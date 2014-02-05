@@ -1,0 +1,47 @@
+#
+#>>> from django.contrib.auth.models import User
+#>>> u = User()
+#>>> u.set_password('password')
+#>>> u.password
+
+#a user
+- model: auth.user
+  pk: 1000
+  fields:
+    first_name: john
+    last_name: smith
+    username: viavmadmin
+    password: "pbkdf2_sha256$12000$VsizsauzTiXC$QcNI963O+w3X67aPiUATh2MZeuFh17fTHL4eiIXaiuQ="
+
+
+
+- model : lost_visions.Person
+  pk : 1
+  fields :
+    name : "John Smith"
+
+
+- model : lost_visions.Person
+  pk : 2
+  fields :
+    name : "Bob Green"
+
+
+- model : lost_visions.Book
+  pk : 1
+  fields :
+    title : "A book"
+    identifier : 7642387
+    publisher : "Fake Publisher"
+    shelfmark : "shelk mark number 0001"
+    author : 1
+    illustrator : 2
+
+
+- model : lost_visions.Image
+  pk : 1
+  fields :
+    identifier : 79864239
+    tags : glue;people;humour;advert
+    imageurl : http://farm6.staticflickr.com/5542/11307158676_46fbc8549d.jpg
+    book : 1
