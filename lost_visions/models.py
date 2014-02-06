@@ -26,6 +26,7 @@ class Image(models.Model):
     identifier = models.CharField(max_length=120L)
     tags = models.CharField(max_length=256L, blank=True)
     imageurl = models.CharField(max_length=120L, blank=True)
+    user_count = models.IntegerField(default=0)
     book = models.ForeignKey('Book', null=True, blank=True)
 
     class Meta:

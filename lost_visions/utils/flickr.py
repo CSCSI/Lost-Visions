@@ -12,10 +12,10 @@ import subprocess
 __author__ = 'Ian Harvey'
 
 
-def getImageTags(url):
+def getImageTags(url, size='o'):
 
     allTags = dict()
-    large_image_resp = urllib2.urlopen(url + '/sizes/o/')
+    large_image_resp = urllib2.urlopen(url + '/sizes/' + size + '/')
 
     if large_image_resp.code == 200:
         large_image_resp_data = large_image_resp.read()
