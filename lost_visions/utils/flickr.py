@@ -15,72 +15,74 @@ __author__ = 'Ian Harvey'
 def getImageTags(url, size='o'):
 
     allTags = dict()
-    large_image_resp = urllib2.urlopen(url + '/sizes/' + size + '/')
+    try:
+        large_image_resp = urllib2.urlopen(url + '/sizes/' + size + '/')
 
-    if large_image_resp.code == 200:
-        large_image_resp_data = large_image_resp.read()
-        xml = BeautifulSoup(large_image_resp_data)
+        if large_image_resp.code == 200:
+            large_image_resp_data = large_image_resp.read()
+            xml = BeautifulSoup(large_image_resp_data)
 
-        for elm in xml.findAll('div', {'id': 'allsizes-photo'}):
-            for img in elm.findAll('img'):
-                allTags['image_location'] = img['src']
-
-
-    resp = urllib2.urlopen(url)
-
-    if resp.code == 200:
-        data = resp.read()
-
-        ## use for local files
-        # with open ("image-1.html", "r") as myfile:
-        #     data=myfile.read().replace('\n', '')
+            for elm in xml.findAll('div', {'id': 'allsizes-photo'}):
+                for img in elm.findAll('img'):
+                    allTags['image_location'] = img['src']
 
 
-        xml = BeautifulSoup(data)
+        resp = urllib2.urlopen(url)
 
-        counter = 0
-        for elm in xml.findAll('a', {'class': 'tag-item ywa-track'}):
-            if ":" in elm.text:
-                kv = elm.text.split(':')
-                k = kv[0].strip()
-                v = kv[1].strip()
-                allTags[k] = v
-            else:
-                counter += 1
-                allTags[str(counter)] = elm.text
+        if resp.code == 200:
+            data = resp.read()
+
+            ## use for local files
+            # with open ("image-1.html", "r") as myfile:
+            #     data=myfile.read().replace('\n', '')
 
 
+            xml = BeautifulSoup(data)
 
-                # info taken from the photo description side bar,
-                # not the metadata which is similar but the formatting sucks.
-        for elm in xml.findAll('div', {'class': 'photo-desc'}):
+            counter = 0
+            for elm in xml.findAll('a', {'class': 'tag-item ywa-track'}):
+                if ":" in elm.text:
+                    kv = elm.text.split(':')
+                    k = kv[0].strip()
+                    v = kv[1].strip()
+                    allTags[k] = v
+                else:
+                    counter += 1
+                    allTags[str(counter)] = elm.text
 
-        # the 2nd <p> block has the data we want, ignore the others
-            data = str(elm.findAll('p')[1])
 
-            #split by new line
-            allkeyvalues = data.split('<br />')
 
-            for kv in allkeyvalues:
+                    # info taken from the photo description side bar,
+                    # not the metadata which is similar but the formatting sucks.
+            for elm in xml.findAll('div', {'class': 'photo-desc'}):
 
-            #regex to remove <strong> <p> and other html tags
-                line = re.sub(r"(<[^>]+>)", "", kv)
+            # the 2nd <p> block has the data we want, ignore the others
+                data = str(elm.findAll('p')[1])
 
-                kvsplit = line.split(':')
+                #split by new line
+                allkeyvalues = data.split('<br />')
 
-                #store the string before the : as the key, and the words afterwards as the value
-                #strip whitespace from both ends.
-                allTags[kvsplit[0].strip()] = kvsplit[1].strip()
+                for kv in allkeyvalues:
 
-        #printing everything for debug
-        # for key in allTags:
-        #     print key + '       :       ' + allTags[key]
+                #regex to remove <strong> <p> and other html tags
+                    line = re.sub(r"(<[^>]+>)", "", kv)
 
-        return allTags
-    else:
-        print 'error with url : ' + url
+                    kvsplit = line.split(':')
+
+                    #store the string before the : as the key, and the words afterwards as the value
+                    #strip whitespace from both ends.
+                    allTags[kvsplit[0].strip()] = kvsplit[1].strip()
+
+            #printing everything for debug
+            # for key in allTags:
+            #     print key + '       :       ' + allTags[key]
+
+            return allTags
+        else:
+            print 'error with url : ' + url
+            return None
+    except urllib2.HTTPError:
         return None
-
 
 
 def getImagePagesFromBasePage(url, imagecounter=0):
