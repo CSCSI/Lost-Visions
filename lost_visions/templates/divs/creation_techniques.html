@@ -1,0 +1,22 @@
+
+<form id="creation-techniques-form" method="post">{% csrf_token %}
+    <div class="panel panel-default">
+
+        <div class="panel-heading">Please select one or more creation techniques which are relevant to the image</div>
+
+        <div class="panel-body">
+
+            <div class="row-fluid">
+
+                {% for field in create_tech_form %}
+                    {{ field }}
+                    <label for="{{ field.auto_id }}">{{ field.label }}</label>
+
+                {% endfor %}
+
+            </div>
+            {{ tag_form.non_field_errors }}
+        </div>
+    </div>
+    <div id="submit_creation_techniques" class="btn btn-default btn-lg">Next --></div>
+</form>

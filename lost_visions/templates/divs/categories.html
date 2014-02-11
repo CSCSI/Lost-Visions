@@ -1,0 +1,19 @@
+<form id="categories-form" method="post">{% csrf_token %}
+    <div class="panel panel-default">
+
+        <div class="panel-heading">Please select one or more categories which describe the image</div>
+
+        <div class="panel-body">
+
+            <div id="categories" class="row-fluid">
+                {% for field in category_form %}
+                    {{ field }}
+                    <label for="{{ field.auto_id }}">{{ field.label }}</label>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div id="submit_categories" class="btn btn-default btn-lg">Next --></div>
+
+</form>

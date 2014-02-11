@@ -1,6 +1,5 @@
 import os
 from random import randint
-from django.core.context_processors import csrf
 from django.shortcuts import render
 
 # Create your views here.
@@ -88,6 +87,8 @@ def image(request, image_id):
     for tag in flickr_tags:
         if is_number(tag) and is_user_tag(flickr_tags[tag]):
             tags[tag] = flickr_tags[tag]
+        else:
+            image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
 
     TagForm = forms.tag_form_factory(tags)
     tag_form = TagForm()
@@ -100,10 +101,24 @@ def image(request, image_id):
 
     return render(request, 'image.html',
                   {'image': image_info,
+                   'image_id': image_url_part,
                    'tag_form': tag_form,
                    'category_form': category_form,
                    'create_tech_form': create_tech},
                   context_instance=RequestContext(request))
+
+def get_creation_techniques_html(request):
+    CreationTech = forms.creation_technique_form_factory()
+    create_tech = CreationTech()
+
+    return render(request, 'divs/creation_techniques.html', {'create_tech_form': create_tech})
+
+
+def get_categories_html(request):
+    CategoryForm = forms.category_form_factory()
+    category_form = CategoryForm()
+
+    return render(request, 'divs/categories.html', {'category_form': category_form})
 
 
 def random_file_in_folder(folder):
@@ -166,9 +181,14 @@ def grab_flickr(request):
     loop = 0
     while problem and loop < 20:
         loop+=1
+        print str(loop)
         image_data = get_random_image_data()
         if image_data is not None:
             if 'flickr_id' in image_data:
                 # this is all we care about for now
                 problem = False
     return image(request, image_data['flickr_id'])
+
+
+def free_text_html(request):
+    return render(request, 'divs/free_text_description.html')

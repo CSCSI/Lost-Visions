@@ -10,6 +10,9 @@
 
     <title>Lost Visions</title>
     {% load staticfiles %}
+    {% load dajaxice_templatetags %}
+    {% dajaxice_js_import %}
+
     <!-- Bootstrap -->
     {#    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">#}
     <script src="//code.jquery.com/jquery-1.9.1.js"></script>
@@ -83,7 +86,6 @@
         });
     });
 
-
 </script>
 
 <nav class="navbar navbar-default" role="navigation">
@@ -122,9 +124,9 @@
 
 <div class="container">
 
-      {% block content %}
+    {% block content %}
 
-      {% endblock %}
+    {% endblock %}
 
 </div>
 <footer>
@@ -143,6 +145,7 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="{% static "lostvisions.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "lostvisions.css" %}" />
+<script type="text/javascript" src="{% static "dajax/jquery.dajax.core.js" %}"></script>
 </body>
 </html>

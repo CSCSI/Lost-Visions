@@ -3,75 +3,155 @@
 
 {% block content %}
 
+    <script type="text/javascript">
+        function send_with_ajax() {
+            myApp.showPleaseWait()
+            console.log('here');
+            var name = 'test';
+            Dajaxice.lost_visions.ajax_test(Dajax.process,{'name': name});
+        }
+
+        function change_image(url){
+            $('#photo').attr("src", url);
+            myApp.hidePleaseWait()
+        }
+
+        function add_description(){
+            $('#right-main').empty();
+            $('#right-main').load('{% url 'free_text_description_url' %}', function() {
+                $( "input[type=checkbox]" )
+                        .button();
+                $('#submit_creation_techniques').click(function(){
+                    Dajaxice.lost_visions.submit_creation_techniques(
+                            Dajax.process,{'form':$('#creation-techniques-form').serialize(true), 'image_id':'{{image_id}}'})
+                });
+            });
+        }
+
+        function add_creation_techniques(){
+            $('#right-main').empty();
+            $('#right-main').load('{% url 'creation_techniques_url' %}', function() {
+                $( "input[type=checkbox]" )
+                        .button();
+                $('#submit_creation_techniques').click(function(){
+                    Dajaxice.lost_visions.submit_creation_techniques(
+                            Dajax.process,{'form':$('#creation-techniques-form').serialize(true), 'image_id':'{{image_id}}'})
+                });
+            });
+        }
+
+        function add_categories(){
+            $('#right-main').empty();
+            $('#right-main').load('{% url 'categories_url' %}', function() {
+                $( "input[type=checkbox]" )
+                        .button();
+                $('#submit_categories').click(function(){
+                    Dajaxice.lost_visions.submit_categories(
+                            Dajax.process,{'form':$('#categories-form').serialize(true), 'image_id':'{{image_id}}'})
+                });
+
+            });
+        }
+
+        var myApp;
+        myApp = myApp || (function () {
+            var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
+            return {
+                showPleaseWait: function() {
+                    pleaseWaitDiv.modal();
+                },
+                hidePleaseWait: function () {
+                    pleaseWaitDiv.modal('hide');
+                }
+            }
+        })();
+
+        $(document).ready(function () {
+            $('#submit_button').click(function(){
+                Dajaxice.lost_visions.submit_tags(
+                        Dajax.process,{'form':$('#tags-form').serialize(true), 'image_id':'{{image_id}}'})
+            });
+        });
+    </script>
+    <style>
+        .category-box{
+        {#            height: 75px;#}
+        {#        width: 100px;#}
+            background-color: red;
+            border: 2px;
+            padding: 3px;
+        }
+        .next-click{
+            height: 48px;
+            width: 100px;
+            background-color: darkslategray;
+            border: 2px;
+            padding: 3px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .lv_tags{
+            background-color: darkslategray;
+            border: 2px;
+            padding: 3px;
+            border-radius: 5px;
+        }
+    </style>
+
     <div class="container">
 
         <div class="col-xs-12 col-sm-6">
-            <img id='photo' src="{{ image.imageurl }}" style='max-width:100%; height:auto'>
+            <div class="jumbotron">
+                <img id='photo' src="{{ image.imageurl }}" style='max-width:100%; height:auto'>
+            </div>
         </div><!--/span-->
 
         <div class="col-xs-12 col-sm-6">
 
-            {#        <form action="http://www.w3schools.com/html/html_form_action.asp" method="get">#}
-            {#        <form action="{% url 'image.grab_flickr' %}" method="post">#}
             <div class="container-fluid">
-                <p>Look, tags!</p>
 
-                <div class="row-fluid">
+                <div id="right-main">
 
-                    {% for key in image.tags %}
-                        {#                    <div>#}
-                        <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />
+                    <form id="tags-form" method="post">
 
-                        <label for="check{{ forloop.counter }}">{{ key }}</label>
-                        {#                    </div>#}
-                        {#                <button type="button" class="btn btn-default">{{ key }}</button>#}
-                    {% endfor %}
+                        <div class="row-fluid">
+
+                            <div class="panel panel-default">
+
+                                <div class="panel-heading">Please select the tags below which describe the image</div>
+
+                                <div class="panel-body">
+
+                                    {% for key in image.tags %}
+                                        <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />
+
+                                        <label for="check{{ forloop.counter }}">{{ key }}</label>
+                                    {% empty %}
+                                        <p>(No previous tags found for this image)</p>
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Please select the Flickr tags below which describe the image</div>
+                                <div class="panel-body">
+                                    {% for field in tag_form %}
+                                        {{ field }}
+                                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
+
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div id="submit_button" class="btn btn-default btn-lg">Next --></div>
+                    </form>
                 </div>
-                <p>Flickr Tags</p>
-                <div class="row-fluid">
-
-                    {% for field in tag_form %}
-                        {{ field }}
-                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
-
-                    {% endfor %}
-
-                </div>
-                <form action="{% url 'image.grab_flickr' %}" method="post">{% csrf_token %}
-
-                    <p>Categories</p>
-                    <div class="row-fluid">
-
-                        {% for field in category_form %}
-                            {{ field }}
-                            <label for="{{ field.auto_id }}">{{ field.label }}</label>
-
-                        {% endfor %}
-
-                    </div>
-
-
-                    <p>Creation Technique</p>
-                    <div class="row-fluid">
-
-                        {% for field in create_tech_form %}
-                            {{ field }}
-                            <label for="{{ field.auto_id }}">{{ field.label }}</label>
-
-                        {% endfor %}
-
-                    </div>
-                    {{ tag_form.non_field_errors }}
-                    <p><input type="submit" name="send" value="Submit" /></p>
-                </form>
-
-                {#                <form action="{% url 'image.tags' %}" method="post">{% csrf_token %}#}
-                {#                     {{ test_form.non_field_errors }}#}
-                {#                    {{ test_form.as_p }}#}
-                {#                    <input type="submit" value="Submit Test Form" />#}
-                {#                </form>#}
             </div>
-            {#        </form>#}
         </div>
 
     </div>
@@ -83,11 +163,12 @@
             {% for mykey,value in image.items %}
                 {% if mykey != 'tags' %}
                     <div class="row">
-                        <dl>
-                            <dt>{{ mykey }}</dt>
+                        {#                        <dl>#}
+                        <p><b>{{ mykey }}</b> : {{ value }}</p>
+                        {#                            <dt>{{ mykey }}</dt>#}
 
-                            <dd>{{ value }} </dd>
-                        </dl>
+                        {#                            <dd>{{ value }} </dd>#}
+                        {#                        </dl>#}
 
                     </div><!--/row-->
                 {% endif %}

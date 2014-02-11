@@ -25,7 +25,14 @@ def creation_technique_form_factory():
 
 
 def category_form_factory():
-    properties = {}
+
+    def clean(self):
+        print 'this ran???'
+        print self.cleaned_data
+        return self.cleaned_data
+
+    # properties = {}
+    properties = dict(clean=lambda self: clean(self))
 
     categories = dict()
     categories['cycling'] = 'cycling'
@@ -46,6 +53,7 @@ def category_form_factory():
     for tag in categories:
         properties[categories[tag]] = forms.BooleanField(initial=False)
 
+    # properties['clean'] = clean()
     return type('CategoryForm', (forms.Form,), properties)
 
 

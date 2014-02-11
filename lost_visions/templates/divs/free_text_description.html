@@ -1,0 +1,16 @@
+<form id="free-text-form" method="post">{% csrf_token %}
+    <div class="panel panel-default">
+
+        <div class="panel-heading">Please enter a description of the image</div>
+
+        <div class="panel-body">
+
+            <div id="free_text" class="row-fluid">
+                <label for="free-text-area">Description</label>
+                <textarea class="form-control" rows="3" id="free-text-area"></textarea>
+            </div>
+        </div>
+    </div>
+    <div id="submit_free_text" class="btn btn-default btn-lg">Next --></div>
+
+</form>
