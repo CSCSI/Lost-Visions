@@ -192,3 +192,11 @@ def grab_flickr(request):
 
 def free_text_html(request):
     return render(request, 'divs/free_text_description.html')
+
+
+def new_tags_html(request):
+    return render(request, 'divs/new_tags.html')
+
+
+def thank_you_html(request):
+    return render(request, 'divs/thank_you.html')

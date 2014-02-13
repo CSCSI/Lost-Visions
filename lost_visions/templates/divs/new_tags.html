@@ -1,0 +1,21 @@
+
+<form id="add-tag-form" method="post">{% csrf_token %}
+    <div class="panel panel-default">
+
+        <div class="panel-heading">Please enter a new tag to describe the image</div>
+        <div class="panel-body">
+            <div id="add-tag-panel-body" class="row-fluid">
+
+            </div>
+
+            <div id="free_text" >
+                <label for="input_tag">Tag</label>
+                <input type="text" class="form-control" id="input_tag">
+            </div>
+        </div>
+        <div id="add_tag" class="btn btn-default btn-lg">Add</div>
+
+    </div>
+    <div id="submit_new_tags" class="btn btn-default btn-lg">Next --></div>
+
+</form>

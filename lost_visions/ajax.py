@@ -59,6 +59,19 @@ def read_tags_form(form):
 
 
 @dajaxice_register
+def load_image(request):
+    dajax = Dajax()
+
+    img_url = get_an_image()
+    # print img_url
+
+    dajax.script('change_image("' + img_url + '");')
+    # dajax.assign('#result', 'value', 'hi' + image_id)
+    # dajax.alert('You sent "%s"' % name)
+    return dajax.json()
+
+
+@dajaxice_register
 def submit_tags(request, form, image_id):
     read_tags_form(form)
     print request.POST
@@ -68,7 +81,7 @@ def submit_tags(request, form, image_id):
     # print img_url
 
     # dajax.script('change_image("' + img_url + '");')
-    dajax.script('add_categories();')
+    dajax.script('add_new_tags();')
     # dajax.assign('#result', 'value', 'hi' + image_id)
     # dajax.alert('You sent "%s"' % name)
     return dajax.json()
@@ -81,6 +94,27 @@ def submit_creation_techniques(request, form, image_id):
 
     dajax = Dajax()
     dajax.script('add_description();')
+    return dajax.json()
+
+
+@dajaxice_register
+def submit_free_text(request, form, image_id):
+    read_category_form(form)
+    print request.POST
+
+    dajax = Dajax()
+    # TODO start here
+    dajax.script('add_thank_you();')
+    return dajax.json()
+
+
+@dajaxice_register
+def submit_new_tags(request, form, image_id):
+    print request.POST
+
+    dajax = Dajax()
+    # TODO start here
+    dajax.script('add_categories();')
     return dajax.json()
 
 

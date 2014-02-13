@@ -17,6 +17,9 @@ urlpatterns = patterns('',
     url(r'^categories', 'lost_visions.views.get_categories_html', name='categories_url'),
     url(r'^creation_techniques', 'lost_visions.views.get_creation_techniques_html', name='creation_techniques_url'),
     url(r'^free_text', 'lost_visions.views.free_text_html', name='free_text_description_url'),
+    url(r'^new_tags', 'lost_visions.views.new_tags_html', name='new_tags_url'),
+    url(r'^thank_you', 'lost_visions.views.thank_you_html', name='thank_you_url'),
+
 
 
     # url(r'^blog/', include('blog.urls')),
