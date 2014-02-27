@@ -9,6 +9,8 @@ dajaxice_autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'lost_visions.views.home', name='home'),
+    url(r'^about_us', 'lost_visions.views.aboutus', name='about_us'),
+
     url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),
     url(r'^image/tags', 'lost_visions.views.image_tags', name='image.tags'),
     url(r'^image/random', 'lost_visions.views.random_image', name='image.random'),

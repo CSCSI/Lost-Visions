@@ -200,3 +200,7 @@ def new_tags_html(request):
 
 def thank_you_html(request):
     return render(request, 'divs/thank_you.html')
+
+
+def aboutus(request):
+    return render_to_response('about_us.html')
