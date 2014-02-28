@@ -56,7 +56,7 @@
     <script>
         function load_css() {
             var head = $('head');
-{#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.slate.min.css" %}') );#}
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.slate.min.css" %}') );#}
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.0.6/bootstrap-social.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css') );
@@ -69,7 +69,7 @@
 
     {#            <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">#}
     {##}
-{#    <link href="{% static "bootstrap.slate.min.css" %}" rel="stylesheet">#}
+    {#    <link href="{% static "bootstrap.slate.min.css" %}" rel="stylesheet">#}
     {##}
     {#        <link rel="stylesheet" type="text/css" href="{% static "Font-Awesome/css/font-awesome.css" %}" />#}
     {#    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">#}
@@ -174,14 +174,28 @@
             </li>
 
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tag Images<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="{% url 'image.random' %}">Random</a></li>
+                    <li><a href="{% url 'image.random' %}">From ARCCA</a></li>
                     <li class="divider"></li>
-                    <li><a href="{% url 'image.grab_flickr' %}">Flickr</a></li>
+                    <li><a href="{% url 'image.grab_flickr' %}">From Flickr</a></li>
                 </ul>
             </li>
 
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contact Us<b class="caret"></b></a>
+                <ul class="dropdown-menu social-buttons">
+                    <a href="" class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook"></i> Facebook </a>
+                    <li class="divider"></li>
+                    <a href="https://www.flickr.com/photos/britishlibrary" target="_blank" class="btn btn-block btn-social btn-flickr"><i class="fa fa-flickr"></i> British Library Images on Flickr </a>
+                    <li class="divider"></li>
+                    <a href="https://github.com/CSCSI/Lost-Visions" target="_blank" class="btn btn-block btn-social btn-github"><i class="fa fa-github"></i> Open Source on Github </a>
+                    <li class="divider"></li>
+                    <a href="http://lost-visions-cardiff.blogspot.co.uk/" target="_blank" class="btn btn-block btn-social btn-google-plus"><i class="fa fa-google-plus"></i> Blog on Blogger </a>
+                    <li class="divider"></li>
+                    <a href="https://twitter.com/Lost_Visions" target="_blank" class="btn btn-block btn-social btn-twitter"><i class="fa fa-twitter"></i> Twitter </a>
+                </ul>
+            </li>
 
         </ul>
 
@@ -193,13 +207,6 @@
             <button type="submit" class="btn btn-default">Submit</button>
         </form>
 
-        <div class="">
-            <a class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></a>
-            <a class="btn btn-social-icon btn-flickr"><i class="fa fa-flickr"></i></a>
-            <a class="btn btn-social-icon btn-github"><i class="fa fa-github"></i></a>
-            <a class="btn btn-social-icon btn-google-plus"><i class="fa fa-google-plus"></i></a>
-            <a class="btn btn-social-icon btn-twitter"><i class="fa fa-twitter"></i></a>
-        </div>
     </div><!-- /.navbar-collapse -->
 
 
@@ -212,6 +219,9 @@
     {% endblock %}
 
 </div>
+
+<hr>
+
 <div class="container footer-links">
     <div class="col-xs-12 col-sm-6">
 

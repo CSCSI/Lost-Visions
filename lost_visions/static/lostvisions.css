@@ -1,4 +1,10 @@
 .ui-state-active, .click{
-    background-color: lawngreen;
-    background: lawngreen;
+    background-color: #28b62c;
+    background: #28b62c;
+    /*lawngreen*/
+}
+
+.home-width{
+    width: 75%;
+    margin: 0 auto;
 }
