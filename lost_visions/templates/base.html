@@ -1,3 +1,6 @@
+{% load staticfiles %}
+{% load dajaxice_templatetags %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,8 +12,7 @@
     <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
 
     <title>Lost Visions</title>
-    {% load staticfiles %}
-    {% load dajaxice_templatetags %}
+
     {% dajaxice_js_import %}
 
 
@@ -151,9 +153,9 @@
 
 <nav class="navbar navbar-default" role="navigation">
     <!-- Brand and toggle get grouped for better mobile display -->
-{#    <div class="navbar-header">#}
-{#        <a class="navbar-brand" href="#"></a>#}
-{#    </div>#}
+    {#    <div class="navbar-header">#}
+    {#        <a class="navbar-brand" href="#"></a>#}
+    {#    </div>#}
 
     <div class="navbar-header">
         <a href="../" class="navbar-brand">Lost Visions</a>

@@ -1,3 +1,6 @@
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -48,17 +51,41 @@ class UserImageTags(models.Model):
 
 class Image(models.Model):
     id = models.IntegerField(primary_key=True)
-    identifier = models.CharField(max_length=120L)
-    tags = models.CharField(max_length=256L, blank=True)
-    imageurl = models.CharField(max_length=120L, blank=True)
-    user_count = models.IntegerField(default=0)
-    book = models.ForeignKey('Book', null=True, blank=True)
+    # identifier = models.CharField(max_length=120L)
+    # tags = models.CharField(max_length=256L, blank=True)
+    # imageurl = models.CharField(max_length=120L, blank=True)
+    # user_count = models.IntegerField(default=0)
+    # book = models.ForeignKey('Book', null=True, blank=True)
     tags1 = models.ManyToManyField(UserImageTags)
+
+    volume = models.CharField(max_length=256L, blank=True)
+    publisher = models.CharField(max_length=256L, blank=True)
+    title = models.CharField(max_length=256L, blank=True)
+    first_author = models.CharField(max_length=256L, blank=True)
+    BL_DLS_ID = models.CharField(max_length=256L, blank=True)
+    pubplace = models.CharField(max_length=256L, blank=True)
+    book_identifier = models.CharField(max_length=256L, blank=True)
+    ARK_id_of_book = models.CharField(max_length=256L, blank=True)
+    date = models.CharField(max_length=256L, blank=True)
+    flickr_url = models.CharField(max_length=256L, blank=True)
+    image_idx = models.CharField(max_length=256L, blank=True)
+    page = models.CharField(max_length=256L, blank=True)
+    flickr_id = models.CharField(max_length=256L, blank=True)
+    flickr_small_source = models.CharField(max_length=256L, blank=True)
+    flickr_small_height = models.CharField(max_length=256L, blank=True)
+    flickr_small_width = models.CharField(max_length=256L, blank=True)
+    flickr_medium_source = models.CharField(max_length=256L, blank=True)
+    flickr_medium_height = models.CharField(max_length=256L, blank=True)
+    flickr_medium_width = models.CharField(max_length=256L, blank=True)
+    flickr_large_source = models.CharField(max_length=256L, blank=True)
+    flickr_large_height = models.CharField(max_length=256L, blank=True)
+    flickr_large_width = models.CharField(max_length=256L, blank=True)
+    flickr_original_source = models.CharField(max_length=256L, blank=True)
+    flickr_original_height = models.CharField(max_length=256L, blank=True)
+    flickr_original_width = models.CharField(max_length=256L, blank=True)
 
     class Meta:
         db_table = 'image'
-
-
 
 
 class Category(models.Model):

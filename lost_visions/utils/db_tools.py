@@ -1,3 +1,5 @@
+from random import randint
+from django.core import serializers
 from django.db.models import Min
 from lost_visions import models
 from django.core.exceptions import ObjectDoesNotExist
@@ -7,24 +9,33 @@ __author__ = 'ubuntu'
 
 def get_next_image_id():
 
-    min_view_count = models.Image.objects.aggregate(Min('user_count'))
-    min_viewed_image = models.Image.objects.get(user_count=min_view_count['user_count__min'])
-    image_id = str(min_viewed_image.identifier)
+    # min_view_count = models.Image.objects.aggregate(Min('user_count'))
+    # min_viewed_image = models.Image.objects.get(user_count=min_view_count['user_count__min'])
+
+    number_of_images = models.Image.objects.count()
+    rand_image_pk = randint(1, number_of_images)
+# flickr_id=10998459416
+    min_viewed_image = models.Image.objects.get(pk=rand_image_pk)
+    data = serializers.serialize("json", [min_viewed_image, ])
+
+    print data
+    # image_id = str(min_viewed_image.identifier)
+    image_id = str(min_viewed_image.id)
     return image_id
 
 
 def get_info_from_image_model(image_model):
     image_info = dict()
-    image_info['imageurl'] = image_model.imageurl
-    image_info['book_title'] = image_model.book.title
-    image_info['author'] = image_model.book.author.name
-    image_info['tags'] = image_model.tags.split(';')
+    image_info['imageurl'] = image_model.flickr_medium_source
+    image_info['book_title'] = image_model.title
+    image_info['author'] = image_model.first_author
+    # image_info['tags'] = image_model.tags1.tags.tag
     return image_info
 
 
 def get_image_info(image_id):
     try:
-        image_for_id = models.Image.objects.get(identifier=image_id)
+        image_for_id = models.Image.objects.get(id=image_id)
         return get_info_from_image_model(image_for_id)
 
     except ObjectDoesNotExist:
