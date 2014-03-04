@@ -1,43 +1,47 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block content %}
 
+    {% if login_success %}
+        {% if login_success == True %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {{ msg }}
+            </div>
+        {% else %}
+            <div class="alert alert-dismissable alert-danger">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {{ msg }}
+            </div>
+        {% endif %}
+    {% endif %}
+
+
     <div class="panel panel-default home-width">
-        <div class="panel-heading"><h3>The Lost Visions Project</h3></div>
+        <div class="panel-heading">
+            <h3>Lost Visions: Retrieving the Visual Element of Printed Books from the Nineteenth Century
+            </h3>
+        </div>
         <div class="panel-body">
 
             <h4>
                 <p>
-                    Thousands of neglected images dating back to the eighteenth century will soon be available for the public to search online and find out more about how they have shaped our culture.<p>
-                ‘Lost Visions: retrieving the visual element of printed books from the nineteenth century’ led by Professor Julia Thomas, School of English, Communication & Philosophy is one of 21 new research projects, funded by the Arts and Humanities Research Council, to address the challenges of working with big data and making the information more accessible and easier to interpret by a lay audience.
-            </p>
-                <p>
-                    In collaboration with experts at Cardiff’s School of Computer Sciences & Informatics, Professor Thomas will work on more than a million illustrations from books in the British Library's collection. Although many historical texts have been digitally stored, the illustrations in these texts are frequently without the information needed to help people understand them.
+                    <i>‘Lost Visions: Retrieving the Visual Element of Printed Books from the Nineteenth Century’</i> is one of 21 exciting and innovative new projects funded by the Arts and Humanities Research Council. Each project will exploit the potential of digital technologies to transform research in the arts and humanities and to ensure that it is at the forefront of tackling crucial issues such as intellectual property, cultural memory and identity, and communication and creativity in a digital age. Led by Professor Julia Thomas, from Cardiff University’s School of English, Communication and Philosophy, and in collaboration with Cardiff’s School of Computer Sciences & Informatics, Lost Visions will develop new methods to enable the general public to search online for over a million book illustrations taken from a dataset held by the British Library. The result of Thomas’s and her team’s work will be the world’s biggest searchable archive of book illustrations.
+
                 </p>
             </h4>
 
+            <hr>
+
+            <img id='home-image' src="{% static "media/images/hot_air.jpg" %}" style='max-width:100%; height:auto'>
+<hr>
 
             <p>
-                The Cardiff team will devise methods that will enable the collection of illustrations to become fully searchable online.
+                The starting point for the Lost Visions project was the realisation that whilst books are being digitised on an unprecedented scale, illustrations and other important visual material are frequently omitted from this process.  In cases where the illustrations have been digitised, they are often of such a low quality and lacking the metadata required to make them searchable. In a very real sense these illustrations, which are a significant aspect of our cultural heritage and play a crucial role in how we understand visual culture today, are lost. The provision of metadata for over a million illustrations from the eighteenth to the twentieth century will allow these illustrations to be searched for and retrieved in a web-based interface that will be free and accessible to the public. Furthermore, the scale and scope of the project means that Illustration Studies, as an academic discipline, will have a resource which will enable researchers to identify how, for example, illustration changes over time, how certain images are re-used in different contexts, and how texts may shift from being illustrated initially, to losing their illustrations at a later date or vice-versa.
             </p>
             <p>
-                "There is a real risk that tomorrow's readers will be almost unaware of illustration and whole genres of artistic, educational and informative products may effectively be lost to us," said Professor Thomas. "This unique collaboration between computer experts and illustration experts aims to overcome this by helping us to better understand the images that fed into our own visual culture"
-            </p>
-
-            <p>
-                "We’re focusing on illustrations from books spanning the eighteenth to the twentieth century, a period that is arguably the most important in British book illustration. In these years, rapid changes in reproductive techniques were paralleled by changes in the meanings of art and its reception. Art was democratised and book illustrations became more widely collectable and mobile than ever before.
-            </p>
-            <p>
-                "The result of our work will be the biggest searchable archive of book illustrations, which can be freely used and accessed by the public. It has the potential to revolutionise how illustration is understood and the importance accorded to it, to supply an image-hungry commercial world with illustrative material, and to lead to ever more accurate ways of classifying and analysing images in large databases," added Professor Thomas.
-            </p>
-            <p>
-                Announcing the projects receiving funding, Minister for Universities and Science, David Willetts, said: "Getting quality data out of the hands of a few and into the public domain is an important goal for this Government.
-            </p>
-            <p>
-                "This funding will help to overcome the challenge of making vast amounts of rich data more accessible and easier to interpret by the public. These 21 projects promise to come up with innovative long-lasting solutions."
-            </p>
-            <p>
-                The projects have been funded under the £4.6M, ‘Digital Transformations in the Arts and Humanities: Big Data Research’ funded by the Arts and Humanities Research Council with support from the Economic and Social Research Council.  Each project will also produce a tangible asset that sustains beyond the life of the project.  These will include open source tools to analyse election poll data and an online teaching resource which will hold a collection of pronunciations of words from speakers of different varieties of English.
+                Lost Visions will revolutionise how illustration is understood and the importance accorded to it.
             </p>
 
         </div>

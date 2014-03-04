@@ -37,8 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'dajaxice',
-    'dajax',
+    # 'social.apps.django_app.default',
+    # 'dajaxice',
+    # 'dajax',
     'lost_visions',
 )
 
@@ -50,6 +51,17 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+# AUTHENTICATION_BACKENDS = (
+#       'social.backends.open_id.OpenIdAuth',
+#       'social.backends.google.GoogleOpenId',
+#       'social.backends.google.GoogleOAuth2',
+#       'social.backends.google.GoogleOAuth',
+#       'social.backends.twitter.TwitterOAuth',
+#       'social.backends.yahoo.YahooOpenId',
+#
+#       'django.contrib.auth.backends.ModelBackend',
+#   )
 
 ROOT_URLCONF = 'crowdsource.urls'
 
@@ -70,7 +82,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages'
+    'django.contrib.messages.context_processors.messages',
+
+    # 'social.apps.django_app.context_processors.backends',
+    # 'social.apps.django_app.context_processors.login_redirect',
 )
 
 # Database
@@ -107,7 +122,7 @@ STATIC_ROOT = 'lost_visions/static'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'dajaxice.finders.DajaxiceFinder',
+    # 'dajaxice.finders.DajaxiceFinder',
 
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )

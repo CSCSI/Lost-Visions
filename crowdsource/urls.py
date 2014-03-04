@@ -1,17 +1,21 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from dajaxice.core import dajaxice_autodiscover, dajaxice_config
+# from dajaxice.core import dajaxice_autodiscover, dajaxice_config
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 admin.autodiscover()
-dajaxice_autodiscover()
+# dajaxice_autodiscover()
 
 
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'lost_visions.views.home', name='home'),
     url(r'^about_us', 'lost_visions.views.aboutus', name='about_us'),
+    url(r'^login', 'lost_visions.views.login', name='login'),
+    url(r'^logout', 'lost_visions.views.logout', name='logout'),
+    url(r'^signup', 'lost_visions.views.signup', name='signup'),
+
 
     url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),
     url(r'^image/tags', 'lost_visions.views.image_tags', name='image.tags'),
@@ -24,10 +28,10 @@ urlpatterns = patterns('',
     url(r'^new_tags', 'lost_visions.views.new_tags_html', name='new_tags_url'),
     url(r'^thank_you', 'lost_visions.views.thank_you_html', name='thank_you_url'),
 
-
+    # url('', include('social.apps.django_app.urls', namespace='social')),
 
     # url(r'^blog/', include('blog.urls')),
-    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
+    # url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
 

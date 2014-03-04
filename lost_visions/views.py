@@ -1,5 +1,6 @@
 import os
 from random import randint
+from django.contrib.auth import authenticate
 from django.shortcuts import render
 
 # Create your views here.
@@ -20,7 +21,7 @@ def home(request):
 @requires_csrf_token
 def image_tags(request):
     print request.get_full_path()
-    print request.POST['question']
+    # print request.POST['question']
 
     if request.method == 'POST':
         print request.POST
@@ -28,13 +29,13 @@ def image_tags(request):
         # print test_form.question
         if test_form.is_valid():
             print test_form.is_valid()
-            print test_form.cleaned_data['question']
+            # print test_form.cleaned_data['question']
         else:
             print 'not valid'
             print request.POST
 
-    return render_to_response('image_tags.html', context_instance=RequestContext(request))
-
+    # return render_to_response('image.html', context_instance=RequestContext(request))
+    return random_image(request)
 
 def is_number(string):
     try:
@@ -204,3 +205,44 @@ def thank_you_html(request):
 
 def aboutus(request):
     return render_to_response('about_us.html')
+
+
+def login(request):
+    return render_to_response('login.html')
+
+
+def do_login(request):
+
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+
+            print("User is valid, active and authenticated")
+            success = True
+            msg = 'You have successfully logged in'
+        else:
+            print("The password is valid, but the account has been disabled!")
+            success = False
+            msg = 'This account has been disabled. Please contact the Lost-Visions team.'
+
+        return render_to_response('home.html', {'login_success': success, 'msg': msg})
+
+    else:
+        msg = 'Username and Password combination not recognised, please try again.'
+        success = False
+    return render_to_response('login.html', {'login_success': success, 'msg': msg})
+
+
+def logout(request):
+    if request.user.is_authenticated():
+        logout(request)
+        msg = 'You have successfully logged out'
+        logout_success = True
+    #do logout
+    return render_to_response('home.html', {'logout_success': logout_success, 'msg': msg})
+
+
+def signup(request):
+    return render_to_response('signup.html')
