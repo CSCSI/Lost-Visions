@@ -13,7 +13,7 @@
 
     <title>Lost Visions</title>
 
-{#    {% dajaxice_js_import %}#}
+    {#    {% dajaxice_js_import %}#}
 
 
     <!-- Bootstrap -->
@@ -29,8 +29,12 @@
     <![endif]-->
     <link rel="stylesheet" type="text/css" href="{% static "jquery.imgareaselect-1.0.0-rc.1/distfiles/css/imgareaselect-default.css" %}" />
     {#    <script type="text/javascript" src="{% static "jquery.imgareaselect-0.9.10/scripts/jquery.min.js" %}"></script>#}
-{#    <script type="text/javascript" src="{% static "jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.min.js" %}"></script>#}
-        <script type="text/javascript" src="{% static "jquery.imgareaselect-1.0.0-rc.1/jquery.imgareaselect.min.js" %}"></script>
+    {#    <script type="text/javascript" src="{% static "jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.min.js" %}"></script>#}
+    <script type="text/javascript" src="{% static "jquery.imgareaselect-1.0.0-rc.1/jquery.imgareaselect.min.js" %}"></script>
+
+    <script type="text/javascript" src="{% static "dtree/dtree.js" %}"></script>
+    <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>
+
 
     <style>
         #format { margin-top: 2em; }
@@ -47,7 +51,7 @@
 
     <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
-{#    <script type="text/javascript" src="{% static "dajax/jquery.dajax.core.js" %}"></script>#}
+    {#    <script type="text/javascript" src="{% static "dajax/jquery.dajax.core.js" %}"></script>#}
 
 
     {#      CSS Files     #}
@@ -62,6 +66,8 @@
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.0.6/bootstrap-social.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css') );
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "dice-theme1.css" %}') );
+
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "lostvisions.css" %}') );
         }
 
@@ -168,6 +174,9 @@
                     <li><a href="#" rel="{% static "bootstrap.slate.min.css" %}">Grey</a></li>
                     <li><a href="#" rel="{% static "bootstrap.flatly.min.css" %}">Blue</a></li>
                     <li><a href="#" rel="{% static "bootstrap.amelia.min.css" %}">Red</a></li>
+                    <li><a href="#" rel="http://www.dmvi.org.uk/css/dice-theme1.min.css">DMVI</a></li>
+
+
                 </ul>
             </li>
 

@@ -8,3 +8,21 @@
     width: 75%;
     margin: 0 auto;
 }
+
+.panel-body{
+    background-color: #7e98a8;
+}
+
+.panel-default>.panel-heading{
+    background-color: #e89362;
+    border-color: #e89362;
+}
+
+.panel-group .panel-footer{
+        background-color: #e89362;
+    border-color: #e89362;
+}
+
+.btn-social{
+    width: 100%;
+}
