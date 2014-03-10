@@ -1,6 +1,6 @@
 import os
 from random import randint
-from django.contrib.auth import authenticate
+from django.contrib import auth
 from django.shortcuts import render
 
 # Create your views here.
@@ -13,9 +13,13 @@ from lost_visions.utils import db_tools
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
 
-
+@requires_csrf_token
 def home(request):
-    return render_to_response('home.html')
+    print request.user
+    if request.user.username:
+        print request.user.username
+    return render(request, 'home.html',
+                  context_instance=RequestContext(request))
 
 
 @requires_csrf_token
@@ -36,6 +40,7 @@ def image_tags(request):
 
     # return render_to_response('image.html', context_instance=RequestContext(request))
     return random_image(request)
+
 
 def is_number(string):
     try:
@@ -204,22 +209,24 @@ def thank_you_html(request):
 
 
 def aboutus(request):
-    return render_to_response('about_us.html')
+    return render(request, 'about_us.html', context_instance=RequestContext(request))
 
-
+@requires_csrf_token
 def login(request):
-    return render_to_response('login.html')
+    return render(request, 'login.html',
+                  context_instance=RequestContext(request))
 
-
+@requires_csrf_token
 def do_login(request):
 
+    print request.POST
     username = request.POST['username']
     password = request.POST['password']
-    user = authenticate(username=username, password=password)
+    user = auth.authenticate(username=username, password=password)
     if user is not None:
         if user.is_active:
-
             print("User is valid, active and authenticated")
+            auth.login(request, user)
             success = True
             msg = 'You have successfully logged in'
         else:
@@ -227,22 +234,29 @@ def do_login(request):
             success = False
             msg = 'This account has been disabled. Please contact the Lost-Visions team.'
 
-        return render_to_response('home.html', {'login_success': success, 'msg': msg})
-
+        return render(request, 'home.html',
+                      {'login_success': success, 'msg': msg},
+                      context_instance=RequestContext(request))
     else:
         msg = 'Username and Password combination not recognised, please try again.'
         success = False
-    return render_to_response('login.html', {'login_success': success, 'msg': msg})
 
+        return render(request, 'login.html',
+                      {'login_success': success, 'msg': msg},
+                      context_instance=RequestContext(request))
 
+@requires_csrf_token
 def logout(request):
     if request.user.is_authenticated():
-        logout(request)
+        auth.logout(request)
         msg = 'You have successfully logged out'
         logout_success = True
     #do logout
-    return render_to_response('home.html', {'logout_success': logout_success, 'msg': msg})
+    return render(request, 'home.html',
+                  {'logout_success': logout_success, 'msg': msg},
+                  context_instance=RequestContext(request))
 
 
+@requires_csrf_token
 def signup(request):
-    return render_to_response('signup.html')
+    return render(request, 'signup.html', context_instance=RequestContext(request))

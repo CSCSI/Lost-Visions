@@ -13,7 +13,6 @@ class LostVisionUser(models.Model):
     expert_level = models.IntegerField(default=0, blank=True)
     self_description = models.CharField(max_length=256L, blank=True)
 
-
 class Book(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=256L)

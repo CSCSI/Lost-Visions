@@ -32,7 +32,9 @@
     {#    <script type="text/javascript" src="{% static "jquery.imgareaselect-0.9.10/scripts/jquery.imgareaselect.min.js" %}"></script>#}
     <script type="text/javascript" src="{% static "jquery.imgareaselect-1.0.0-rc.1/jquery.imgareaselect.min.js" %}"></script>
 
-    <script type="text/javascript" src="{% static "dtree/dtree.js" %}"></script>
+{#    <script type="text/javascript" src="{% static "dtree/dtree.js" %}"></script>#}
+
+    <script type="text/javascript" src="{% static "vakata-jstree-480a265/dist/jstree.js" %}"></script>
     <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>
 
 
@@ -67,6 +69,7 @@
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.0.6/bootstrap-social.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "dice-theme1.css" %}') );
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "vakata-jstree-480a265/dist/themes/default/style.css" %}') );
 
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "lostvisions.css" %}') );
         }
@@ -204,10 +207,10 @@
                 </ul>
             </li>
 
-            {% if 1 == 1 %}
-                <li><a href="{% url 'login' %}">Login</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}">Logout {{ user }}</a></li>
             {% else %}
-                <li><a href="{% url 'logout' %}">Logout</a></li>
+                <li><a href="{% url 'login' %}">Login {{ user }}</a></li>
             {% endif %}
 
         </ul>
