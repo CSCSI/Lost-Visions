@@ -83,16 +83,24 @@
                 input_field.val("");
             });
 
-            $('#rotate').click(function() {
-                var deg = $(this).data('rotate') || 0;
-                var rotate = 'rotate(' + $(this).data('rotate') + 'deg)';
-                $('#photo').css({
-                    '-webkit-transform': rotate,
-                    '-moz-transform': rotate,
-                    '-o-transform': rotate,
-                    '-ms-transform': rotate,
-                    'transform': rotate
-                });
+            var degs = 0;
+            $(".rota").click(function() {
+
+                degs += $(this).data('degs');
+
+                if (degs < 0) {
+                    degs += 360;
+                }
+
+                $("#photo").rotate( {animateTo: degs}, 'abs' );
+
+                                degs = degs%360;
+
+                var photoWidth = $('#photo').offsetWidth;
+                $("#rotval").html(degs + " " + photoWidth);
+
+                load_css();
+
             });
 
             register_tree_categories();
@@ -130,9 +138,11 @@
     <div class="col-xs-12 col-sm-6">
         <div class="jumbotron">
             <img id='photo' src="{{ image.imageurl }}" style='max-width:100%; height:auto'>
-            <div id="rotate" class="btn btn-default" data-rotate="270">← Rotate left</div>
-            <div id="rotate" class="btn btn-default" data-rotate="90">Rotate right →</div>
+            <div class="rota btn btn-default" data-degs="-90">← Rotate left</div>
+                        <div class="rota btn btn-default" data-degs="0">Reset</div>
 
+            <div class="rota btn btn-default" data-degs="90">Rotate right →</div>
+            <div id="rotval"></div>
         </div>
     </div><!--/span-->
 
@@ -153,53 +163,13 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                    Please select the tags below which describe the image                                </a>
+                    Please select one or more categories which describe the image
+                </a>
             </h4>
         </div>
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
 
-                {% for key in image.tags %}
-                    <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />
-
-                    <label for="check{{ forloop.counter }}">{{ key }}</label>
-                {% empty %}
-                    <p>(No previous tags found for this image)</p>
-                {% endfor %}
-
-
-
-                <div class="panel-heading">Please select the Flickr tags below which describe the image</div>
-                <div class="panel-body">
-                    {% for field in tag_form %}
-                        {{ field }}
-                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                    {% empty %}
-                        (No relevant Flickr tags found for this image)
-                    {% endfor %}
-                </div>
-
-            </div>
-            <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                   class="btn btn-default">Next →</a>
-            </div>
-        </div>
-
-    </div>
-
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                    Please select one or more categories which describe the image
-                </a>
-            </h4>
-        </div>
-        <div id="collapseTwo" class="panel-collapse collapse">
-            <div class="panel-body">
 
                 <div id="add_category_body"></div>
 
@@ -207,7 +177,6 @@
                 {#                    {% for field in category_form %}#}
                 {#                        {{ field }}#}
                 {#                        <label for="{{ field.auto_id }}">{{ field.label }}</label>#}
-                {##}
                 {#                    {% endfor %}#}
                 {#                </div>#}
 
@@ -245,6 +214,50 @@
 
                     });
                 </script>
+
+            </div>
+            <div class="panel-footer">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
+                   class="btn btn-default">Next →</a>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                    Please select the tags below which describe the image
+                </a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse">
+            <div class="panel-body">
+
+
+                {% for key in image.tags %}
+                    <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />
+
+                    <label for="check{{ forloop.counter }}">{{ key }}</label>
+                {% empty %}
+                    <p>(No previous tags found for this image)</p>
+                {% endfor %}
+
+
+
+                <div class="panel-heading">Please select the Flickr tags below which describe the image</div>
+                <div class="panel-body">
+                    {% for field in tag_form %}
+                        {{ field }}
+                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                    {% empty %}
+                        (No relevant Flickr tags found for this image)
+                    {% endfor %}
+                </div>
+
 
             </div>
             <div class="panel-footer">
