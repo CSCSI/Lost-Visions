@@ -83,8 +83,22 @@
                 input_field.val("");
             });
 
+            $('#rotate').click(function() {
+                var deg = $(this).data('rotate') || 0;
+                var rotate = 'rotate(' + $(this).data('rotate') + 'deg)';
+                $('#photo').css({
+                    '-webkit-transform': rotate,
+                    '-moz-transform': rotate,
+                    '-o-transform': rotate,
+                    '-ms-transform': rotate,
+                    'transform': rotate
+                });
+            });
+
             register_tree_categories();
         });
+
+
     </script>
     <style>
         .category-box{
@@ -116,6 +130,9 @@
     <div class="col-xs-12 col-sm-6">
         <div class="jumbotron">
             <img id='photo' src="{{ image.imageurl }}" style='max-width:100%; height:auto'>
+            <div id="rotate" class="btn btn-default" data-rotate="270">← Rotate left</div>
+            <div id="rotate" class="btn btn-default" data-rotate="90">Rotate right →</div>
+
         </div>
     </div><!--/span-->
 
