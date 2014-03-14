@@ -31,27 +31,27 @@
             }
         })();
 
-        function register_tree_categories() {
-            $('#add_category').click(function(){
-                console.log(this);
-
-                var input_field = $("#input_tag");
-                var tag_string = input_field.val();
-                if (tag_string != "") {
-                    var id = 'id_' + tag_string;
-
-                    var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
-                    var $label = $('<label/>').attr({for: id}).html(tag_string);
-
-
-                    $("#add_category_body").prepend($label).prepend($check);
-
-                    $( "input[type=checkbox]" )
-                            .button();
-                }
-                input_field.val("");
-            });
-        }
+        {#        function register_tree_categories() {#}
+        {#            $('#add_category').click(function(){#}
+        {#                console.log(this);#}
+        {##}
+        {#                var input_field = $("#input_tag");#}
+        {#                var tag_string = input_field.val();#}
+        {#                if (tag_string != "") {#}
+        {#                    var id = 'id_' + tag_string;#}
+        {##}
+        {#                    var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});#}
+        {#                    var $label = $('<label/>').attr({for: id}).html(tag_string);#}
+        {##}
+        {##}
+        {#                    $("#add_category_body").prepend($label).prepend($check);#}
+        {##}
+        {#                    $( "input[type=checkbox]" )#}
+        {#                            .button();#}
+        {#                }#}
+        {#                input_field.val("");#}
+        {#            });#}
+        {#        }#}
 
         $(document).ready(function () {
             {#            $('#submit_button').click(function(){#}
@@ -103,14 +103,68 @@
 
             });
 
-
-
             $('#photo').click(function(e) {
                 var posX = $(this).offset().left, posY = $(this).offset().top;
                 alert((e.pageX - posX)+ ' , ' + (e.pageY - posY));
             });
 
-            register_tree_categories();
+            $('#category_tree').bind("ready.jstree", function(){
+                console.log('ready');
+
+
+            }).jstree({ 'core' : {
+                'data' : dmvi_categories
+
+            }
+            }).on("changed.jstree", function (e, data) {
+
+                var inst = data.instance;
+                var i, j = [];
+                for(i = 0, j = data.selected.length; i < j; i++) {
+
+                    if (inst.is_leaf(inst.get_node(data.selected[i]))) {
+
+                        var tag_string = inst.get_node(data.selected[i]).text
+                        var id = 'id_' + tag_string;
+
+                        var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
+                        var $label = $('<label/>').attr({for: id}).html(tag_string);
+
+
+                        $("#add_category_body").prepend($label).prepend($check);
+
+                        $( "input[type=checkbox]" )
+                                .button();
+                    } else {
+                        inst.toggle_node(inst.get_node(data.selected[i]));
+                    }
+                }
+
+            });
+
+            var availableTags = [];
+
+            dmvi_categories.forEach(function(entry) {
+                console.log(entry);
+
+                availableTags.push(entry['text']);
+
+            });
+
+
+            console.log(availableTags);
+
+            $( "#tags" ).autocomplete({
+                source: availableTags,
+                select: function( event, ui ) {
+                    console.log( ui.item.label );
+                    console.log( ui.item.value );
+                    var inst = $('#category_tree').jstree;
+
+                     inst.toggle_node(inst.select_node(ui.item.label));
+                    return false;
+                }
+            });
         });
 
 
@@ -160,224 +214,202 @@
     <div id="right-main">
 
 
-    <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
-    {{ tag_form.non_field_errors }}
+        <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
+            {{ tag_form.non_field_errors }}
 
-    <div class="panel-group" id="accordion">
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                    Please select one or more categories which describe the image
-                </a>
-            </h4>
-        </div>
-        <div id="collapseOne" class="panel-collapse collapse in">
-            <div class="panel-body">
+            <div class="panel-group" id="accordion">
 
 
-                <div id="add_category_body"></div>
-
-                {#                <div id="categories" class="row-fluid">#}
-                {#                    {% for field in category_form %}#}
-                {#                        {{ field }}#}
-                {#                        <label for="{{ field.auto_id }}">{{ field.label }}</label>#}
-                {#                    {% endfor %}#}
-                {#                </div>#}
-
-
-                <div id="category_tree"></div>
-
-                <script type="text/javascript">
-
-                    $('#category_tree').jstree({ 'core' : {
-                        'data' : dmvi_categories
-
-                    } }).on("changed.jstree", function (e, data) {
-
-                        var inst = data.instance;
-                        var i, j = [];
-                        for(i = 0, j = data.selected.length; i < j; i++) {
-
-                            if (inst.is_leaf(inst.get_node(data.selected[i]))) {
-
-                                var tag_string = inst.get_node(data.selected[i]).text
-                                var id = 'id_' + tag_string;
-
-                                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
-                                var $label = $('<label/>').attr({for: id}).html(tag_string);
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                Please select one or more categories which describe the image
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="panel-body">
 
 
-                                $("#add_category_body").prepend($label).prepend($check);
+                            <div id="add_category_body"></div>
 
-                                $( "input[type=checkbox]" )
-                                        .button();
-                            } else {
-                                inst.toggle_node(inst.get_node(data.selected[i]));
-                            }
-                        }
+                            {#                <div id="categories" class="row-fluid">#}
+                            {#                    {% for field in category_form %}#}
+                            {#                        {{ field }}#}
+                            {#                        <label for="{{ field.auto_id }}">{{ field.label }}</label>#}
+                            {#                    {% endfor %}#}
+                            {#                </div>#}
 
-                    });
-                </script>
 
-            </div>
-            <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                   class="btn btn-default">Next →</a>
-            </div>
-        </div>
+                            <div class="ui-widget">
+                                <label for="tags">Tags: </label>
+                                <input id="tags">
+                            </div>
 
-    </div>
+                            <div id="category_tree"></div>
 
 
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                    Please select the tags below which describe the image
-                </a>
-            </h4>
-        </div>
-        <div id="collapseTwo" class="panel-collapse collapse">
-            <div class="panel-body">
+                            <script type="text/javascript">
+                            </script>
 
-
-                {% for key in image.tags %}
-                    <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />
-
-                    <label for="check{{ forloop.counter }}">{{ key }}</label>
-                {% empty %}
-                    <p>(No previous tags found for this image)</p>
-                {% endfor %}
-
-
-
-                <div class="panel-heading">Please select the Flickr tags below which describe the image</div>
-                <div class="panel-body">
-                    {% for field in tag_form %}
-                        {{ field }}
-                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                    {% empty %}
-                        (No relevant Flickr tags found for this image)
-                    {% endfor %}
-                </div>
-
-
-            </div>
-            <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                   class="btn btn-default">← Previous</a>
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
-                   class="btn btn-default">Next →</a>
-            </div>
-        </div>
-
-    </div>
-
-
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                    Please enter a new tag to describe the image
-                </a>
-            </h4>
-        </div>
-        <div id="collapseThree" class="panel-collapse collapse">
-            <div class="panel-body">
-
-                <div id="add_tag_body">
+                        </div>
+                        <div class="panel-footer">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
+                               class="btn btn-default">Next →</a>
+                        </div>
+                    </div>
 
                 </div>
 
-                <div id="free_text" >
-                    <label for="input_tag">Tag</label>
-                    <input type="text" class="form-control" id="input_tag">
-                    <div id="add_tag" class="btn btn-default">Add</div>
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                Please select the tags below which describe the image
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+
+                            {% for key in image.tags %}
+                                <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />
+
+                                <label for="check{{ forloop.counter }}">{{ key }}</label>
+                            {% empty %}
+                                <p>(No previous tags found for this image)</p>
+                            {% endfor %}
+
+
+
+                            <div class="panel-heading">Please select the Flickr tags below which describe the image</div>
+                            <div class="panel-body">
+                                {% for field in tag_form %}
+                                    {{ field }}
+                                    <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                                {% empty %}
+                                    (No relevant Flickr tags found for this image)
+                                {% endfor %}
+                            </div>
+
+
+                        </div>
+                        <div class="panel-footer">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                               class="btn btn-default">← Previous</a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                               class="btn btn-default">Next →</a>
+                        </div>
+                    </div>
+
                 </div>
 
 
-            </div>
-            <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                   class="btn btn-default">← Previous</a>
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
-                   class="btn btn-default">Next →</a>
-            </div>
-        </div>
-    </div>
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                                Please enter a new tag to describe the image
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+                            <div id="add_tag_body">
+
+                            </div>
+
+                            <div id="free_text" >
+                                <label for="input_tag">Tag</label>
+                                <input type="text" class="form-control" id="input_tag">
+                                <div id="add_tag" class="btn btn-default">Add</div>
+                            </div>
+
+
+                        </div>
+                        <div class="panel-footer">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
+                               class="btn btn-default">← Previous</a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                               class="btn btn-default">Next →</a>
+                        </div>
+                    </div>
+                </div>
 
 
 
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
-                    Please select one or more creation techniques which are relevant to the image
-                </a>
-            </h4>
-        </div>
-        <div id="collapseFour" class="panel-collapse collapse">
-            <div class="panel-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                                Please select one or more creation techniques which are relevant to the image
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseFour" class="panel-collapse collapse">
+                        <div class="panel-body">
 
 
-                <div class="row-fluid">
+                            <div class="row-fluid">
 
-                    {% for field in create_tech_form %}
-                        {{ field }}
-                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                                {% for field in create_tech_form %}
+                                    {{ field }}
+                                    <label for="{{ field.auto_id }}">{{ field.label }}</label>
 
-                    {% endfor %}
+                                {% endfor %}
 
+                            </div>
+
+                        </div>
+                        <div class="panel-footer">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                               class="btn btn-default">← Previous</a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
+                               class="btn btn-default">Next →</a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
+                                Please enter a description of the image                                </a>
+                        </h4>
+                    </div>
+                    <div id="collapseFive" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+                            <div id="free_text" class="row-fluid">
+                                <label for="free-text-area">Description</label>
+                                <textarea name="image_description" class="form-control"
+                                          rows="3" id="free-text-area"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                               class="btn btn-default">← Previous</a>
+                            <button type="submit" class="btn btn-primary">Finish!</button>
+                        </div>
+                    </div>
                 </div>
 
             </div>
-            <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
-                   class="btn btn-default">← Previous</a>
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
-                   class="btn btn-default">Next →</a>
-            </div>
-        </div>
-    </div>
 
-
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
-                    Please enter a description of the image                                </a>
-            </h4>
-        </div>
-        <div id="collapseFive" class="panel-collapse collapse">
-            <div class="panel-body">
-
-                <div id="free_text" class="row-fluid">
-                    <label for="free-text-area">Description</label>
-                    <textarea name="image_description" class="form-control"
-                              rows="3" id="free-text-area"></textarea>
-                </div>
-            </div>
-
-            <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
-                   class="btn btn-default">← Previous</a>
-                <button type="submit" class="btn btn-primary">Finish!</button>
-            </div>
-        </div>
-    </div>
-
-    </div>
-
-    </form>
+        </form>
 
     </div>
     </div>
