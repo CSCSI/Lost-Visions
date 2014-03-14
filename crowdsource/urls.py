@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 # from dajaxice.core import dajaxice_autodiscover, dajaxice_config
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.http import HttpResponseRedirect
 
 
 admin.autodiscover()
@@ -10,7 +11,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', 'lost_visions.views.home', name='home'),
+    url(r'^$', lambda r : HttpResponseRedirect('/')),
+
+    url(r'^home', 'lost_visions.views.home', name='home'),
     url(r'^about_us', 'lost_visions.views.aboutus', name='about_us'),
     url(r'^login', 'lost_visions.views.login', name='login'),
     url(r'^do_login', 'lost_visions.views.do_login', name='login.do_login'),

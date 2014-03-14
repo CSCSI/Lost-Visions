@@ -21,6 +21,25 @@
     self_description : "Delete Me"
 
 
+
+#a user
+- model: auth.user
+  pk: 2000
+  fields:
+    first_name: dave
+    last_name: jones
+    username: davejones
+    password: "pbkdf2_sha256$12000$VsizsauzTiXC$QcNI963O+w3X67aPiUATh2MZeuFh17fTHL4eiIXaiuQ="
+
+- model: lost_visions.LostVisionUser
+  pk: 2
+  fields:
+    username: 2000
+    expert_level: 0
+    self_description : "Delete Me"
+
+
+
 - model : lost_visions.Person
   pk : 1
   fields :
