@@ -154,14 +154,34 @@
 
             console.log(availableTags);
 
+            cascade_nodes = function(id){
+                dmvi_categories.forEach(function(entry) {
+                    if(entry['id'] == id) {
+                        $('#category_tree').jstree('open_node', entry['id']);
+                        cascade_nodes(entry['parent'])
+                    }
+                });
+            };
+
             $( "#tags" ).autocomplete({
                 source: availableTags,
                 select: function( event, ui ) {
+                                                $('#category_tree').jstree('close_all', -1);
+
                     console.log( ui.item.label );
                     console.log( ui.item.value );
-                    var inst = $('#category_tree').jstree;
 
-                     inst.toggle_node(inst.select_node(ui.item.label));
+                    dmvi_categories.forEach(function(entry) {
+
+
+                        if (entry['text'] == ui.item.label) {
+                            console.log(entry['id']);
+                            {#                            $('#category_tree').jstree('toggle_node', entry['id']);#}
+
+                            cascade_nodes(entry['id'])
+
+                        }
+                    });
                     return false;
                 }
             });
