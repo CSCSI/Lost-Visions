@@ -5,200 +5,207 @@
 {% block content %}
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-        function load_new_image() {
-            myApp.showPleaseWait()
-            var name = 'test';
-            Dajaxice.lost_visions.new_image(Dajax.process,{'name': name});
-        }
+    function load_new_image() {
+        myApp.showPleaseWait()
+        var name = 'test';
+        Dajaxice.lost_visions.new_image(Dajax.process,{'name': name});
+    }
 
-        function change_image(url){
-            {#            $('#photo').attr("src", url);#}
-            location.reload();
-            myApp.hidePleaseWait();
-        }
+    function change_image(url){
+        {#            $('#photo').attr("src", url);#}
+        location.reload();
+        myApp.hidePleaseWait();
+    }
 
-        var myApp;
-        myApp = myApp || (function () {
-            var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
-            return {
-                showPleaseWait: function() {
-                    pleaseWaitDiv.modal();
-                },
-                hidePleaseWait: function () {
-                    pleaseWaitDiv.modal('hide');
+    var myApp;
+    myApp = myApp || (function () {
+        var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
+        return {
+            showPleaseWait: function() {
+                pleaseWaitDiv.modal();
+            },
+            hidePleaseWait: function () {
+                pleaseWaitDiv.modal('hide');
+            }
+        }
+    })();
+
+    {#        function register_tree_categories() {#}
+    {#            $('#add_category').click(function(){#}
+    {#                console.log(this);#}
+    {##}
+    {#                var input_field = $("#input_tag");#}
+    {#                var tag_string = input_field.val();#}
+    {#                if (tag_string != "") {#}
+    {#                    var id = 'id_' + tag_string;#}
+    {##}
+    {#                    var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});#}
+    {#                    var $label = $('<label/>').attr({for: id}).html(tag_string);#}
+    {##}
+    {##}
+    {#                    $("#add_category_body").prepend($label).prepend($check);#}
+    {##}
+    {#                    $( "input[type=checkbox]" )#}
+    {#                            .button();#}
+    {#                }#}
+    {#                input_field.val("");#}
+    {#            });#}
+    {#        }#}
+
+    $(document).ready(function () {
+        {#            $('#submit_button').click(function(){#}
+        {#                Dajaxice.lost_visions.submit_tags(#}
+        {#                        Dajax.process,{'form':$('#tags-form').serialize(true), 'image_id':'{{image_id}}'})#}
+        {#            });#}
+        {##}
+        $('#load_new_image').click(function(){
+            window.location.replace({% url 'image.random' %})
+            {#                Dajaxice.lost_visions.load_image(Dajax.process,{})#}
+        });
+
+        $('#add_tag').click(function(){
+
+            var input_field = $("#input_tag");
+            var tag_string = input_field.val();
+            if (tag_string != "") {
+                var id = 'id_' + tag_string;
+
+                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
+                var $label = $('<label/>').attr({for: id}).html(tag_string);
+
+
+                $("#add_tag_body").prepend($label).prepend($check);
+
+                $( "input[type=checkbox]" )
+                        .button();
+            }
+            input_field.val("");
+        });
+
+        var degs = 0;
+        $(".rota").click(function() {
+
+            var turn_degs = $(this).data('degs');
+
+            if (turn_degs == 'reset') {
+                degs = 0;
+            } else {
+                degs += turn_degs;
+
+                if (degs < 0) {
+                    degs += 360;
                 }
             }
-        })();
 
-        {#        function register_tree_categories() {#}
-        {#            $('#add_category').click(function(){#}
-        {#                console.log(this);#}
-        {##}
-        {#                var input_field = $("#input_tag");#}
-        {#                var tag_string = input_field.val();#}
-        {#                if (tag_string != "") {#}
-        {#                    var id = 'id_' + tag_string;#}
-        {##}
-        {#                    var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});#}
-        {#                    var $label = $('<label/>').attr({for: id}).html(tag_string);#}
-        {##}
-        {##}
-        {#                    $("#add_category_body").prepend($label).prepend($check);#}
-        {##}
-        {#                    $( "input[type=checkbox]" )#}
-        {#                            .button();#}
-        {#                }#}
-        {#                input_field.val("");#}
-        {#            });#}
-        {#        }#}
+            $("#photo").rotate( {animateTo: degs}, 'abs' );
 
-        $(document).ready(function () {
-            {#            $('#submit_button').click(function(){#}
-            {#                Dajaxice.lost_visions.submit_tags(#}
-            {#                        Dajax.process,{'form':$('#tags-form').serialize(true), 'image_id':'{{image_id}}'})#}
-            {#            });#}
-            {##}
-            $('#load_new_image').click(function(){
-                window.location.replace({% url 'image.random' %})
-                {#                Dajaxice.lost_visions.load_image(Dajax.process,{})#}
-            });
+            degs = degs%360;
 
-            $('#add_tag').click(function(){
+            var photoWidth = $('#photo').offset().left;
+            console.log(photoWidth);
+            $("#rotval").html(degs + " degrees rotation");
 
-                var input_field = $("#input_tag");
-                var tag_string = input_field.val();
-                if (tag_string != "") {
+            load_css();
+
+        });
+
+        $('#photo').click(function(e) {
+            var posX = $(this).offset().left, posY = $(this).offset().top;
+            alert((e.pageX - posX)+ ' , ' + (e.pageY - posY));
+        });
+
+        $('#category_tree').bind("ready.jstree", function(){
+
+        }).jstree({ 'core' : {
+            'data' : dmvi_categories
+
+        }
+        }).on("changed.jstree", function (e, data) {
+
+            var inst = data.instance;
+            var i, j = [];
+            for(i = 0, j = data.selected.length; i < j; i++) {
+
+                if (inst.is_leaf(inst.get_node(data.selected[i]))) {
+
+                    var tag_string = inst.get_node(data.selected[i]).text
                     var id = 'id_' + tag_string;
 
                     var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
                     var $label = $('<label/>').attr({for: id}).html(tag_string);
 
 
-                    $("#add_tag_body").prepend($label).prepend($check);
+                    $("#add_category_body").prepend($label).prepend($check);
 
                     $( "input[type=checkbox]" )
                             .button();
+                } else {
+                    inst.toggle_node(inst.get_node(data.selected[i]));
                 }
-                input_field.val("");
-            });
-
-            var degs = 0;
-            $(".rota").click(function() {
-
-                degs += $(this).data('degs');
-
-                if (degs < 0) {
-                    degs += 360;
-                }
-
-                $("#photo").rotate( {animateTo: degs}, 'abs' );
-
-                degs = degs%360;
-
-                var photoWidth = $('#photo').offset().left;
-                $("#rotval").html(degs + " degrees rotation<br>" + photoWidth + " screen offset");
-
-                load_css();
-
-            });
-
-            $('#photo').click(function(e) {
-                var posX = $(this).offset().left, posY = $(this).offset().top;
-                alert((e.pageX - posX)+ ' , ' + (e.pageY - posY));
-            });
-
-            $('#category_tree').bind("ready.jstree", function(){
-
-            }).jstree({ 'core' : {
-                'data' : dmvi_categories
-
             }
-            }).on("changed.jstree", function (e, data) {
 
-                var inst = data.instance;
-                var i, j = [];
-                for(i = 0, j = data.selected.length; i < j; i++) {
+        });
 
-                    if (inst.is_leaf(inst.get_node(data.selected[i]))) {
+        var availableTags = [];
 
-                        var tag_string = inst.get_node(data.selected[i]).text
-                        var id = 'id_' + tag_string;
+        dmvi_categories.forEach(function(entry) {
 
-                        var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
-                        var $label = $('<label/>').attr({for: id}).html(tag_string);
+            availableTags.push(entry['text']);
+
+        });
 
 
-                        $("#add_category_body").prepend($label).prepend($check);
-
-                        $( "input[type=checkbox]" )
-                                .button();
-                    } else {
-                        inst.toggle_node(inst.get_node(data.selected[i]));
-                    }
-                }
-
-            });
-
-            var availableTags = [];
-
+        cascade_nodes = function(id){
             dmvi_categories.forEach(function(entry) {
-
-                availableTags.push(entry['text']);
-
+                if(entry['id'] == id) {
+                    $('#category_tree').jstree('open_node', entry['id']);
+                    cascade_nodes(entry['parent'])
+                }
             });
+        };
 
+        $( "#tags" ).autocomplete({
+            source: availableTags,
+            select: function( event, ui ) {
+                $('#category_tree').jstree('close_all', -1);
 
-            cascade_nodes = function(id){
+                {#                    console.log( ui.item.label );#}
+                {#                    console.log( ui.item.value );#}
+
                 dmvi_categories.forEach(function(entry) {
-                    if(entry['id'] == id) {
-                        $('#category_tree').jstree('open_node', entry['id']);
-                        cascade_nodes(entry['parent'])
+
+
+                    if (entry['text'] == ui.item.label) {
+                        {#                            $('#category_tree').jstree('toggle_node', entry['id']);#}
+
+                        cascade_nodes(entry['id'])
+
                     }
                 });
-            };
-
-            $( "#tags" ).autocomplete({
-                source: availableTags,
-                select: function( event, ui ) {
-                    $('#category_tree').jstree('close_all', -1);
-
-                    {#                    console.log( ui.item.label );#}
-                    {#                    console.log( ui.item.value );#}
-
-                    dmvi_categories.forEach(function(entry) {
-
-
-                        if (entry['text'] == ui.item.label) {
-                            {#                            $('#category_tree').jstree('toggle_node', entry['id']);#}
-
-                            cascade_nodes(entry['id'])
-
-                        }
-                    });
-                    return false;
-                }
-            });
-
-            var active = true;
-
-            $('#collapse-init').click(function () {
-                if (active) {
-                    active = false;
-                    $('.panel-collapse').collapse('show');
-                                        $('.panel-title').attr('data-toggle', '');
-                    $(this).text('-');
-                } else {
-                    active = true;
-                    $('.panel-collapse').collapse('hide');
-                                        $('.panel-title').attr('data-toggle', 'collapse');
-                    $(this).text('+');
-                }
-            });
-
-            $('#accordion').on('show.bs.collapse', function () {
-                if (active) $('#accordion .in').collapse('hide');
-            });
+                return false;
+            }
         });
+
+        var active = true;
+
+        $('#collapse-init').click(function () {
+            if (active) {
+                active = false;
+                $('.panel-collapse').collapse('show');
+                $('.panel-title').attr('data-toggle', '');
+                $(this).text('-');
+            } else {
+                active = true;
+                $('.panel-collapse').collapse('hide');
+                $('.panel-title').attr('data-toggle', 'collapse');
+                $(this).text('+');
+            }
+        });
+
+        $('#accordion').on('show.bs.collapse', function () {
+            if (active) $('#accordion .in').collapse('hide');
+        });
+    });
 
 
     </script>
@@ -232,11 +239,14 @@
     <div class="col-xs-12 col-sm-6">
         <div class="jumbotron">
             <img id='photo' src="{{ image.imageurl }}" style='max-width:100%; height:auto'>
-            <div class="rota btn btn-default" data-degs="-90">← Rotate left</div>
-            <div class="rota btn btn-default" data-degs="0">Reset</div>
 
-            <div class="rota btn btn-default" data-degs="90">Rotate right →</div>
-            <div id="rotval"></div>
+            <div class="panel-footer">
+                <div class="rota btn btn-default" data-degs="-90">← Rotate left</div>
+                <div class="rota btn btn-default" data-degs="reset">Reset</div>
+
+                <div class="rota btn btn-default" data-degs="90">Rotate right →</div>
+                <div id="rotval"></div>
+            </div>
         </div>
     </div><!--/span-->
 
@@ -249,7 +259,7 @@
 
     <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
     {{ tag_form.non_field_errors }}
-
+<input type="hidden" name="image_id" value="{{ image_id }}" />
 
 
     <div class="panel-group" id="accordion">

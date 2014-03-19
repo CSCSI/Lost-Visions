@@ -11,9 +11,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', lambda r : HttpResponseRedirect('/')),
+    # url(r'^$', lambda r : HttpResponseRedirect('/home')),
 
-    url(r'^home', 'lost_visions.views.home', name='home'),
+    url(r'^$', 'lost_visions.views.home', name='home'),
     url(r'^about_us', 'lost_visions.views.aboutus', name='about_us'),
     url(r'^login', 'lost_visions.views.login', name='login'),
     url(r'^do_login', 'lost_visions.views.do_login', name='login.do_login'),

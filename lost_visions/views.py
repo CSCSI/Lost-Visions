@@ -27,8 +27,16 @@ def image_tags(request):
     print request.get_full_path()
     # print request.POST['question']
 
+    usable_tags = []
     if request.method == 'POST':
         print request.POST
+
+        for value in request.POST:
+            if value is not 'image_description' and value is not 'csrfmiddlewaretoken' and value is not 'image_id':
+                usable_tags.append(value)
+
+        print usable_tags
+
         test_form = TestForm(request.POST)
         # print test_form.question
         if test_form.is_valid():
@@ -86,13 +94,19 @@ def image(request, image_id):
     #get Flickr tags for this image
     flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_url_part, size='z')
 
+    author = ""
+    if flickr_tags['Author']:
+        print "found author : " + flickr_tags['Author']
+        author = flickr_tags['Author']
+
     if not 'imageurl' in image_info:
         image_info['imageurl'] = flickr_tags['image_location']
 
     tags = {}
     for tag in flickr_tags:
         if is_number(tag) and is_user_tag(flickr_tags[tag]):
-            tags[tag] = flickr_tags[tag]
+            if tag.lower() is not author.lower():
+                tags[tag] = flickr_tags[tag]
         else:
             image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
 
