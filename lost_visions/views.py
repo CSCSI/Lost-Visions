@@ -32,7 +32,7 @@ def image_tags(request):
         print request.POST
 
         for value in request.POST:
-            if value is not 'image_description' and value is not 'csrfmiddlewaretoken' and value is not 'image_id':
+            if value != 'image_description' and value != 'csrfmiddlewaretoken' and value != 'image_id':
                 usable_tags.append(value)
 
         print usable_tags
@@ -95,7 +95,7 @@ def image(request, image_id):
     flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_url_part, size='z')
 
     author = ""
-    if flickr_tags['Author']:
+    if 'Author' in flickr_tags:
         print "found author : " + flickr_tags['Author']
         author = flickr_tags['Author']
 
@@ -105,7 +105,13 @@ def image(request, image_id):
     tags = {}
     for tag in flickr_tags:
         if is_number(tag) and is_user_tag(flickr_tags[tag]):
-            if tag.lower() is not author.lower():
+            if flickr_tags[tag].lower() != author.lower():
+                try:
+                    # TODO utf fix
+                    print "*" + str(flickr_tags[tag]).lower() + "* *" + str(author).lower() + "*"
+                except:
+                    pass
+
                 tags[tag] = flickr_tags[tag]
         else:
             image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
