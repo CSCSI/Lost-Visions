@@ -30,3 +30,7 @@
 .social-buttons{
     width: 100%;
 }
+
+.jstree-node{
+    font-size: 15px;
+}
