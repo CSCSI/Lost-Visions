@@ -83,8 +83,12 @@
         });
 
         var degs = 0;
+        var r = $("#photo").get(0).getBoundingClientRect();
+        console.log(r);
+
         $(".rota").click(function() {
 
+            var photo = $("#photo");
             var turn_degs = $(this).data('degs');
 
             if (turn_degs == 'reset') {
@@ -97,13 +101,27 @@
                 }
             }
 
-            $("#photo").rotate( {animateTo: degs}, 'abs' );
+            photo.rotate( {animateTo: degs}, 'abs' );
 
             degs = degs%360;
 
-            var photoWidth = $('#photo').offset().left;
-            console.log(photoWidth);
-            $("#rotval").html(degs + " degrees rotation");
+
+            var offset_top = photo.offset().top;
+
+            var offset_l = photo.offset().left;
+
+{#            offset_top -= r.top;#}
+{#            offset_l -= r.left;#}
+
+{#            lbl.html(angle + " <br>" + offset_top + " <br>" + offset_l + "<br>" + r.top+ " <br>" + r.left);#}
+
+{#            photo.css({marginTop: '-=' + offset_top + 'px'});#}
+
+{#            photo.css({marginLeft: '-=' + offset_l + 'px'});#}
+
+                        $("#rotval").html(degs + " degrees rotation" + "<br>" +
+                                offset_top + "<br>" + offset_l + "<br>" + r.top+ "<br>" + r.left);
+
 
             load_css();
 
@@ -238,15 +256,30 @@
 
     <div class="col-xs-12 col-sm-6">
         <div class="jumbotron">
-            <img id='photo' src="{{ image.imageurl }}" style='max-width:100%; height:auto'>
+            <img id='photo' src="{{ image.imageurl }}" style='max-width:100%; height:auto; margin: 0 auto'>
 
             <div class="panel-footer">
-                <div class="rota btn btn-default" data-degs="-90">← Rotate left</div>
-                <div class="rota btn btn-default" data-degs="reset">Reset</div>
+                {#                <div class="rota btn btn-default" data-degs="-90">← Rotate left</div>#}
+                {#                <div class="rota btn btn-default" data-degs="reset">Reset</div>#}
+                {##}
+                {#                <div class="rota btn btn-default" data-degs="90">Rotate right →</div>#}
+                {#                <div id="rotval"></div>#}
 
-                <div class="rota btn btn-default" data-degs="90">Rotate right →</div>
-                <div id="rotval"></div>
+                <ul class="pager">
+                    <li class="previous">
+                        <a class="rota btn btn-default" data-degs="-90">← Rotate left</a>
+                    </li>
+
+                    <li>
+                        <a class="rota btn btn-default" data-degs="reset">Reset</a>
+                    </li>
+
+                    <li class="next">
+                        <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
+                    </li>
+                </ul>
             </div>
+
         </div>
     </div><!--/span-->
 
@@ -259,7 +292,7 @@
 
     <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
     {{ tag_form.non_field_errors }}
-<input type="hidden" name="image_id" value="{{ image_id }}" />
+    <input type="hidden" name="image_id" value="{{ image_id }}" />
 
 
     <div class="panel-group" id="accordion">
@@ -306,8 +339,12 @@
 
             </div>
             <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                   class="btn btn-default">Next →</a>
+                <ul class="pager">
+                    <li class="next">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
+                           class="btn btn-default">Next →</a>
+                    </li>
+                </ul>
             </div>
         </div>
 
@@ -350,10 +387,18 @@
 
             </div>
             <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                   class="btn btn-default">← Previous</a>
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
-                   class="btn btn-default">Next →</a>
+                <ul class="pager">
+                    <li class="previous">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                           class="btn btn-default">← Previous</a>
+                    </li>
+                    <li class="next">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                           class="btn btn-default">Next →</a>
+                    </li>
+                </ul>
+
+
             </div>
         </div>
 
@@ -386,10 +431,18 @@
 
             </div>
             <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                   class="btn btn-default">← Previous</a>
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
-                   class="btn btn-default">Next →</a>
+
+
+                <ul class="pager">
+                    <li class="previous">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
+                           class="btn btn-default">← Previous</a>
+                    </li>
+                    <li class="next">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                           class="btn btn-default">Next →</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -417,17 +470,22 @@
             </div>
 
             <div class="panel-footer">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
-                   class="btn btn-default">← Previous</a>
-
-                {% if user.is_authenticated %}
+                <ul class="pager">
 
 
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
-                       class="btn btn-default">Next →</a>
+                    <li class="previous">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                           class="btn btn-default">← Previous</a>
+                    </li>
+                    {% if user.is_authenticated %}
 
-                {% endif %}
+                        <li class="next">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
+                               class="btn btn-default">Next →</a>
+                        </li>
+                    {% endif %}
 
+                </ul>
             </div>
         </div>
     </div>
@@ -461,9 +519,12 @@
 
                 </div>
                 <div class="panel-footer">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
-                       class="btn btn-default">← Previous</a>
-
+                    <ul class="pager">
+                        <li class="previous">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                               class="btn btn-default">← Previous</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
