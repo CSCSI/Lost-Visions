@@ -103,6 +103,7 @@
 
             photo.rotate( {animateTo: degs}, 'abs' );
 
+
             degs = degs%360;
 
 
@@ -110,17 +111,17 @@
 
             var offset_l = photo.offset().left;
 
-{#            offset_top -= r.top;#}
-{#            offset_l -= r.left;#}
+            {#            offset_top -= r.top;#}
+            {#            offset_l -= r.left;#}
 
-{#            lbl.html(angle + " <br>" + offset_top + " <br>" + offset_l + "<br>" + r.top+ " <br>" + r.left);#}
+            {#            lbl.html(angle + " <br>" + offset_top + " <br>" + offset_l + "<br>" + r.top+ " <br>" + r.left);#}
 
-{#            photo.css({marginTop: '-=' + offset_top + 'px'});#}
+            {#            photo.css({marginTop: '-=' + offset_top + 'px'});#}
 
-{#            photo.css({marginLeft: '-=' + offset_l + 'px'});#}
+            {#            photo.css({marginLeft: '-=' + offset_l + 'px'});#}
 
-                        $("#rotval").html(degs + " degrees rotation" + "<br>" +
-                                offset_top + "<br>" + offset_l + "<br>" + r.top+ "<br>" + r.left);
+            $("#rotval").html(degs + " degrees rotation" + "<br>" +
+                    offset_top + "<br>" + offset_l + "<br>" + r.top+ "<br>" + r.left);
 
 
             load_css();
@@ -223,64 +224,73 @@
         $('#accordion').on('show.bs.collapse', function () {
             if (active) $('#accordion .in').collapse('hide');
         });
+
+        resize_box = function(){
+
+            var photo = $("#photo");
+            var photo_width = photo.width();
+            var photo_height = photo.height();
+
+            var p_b = $("#photo_background");
+
+            var max_length = (photo_height > photo_width) ? photo_height : photo_width;
+
+            if (photo_width > photo_height) {
+                p_b.height(photo_width);
+                p_b.width(photo_width);
+
+{#                photo.css("height: auto");#}
+{#                photo.css("width: auto");#}
+            } else {
+                p_b.height(photo_height);
+                p_b.width(photo_height);
+
+                photo.css("height: " + photo_width + "px;");
+                photo.css("width: auto");
+            }
+
+            console.log("square : " + max_length);
+
+{#            p_b.height(max_length);#}
+{#            p_b.width(max_length);#}
+        };
+
+        resize_box();
+
+{#        window.onresize = function(){#}
+{#            resize_box();#}
+{#        }#}
     });
 
 
     </script>
-    <style>
-        .category-box{
-        {#            height: 75px;#}
-        {#        width: 100px;#}
-            background-color: red;
-            border: 2px;
-            padding: 3px;
-        }
-        .next-click{
-            height: 48px;
-            width: 100px;
-            background-color: darkslategray;
-            border: 2px;
-            padding: 3px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .lv_tags{
-            background-color: darkslategray;
-            border: 2px;
-            padding: 3px;
-            border-radius: 5px;
-        }
-    </style>
 
     <div class="container">
 
     <div class="col-xs-12 col-sm-6">
         <div class="jumbotron">
-            <img id='photo' src="{{ image.imageurl }}" style='max-width:100%; height:auto; margin: 0 auto'>
-
-            <div class="panel-footer">
-                {#                <div class="rota btn btn-default" data-degs="-90">← Rotate left</div>#}
-                {#                <div class="rota btn btn-default" data-degs="reset">Reset</div>#}
-                {##}
-                {#                <div class="rota btn btn-default" data-degs="90">Rotate right →</div>#}
-                {#                <div id="rotval"></div>#}
-
-                <ul class="pager">
-                    <li class="previous">
-                        <a class="rota btn btn-default" data-degs="-90">← Rotate left</a>
-                    </li>
-
-                    <li>
-                        <a class="rota btn btn-default" data-degs="reset">Reset</a>
-                    </li>
-
-                    <li class="next">
-                        <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
-                    </li>
-                </ul>
+            <div id="photo_background" style="">
+                <img id='photo' src="{{ image.imageurl }}"
+                     style=' min-width:50px; min-height: 50px;width: 100%; height:auto;'>
             </div>
-
         </div>
+
+        <div class="panel-footer">
+            <ul class="pager">
+                <li class="previous">
+                    <a class="rota btn btn-default" data-degs="-90">← Rotate left</a>
+                </li>
+
+                <li>
+                    <a class="rota btn btn-default" data-degs="reset">Reset</a>
+                </li>
+
+                <li class="next">
+                    <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
+                </li>
+            </ul>
+        </div>
+
     </div><!--/span-->
 
     <div class="col-xs-12 col-sm-6">
@@ -288,6 +298,26 @@
     <div class="container-fluid">
 
     <div id="right-main">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 style="margin:0 0 5px 0;color:#2b5688;font-size:15px">
+                Search Oxford English Dictionary
+            </h1>
+        </div>
+        <div class="panel-body">
+            <div style="font:normal 13px/1.5 Arial;width:318px;height:98px;background:#f1f5fb;border:1px solid #d8e0f5;margin:0;padding:20px 10px 10px 10px;text-align:left">
+                <form enctype="application/x-www-form-urlencoded" method="get" action="http://www.oed.com:80/search" name="oed_search" id="oed_search">
+                    <label for="text">
+                        Enter word or phrase:</label>
+                    <input size="20" name="q" type="text" style="textfield">
+
+                    </input><br/>
+                    <input type="submit" value="Search"></input>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
@@ -313,6 +343,7 @@
         </div>
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
+
 
 
                 <div id="add_category_body"></div>
