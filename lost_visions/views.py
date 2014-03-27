@@ -1,5 +1,7 @@
 import os
 from random import randint
+import urllib2
+from BeautifulSoup import BeautifulSoup
 from django.contrib import auth
 from django.shortcuts import render
 
@@ -9,6 +11,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
 from lost_visions import models, forms
 from lost_visions.forms import TestForm
+from lost_visions.models import Tags
 from lost_visions.utils import db_tools
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
@@ -36,6 +39,11 @@ def image_tags(request):
                 usable_tags.append(value)
 
         print usable_tags
+
+        for user_tag in usable_tags:
+            tag = Tags()
+            tag.tag = str(user_tag)
+            tag.save()
 
         test_form = TestForm(request.POST)
         # print test_form.question
@@ -280,3 +288,32 @@ def logout(request):
 @requires_csrf_token
 def signup(request):
     return render(request, 'signup.html', context_instance=RequestContext(request))
+
+
+@requires_csrf_token
+def oed(request, word):
+
+    url = 'http://www.oed.com/srupage?operation=searchRetrieve&query=cql.serverChoice+=+'
+    url += word
+    url += '*&maximumRecords=10&startRecord=1'
+    resp = urllib2.urlopen(url)
+
+    if resp.code == 200:
+        data = resp.read()
+
+        print data
+        xml = BeautifulSoup(data)
+
+        for elm in xml.findAll('srw:searchretrieveresponse'):
+            for div in elm.findAll('srw:records'):
+                for a in div.findAll('srw:record'):
+                    for img in a.findAll('srw:recorddata'):
+                        for record_dc in img.findAll('sru_dc:dc'):
+                            for title in record_dc.findAll('dc:title'):
+                                # print '*' + str(title.text) + '*'
+                                if "n." in title.text.split()[-1]:
+                                    print title.text
+
+    return_json = ""
+
+    return render(request, return_json, context_instance=RequestContext(request))

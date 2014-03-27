@@ -27,6 +27,8 @@ urlpatterns = patterns('',
     url(r'^image/random', 'lost_visions.views.random_image', name='image.random'),
     url(r'^image/grabflickr', 'lost_visions.views.grab_flickr', name='image.grab_flickr'),
 
+    url(r'^oed/(?P<word>\w+)', 'lost_visions.views.oed', name='oed'),
+
     # url(r'^categories', 'lost_visions.views.get_categories_html', name='categories_url'),
     # url(r'^creation_techniques', 'lost_visions.views.get_creation_techniques_html', name='creation_techniques_url'),
     # url(r'^free_text', 'lost_visions.views.free_text_html', name='free_text_description_url'),
