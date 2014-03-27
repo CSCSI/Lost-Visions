@@ -87,7 +87,7 @@
         console.log(r);
 
         $(".rota").click(function() {
-
+console.log("click");
             var photo = $("#photo");
             var turn_degs = $(this).data('degs');
 
@@ -225,45 +225,51 @@
             if (active) $('#accordion .in').collapse('hide');
         });
 
-        resize_box = function(){
+{#        resize_box = function(){#}
+{##}
+{#            var photo = $("#photo");#}
+{#            var photo_width = photo.width();#}
+{#            var photo_height = photo.height();#}
+{##}
+{#            var p_b = $("#photo_background");#}
+{##}
+{#            console.log("x,y : " + photo_width + " " + photo_height)#}
+{##}
+{#            var max_length = (photo_height > photo_width) ? photo_height : photo_width;#}
+{##}
+{#            if (photo_width > photo_height) {#}
+{#                p_b.height(photo_width);#}
+{#                p_b.width(photo_width);#}
+{##}
+                {#                photo.css("height: auto");#}
+                {#                photo.css("width: auto");#}
+{#            } else {#}
+{##}
+{#                console.log("1 " + photo.width());#}
+{#                photo.css("height: " + photo_width + "px; width: auto; display: block;");#}
+{#                console.log("2 " + photo.width());#}
+{##}
+{##}
+{#                photo_width = photo.width();#}
+{#                p_b.height(photo_width);#}
+{#                p_b.width(photo_width);#}
+{#            }#}
+{##}
+{#            var top_margin = (p_b.height()/2) - (photo.height() /2);#}
+{##}
+{#            photo.css("margin-top:", top_margin);#}
+{##}
+{#            console.log("square : " + max_length);#}
+{#            console.log("margin : " + top_margin);#}
+{##}
+{#        };#}
 
-            var photo = $("#photo");
-            var photo_width = photo.width();
-            var photo_height = photo.height();
-
-            var p_b = $("#photo_background");
-
-            var max_length = (photo_height > photo_width) ? photo_height : photo_width;
-
-            if (photo_width > photo_height) {
-                p_b.height(photo_width);
-                p_b.width(photo_width);
-
-{#                photo.css("height: auto");#}
-{#                photo.css("width: auto");#}
-            } else {
-                p_b.height(photo_height);
-                p_b.width(photo_height);
-
-                photo.css("height: " + photo_width + "px;");
-                photo.css("width: auto");
-            }
-
-            console.log("square : " + max_length);
-
-{#            p_b.height(max_length);#}
-{#            p_b.width(max_length);#}
-        };
-
-        resize_box();
-
-{#        window.onresize = function(){#}
-{#            resize_box();#}
-{#        }#}
     });
 
 
     </script>
+
+
 
     <div class="container">
 
@@ -271,7 +277,7 @@
         <div class="jumbotron">
             <div id="photo_background" style="">
                 <img id='photo' src="{{ image.imageurl }}"
-                     style=' min-width:50px; min-height: 50px;width: 100%; height:auto;'>
+                     style=' min-width:50px; min-height: 50px;width: 100%; height:auto; '>
             </div>
         </div>
 
@@ -283,6 +289,10 @@
 
                 <li>
                     <a class="rota btn btn-default" data-degs="reset">Reset</a>
+                </li>
+
+                <li>
+                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
                 </li>
 
                 <li class="next">
@@ -659,5 +669,11 @@
         </div>
     </div>
 
-
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <img id='photo' src="{{ image.imageurl }}" style='width: 100%; height:auto; '>
+            </div>
+        </div>
+    </div>
 {% endblock %}
