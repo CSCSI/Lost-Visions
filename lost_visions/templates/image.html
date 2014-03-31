@@ -106,7 +106,6 @@
 
             degs = degs%360;
 
-
             var offset_top = photo.offset().top;
 
             var offset_l = photo.offset().left;
@@ -135,13 +134,24 @@
             var x = (e.pageX - posX);
             var y = (e.pageY - posY);
 
-{#            alert((e.pageX - posX)+ ' , ' + (e.pageY - posY));#}
+
 
             var canvas_object = $('#photo'),
-                canvas = canvas_object.get(0),
-                ctx = canvas.getContext('2d');
+                    canvas = canvas_object.get(0),
+                    ctx = canvas.getContext('2d');
             ctx.strokeStyle = '#FF0000';
-            ctx.rect(x-10, y-10, 20, 20);
+
+
+{#            alert(e.pageX + ' , ' + e.pageY + ' - \n' +#}
+{#                    posX + ' , ' + posY + ' = \n' +#}
+{#                    (e.pageX - posX) + ' , ' + (e.pageY - posY) + '\n'#}
+                    {#                    trans_x + ' , ' + trans_y#}
+{##}
+{#            );#}
+
+            var coords = translateCoords(x, y, canvas, degs);
+
+            ctx.rect(coords.x-10, coords.y-10, 20, 20);
             ctx.stroke();
         });
 
@@ -282,6 +292,77 @@
                 {#    line = new Line(ctx);#}
                 img = new Image;
 
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+        function translateCoords(mouseX, mouseY, component, degreesRotation) {
+            var centerpointX = (component.getBoundingClientRect().width /2);
+            var centerpointY = (component.getBoundingClientRect().height /2);
+
+            var ratio = centerpointX / centerpointY;
+
+            var mouseOffsetX = (-(centerpointX - mouseX));
+            var mouseOffsetY = (-(centerpointY - mouseY));
+
+            var radians = -((degreesRotation) * (Math.PI/180));
+
+            var theta = Math.atan(mouseOffsetY / mouseOffsetX);
+
+            var hyp = mouseOffsetX / Math.cos(theta);
+
+            var draw_x = (hyp * Math.cos(theta + radians)) + centerpointX;
+
+            var draw_y = (hyp * Math.sin(theta + radians)) + centerpointY;
+
+            return {
+                radians: radians,
+                theta: theta,
+                hyp: hyp,
+                x : draw_x,
+                y : draw_y,
+                offsetX : mouseOffsetX,
+                offsetY : mouseOffsetY,
+                centerpointX : centerpointX,
+                centerpointY :  centerpointY,
+                ratio : ratio
+            }
+        }
+
+        canvas.addEventListener('mousemove', function(evt) {
+            var mousePos = getMousePos(canvas, evt);
+
+{#            var centerpointX = (canvas.getBoundingClientRect().width /2);#}
+{#            var centerpointY = (canvas.getBoundingClientRect().height /2);#}
+{##}
+{#            var radians = (degs * (Math.PI/180));#}
+{##}
+{#            var theta = Math.atan((-(centerpointY - mousePos.y)) / (-(centerpointX - mousePos.x)));#}
+{##}
+{#            var hyp = (-(centerpointX - mousePos.x)) / Math.cos(theta);#}
+{##}
+{#            var draw_x = (hyp * Math.cos(theta + radians)) + centerpointX;#}
+{##}
+{#            var draw_y = (hyp * Math.sin(theta + radians)) + centerpointX;#}
+
+            var translated_variables = translateCoords(mousePos.x, mousePos.y, canvas, degs);
+
+            var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+            message += ('<br>draw coords: ' + translated_variables.x + ' , ' + translated_variables.y);
+
+            message += ('<br>offset : ' + translated_variables.offsetX + ' , ' + translated_variables.offsetY);
+            message += ('<br>centerpoint : ' + translated_variables.centerpointX + ' , ' + translated_variables.centerpointY);
+            message += ('<br>theta : ' + translated_variables.theta + ', hyp : ' + translated_variables.hyp);
+            message += ('<br>degs : ' + degs + ', rads : ' + translated_variables.radians + ' ratio : ' + translated_variables.ratio);
+            message += ('<br>t-x : ' + (mousePos.x / translated_variables.x) + ', t-y : ' + (mousePos.y / translated_variables.y));
+
+            $('#output').html(message);
+        }, false);
+
         console.log(parent);
 
         img.src = "{{ image.imageurl }}";
@@ -334,6 +415,7 @@
                     <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
                 </li>
             </ul>
+            <div id="output"></div>
         </div>
 
     </div><!--/span-->

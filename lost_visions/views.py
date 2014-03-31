@@ -1,8 +1,10 @@
+import json
 import os
 from random import randint
 import urllib2
 from BeautifulSoup import BeautifulSoup
 from django.contrib import auth
+from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
@@ -41,9 +43,12 @@ def image_tags(request):
         print usable_tags
 
         for user_tag in usable_tags:
-            tag = Tags()
-            tag.tag = str(user_tag)
-            tag.save()
+            try:
+                tag = Tags()
+                tag.tag = str(user_tag)
+                tag.save()
+            except:
+                pass
 
         test_form = TestForm(request.POST)
         # print test_form.question
@@ -295,9 +300,10 @@ def oed(request, word):
 
     url = 'http://www.oed.com/srupage?operation=searchRetrieve&query=cql.serverChoice+=+'
     url += word
-    url += '*&maximumRecords=10&startRecord=1'
+    url += '*&maximumRecords=100&startRecord=1'
     resp = urllib2.urlopen(url)
 
+    words = []
     if resp.code == 200:
         data = resp.read()
 
@@ -311,9 +317,10 @@ def oed(request, word):
                         for record_dc in img.findAll('sru_dc:dc'):
                             for title in record_dc.findAll('dc:title'):
                                 # print '*' + str(title.text) + '*'
-                                if "n." in title.text.split()[-1]:
+                                # if "n." == title.text.split()[-1]:
+                                if 'in ' + word + ',' not in title.text:
                                     print title.text
+                                    words.append(title.text)
+    response_data = words
 
-    return_json = ""
-
-    return render(request, return_json, context_instance=RequestContext(request))
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
