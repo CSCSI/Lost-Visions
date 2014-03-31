@@ -87,7 +87,7 @@
         console.log(r);
 
         $(".rota").click(function() {
-console.log("click");
+            console.log("click");
             var photo = $("#photo");
             var turn_degs = $(this).data('degs');
 
@@ -129,8 +129,20 @@ console.log("click");
         });
 
         $('#photo').click(function(e) {
-            var posX = $(this).offset().left, posY = $(this).offset().top;
-            alert((e.pageX - posX)+ ' , ' + (e.pageY - posY));
+            var posX = $(this).offset().left;
+            var posY = $(this).offset().top;
+
+            var x = (e.pageX - posX);
+            var y = (e.pageY - posY);
+
+{#            alert((e.pageX - posX)+ ' , ' + (e.pageY - posY));#}
+
+            var canvas_object = $('#photo'),
+                canvas = canvas_object.get(0),
+                ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#FF0000';
+            ctx.rect(x-10, y-10, 20, 20);
+            ctx.stroke();
         });
 
         $('#category_tree').bind("ready.jstree", function(){
@@ -225,45 +237,68 @@ console.log("click");
             if (active) $('#accordion .in').collapse('hide');
         });
 
-{#        resize_box = function(){#}
-{##}
-{#            var photo = $("#photo");#}
-{#            var photo_width = photo.width();#}
-{#            var photo_height = photo.height();#}
-{##}
-{#            var p_b = $("#photo_background");#}
-{##}
-{#            console.log("x,y : " + photo_width + " " + photo_height)#}
-{##}
-{#            var max_length = (photo_height > photo_width) ? photo_height : photo_width;#}
-{##}
-{#            if (photo_width > photo_height) {#}
-{#                p_b.height(photo_width);#}
-{#                p_b.width(photo_width);#}
-{##}
-                {#                photo.css("height: auto");#}
-                {#                photo.css("width: auto");#}
-{#            } else {#}
-{##}
-{#                console.log("1 " + photo.width());#}
-{#                photo.css("height: " + photo_width + "px; width: auto; display: block;");#}
-{#                console.log("2 " + photo.width());#}
-{##}
-{##}
-{#                photo_width = photo.width();#}
-{#                p_b.height(photo_width);#}
-{#                p_b.width(photo_width);#}
-{#            }#}
-{##}
-{#            var top_margin = (p_b.height()/2) - (photo.height() /2);#}
-{##}
-{#            photo.css("margin-top:", top_margin);#}
-{##}
-{#            console.log("square : " + max_length);#}
-{#            console.log("margin : " + top_margin);#}
-{##}
-{#        };#}
+        {#        resize_box = function(){#}
+        {##}
+        {#            var photo = $("#photo");#}
+        {#            var photo_width = photo.width();#}
+        {#            var photo_height = photo.height();#}
+        {##}
+        {#            var p_b = $("#photo_background");#}
+        {##}
+        {#            console.log("x,y : " + photo_width + " " + photo_height)#}
+        {##}
+        {#            var max_length = (photo_height > photo_width) ? photo_height : photo_width;#}
+        {##}
+        {#            if (photo_width > photo_height) {#}
+        {#                p_b.height(photo_width);#}
+        {#                p_b.width(photo_width);#}
+        {##}
+        {#                photo.css("height: auto");#}
+        {#                photo.css("width: auto");#}
+        {#            } else {#}
+        {##}
+        {#                console.log("1 " + photo.width());#}
+        {#                photo.css("height: " + photo_width + "px; width: auto; display: block;");#}
+        {#                console.log("2 " + photo.width());#}
+        {##}
+        {##}
+        {#                photo_width = photo.width();#}
+        {#                p_b.height(photo_width);#}
+        {#                p_b.width(photo_width);#}
+        {#            }#}
+        {##}
+        {#            var top_margin = (p_b.height()/2) - (photo.height() /2);#}
+        {##}
+        {#            photo.css("margin-top:", top_margin);#}
+        {##}
+        {#            console.log("square : " + max_length);#}
+        {#            console.log("margin : " + top_margin);#}
+        {##}
+        {#        };#}
+        var canvas_object = $('#photo'),
+                canvas = canvas_object.get(0),
+                ctx = canvas.getContext('2d'),
+                parent = canvas_object.parent(),
+                {#    line = new Line(ctx);#}
+                img = new Image;
 
+        console.log(parent);
+
+        img.src = "{{ image.imageurl }}";
+        img.onload = function(){
+            console.log( img.naturalWidth + " " + img.naturalHeight);
+
+            var scale = img.naturalWidth / parent.width();
+
+            console.log(scale);
+
+            canvas.width = parent.width();
+            canvas.height = img.naturalHeight / scale;
+
+            console.log(canvas.width + " " + canvas.height);
+            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+
+        };
     });
 
 
@@ -276,8 +311,8 @@ console.log("click");
     <div class="col-xs-12 col-sm-6">
         <div class="jumbotron">
             <div id="photo_background" style="">
-                <img id='photo' src="{{ image.imageurl }}"
-                     style=' min-width:50px; min-height: 50px;width: 100%; height:auto; '>
+                <canvas id='photo'></canvas>
+                {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
             </div>
         </div>
 
@@ -669,7 +704,7 @@ console.log("click");
         </div>
     </div>
 
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <img id='photo' src="{{ image.imageurl }}" style='width: 100%; height:auto; '>
