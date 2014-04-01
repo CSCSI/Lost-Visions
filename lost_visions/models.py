@@ -86,6 +86,8 @@ class Image(models.Model):
     class Meta:
         db_table = 'image'
 
+    def __unicode__(self):
+        return self.flickr_id
 
 class Category(models.Model):
     id = models.IntegerField(primary_key=True)

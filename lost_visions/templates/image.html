@@ -142,12 +142,12 @@
             ctx.strokeStyle = '#FF0000';
 
 
-{#            alert(e.pageX + ' , ' + e.pageY + ' - \n' +#}
-{#                    posX + ' , ' + posY + ' = \n' +#}
-{#                    (e.pageX - posX) + ' , ' + (e.pageY - posY) + '\n'#}
-                    {#                    trans_x + ' , ' + trans_y#}
-{##}
-{#            );#}
+            {#            alert(e.pageX + ' , ' + e.pageY + ' - \n' +#}
+            {#                    posX + ' , ' + posY + ' = \n' +#}
+            {#                    (e.pageX - posX) + ' , ' + (e.pageY - posY) + '\n'#}
+            {#                    trans_x + ' , ' + trans_y#}
+            {##}
+            {#            );#}
 
             var coords = translateCoords(x, y, canvas, degs);
 
@@ -306,18 +306,38 @@
 
             var ratio = centerpointX / centerpointY;
 
-            var mouseOffsetX = (-(centerpointX - mouseX));
-            var mouseOffsetY = (-(centerpointY - mouseY));
+            var mouseOffsetX = mouseX - centerpointX;
+            var mouseOffsetY = mouseY - centerpointY;
 
-            var radians = -((degreesRotation) * (Math.PI/180));
+            var radians = ((degreesRotation) * (Math.PI/180));
 
             var theta = Math.atan(mouseOffsetY / mouseOffsetX);
 
             var hyp = mouseOffsetX / Math.cos(theta);
 
-            var draw_x = (hyp * Math.cos(theta + radians)) + centerpointX;
+{#            if (Math.cos(radians) == 0) {#}
+{#                if (centerpointX < centerpointY) {#}
+{#                    hyp = (hyp / centerpointY) * (centerpointX);#}
+{##}
+                    {#                    draw_x += (draw_x / centerpointY) * (centerpointX);#}
+                    {#                    draw_y += (draw_y / centerpointX) * (centerpointY);#}
+{#                } else {#}
+{#                    hyp = (hyp / centerpointX) * (centerpointY);#}
+{##}
+                    {#                    draw_x += (draw_x / centerpointX) * (centerpointY);#}
+                    {#                    draw_y += (draw_y / centerpointY) * (centerpointX);#}
+{#                }#}
+{#            }#}
 
-            var draw_y = (hyp * Math.sin(theta + radians)) + centerpointY;
+            var x_correction = 0;
+
+            var y_correction = 0;
+
+            var draw_x = (hyp * Math.cos(theta - radians)) + centerpointX;
+
+            var draw_y = (hyp * Math.sin(theta - radians)) + centerpointY;
+
+
 
             return {
                 radians: radians,
@@ -329,25 +349,25 @@
                 offsetY : mouseOffsetY,
                 centerpointX : centerpointX,
                 centerpointY :  centerpointY,
-                ratio : ratio
+                ratio : ratio + ',' + x_correction + ',' + y_correction
             }
         }
 
         canvas.addEventListener('mousemove', function(evt) {
             var mousePos = getMousePos(canvas, evt);
 
-{#            var centerpointX = (canvas.getBoundingClientRect().width /2);#}
-{#            var centerpointY = (canvas.getBoundingClientRect().height /2);#}
-{##}
-{#            var radians = (degs * (Math.PI/180));#}
-{##}
-{#            var theta = Math.atan((-(centerpointY - mousePos.y)) / (-(centerpointX - mousePos.x)));#}
-{##}
-{#            var hyp = (-(centerpointX - mousePos.x)) / Math.cos(theta);#}
-{##}
-{#            var draw_x = (hyp * Math.cos(theta + radians)) + centerpointX;#}
-{##}
-{#            var draw_y = (hyp * Math.sin(theta + radians)) + centerpointX;#}
+            {#            var centerpointX = (canvas.getBoundingClientRect().width /2);#}
+            {#            var centerpointY = (canvas.getBoundingClientRect().height /2);#}
+            {##}
+            {#            var radians = (degs * (Math.PI/180));#}
+            {##}
+            {#            var theta = Math.atan((-(centerpointY - mousePos.y)) / (-(centerpointX - mousePos.x)));#}
+            {##}
+            {#            var hyp = (-(centerpointX - mousePos.x)) / Math.cos(theta);#}
+            {##}
+            {#            var draw_x = (hyp * Math.cos(theta + radians)) + centerpointX;#}
+            {##}
+            {#            var draw_y = (hyp * Math.sin(theta + radians)) + centerpointX;#}
 
             var translated_variables = translateCoords(mousePos.x, mousePos.y, canvas, degs);
 
