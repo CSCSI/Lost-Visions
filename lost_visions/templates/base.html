@@ -210,9 +210,9 @@
             </li>
 
             {% if user.is_authenticated %}
-                <li><a href="{% url 'logout' %}">Logout {{ user }}</a></li>
+                <li><a href="{% url 'logout' %}?return_url={{ request.path }}">Logout {{ user }}</a></li>
             {% else %}
-                <li><a href="{% url 'login' %}">Login {{ user }}</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
             {% endif %}
 
         </ul>

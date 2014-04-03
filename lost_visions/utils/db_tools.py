@@ -1,6 +1,9 @@
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
+
 from random import randint
 from django.core import serializers
-from django.db.models import Min
+from django.db.models import Min, Q
 from lost_visions import models
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -27,6 +30,9 @@ def get_next_image_id():
 def get_info_from_image_model(image_model):
     image_info = dict()
     image_info['imageurl'] = image_model.flickr_medium_source
+    if image_info['imageurl'] == '':
+        image_info['imageurl'] = image_model.flickr_original_source
+
     image_info['book_title'] = image_model.title
     image_info['author'] = image_model.first_author
     # image_info['tags'] = image_model.tags1.tags.tag
@@ -84,6 +90,47 @@ def read_tsv_file(filename, line_number):
         return None
 
 
+def tests():
+    # 2207933
+
+    # image_set = models.Image.objects.filter(book_identifier=2207933)
+    #
+    # for image in image_set:
+    #     print image.date + ' : ' + image.flickr_id
+    #     print image.flickr_url
+    #
+    #     print '*****\n'
+    #
+    # image_set = models.Image.objects.exclude(volume=0)
+    #
+    # for image in image_set:
+    #     print image.date + ' : ' + image.flickr_id
+    #     print image.flickr_url
+    #     print image.book_identifier
+    #
+    #     print '*****'
+    # print len(image_set)
+    # print '\n***********\n'
+
+    image_set = models.Image.objects.filter(id='9353')
+
+    for image in image_set:
+        print image.date + ' : ' + image.flickr_id
+        print image.title
+
+        print image.flickr_url
+        print image.flickr_medium_source
+        print image.book_identifier
+
+        print '*****\n'
+
+    # image_set = models.Image.objects.filter(book_identifier='')
+    # for image in image_set:
+    #     print image.id
+    #     print image
+    #
+    #     print '*****'
+    # print len(image_set)
 
 
 

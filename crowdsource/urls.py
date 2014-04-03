@@ -39,6 +39,8 @@ urlpatterns = patterns('',
 
     # url(r'^blog/', include('blog.urls')),
     # url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
+    url(r'^admin_tools/', include('admin_tools.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
 )
 

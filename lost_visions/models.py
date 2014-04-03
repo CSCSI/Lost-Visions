@@ -9,9 +9,13 @@ from django.db import models
 
 class LostVisionUser(models.Model):
     id = models.IntegerField(primary_key=True)
-    username = models.ForeignKey(User)
+    username = models.ForeignKey(User, blank=False)
     expert_level = models.IntegerField(default=0, blank=True)
     self_description = models.CharField(max_length=256L, blank=True)
+
+    def __unicode__(self):
+        return str(self.id) + ':' + self.username.username
+
 
 class Book(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -87,7 +91,8 @@ class Image(models.Model):
         db_table = 'image'
 
     def __unicode__(self):
-        return self.flickr_id
+        return str(self.id) + ':' + self.flickr_id
+
 
 class Category(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -104,10 +109,18 @@ class ExpertLevel(models.Model):
     description = models.CharField(max_length=256L, blank=True)
 
 
-
-
-
-
-
 class ImageCategories(models.Model):
     id = models.IntegerField(primary_key=True)
+
+
+class Tag(models.Model):
+    id = models.IntegerField(primary_key=True)
+    tag = models.CharField(max_length=256L, blank=False)
+    user = models.ForeignKey(LostVisionUser, blank=False)
+    image = models.ForeignKey(Image, blank=False)
+
+    def __unicode__(self):
+        user = self.user.username.username
+        image = self.image.flickr_id
+
+        return str(self.id) + ':' + self.tag + ':' + user + ':' + image

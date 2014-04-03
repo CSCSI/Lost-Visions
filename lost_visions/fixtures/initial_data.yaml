@@ -8,9 +8,9 @@
 - model: auth.user
   pk: 1000
   fields:
-    first_name: john
-    last_name: smith
-    username: viavmadmin
+    first_name: Anon .Y
+    last_name: Mouse
+    username: Anon_y_mouse
     password: "pbkdf2_sha256$12000$VsizsauzTiXC$QcNI963O+w3X67aPiUATh2MZeuFh17fTHL4eiIXaiuQ="
 
 - model: lost_visions.LostVisionUser

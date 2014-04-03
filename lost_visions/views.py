@@ -13,7 +13,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
 from lost_visions import models, forms
 from lost_visions.forms import TestForm
-from lost_visions.models import Tags
+from lost_visions.models import Tags, Tag
 from lost_visions.utils import db_tools
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
@@ -35,6 +35,7 @@ def image_tags(request):
     usable_tags = []
     if request.method == 'POST':
         print request.POST
+        print request.user
 
         for value in request.POST:
             if value != 'image_description' and value != 'csrfmiddlewaretoken' and value != 'image_id':
@@ -44,10 +45,35 @@ def image_tags(request):
 
         for user_tag in usable_tags:
             try:
-                tag = Tags()
+                tag = Tag()
                 tag.tag = str(user_tag)
+
+                image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+                if image:
+                    tag.image = image
+
+                try:
+                    user = models.User.objects.get(username=request.user)
+                    print user
+                    lost_vision_user = models.LostVisionUser.objects.get(username=user)
+                    print lost_vision_user
+
+                    tag.user = lost_vision_user
+                except Exception as e1:
+                    print e1
+
+                    print '4'
+                    anon_user = models.User.objects.get(username='Anon_y_Mouse')
+                    print anon_user
+                    print '5'
+                    tag.user = models.LostVisionUser.objects.get(username=anon_user)
+                    print tag.user
+                    print '6'
+                    pass
+
                 tag.save()
-            except:
+            except Exception as e2:
+                print e2
                 pass
 
         test_form = TestForm(request.POST)
