@@ -324,9 +324,12 @@ def signup(request):
 @requires_csrf_token
 def oed(request, word):
 
-    url = 'http://www.oed.com/srupage?operation=searchRetrieve&query=cql.serverChoice+=+'
-    url += word
-    url += '*&maximumRecords=100&startRecord=1'
+    # url = 'http://www.oed.com/srupage?operation=searchRetrieve&query=cql.serverChoice+=+'
+    # url += word
+    # url += '*&maximumRecords=100&startRecord=1'
+
+    url = 'http://localhost:8000/static/oed.xml'
+    print url
     resp = urllib2.urlopen(url)
 
     words = []
@@ -349,4 +352,28 @@ def oed(request, word):
                                     words.append(title.text)
     response_data = words
 
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def findword(request):
+
+    word = request.GET['term']
+
+    url = 'http://services.aonaware.com/DictService/DictService.asmx/MatchInDict?dictId=gcide&word=' + \
+          word + '&strategy=prefix'
+    print url
+    resp = urllib2.urlopen(url)
+
+    words = []
+    if resp.code == 200:
+        data = resp.read()
+        xml = BeautifulSoup(data)
+
+        for arr in xml.findAll('arrayofdictionaryword'):
+            for dic_word in arr.findAll('dictionaryword'):
+                for title in dic_word.findAll('word'):
+                    if ' ' not in title.text:
+                        words.append(title.text)
+
+    response_data = words
     return HttpResponse(json.dumps(response_data), content_type="application/json")

@@ -42,7 +42,13 @@ def get_info_from_image_model(image_model):
 def get_image_info(image_id):
     try:
         image_for_id = models.Image.objects.get(id=image_id)
-        return get_info_from_image_model(image_for_id)
+        image_info = get_info_from_image_model(image_for_id)
+
+        if image_info['imageurl'] == '':
+            print 'ERROR with IMAGE_ID = ' + image_id
+            return get_image_info(get_next_image_id())
+        else:
+            return image_info
 
     except ObjectDoesNotExist:
         return None

@@ -53,13 +53,32 @@
     {#        }#}
 
     $(document).ready(function () {
-        {#            $('#submit_button').click(function(){#}
-        {#                Dajaxice.lost_visions.submit_tags(#}
-        {#                        Dajax.process,{'form':$('#tags-form').serialize(true), 'image_id':'{{image_id}}'})#}
-        {#            });#}
-        {##}
+
+        $( "#dictionary" ).autocomplete({
+            source: "{% url 'find.word' %}",
+            minLength: 3,
+            select: function( event, ui ) {
+                console.log( ui.item ?
+                        "Selected: " + ui.item.value + " aka " + ui.item.id :
+                        "Nothing selected, input was " + this.value );
+
+                var tag_string = ui.item.value;
+                var id = 'id_' + tag_string;
+
+                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
+                var $label = $('<label/>').attr({for: id}).html(tag_string);
+
+
+                $("#add_category_body").prepend($label).prepend($check);
+
+                $( "input[type=checkbox]" )
+                        .button();
+            }
+        });
+
+
         $('#load_new_image').click(function(){
-            window.location.replace({% url 'image.random' %})
+            window.location.replace('{% url 'image.random' %}');
             {#                Dajaxice.lost_visions.load_image(Dajax.process,{})#}
         });
 
@@ -209,18 +228,13 @@
             source: availableTags,
             select: function( event, ui ) {
                 $('#category_tree').jstree('close_all', -1);
-
                 {#                    console.log( ui.item.label );#}
                 {#                    console.log( ui.item.value );#}
-
                 dmvi_categories.forEach(function(entry) {
-
 
                     if (entry['text'] == ui.item.label) {
                         {#                            $('#category_tree').jstree('toggle_node', entry['id']);#}
-
                         cascade_nodes(entry['id'])
-
                     }
                 });
                 return false;
@@ -298,7 +312,7 @@
                 x: evt.clientX - rect.left,
                 y: evt.clientY - rect.top
             };
-        }
+        };
 
         function translateCoords(mouseX, mouseY, component, degreesRotation) {
             var centerpointX = (component.getBoundingClientRect().width /2);
@@ -315,29 +329,26 @@
 
             var hyp = mouseOffsetX / Math.cos(theta);
 
-{#            if (Math.cos(radians) == 0) {#}
-{#                if (centerpointX < centerpointY) {#}
-{#                    hyp = (hyp / centerpointY) * (centerpointX);#}
-{##}
-                    {#                    draw_x += (draw_x / centerpointY) * (centerpointX);#}
-                    {#                    draw_y += (draw_y / centerpointX) * (centerpointY);#}
-{#                } else {#}
-{#                    hyp = (hyp / centerpointX) * (centerpointY);#}
-{##}
-                    {#                    draw_x += (draw_x / centerpointX) * (centerpointY);#}
-                    {#                    draw_y += (draw_y / centerpointY) * (centerpointX);#}
-{#                }#}
-{#            }#}
+            var scale = 1;
 
-            var x_correction = 0;
-
-            var y_correction = 0;
+            if (Math.cos(radians) == 0) {
+                scale = img.naturalWidth / canvas.height;
+                {#                if (centerpointX < centerpointY) {#}
+                {#                                hyp = (hyp / centerpointY) * (centerpointX);#}
+                {#                                draw_x += (draw_x / centerpointY) * (centerpointX);#}
+                {#                                draw_y += (draw_y / centerpointX) * (centerpointY);#}
+                {#                } else {#}
+                {#                                hyp = (hyp / centerpointX) * (centerpointY);#}
+                {#                                draw_x += (draw_x / centerpointX) * (centerpointY);#}
+                {#                                draw_y += (draw_y / centerpointY) * (centerpointX);#}
+                {#                }#}
+            } else {
+                scale = img.naturalWidth / canvas.width;
+            }
 
             var draw_x = (hyp * Math.cos(theta - radians)) + centerpointX;
 
             var draw_y = (hyp * Math.sin(theta - radians)) + centerpointY;
-
-
 
             return {
                 radians: radians,
@@ -349,35 +360,24 @@
                 offsetY : mouseOffsetY,
                 centerpointX : centerpointX,
                 centerpointY :  centerpointY,
-                ratio : ratio + ',' + x_correction + ',' + y_correction
+                x_percent : (((draw_x/img.naturalWidth)*scale) *100),
+                y_percent : (((draw_y/img.naturalHeight)*scale) *100)
             }
-        }
+        };
 
         canvas.addEventListener('mousemove', function(evt) {
             var mousePos = getMousePos(canvas, evt);
-
-            {#            var centerpointX = (canvas.getBoundingClientRect().width /2);#}
-            {#            var centerpointY = (canvas.getBoundingClientRect().height /2);#}
-            {##}
-            {#            var radians = (degs * (Math.PI/180));#}
-            {##}
-            {#            var theta = Math.atan((-(centerpointY - mousePos.y)) / (-(centerpointX - mousePos.x)));#}
-            {##}
-            {#            var hyp = (-(centerpointX - mousePos.x)) / Math.cos(theta);#}
-            {##}
-            {#            var draw_x = (hyp * Math.cos(theta + radians)) + centerpointX;#}
-            {##}
-            {#            var draw_y = (hyp * Math.sin(theta + radians)) + centerpointX;#}
-
             var translated_variables = translateCoords(mousePos.x, mousePos.y, canvas, degs);
 
             var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
             message += ('<br>draw coords: ' + translated_variables.x + ' , ' + translated_variables.y);
+            message += ('<br>scale-x% : ' + translated_variables.x_percent + ', scale-y% ' + translated_variables.y_percent);
+            {#            message += ('<br>x% : ' + ((translated_variables.x/img.naturalWidth) *100) + ', y% ' + (translated_variables.y/img.naturalHeight) *100);#}
 
             message += ('<br>offset : ' + translated_variables.offsetX + ' , ' + translated_variables.offsetY);
             message += ('<br>centerpoint : ' + translated_variables.centerpointX + ' , ' + translated_variables.centerpointY);
             message += ('<br>theta : ' + translated_variables.theta + ', hyp : ' + translated_variables.hyp);
-            message += ('<br>degs : ' + degs + ', rads : ' + translated_variables.radians + ' ratio : ' + translated_variables.ratio);
+            message += ('<br>degs : ' + degs + ', rads : ' + translated_variables.radians);
             message += ('<br>t-x : ' + (mousePos.x / translated_variables.x) + ', t-y : ' + (mousePos.y / translated_variables.y));
 
             $('#output').html(message);
@@ -446,31 +446,30 @@
 
     <div id="right-main">
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h1 style="margin:0 0 5px 0;color:#2b5688;font-size:15px">
-                Search Oxford English Dictionary
-            </h1>
-        </div>
-        <div class="panel-body">
-            <div style="font:normal 13px/1.5 Arial;width:318px;height:98px;background:#f1f5fb;border:1px solid #d8e0f5;margin:0;padding:20px 10px 10px 10px;text-align:left">
-                <form enctype="application/x-www-form-urlencoded" method="get" action="http://www.oed.com:80/search" name="oed_search" id="oed_search">
-                    <label for="text">
-                        Enter word or phrase:</label>
-                    <input size="20" name="q" type="text" style="textfield">
-
-                    </input><br/>
-                    <input type="submit" value="Search"></input>
-                </form>
-            </div>
-        </div>
-    </div>
+    {#    <div class="panel panel-default">#}
+    {#        <div class="panel-heading">#}
+    {#            <h1 style="margin:0 0 5px 0;color:#2b5688;font-size:15px">#}
+    {#                Search Oxford English Dictionary#}
+    {#            </h1>#}
+    {#        </div>#}
+    {#        <div class="panel-body">#}
+    {#            <div style="font:normal 13px/1.5 Arial;width:318px;height:98px;background:#f1f5fb;border:1px solid #d8e0f5;margin:0;padding:20px 10px 10px 10px;text-align:left">#}
+    {#                <form enctype="application/x-www-form-urlencoded" method="get" action="http://www.oed.com:80/search" name="oed_search" id="oed_search">#}
+    {#                    <label for="text">#}
+    {#                        Enter word or phrase:</label>#}
+    {#                    <input size="20" name="q" type="text" style="textfield">#}
+    {##}
+    {#                    </input><br/>#}
+    {#                    <input type="submit" value="Search"></input>#}
+    {#                </form>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
 
 
     <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
     {{ tag_form.non_field_errors }}
     <input type="hidden" name="image_id" value="{{ image_id }}" />
-
 
     <div class="panel-group" id="accordion">
 
@@ -479,7 +478,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                    Please select one or more categories which describe the image
+                    Select and Name the Objects in this Image
                 </a>
                 <div class="navbar-right">
                     <div id="collapse-init" class="btn btn-primary btn-xs">
@@ -490,9 +489,6 @@
         </div>
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
-
-
-
                 <div id="add_category_body"></div>
 
                 {#                <div id="categories" class="row-fluid">#}
@@ -502,18 +498,17 @@
                 {#                    {% endfor %}#}
                 {#                </div>#}
 
-
                 <div class="ui-widget">
-                    <label for="tags">Tags: </label>
-                    <input id="tags">
+                    <label for="dictionary">Tags: </label>
+                    <input id="dictionary">
                 </div>
 
-                <div id="category_tree"></div>
+                {#                <div class="ui-widget">#}
+                {#                    <label for="tags">Tags: </label>#}
+                {#                    <input id="tags">#}
+                {#                </div>#}
 
-
-
-                <script type="text/javascript">
-                </script>
+                {#                <div id="category_tree"></div>#}
 
             </div>
             <div class="panel-footer">
@@ -571,62 +566,60 @@
                            class="btn btn-default">← Previous</a>
                     </li>
                     <li class="next">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
-                           class="btn btn-default">Next →</a>
-                    </li>
-                </ul>
-
-
-            </div>
-        </div>
-
-    </div>
-
-
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                    Please enter a new tag to describe the image
-                </a>
-            </h4>
-        </div>
-        <div id="collapseThree" class="panel-collapse collapse">
-            <div class="panel-body">
-
-                <div id="add_tag_body">
-
-                </div>
-
-                <div id="free_text" >
-                    <label for="input_tag">Tag</label>
-                    <input type="text" class="form-control" id="input_tag">
-                    <div id="add_tag" class="btn btn-default">Add</div>
-                </div>
-
-
-            </div>
-            <div class="panel-footer">
-
-
-                <ul class="pager">
-                    <li class="previous">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                           class="btn btn-default">← Previous</a>
-                    </li>
-                    <li class="next">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
                            class="btn btn-default">Next →</a>
                     </li>
                 </ul>
+
+
             </div>
         </div>
+
     </div>
 
 
 
+
+{#    <div class="panel panel-default">#}
+{#        <div class="panel-heading">#}
+{#            <h4 class="panel-title">#}
+{#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">#}
+{#                    Please enter a new tag to describe the image#}
+{#                </a>#}
+{#            </h4>#}
+{#        </div>#}
+{#        <div id="collapseThree" class="panel-collapse collapse">#}
+{#            <div class="panel-body">#}
+{##}
+{#                <div id="add_tag_body">#}
+{##}
+{#                </div>#}
+{##}
+{#                <div id="free_text" >#}
+{#                    <label for="input_tag">Tag</label>#}
+{#                    <input type="text" class="form-control" id="input_tag">#}
+{#                    <div id="add_tag" class="btn btn-default">Add</div>#}
+{#                </div>#}
+{##}
+{##}
+{#            </div>#}
+{#            <div class="panel-footer">#}
+{##}
+{##}
+{#                <ul class="pager">#}
+{#                    <li class="previous">#}
+{#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"#}
+{#                           class="btn btn-default">← Previous</a>#}
+{#                    </li>#}
+{#                    <li class="next">#}
+{#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"#}
+{#                           class="btn btn-default">Next →</a>#}
+{#                    </li>#}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{##}
 
 
 
@@ -652,7 +645,7 @@
 
 
                     <li class="previous">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
                            class="btn btn-default">← Previous</a>
                     </li>
                     {% if user.is_authenticated %}
