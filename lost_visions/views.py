@@ -4,6 +4,8 @@ import os
 from random import randint
 import urllib2
 from BeautifulSoup import BeautifulSoup
+from datetime import datetime
+from dateutil import parser
 from django.contrib import auth
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -54,6 +56,15 @@ def image_tags(request):
                 tag.tag = str(user_tag['tag'])
                 tag.x_percent = str(user_tag['x_percent'])
                 tag.y_percent = str(user_tag['y_percent'])
+                try:
+                    # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
+                    date_object = parser.parse(str(user_tag['datetime']))
+                    tag.timestamp = date_object
+                except Exception as e3:
+                    print e3
+                    pass
+                
+                tag.tag_order = user_tag['tag_order']
 
                 image = models.Image.objects.get(flickr_id=request.POST['image_id'])
                 if image:
@@ -80,7 +91,7 @@ def image_tags(request):
 
                 tag.save()
             except Exception as e2:
-                print e2
+                print 'error 2' + str(e2)
                 pass
 
         test_form = TestForm(request.POST)

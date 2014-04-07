@@ -120,7 +120,8 @@ class Tag(models.Model):
     image = models.ForeignKey(Image, blank=False)
     x_percent = models.CharField(max_length=256L, blank=True)
     y_percent = models.CharField(max_length=256L, blank=True)
-    timestamp = models.DateTimeField
+    timestamp = models.DateTimeField(auto_now=False, blank=True)
+    tag_order = models.IntegerField(blank=True)
 
     def __unicode__(self):
         user = self.user.username.username

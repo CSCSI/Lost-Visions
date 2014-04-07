@@ -69,8 +69,15 @@
                 var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});
                 var $label = $('<label/>').attr({for: id}).html(tag_string);
 
-                all_tags.push({tag: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});
 
+                var d = new Date();
+                var datetime = d.toISOString();
+                all_tags.push({tag: tag_string,
+                    x_percent: hightlighted_x_percent,
+                    y_percent: hightlighted_y_percent,
+                    datetime: datetime,
+                    tag_order: all_tags.length
+                });
 
                 document.getElementById("tag_info").value = JSON.stringify(all_tags);
                 console.log(JSON.parse(document.getElementById("tag_info").value));
