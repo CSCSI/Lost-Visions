@@ -1,3 +1,4 @@
+import ast
 import json
 import os
 from random import randint
@@ -32,21 +33,27 @@ def image_tags(request):
     print request.get_full_path()
     # print request.POST['question']
 
-    usable_tags = []
+    # usable_tags = []
     if request.method == 'POST':
         print request.POST
         print request.user
 
-        for value in request.POST:
-            if value != 'image_description' and value != 'csrfmiddlewaretoken' and value != 'image_id':
-                usable_tags.append(value)
+        # for value in request.POST:
+        #     if value != 'image_description' and value != 'csrfmiddlewaretoken' and value != 'image_id':
+        #         usable_tags.append(value)
 
-        print usable_tags
+        tag_info = request.POST['tag_info']
 
-        for user_tag in usable_tags:
+        tags_xy = ast.literal_eval(tag_info)
+
+        # print usable_tags
+
+        for user_tag in tags_xy:
             try:
                 tag = Tag()
-                tag.tag = str(user_tag)
+                tag.tag = str(user_tag['tag'])
+                tag.x_percent = str(user_tag['x_percent'])
+                tag.y_percent = str(user_tag['y_percent'])
 
                 image = models.Image.objects.get(flickr_id=request.POST['image_id'])
                 if image:

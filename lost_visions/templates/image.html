@@ -53,6 +53,7 @@
     {#        }#}
 
     $(document).ready(function () {
+        var all_tags = [];
 
         $( "#dictionary" ).autocomplete({
             source: "{% url 'find.word' %}",
@@ -65,9 +66,16 @@
                 var tag_string = ui.item.value;
                 var id = 'id_' + tag_string;
 
-                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
+                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});
                 var $label = $('<label/>').attr({for: id}).html(tag_string);
 
+                all_tags.push({tag: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});
+
+
+                document.getElementById("tag_info").value = JSON.stringify(all_tags);
+                console.log(JSON.parse(document.getElementById("tag_info").value));
+
+                $("#add_tag_body").prepend($label).prepend($check);
 
                 $("#add_category_body").prepend($label).prepend($check);
 
@@ -91,9 +99,6 @@
 
                 var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
                 var $label = $('<label/>').attr({for: id}).html(tag_string);
-
-
-                $("#add_tag_body").prepend($label).prepend($check);
 
                 $( "input[type=checkbox]" )
                         .button();
@@ -146,6 +151,10 @@
 
         });
 
+
+        var hightlighted_x_percent = 0;
+        var hightlighted_y_percent = 0;
+
         $('#photo').click(function(e) {
             var posX = $(this).offset().left;
             var posY = $(this).offset().top;
@@ -158,6 +167,7 @@
             var canvas_object = $('#photo'),
                     canvas = canvas_object.get(0),
                     ctx = canvas.getContext('2d');
+            canvas.width = canvas.width;
             ctx.strokeStyle = '#FF0000';
 
 
@@ -168,9 +178,14 @@
             {##}
             {#            );#}
 
+            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+
             var coords = translateCoords(x, y, canvas, degs);
 
             ctx.rect(coords.x-10, coords.y-10, 20, 20);
+            hightlighted_x_percent = coords.x_percent;
+            hightlighted_y_percent = coords.y_percent;
+
             ctx.stroke();
         });
 
@@ -237,6 +252,11 @@
                         cascade_nodes(entry['id'])
                     }
                 });
+                return false;
+            }
+        }).keypress(function(e) {
+            if(e.which == 13) {
+                alert('You pressed enter!');
                 return false;
             }
         });
@@ -470,6 +490,8 @@
     <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
     {{ tag_form.non_field_errors }}
     <input type="hidden" name="image_id" value="{{ image_id }}" />
+    <input type="hidden" id = 'tag_info' name="tag_info" value="""" />
+
 
     <div class="panel-group" id="accordion">
 
@@ -580,46 +602,46 @@
 
 
 
-{#    <div class="panel panel-default">#}
-{#        <div class="panel-heading">#}
-{#            <h4 class="panel-title">#}
-{#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">#}
-{#                    Please enter a new tag to describe the image#}
-{#                </a>#}
-{#            </h4>#}
-{#        </div>#}
-{#        <div id="collapseThree" class="panel-collapse collapse">#}
-{#            <div class="panel-body">#}
-{##}
-{#                <div id="add_tag_body">#}
-{##}
-{#                </div>#}
-{##}
-{#                <div id="free_text" >#}
-{#                    <label for="input_tag">Tag</label>#}
-{#                    <input type="text" class="form-control" id="input_tag">#}
-{#                    <div id="add_tag" class="btn btn-default">Add</div>#}
-{#                </div>#}
-{##}
-{##}
-{#            </div>#}
-{#            <div class="panel-footer">#}
-{##}
-{##}
-{#                <ul class="pager">#}
-{#                    <li class="previous">#}
-{#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"#}
-{#                           class="btn btn-default">← Previous</a>#}
-{#                    </li>#}
-{#                    <li class="next">#}
-{#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"#}
-{#                           class="btn btn-default">Next →</a>#}
-{#                    </li>#}
-{#                </ul>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{##}
+    {#    <div class="panel panel-default">#}
+    {#        <div class="panel-heading">#}
+    {#            <h4 class="panel-title">#}
+    {#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">#}
+    {#                    Please enter a new tag to describe the image#}
+    {#                </a>#}
+    {#            </h4>#}
+    {#        </div>#}
+    {#        <div id="collapseThree" class="panel-collapse collapse">#}
+    {#            <div class="panel-body">#}
+    {##}
+    {#                <div id="add_tag_body">#}
+    {##}
+    {#                </div>#}
+    {##}
+    {#                <div id="free_text" >#}
+    {#                    <label for="input_tag">Tag</label>#}
+    {#                    <input type="text" class="form-control" id="input_tag">#}
+    {#                    <div id="add_tag" class="btn btn-default">Add</div>#}
+    {#                </div>#}
+    {##}
+    {##}
+    {#            </div>#}
+    {#            <div class="panel-footer">#}
+    {##}
+    {##}
+    {#                <ul class="pager">#}
+    {#                    <li class="previous">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"#}
+    {#                           class="btn btn-default">← Previous</a>#}
+    {#                    </li>#}
+    {#                    <li class="next">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"#}
+    {#                           class="btn btn-default">Next →</a>#}
+    {#                    </li>#}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+    {##}
 
 
 
