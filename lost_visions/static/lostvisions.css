@@ -32,6 +32,13 @@ border-left: 1px solid black;
     background-color: #3e444c;
     border-color: #3e444c;
     color: #ffffff;
+
+    white-space: nowrap;
+    width: 100%;                   /* IE6 needs any width */
+    overflow: hidden;              /* "overflow" value must be different from  visible"*/
+    -o-text-overflow: ellipsis;    /* Opera < 11*/
+    text-overflow:    ellipsis;    /* IE, Safari (WebKit), Opera >= 11, FF > 6 */
+
 }
 
 .btn-block{

@@ -443,9 +443,10 @@ def search(request, word):
 
     results = dict()
     total_results = 0
-    for subword in word.split():
+    for subword in word.split('+'):
 
-        tag_results = models.Tag.objects.filter(Q( tag__contains=subword ))
+        tag_results = models.Tag.objects.filter(Q( tag__contains=subword ))[:30]
+        print tag_results
         tag_results_dict = dict()
 
         for result in tag_results:
@@ -453,21 +454,24 @@ def search(request, word):
             tag_result = dict()
             tag_result['url'] = 'http://localhost:8000/image/' + result.image.flickr_id
             tag_result['tag'] = result.tag
+            tag_result['title'] = result.image.title
+            tag_result['img'] = result.image.flickr_small_source
 
             tag_results_dict[result.image.flickr_id] = tag_result
             total_results += 1
 
         results['tag'] = tag_results_dict
 
-
-
-        author_results = models.Image.objects.filter(Q( first_author__contains=subword ))
+        author_results = models.Image.objects.filter(Q(first_author__contains=subword) |
+                                                     Q(title__contains=subword))[:30]
         author_results_dict = dict()
 
         for result in author_results:
             tag_result = dict()
             tag_result['url'] = 'http://localhost:8000/image/' + result.flickr_id
             tag_result['author'] = result.first_author
+            tag_result['title'] = result.title
+            tag_result['img'] = result.flickr_small_source
 
             author_results_dict[result.flickr_id] = tag_result
             total_results += 1
@@ -475,4 +479,9 @@ def search(request, word):
         results['author'] = author_results_dict
 
     response_data = {'results': results, 'size': total_results, 'search_string': word}
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    return render(request, 'results.html',
+                  {'results': response_data},
+                  context_instance=RequestContext(request))
+
+    # return HttpResponse(json.dumps(response_data), content_type="application/json")

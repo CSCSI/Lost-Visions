@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+
+{% block content %}
+    <script type="text/javascript" src="{% static "masonry.pkgd.min.js" %}"></script>
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+        $(document).ready(function(){
+            console.log('reflow');
+            $('.js-masonry').masonry();
+        });
+        $(window).load(function(){
+            $('.js-masonry').masonry();
+        });
+    </script>
+
+    Search results for : {{ results.search_string }}
+    Images Tagged with {{ results.search_string }}
+    <div id="result-container" class="js-masonry"
+         data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
+
+        {% for tag_key, tag_data in results.results.tag.items %}
+            <div class="bl_item">
+                <div class="panel">
+                    <a href="/image/{{ tag_key }}" target="_blank">
+                        <img src="{{ tag_data.img }}" style='width:100%; height:auto;'>
+                    </a>
+                    <div class="panel-footer">
+                        {{ tag_data.tag }}
+                        <br>
+                        {{ tag_data.title }}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>(No matches for your search within Tags)</p>
+        {% endfor %}
+
+    </div>
+    <hr>
+
+    Images with {{ results.search_string }} within the Author label
+
+    <div id="result-container" class="js-masonry"
+         data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
+        <br>
+        {% for author_key, author_data in results.results.author.items %}
+            <div class="bl_item" >
+                <div class="panel">
+                    <a href="/image/{{ author_key }}" target="_blank">
+                        <img src="{{ author_data.img }}" style='width:100%; height:auto;'>
+                    </a>
+                    <div class="panel-footer">
+                        {{ author_data.author }}
+{#                        <br>#}
+{#                        {{ author_data.title }}#}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>(No matches for your search within Authors)</p>
+        {% endfor %}
+    </div>
+{% endblock %}
