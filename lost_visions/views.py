@@ -7,6 +7,7 @@ from BeautifulSoup import BeautifulSoup
 from datetime import datetime
 from dateutil import parser
 from django.contrib import auth
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -63,7 +64,7 @@ def image_tags(request):
                 except Exception as e3:
                     print e3
                     pass
-                
+
                 tag.tag_order = user_tag['tag_order']
 
                 image = models.Image.objects.get(flickr_id=request.POST['image_id'])
@@ -149,7 +150,11 @@ def image(request, image_id):
 
     #cut image ID from image URL
     #get Flickr tags for this image
-    flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_url_part, size='z')
+    flickr_tags = dict()
+    try:
+        flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_url_part, size='z')
+    except Exception as e:
+        print e
 
     author = ""
     if 'Author' in flickr_tags:
@@ -182,9 +187,15 @@ def image(request, image_id):
     CreationTech = forms.creation_technique_form_factory()
     create_tech = CreationTech()
 
+    image_types = {'map': 'Map', 'architechture': 'Architechture', 'geology': 'Geology'}
+
+    image_themes = {'homeandfamily': 'Home and Family', 'mythology': 'Mythology'}
+
     return render(request, 'image.html',
                   {'image': image_info,
                    'image_id': image_url_part,
+                   'image_types': image_types,
+                   'image_themes': image_themes,
                    'tag_form': tag_form,
                    'category_form': category_form,
                    'create_tech_form': create_tech},
@@ -294,6 +305,34 @@ def login(request):
                   context_instance=RequestContext(request))
 
 @requires_csrf_token
+def do_signup(request):
+    print request.POST
+    username = request.POST['username']
+    password = request.POST['password']
+    user = auth.authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            print("User is valid, active and authenticated")
+            auth.login(request, user)
+            success = True
+            msg = 'You have successfully logged in'
+        else:
+            print("The password is valid, but the account has been disabled!")
+            success = False
+            msg = 'This account has been disabled. Please contact the Lost-Visions team.'
+
+        return render(request, 'home.html',
+                      {'login_success': success, 'msg': msg},
+                      context_instance=RequestContext(request))
+    else:
+        msg = 'Username and Password combination not recognised, please try again.'
+        success = False
+
+        return render(request, 'login.html',
+                      {'login_success': success, 'msg': msg},
+                      context_instance=RequestContext(request))
+
+@requires_csrf_token
 def do_login(request):
 
     print request.POST
@@ -394,4 +433,19 @@ def findword(request):
                         words.append(title.text)
 
     response_data = words
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def search(request, word):
+    print word
+    print word.split(' ')
+
+    results = dict()
+    for subword in word.split():
+
+        tag_results = models.Tag.objects.filter(Q( tag__contains=subword ))
+        for result in tag_results:
+            results[result.id] = result.image.flickr_id
+
+    response_data = {'results': results, 'size': len(results)}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
