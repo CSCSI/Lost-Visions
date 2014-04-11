@@ -7,6 +7,7 @@ from BeautifulSoup import BeautifulSoup
 from datetime import datetime
 from dateutil import parser
 from django.contrib import auth
+from django.core import serializers
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -438,14 +439,40 @@ def findword(request):
 
 def search(request, word):
     print word
-    print word.split(' ')
+    print word.split('+')
 
     results = dict()
+    total_results = 0
     for subword in word.split():
 
         tag_results = models.Tag.objects.filter(Q( tag__contains=subword ))
-        for result in tag_results:
-            results[result.id] = result.image.flickr_id
+        tag_results_dict = dict()
 
-    response_data = {'results': results, 'size': len(results)}
+        for result in tag_results:
+            # results[result.image.flickr_id] = serializers.serialize("json", result)
+            tag_result = dict()
+            tag_result['url'] = 'http://localhost:8000/image/' + result.image.flickr_id
+            tag_result['tag'] = result.tag
+
+            tag_results_dict[result.image.flickr_id] = tag_result
+            total_results += 1
+
+        results['tag'] = tag_results_dict
+
+
+
+        author_results = models.Image.objects.filter(Q( first_author__contains=subword ))
+        author_results_dict = dict()
+
+        for result in author_results:
+            tag_result = dict()
+            tag_result['url'] = 'http://localhost:8000/image/' + result.flickr_id
+            tag_result['author'] = result.first_author
+
+            author_results_dict[result.flickr_id] = tag_result
+            total_results += 1
+
+        results['author'] = author_results_dict
+
+    response_data = {'results': results, 'size': total_results, 'search_string': word}
     return HttpResponse(json.dumps(response_data), content_type="application/json")

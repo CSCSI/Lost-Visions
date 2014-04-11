@@ -34,7 +34,7 @@
     <script type="text/javascript" src="http://jqueryrotate.googlecode.com/svn/trunk/jQueryRotate.js"></script>
 
 
-{#    <script type="text/javascript" src="{% static "dtree/dtree.js" %}"></script>#}
+    {#    <script type="text/javascript" src="{% static "dtree/dtree.js" %}"></script>#}
 
     <script type="text/javascript" src="{% static "vakata-jstree-480a265/dist/jstree.js" %}"></script>
     <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>
@@ -70,7 +70,7 @@
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.0.6/bootstrap-social.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css') );
-{#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "dice-theme1.css" %}') );#}
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "dice-theme1.css" %}') );#}
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "vakata-jstree-480a265/dist/themes/default/style.css" %}') );
 
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "lostvisions.css" %}') );
@@ -125,7 +125,7 @@
 
     $(document).ready(function () {
         load_css();
-{#        $('#photo').imgAreaSelect({ handles: true, fadeSpeed: 200, onSelectChange: preview });#}
+        {#        $('#photo').imgAreaSelect({ handles: true, fadeSpeed: 200, onSelectChange: preview });#}
         $( "#format" ).buttonset();
 
         $(updateCheckboxes());
@@ -138,6 +138,11 @@
             load_css();
             updateCheckboxes();
             return false;
+        });
+
+        $('#search_box').change(function () {
+            $('#search_form').attr('action',
+                    '{% url 'do_search' 'abcde'%}'.replace('abcde', $('#search_box').val().replace(' ', '+')));
         });
 
     });
@@ -215,15 +220,13 @@
 
         </ul>
 
-
-        <form onsubmit="this.action='{% url 'do_search' 'a'%}/'+this.search_box.value.replace(' ', '+');" class="navbar-form navbar-right" role="search" method="post">{% csrf_token %}
+        <form id='search_form' action='{% url 'do_search' 'abcde'%}'
+              class="navbar-form navbar-right" role="search" method="post">{% csrf_token %}
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search" id="search_box">
             </div>
             <button type="submit" class="btn btn-default">Submit</button>
         </form>
-
-
 
     </div><!-- /.navbar-collapse -->
 
