@@ -84,9 +84,7 @@
                 document.getElementById("tag_info").value = JSON.stringify(all_tags);
                 console.log(JSON.parse(document.getElementById("tag_info").value));
 
-                $("#add_tag_body").prepend($label).prepend($check);
-
-                $("#add_category_body").prepend($label).prepend($check);
+                $("#add_tags_body").prepend($label).prepend($check);
 
                 $( "input[type=checkbox]" )
                         .button();
@@ -492,7 +490,7 @@
     <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
     {{ tag_form.non_field_errors }}
     <input type="hidden" name="image_id" value="{{ image_id }}" />
-    <input type="hidden" id = 'tag_info' name="tag_info" value="""" />
+    <input type="hidden" id = 'tag_info' name="tag_info" value="" />
 
 
     <div class="panel-group" id="accordion">
@@ -513,7 +511,7 @@
         </div>
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
-                <div id="add_category_body"></div>
+                <div id="add_tags_body"></div>
 
                 {#                <div id="categories" class="row-fluid">#}
                 {#                    {% for field in category_form %}#}
@@ -563,10 +561,10 @@
         <div id="collapseTwo" class="panel-collapse collapse">
             <div class="panel-body">
 
-                {% for type_key in image_types %}
+                {% for type_key, type_value in image_types.items %}
                     <input type="checkbox" value="{{ type_key }}" id="type_check{{ forloop.counter }}" />
 
-                    <label for="type_check{{ forloop.counter }}">{{ type_key }}</label>
+                    <label for="type_check{{ forloop.counter }}">{{ type_value }}</label>
                 {% empty %}
                     <p>(No previous tags found for this image)</p>
                 {% endfor %}
@@ -601,11 +599,12 @@
         </div>
         <div id="collapseThree" class="panel-collapse collapse">
             <div class="panel-body">
+                <div id="add_category_body"></div>
 
 
-                {% for theme_key in image_themes %}
+                {% for theme_key, theme_value in image_themes.items %}
                     <input type="checkbox" value="{{ theme_key }}" id="theme_check{{ forloop.counter }}" />
-                    <label for="theme_check{{ forloop.counter }}">{{ theme_key }}</label>
+                    <label for="theme_check{{ forloop.counter }}">{{ theme_value }}</label>
                 {% empty %}
                     <p>(No previous tags found for this image)</p>
                 {% endfor %}

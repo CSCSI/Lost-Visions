@@ -80,15 +80,11 @@ def image_tags(request):
 
                     tag.user = lost_vision_user
                 except Exception as e1:
+                    # hack using the exception to use anonymous user if not logged in
                     print e1
 
-                    print '4'
-                    anon_user = models.User.objects.get(username='Anon_y_Mouse')
-                    print anon_user
-                    print '5'
+                    anon_user = models.User.objects.get(username='Anon_y_mouse')
                     tag.user = models.LostVisionUser.objects.get(username=anon_user)
-                    print tag.user
-                    print '6'
                     pass
 
                 tag.save()
@@ -188,7 +184,7 @@ def image(request, image_id):
     CreationTech = forms.creation_technique_form_factory()
     create_tech = CreationTech()
 
-    image_types = {'map': 'Map', 'architechture': 'Architechture', 'geology': 'Geology'}
+    image_types = {'decoration': 'Decoration', 'map': 'Map', 'architecture': 'Architecture', 'geology': 'Geology'}
 
     image_themes = {'homeandfamily': 'Home and Family', 'mythology': 'Mythology'}
 
