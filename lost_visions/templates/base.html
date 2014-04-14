@@ -220,7 +220,7 @@
 
         </ul>
 
-        <form id='search_form' action='{% url 'do_search' 'abcde'%}'
+        <form id='search_form' action='{% url 'do_search' 'abcde'%}' target="_blank"
               class="navbar-form navbar-right" role="search" method="post">{% csrf_token %}
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search" id="search_box">

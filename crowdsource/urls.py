@@ -22,7 +22,7 @@ urlpatterns = patterns('',
                        url(r'^signup', 'lost_visions.views.signup', name='signup'),
                        url(r'^do_signup', 'lost_visions.views.do_signup', name='signup.do_signup'),
 
-                       url(r'^search/(?P<word>\w+)', 'lost_visions.views.search', name='do_search'),
+                       url(r'^search/(?P<word>[\w\+]+)', 'lost_visions.views.search', name='do_search'),
 
                        url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),
                        url(r'^image/tags', 'lost_visions.views.image_tags', name='image.tags'),

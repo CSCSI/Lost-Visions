@@ -15,8 +15,8 @@
         });
     </script>
 
-    Search results for : {{ results.search_string }}
-    Images Tagged with {{ results.search_string }}
+    {#    <h2>Search results for : {{ results.search_string }}</h2>#}
+    <h3>Images Tagged with <strong>{{ results.search_string }}</strong></h3>
     <div id="result-container" class="js-masonry"
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
 
@@ -34,13 +34,14 @@
                 </div>
             </div>
         {% empty %}
-            <p>(No matches for your search within Tags)</p>
+            <div class="bl_item">
+                <p>(No matches for your search within Tags)</p>
+            </div>
         {% endfor %}
-
     </div>
     <hr>
 
-    Images with {{ results.search_string }} within the Author label
+    <h3>Images with <strong>{{ results.search_string }}</strong> within the Author or Title label</h3>
 
     <div id="result-container" class="js-masonry"
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
@@ -53,13 +54,15 @@
                     </a>
                     <div class="panel-footer">
                         {{ author_data.author }}
-{#                        <br>#}
-{#                        {{ author_data.title }}#}
+                        <br>
+                        ...{{ author_data.search_substring | safe }}...
                     </div>
                 </div>
             </div>
         {% empty %}
-            <p>(No matches for your search within Authors)</p>
+            <div class="bl_item" >
+                (No matches for your search within Authors or Title text)
+            </div>
         {% endfor %}
     </div>
 {% endblock %}

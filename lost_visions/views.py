@@ -2,6 +2,7 @@ import ast
 import json
 import os
 from random import randint
+import re
 import urllib2
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime
@@ -439,6 +440,9 @@ def search(request, word):
 
     results = dict()
     total_results = 0
+
+    results['tag'] = dict()
+    results['author'] = dict()
     for subword in word.split('+'):
 
         tag_results = models.Tag.objects.filter(Q( tag__contains=subword ))[:30]
@@ -456,7 +460,7 @@ def search(request, word):
             tag_results_dict[result.image.flickr_id] = tag_result
             total_results += 1
 
-        results['tag'] = tag_results_dict
+        results['tag'].update(tag_results_dict)
 
         author_results = models.Image.objects.filter(Q(first_author__contains=subword) |
                                                      Q(title__contains=subword))[:30]
@@ -469,15 +473,55 @@ def search(request, word):
             tag_result['title'] = result.title
             tag_result['img'] = result.flickr_small_source
 
+            #produce a substring of the title containing the search term, approx 6 words long
+            tag_result['search_substring'] = build_substring(subword, tag_result['title'], 6)
+
             author_results_dict[result.flickr_id] = tag_result
             total_results += 1
 
-        results['author'] = author_results_dict
+        results['author'].update(author_results_dict)
 
-    response_data = {'results': results, 'size': total_results, 'search_string': word}
+    response_data = {'results': results, 'size': total_results, 'search_string': word.replace('+', ' OR ')}
 
     return render(request, 'results.html',
                   {'results': response_data},
                   context_instance=RequestContext(request))
 
     # return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+# method to find the search term in the string
+# produces a substring containing the term
+# adds html strong tag around the search term
+# returned string approx 'length' words long, less if array is too short
+def build_substring(word, long_string, length):
+    title_arr = long_string.split()
+    word_pos = word_in_word(word, title_arr)
+
+    if word_pos == -1:
+        return ''
+    else:
+        start_pos = word_pos - int(length / 2)
+
+        substring_array = title_arr[start_pos:start_pos+length]
+
+        substring = ' '.join(substring_array)
+        return insert_bold(substring, word)
+
+
+#regex search ton find term, case insensitive
+#add html strong tag
+def insert_bold(string, word_to_bold):
+    str_arr = re.compile(word_to_bold, re.IGNORECASE).split(string)
+    str_arr[0] = str_arr[0] + '<strong>' + word_to_bold + '</strong>'
+    return ''.join(str_arr)
+
+
+# finds if search term is a substring of an individual word
+# eg search term 'bone'. 'Marylebone' contains the word 'bone',
+# so return index for 'Marylebone'
+def word_in_word(string, word_array):
+    for index, word in enumerate(word_array):
+        if string.lower() in word.lower():
+            return index
+    return -1
