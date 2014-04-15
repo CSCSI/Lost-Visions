@@ -9,7 +9,7 @@ from datetime import datetime
 from dateutil import parser
 from django.contrib import auth
 from django.core import serializers
-from django.db.models import Q
+from django.db.models import Q, Min
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -70,6 +70,7 @@ def image_tags(request):
                 tag.tag_order = user_tag['tag_order']
 
                 image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+                image.views_completed += 1
                 if image:
                     tag.image = image
 
@@ -88,6 +89,7 @@ def image_tags(request):
                     tag.user = models.LostVisionUser.objects.get(username=anon_user)
                     pass
 
+                image.save()
                 tag.save()
             except Exception as e2:
                 print 'error 2' + str(e2)
@@ -435,9 +437,6 @@ def findword(request):
 
 
 def search(request, word):
-    print word
-    print word.split('+')
-
     results = dict()
     total_results = 0
 
@@ -445,7 +444,7 @@ def search(request, word):
     results['author'] = dict()
     for subword in word.split('+'):
 
-        tag_results = models.Tag.objects.filter(Q( tag__contains=subword ))[:30]
+        tag_results = models.Tag.objects.order_by('-image__views_begun').filter(Q( tag__contains=subword ))[:30]
         print tag_results
         tag_results_dict = dict()
 
@@ -460,9 +459,13 @@ def search(request, word):
             tag_results_dict[result.image.flickr_id] = tag_result
             total_results += 1
 
+            #increment the views so the next search skips this one
+            result.image.views_begun +=1
+            result.image.save()
+
         results['tag'].update(tag_results_dict)
 
-        author_results = models.Image.objects.filter(Q(first_author__contains=subword) |
+        author_results = models.Image.objects.order_by('-views_begun').filter(Q(first_author__contains=subword) |
                                                      Q(title__contains=subword))[:30]
         author_results_dict = dict()
 
@@ -478,6 +481,8 @@ def search(request, word):
 
             author_results_dict[result.flickr_id] = tag_result
             total_results += 1
+            result.views_begun +=1
+            result.save()
 
         results['author'].update(author_results_dict)
 

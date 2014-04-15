@@ -54,6 +54,15 @@ class UserImageTags(models.Model):
 
 class Image(models.Model):
     id = models.IntegerField(primary_key=True)
+
+    # a count of number of times image is presented to user
+    # includes both search results and full image request
+    #
+    views_begun = models.IntegerField(default=0, blank=True)
+
+    # a count of number of times users have returned tagging info
+    views_completed = models.IntegerField(default=0, blank=True)
+
     # identifier = models.CharField(max_length=120L)
     # tags = models.CharField(max_length=256L, blank=True)
     # imageurl = models.CharField(max_length=120L, blank=True)

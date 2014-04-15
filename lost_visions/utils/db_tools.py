@@ -48,6 +48,9 @@ def get_image_info(image_id):
             print 'ERROR with IMAGE_ID = ' + image_id
             return get_image_info(get_next_image_id())
         else:
+            image_for_id.views_begun += 1
+            image_for_id.save()
+
             return image_info
 
     except ObjectDoesNotExist:
