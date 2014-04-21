@@ -17,18 +17,22 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
+from pygeoip import GeoIP
+from crowdsource.settings import BASE_DIR
 from lost_visions import models, forms
 from lost_visions.forms import TestForm
-from lost_visions.models import Tags, Tag
+from lost_visions.models import Tag
+from ipware.ip import get_ip
+
 from lost_visions.utils import db_tools
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
 
 @requires_csrf_token
 def home(request):
-    print request.user
-    if request.user.username:
-        print request.user.username
+    # print request.user
+    # if request.user.username:
+    #     print request.user.username
     return render(request, 'home.html',
                   context_instance=RequestContext(request))
 
@@ -36,9 +40,7 @@ def home(request):
 @requires_csrf_token
 def image_tags(request):
     print request.get_full_path()
-    # print request.POST['question']
 
-    # usable_tags = []
     if request.method == 'POST':
         print request.POST
         print request.user
@@ -436,9 +438,27 @@ def findword(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
+def record_search(request, word):
+
+    ip = get_ip(request)
+    if ip is not None:
+        print "we have an IP address for user"
+        print ip
+        g = GeoIP(os.path.join(BASE_DIR, 'GeoLiteCity.dat'))
+        location = g.record_by_addr(ip)
+        print word
+        print str(location)
+    else:
+        print "we don't have an IP address for user"
+
+    pass
+
+
 def search(request, word):
     results = dict()
     total_results = 0
+    
+    record_search(request, word)
 
     results['tag'] = dict()
     results['author'] = dict()
@@ -530,3 +550,15 @@ def word_in_word(string, word_array):
         if string.lower() in word.lower():
             return index
     return -1
+
+
+def image_map(request, image_id):
+    print 'map for image : ' + image_id
+    return render_to_response('image_map.html')
+
+
+def image_map_coords(request, image_id):
+
+    print image_id
+    print request.POST
+    return image_map(request, image_id)

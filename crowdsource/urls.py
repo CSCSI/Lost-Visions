@@ -24,10 +24,15 @@ urlpatterns = patterns('',
 
                        url(r'^search/(?P<word>[\w\+]+)', 'lost_visions.views.search', name='do_search'),
 
+                       url(r'^image/(?P<image_id>\d+)/map', 'lost_visions.views.image_map', name='image.map'),
+                       url(r'^image/(?P<image_id>\d+)/map/coords', 'lost_visions.views.image_map_coords', name='image.map.coords'),
+
                        url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),
                        url(r'^image/tags', 'lost_visions.views.image_tags', name='image.tags'),
                        url(r'^image/random', 'lost_visions.views.random_image', name='image.random'),
                        url(r'^image/grabflickr', 'lost_visions.views.grab_flickr', name='image.grab_flickr'),
+
+
 
                        url(r'^oed/(?P<word>\w+)', 'lost_visions.views.oed', name='oed'),
                        url(r'^findword', 'lost_visions.views.findword', name='find.word'),
