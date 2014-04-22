@@ -185,7 +185,7 @@ def image(request, image_id):
 
     return render(request, 'image.html',
                   {'image': image_info,
-                   'image_id': image_url_part,
+                   'image_id': str(image_url_part),
                    'image_types': image_types,
                    'image_themes': image_themes,
                    'tag_form': tag_form,

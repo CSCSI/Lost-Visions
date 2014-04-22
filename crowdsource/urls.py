@@ -22,8 +22,8 @@ urlpatterns = patterns('',
                        url(r'^signup', 'lost_visions.views.signup', name='signup'),
                        url(r'^do_signup', 'lost_visions.views.do_signup', name='signup.do_signup'),
 
-                       url(r'^image/coords/(?P<image_id>\d+)', 'lost_visions.views.coords', name='coords'),
-                       url(r'^image/map/(?P<image_id>\d+)', 'lost_visions.views.map', name='map'),
+                       url(r'^image/coords/(?P<image_id>\d+)', 'lost_visions.views.coords', name='image.coords'),
+                       url(r'^image/map/(?P<image_id>\d+)', 'lost_visions.views.map', name='image.map'),
                        url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),
 
                        url(r'^search/(?P<word>[\w\+]+)', 'lost_visions.views.search', name='do_search'),
@@ -49,7 +49,7 @@ urlpatterns = patterns('',
 
                        # url(r'^blog/', include('blog.urls')),
                        # url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
-                       url(r'^admin_tools/', include('admin_tools.urls')),
+                       # url(r'^admin_tools/', include('admin_tools.urls')),
 
                        url(r'^admin/', include(admin.site.urls)),
                        )
