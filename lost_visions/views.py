@@ -550,7 +550,7 @@ def word_in_word(string, word_array):
 
 
 @requires_csrf_token
-def image_map(request, image_id):
+def map(request, image_id):
     print 'map for image : ' + image_id
     return render(request,
                   'image_map.html',
@@ -559,7 +559,7 @@ def image_map(request, image_id):
 
 
 @requires_csrf_token
-def image_map_coords(request, image_id):
+def coords(request, image_id):
 
     print image_id
     print request.POST

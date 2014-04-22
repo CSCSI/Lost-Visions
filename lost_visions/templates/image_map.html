@@ -135,7 +135,7 @@
                 {{ image_coords_msg }}
             </div>
 {% endif %}
-    <form action="{% url 'image.map.coords' image_id=image_id %}" id="image-map-form" method="post">{% csrf_token %}
+    <form action="{% url 'coords' image_id=image_id %}" id="image-map-form" method="post">{% csrf_token %}
         <input type="hidden" name="image_id" value="{{ image_id }}" />
         <input type="hidden" id = 'north_east_x' name="north_east_x" value="" />
         <input type="hidden" id = 'north_east_y' name="north_east_y" value="" />
