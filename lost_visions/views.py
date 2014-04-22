@@ -18,8 +18,8 @@ from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
 from pygeoip import GeoIP
 from crowdsource.settings import BASE_DIR
-from lost_visions import forms
-from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
+from lost_visions import forms, models
+# from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
 from ipware.ip import get_ip
 
 from lost_visions.utils import db_tools
@@ -43,10 +43,10 @@ def image_tags(request):
         print request.POST
         print request.user
 
-        image = Image.objects.get(flickr_id=request.POST['image_id'])
+        image = models.Image.objects.get(flickr_id=request.POST['image_id'])
         request_user = get_request_user(request)
 
-        image_text = ImageText()
+        image_text = models.ImageText()
         image_text.caption = request.POST['input_caption']
         image_text.description = request.POST['image_description']
         image_text.image = image
@@ -59,7 +59,7 @@ def image_tags(request):
 
             for user_tag in tags_xy:
                 try:
-                    tag = Tag()
+                    tag = models.Tag()
                     tag.tag = str(user_tag['tag'])
                     tag.x_percent = str(user_tag['x_percent'])
                     tag.y_percent = str(user_tag['y_percent'])
@@ -91,13 +91,13 @@ def image_tags(request):
 
 def get_request_user(request):
     try:
-        user = User.objects.get(username=request.user)
-        lost_vision_user = LostVisionUser.objects.get(username=user)
+        user = models.User.objects.get(username=request.user)
+        lost_vision_user = models.LostVisionUser.objects.get(username=user)
         return lost_vision_user
     except Exception as e1:
         # hack using the exception to use anonymous user if not logged in
-        anon_user = User.objects.get(username='Anon_y_mouse')
-        return LostVisionUser.objects.get(username=anon_user)
+        anon_user = models.User.objects.get(username='Anon_y_mouse')
+        return models.LostVisionUser.objects.get(username=anon_user)
 
 
 def is_number(string):
@@ -452,7 +452,7 @@ def search(request, word):
 
     record_search(request, word)
 
-    search_result = SearchQuery()
+    search_result = models.SearchQuery()
     search_result.user = get_request_user(request)
     search_result.search_term = word
     search_result.save()
@@ -461,7 +461,7 @@ def search(request, word):
     results['author'] = dict()
     for subword in word.split('+'):
 
-        tag_results = Tag.objects.order_by('-image__views_begun').filter(Q( tag__contains=subword ))[:30]
+        tag_results = models.Tag.objects.order_by('-image__views_begun').filter(Q( tag__contains=subword ))[:30]
         print tag_results
         tag_results_dict = dict()
 
@@ -482,7 +482,7 @@ def search(request, word):
 
         results['tag'].update(tag_results_dict)
 
-        author_results = Image.objects.order_by('-views_begun').filter(Q(first_author__contains=subword) |
+        author_results = models.Image.objects.order_by('-views_begun').filter(Q(first_author__contains=subword) |
                                                                               Q(title__contains=subword))[:30]
         author_results_dict = dict()
 
@@ -570,7 +570,7 @@ def image_map_coords(request, image_id):
     print request.POST['south_west_y']
 
     try:
-        geotag = GeoTag()
+        geotag = models.GeoTag()
         if request.POST['north_east_x']:
             geotag.north_east_x = request.POST['north_east_x']
         if request.POST['north_east_y']:
@@ -579,7 +579,7 @@ def image_map_coords(request, image_id):
             geotag.south_west_x = request.POST['south_west_x']
         if request.POST['south_west_y']:
             geotag.south_west_y = request.POST['south_west_y']
-        geotag.image = Image.objects.get(flickr_id=request.POST['image_id'])
+        geotag.image = models.Image.objects.get(flickr_id=request.POST['image_id'])
         geotag.user = get_request_user(request)
 
         geotag.save()
