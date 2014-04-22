@@ -49,7 +49,9 @@
         {% for author_key, author_data in results.results.author.items %}
             <div class="bl_item" >
                 <div class="panel">
-                    <a href="/image/{{ author_key }}" target="_blank">
+                    {#                    <a href="/image/{{ author_key }}" target="_blank">#}
+                    <a href="{% url 'image' author_key %}" target="_blank">
+
                         <img src="{{ author_data.img }}" style='width:100%; height:auto;'>
                     </a>
                     <div class="panel-footer">

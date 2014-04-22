@@ -17,19 +17,6 @@
         myApp.hidePleaseWait();
     }
 
-    var myApp;
-    myApp = myApp || (function () {
-        var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
-        return {
-            showPleaseWait: function() {
-                pleaseWaitDiv.modal();
-            },
-            hidePleaseWait: function () {
-                pleaseWaitDiv.modal('hide');
-            }
-        }
-    })();
-
     {#        function register_tree_categories() {#}
     {#            $('#add_category').click(function(){#}
     {#                console.log(this);#}
@@ -355,15 +342,6 @@
 
             if (Math.cos(radians) == 0) {
                 scale = img.naturalWidth / canvas.height;
-                {#                if (centerpointX < centerpointY) {#}
-                {#                                hyp = (hyp / centerpointY) * (centerpointX);#}
-                {#                                draw_x += (draw_x / centerpointY) * (centerpointX);#}
-                {#                                draw_y += (draw_y / centerpointX) * (centerpointY);#}
-                {#                } else {#}
-                {#                                hyp = (hyp / centerpointX) * (centerpointY);#}
-                {#                                draw_x += (draw_x / centerpointX) * (centerpointY);#}
-                {#                                draw_y += (draw_y / centerpointY) * (centerpointX);#}
-                {#                }#}
             } else {
                 scale = img.naturalWidth / canvas.width;
             }
@@ -394,7 +372,6 @@
             var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
             message += ('<br>draw coords: ' + translated_variables.x + ' , ' + translated_variables.y);
             message += ('<br>scale-x% : ' + translated_variables.x_percent + ', scale-y% ' + translated_variables.y_percent);
-            {#            message += ('<br>x% : ' + ((translated_variables.x/img.naturalWidth) *100) + ', y% ' + (translated_variables.y/img.naturalHeight) *100);#}
 
             message += ('<br>offset : ' + translated_variables.offsetX + ' , ' + translated_variables.offsetY);
             message += ('<br>centerpoint : ' + translated_variables.centerpointX + ' , ' + translated_variables.centerpointY);
@@ -402,21 +379,14 @@
             message += ('<br>degs : ' + degs + ', rads : ' + translated_variables.radians);
             message += ('<br>t-x : ' + (mousePos.x / translated_variables.x) + ', t-y : ' + (mousePos.y / translated_variables.y));
 
-{#            $('#output').html(message);#}
+            {#            $('#output').html(message);#}
         }, false);
 
         img.src = "{{ image.imageurl }}";
         img.onload = function(){
-            {#            console.log( img.naturalWidth + " " + img.naturalHeight);#}
-
             var scale = img.naturalWidth / parent.width();
-
-            {#            console.log(scale);#}
-
             canvas.width = parent.width();
             canvas.height = img.naturalHeight / scale;
-
-            {#            console.log(canvas.width + " " + canvas.height);#}
             ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 
         };
@@ -451,6 +421,10 @@
                     <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
                 </li>
 
+                <li>
+                    <a class="btn btn-default" href="{% url 'image.map' image_id %}" target="_blank">Map</a>
+                </li>
+
                 <li class="next">
                     <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
                 </li>
@@ -465,27 +439,6 @@
     <div class="container-fluid">
 
     <div id="right-main">
-
-    {#    <div class="panel panel-default">#}
-    {#        <div class="panel-heading">#}
-    {#            <h1 style="margin:0 0 5px 0;color:#2b5688;font-size:15px">#}
-    {#                Search Oxford English Dictionary#}
-    {#            </h1>#}
-    {#        </div>#}
-    {#        <div class="panel-body">#}
-    {#            <div style="font:normal 13px/1.5 Arial;width:318px;height:98px;background:#f1f5fb;border:1px solid #d8e0f5;margin:0;padding:20px 10px 10px 10px;text-align:left">#}
-    {#                <form enctype="application/x-www-form-urlencoded" method="get" action="http://www.oed.com:80/search" name="oed_search" id="oed_search">#}
-    {#                    <label for="text">#}
-    {#                        Enter word or phrase:</label>#}
-    {#                    <input size="20" name="q" type="text" style="textfield">#}
-    {##}
-    {#                    </input><br/>#}
-    {#                    <input type="submit" value="Search"></input>#}
-    {#                </form>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-
 
     <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
     {{ tag_form.non_field_errors }}
@@ -608,7 +561,7 @@
                 {% empty %}
                     <p>(No previous tags found for this image)</p>
                 {% endfor %}
-                                                <div id="category_tree"></div>
+                <div id="category_tree"></div>
 
             </div>
             <div class="panel-footer">
@@ -638,13 +591,10 @@
         <div id="collapseFour" class="panel-collapse collapse">
             <div class="panel-body">
 
-
-                <div id="free_text" >
-                    <label for="input_tag">Caption</label>
-                    <input type="text" class="form-control" id="input_caption">
-                    <div id="add_caption" class="btn btn-default">Save</div>
+                <div id="free_text_caption" >
+                    <label for="input_caption">Caption</label>
+                    <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
                 </div>
-
 
             </div>
             <div class="panel-footer">
@@ -675,7 +625,7 @@
         <div id="collapseFive" class="panel-collapse collapse">
             <div class="panel-body">
 
-                <div id="free_text" class="row-fluid">
+                <div id="free_text_description" class="row-fluid">
                     <label for="free-text-area">Description</label>
                     <textarea name="image_description" class="form-control"
                               rows="3" id="free-text-area"></textarea>
@@ -702,55 +652,55 @@
 
 
 
-{#    <div class="panel panel-default">#}
-{#        <div class="panel-heading">#}
-{#            <h4 class="panel-title">#}
-{#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix">#}
-{#                    Please select the tags below which describe the image#}
-{#                </a>#}
-{#            </h4>#}
-{#        </div>#}
-{#        <div id="collapseSix" class="panel-collapse collapse">#}
-{#            <div class="panel-body">#}
-{##}
-{##}
-{#                {% for key in image.tags %}#}
-{#                    <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />#}
-{##}
-{#                    <label for="check{{ forloop.counter }}">{{ key }}</label>#}
-{#                {% empty %}#}
-{#                    <p>(No previous tags found for this image)</p>#}
-{#                {% endfor %}#}
-{##}
-{##}
-{##}
-{#                <div class="panel-heading">Please select the Flickr tags below which describe the image</div>#}
-{#                <div class="panel-body">#}
-{#                    {% for field in tag_form %}#}
-{#                        {{ field }}#}
-{#                        <label for="{{ field.auto_id }}">{{ field.label }}</label>#}
-{#                    {% empty %}#}
-{#                        (No relevant Flickr tags found for this image)#}
-{#                    {% endfor %}#}
-{#                </div>#}
-{##}
-{##}
-{#            </div>#}
-{#            <div class="panel-footer">#}
-{#                <ul class="pager">#}
-{#                    <li class="previous">#}
-{#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"#}
-{#                           class="btn btn-default">← Previous</a>#}
-{#                    </li>#}
-{#                    <li class="next">#}
-{#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseSevern"#}
-{#                           class="btn btn-default">Next →</a>#}
-{#                    </li>#}
-{#                </ul>#}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#    </div>#}
+    {#    <div class="panel panel-default">#}
+    {#        <div class="panel-heading">#}
+    {#            <h4 class="panel-title">#}
+    {#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix">#}
+    {#                    Please select the tags below which describe the image#}
+    {#                </a>#}
+    {#            </h4>#}
+    {#        </div>#}
+    {#        <div id="collapseSix" class="panel-collapse collapse">#}
+    {#            <div class="panel-body">#}
+    {##}
+    {##}
+    {#                {% for key in image.tags %}#}
+    {#                    <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />#}
+    {##}
+    {#                    <label for="check{{ forloop.counter }}">{{ key }}</label>#}
+    {#                {% empty %}#}
+    {#                    <p>(No previous tags found for this image)</p>#}
+    {#                {% endfor %}#}
+    {##}
+    {##}
+    {##}
+    {#                <div class="panel-heading">Please select the Flickr tags below which describe the image</div>#}
+    {#                <div class="panel-body">#}
+    {#                    {% for field in tag_form %}#}
+    {#                        {{ field }}#}
+    {#                        <label for="{{ field.auto_id }}">{{ field.label }}</label>#}
+    {#                    {% empty %}#}
+    {#                        (No relevant Flickr tags found for this image)#}
+    {#                    {% endfor %}#}
+    {#                </div>#}
+    {##}
+    {##}
+    {#            </div>#}
+    {#            <div class="panel-footer">#}
+    {#                <ul class="pager">#}
+    {#                    <li class="previous">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"#}
+    {#                           class="btn btn-default">← Previous</a>#}
+    {#                    </li>#}
+    {#                    <li class="next">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseSevern"#}
+    {#                           class="btn btn-default">Next →</a>#}
+    {#                    </li>#}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+    {##}
+    {#    </div>#}
 
 
 
@@ -760,43 +710,43 @@
 
 
 
-{#        <div class="panel panel-default">#}
-{#            <div class="panel-heading">#}
-{#                <h4 class="panel-title">#}
-{#                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseSevern">#}
-{#                        Please select one or more creation techniques which are relevant to the image#}
-{#                    </a>#}
-{#                </h4>#}
-{#            </div>#}
-{#            <div id="collapseSevern" class="panel-collapse collapse">#}
-{#                <div class="panel-body">#}
-{##}
-{##}
-{#                    <div class="row-fluid">#}
-{##}
-{#                        {% for field in create_tech_form %}#}
-{#                            {{ field }}#}
-{#                            <label for="{{ field.auto_id }}">{{ field.label }}</label>#}
-{##}
-{#                        {% endfor %}#}
-{##}
-{#                    </div>#}
-{##}
-{#                </div>#}
-{#                <div class="panel-footer">#}
-{#                    <ul class="pager">#}
-{#                        <li class="previous">#}
-{#                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix"#}
-{#                               class="btn btn-default">← Previous</a>#}
-{#                        </li>#}
-{#                    </ul>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
+        {#        <div class="panel panel-default">#}
+        {#            <div class="panel-heading">#}
+        {#                <h4 class="panel-title">#}
+        {#                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseSevern">#}
+        {#                        Please select one or more creation techniques which are relevant to the image#}
+        {#                    </a>#}
+        {#                </h4>#}
+        {#            </div>#}
+        {#            <div id="collapseSevern" class="panel-collapse collapse">#}
+        {#                <div class="panel-body">#}
+        {##}
+        {##}
+        {#                    <div class="row-fluid">#}
+        {##}
+        {#                        {% for field in create_tech_form %}#}
+        {#                            {{ field }}#}
+        {#                            <label for="{{ field.auto_id }}">{{ field.label }}</label>#}
+        {##}
+        {#                        {% endfor %}#}
+        {##}
+        {#                    </div>#}
+        {##}
+        {#                </div>#}
+        {#                <div class="panel-footer">#}
+        {#                    <ul class="pager">#}
+        {#                        <li class="previous">#}
+        {#                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix"#}
+        {#                               class="btn btn-default">← Previous</a>#}
+        {#                        </li>#}
+        {#                    </ul>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </div>#}
 
 
     {% else %}
-<hr>
+        <hr>
 
 
         <div class="bs-component">
@@ -896,7 +846,7 @@
     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <img id='photo' src="{{ image.imageurl }}" style='width: 100%; height:auto; '>
+                <img id='zoom-photo' src="{{ image.imageurl }}" style='width: 100%; height:auto; '>
             </div>
         </div>
     </div>

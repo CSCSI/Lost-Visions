@@ -1,4 +1,5 @@
 import os
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
 from django.contrib.auth.models import User
@@ -12,8 +13,8 @@ class LostVisionUser(models.Model):
     username = models.ForeignKey(User, blank=False)
     expert_level = models.IntegerField(default=0, blank=True)
     self_description = models.CharField(max_length=256L, blank=True)
-    sign_up_timestamp = models.DateTimeField(auto_now=False, blank=True)
-    last_login = models.DateTimeField(auto_now=False, blank=True)
+    sign_up_timestamp = models.DateTimeField(auto_now=False, blank=True, null=True)
+    last_login = models.DateTimeField(auto_now=False, blank=True, null=True)
     number_logins = models.IntegerField(default=0, blank=True)
 
     def __unicode__(self):
@@ -138,7 +139,27 @@ class Tag(models.Model):
         return str(self.id) + ':' + self.tag + ':' + user + ':' + image
 
 
-class Searches(models.Model):
+class GeoTag(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(LostVisionUser, blank=False)
+    image = models.ForeignKey(Image, blank=False)
+    north_east_x = models.CharField(max_length=256L, blank=True)
+    north_east_y = models.CharField(max_length=256L, blank=True)
+    south_west_x = models.CharField(max_length=256L, blank=True)
+    south_west_y = models.CharField(max_length=256L, blank=True)
+
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+    tag_order = models.IntegerField(blank=True, null=True)
+
+    def __unicode__(self):
+        user = self.user.username.username
+        image = self.image.flickr_id
+
+        return str(self.id) + ':' + user + ':' + image + ':[' + self.north_east_x + ':' \
+            + self.north_east_y + ']:[' + self.south_west_x + ':' + self.south_west_y + ']'
+
+
+class SearchQuery(models.Model):
     id = models.IntegerField(primary_key=True)
     search_term = models.CharField(max_length=256L, blank=False)
     timestamp = models.DateTimeField(auto_now=True, blank=True)
@@ -147,4 +168,20 @@ class Searches(models.Model):
     def __unicode__(self):
         user = self.user.username.username
 
-        return str(self.id) + ':' + user + ':' + self.search_term
+        return str(self.id) + ':' + user + ':' + self.search_term + ':' \
+               + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+
+
+class ImageText(models.Model):
+    id = models.IntegerField(primary_key=True)
+    caption = models.TextField()
+    description = models.TextField()
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+    user = models.ForeignKey(LostVisionUser, blank=True)
+    image = models.ForeignKey(Image, blank=False)
+
+    def __unicode__(self):
+        user = self.user.username.username
+
+        return str(self.id) + ':' + user + ':' + self.caption + ':' \
+               + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')

@@ -21,7 +21,6 @@
     self_description : "Delete Me"
 
 
-
 #a user
 - model: auth.user
   pk: 2000
@@ -39,28 +38,27 @@
     self_description : "Delete Me"
 
 
-
-- model : lost_visions.Person
-  pk : 1
-  fields :
-    name : "John Smith"
-
-
-- model : lost_visions.Person
-  pk : 2
-  fields :
-    name : "Bob Green"
-
-
-- model : lost_visions.Book
-  pk : 1
-  fields :
-    title : "A book"
-    identifier : 7642387
-    publisher : "Fake Publisher"
-    shelfmark : "shelk mark number 0001"
-    author : 1
-    illustrator : 2
+#- model : lost_visions.Person
+#  pk : 1
+#  fields :
+#    name : "John Smith"
+#
+#
+#- model : lost_visions.Person
+#  pk : 2
+#  fields :
+#    name : "Bob Green"
+#
+#
+#- model : lost_visions.Book
+#  pk : 1
+#  fields :
+#    title : "A book"
+#    identifier : 7642387
+#    publisher : "Fake Publisher"
+#    shelfmark : "shelk mark number 0001"
+#    author : 1
+#    illustrator : 2
 
 
 #- model : lost_visions.Image

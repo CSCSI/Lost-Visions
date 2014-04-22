@@ -91,7 +91,7 @@
             infoWindow.setContent(contentString);
             infoWindow.setPosition(ne);
 
-            infoWindow.open(map);
+{#            infoWindow.open(map);#}
 
             document.getElementById("north_east_x").value = ne.lat();
             document.getElementById("north_east_y").value = ne.lng();
@@ -113,7 +113,7 @@
                 content: content
             };
 
-            var infowindow = new google.maps.InfoWindow(options);
+{#            var infowindow = new google.maps.InfoWindow(options);#}
             map.setCenter(options.position);
         }
 
@@ -123,8 +123,19 @@
             $('#map-canvas').height($(window).height() - 65);
         });
 
+        function SubmitAndClose(){
+            document.forms['certform'].submit();
+            window.close();
+        }
+
     </script>
-    <form action="{% url 'image.map.coords' %}" id="image-map-form" method="post">{% csrf_token %}
+        {% if image_coords_msg %}
+            <div class="alert alert-dismissable alert-success">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {{ image_coords_msg }}
+            </div>
+{% endif %}
+    <form action="{% url 'image.map.coords' image_id %}" id="image-map-form" method="post">{% csrf_token %}
         <input type="hidden" name="image_id" value="{{ image_id }}" />
         <input type="hidden" id = 'north_east_x' name="north_east_x" value="" />
         <input type="hidden" id = 'north_east_y' name="north_east_y" value="" />
@@ -132,18 +143,22 @@
         <input type="hidden" id = 'south_west_y' name="south_west_y" value="" />
 
 
-        <div class="container jumbotron" style="height: auto; width: 100%">
+        <div class="jumbotron" style="height: auto; width: 100%">
+            <div class="panel-footer">
+                <ul class="pager">
+                    <li>
+                        <button type="submit" class="rota btn btn-default">Save</button>
+                    </li>
+                </ul>
+            </div>
             <div id="map-canvas" style="height: 100%; width: 100%"></div>
 
             <div class="panel-footer">
                 <ul class="pager">
-
                     <li>
-                        <a class="rota btn btn-default" data-north-east-x="0">Save</a>
+                        <button type="submit" class="rota btn btn-default">Save</button>
                     </li>
-
                 </ul>
-                <div id="output"></div>
             </div>
         </div>
     </form>
