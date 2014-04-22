@@ -24,8 +24,8 @@ urlpatterns = patterns('',
 
                        url(r'^search/(?P<word>[\w\+]+)', 'lost_visions.views.search', name='do_search'),
 
-                       url(r'^image/(?P<image_id>\d+)/map/coords', 'lost_visions.views.image_map_coords', name='image.map.coords'),
-                       url(r'^image/(?P<image_id>\d+)/map', 'lost_visions.views.image_map', name='image.map'),
+                       url(r'^image/(?P<image_id>\w+)/map/coords', 'lost_visions.views.image_map_coords', name='image.map.coords'),
+                       url(r'^image/(?P<image_id>\w+)/map', 'lost_visions.views.image_map', name='image.map'),
 
                        url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),
                        url(r'^image/tags', 'lost_visions.views.image_tags', name='image.tags'),

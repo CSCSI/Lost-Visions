@@ -1,21 +1,10 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-
+{% load url from future %}
 
 {% block content %}
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-    function load_new_image() {
-        myApp.showPleaseWait()
-        var name = 'test';
-        Dajaxice.lost_visions.new_image(Dajax.process,{'name': name});
-    }
-
-    function change_image(url){
-        {#            $('#photo').attr("src", url);#}
-        location.reload();
-        myApp.hidePleaseWait();
-    }
 
     {#        function register_tree_categories() {#}
     {#            $('#add_category').click(function(){#}
