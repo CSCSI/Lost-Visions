@@ -170,14 +170,26 @@ def image(request, image_id):
         else:
             image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
 
-    TagForm = forms.tag_form_factory(tags)
-    tag_form = TagForm()
+    formatted_info = dict()
+    formatted_info['Issuance'] = image_info['Issuance']
+    formatted_info['Date of Publishing'] = image_info['Date of Publishing']
+    formatted_info['Title'] = image_info['Title']
+    formatted_info['Volume'] = image_info['vol']
+    formatted_info['Author'] = image_info['Author']
+    formatted_info['Book ID'] = image_info['imagesfrombook']
+    formatted_info['Place of Publishing'] = image_info['Place of Publishing']
+    formatted_info['Shelfmark'] = image_info['Shelfmark']
+    formatted_info['Page'] = image_info['Page']
+    formatted_info['Identifier'] = image_info['Identifier']
 
-    CategoryForm = forms.category_form_factory()
-    category_form = CategoryForm()
-
-    CreationTech = forms.creation_technique_form_factory()
-    create_tech = CreationTech()
+    # TagForm = forms.tag_form_factory(tags)
+    # tag_form = TagForm()
+    #
+    # CategoryForm = forms.category_form_factory()
+    # category_form = CategoryForm()
+    #
+    # CreationTech = forms.creation_technique_form_factory()
+    # create_tech = CreationTech()
 
     image_types = {'decoration': 'Decoration', 'map': 'Map', 'architecture': 'Architecture', 'geology': 'Geology'}
 
@@ -185,12 +197,10 @@ def image(request, image_id):
 
     return render(request, 'image.html',
                   {'image': image_info,
+                   'formatted_info': formatted_info,
                    'image_id': str(image_url_part),
                    'image_types': image_types,
-                   'image_themes': image_themes,
-                   'tag_form': tag_form,
-                   'category_form': category_form,
-                   'create_tech_form': create_tech},
+                   'image_themes': image_themes},
                   context_instance=RequestContext(request))
 
 def get_creation_techniques_html(request):

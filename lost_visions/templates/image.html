@@ -773,7 +773,7 @@
             <div class="bs-example table-responsive">
                 <table class="table table-striped table-hover ">
                     <tbody>
-                    {% for mykey,value in image.items %}
+                    {% for mykey,value in formatted_info.items %}
                         {% if mykey != 'tags' %}
 
                             <tr><th>{{ mykey }}</th><td>{{ value }}</td></tr>
