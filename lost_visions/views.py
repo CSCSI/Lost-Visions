@@ -19,7 +19,6 @@ from django.views.decorators.csrf import requires_csrf_token
 from pygeoip import GeoIP
 from crowdsource.settings import BASE_DIR
 from lost_visions import forms
-from lost_visions.forms import TestForm
 from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
 from ipware.ip import get_ip
 
