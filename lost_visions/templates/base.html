@@ -215,6 +215,7 @@
 
             {% if user.is_authenticated %}
                 <li><a href="{% url 'logout' %}?return_url={{ request.path }}">Logout {{ user }}</a></li>
+                <li><a href="{% url 'user_profile_home' %}">{{ user }} Home</a></li>
             {% else %}
                 <li><a href="{% url 'login' %}">Login</a></li>
             {% endif %}

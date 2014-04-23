@@ -156,7 +156,7 @@ class GeoTag(models.Model):
         image = self.image.flickr_id
 
         return str(self.id) + ':' + user + ':' + image + ':[' + self.north_east_x + ':' \
-            + self.north_east_y + ']:[' + self.south_west_x + ':' + self.south_west_y + ']'
+               + self.north_east_y + ']:[' + self.south_west_x + ':' + self.south_west_y + ']'
 
 
 class SearchQuery(models.Model):
@@ -185,3 +185,16 @@ class ImageText(models.Model):
 
         return str(self.id) + ':' + user + ':' + self.caption + ':' \
                + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+
+
+class SavedImages(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user = models.ForeignKey(LostVisionUser, blank=True)
+    image = models.ForeignKey(Image, blank=False)
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    def __unicode__(self):
+        user = self.user.username.username
+
+        return str(self.id) + ':' + user + ':' \
+               + self.image.flickr_id + ':' + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')

@@ -78,6 +78,25 @@
             window.location.replace('{% url 'image.random' %}');
         });
 
+        $('#save_image').change(function() {
+            if(this.checked) {
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'user_profile.save_image' %}",
+                    data: {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        image_id: {{ image_id }}
+                    },
+                    success: function(data) {
+                        alert("Saved Image");
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
+                    }
+                });
+            }
+        });
+
         $('#add_tag').click(function(){
 
             var input_field = $("#input_tag");
@@ -412,6 +431,11 @@
 
                 <li>
                     <a class="btn btn-default" href="{% url 'image.map' image_id %}" target="_blank">Map</a>
+                </li>
+
+                <li>
+                    <input type="checkbox" id="save_image">
+                    <label for="save_image">Save</label>
                 </li>
 
                 <li class="next">

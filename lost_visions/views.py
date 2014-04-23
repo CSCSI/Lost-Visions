@@ -10,10 +10,11 @@ from dateutil import parser
 from django.contrib import auth
 from django.core import serializers
 from django.db.models import Q, Min
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render
 
 # Create your views here.
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
 from pygeoip import GeoIP
@@ -21,6 +22,7 @@ from crowdsource.settings import BASE_DIR
 from lost_visions import forms, models
 # from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
 from ipware.ip import get_ip
+from bleach import clean
 
 from lost_visions.utils import db_tools
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
@@ -47,8 +49,8 @@ def image_tags(request):
         request_user = get_request_user(request)
 
         image_text = models.ImageText()
-        image_text.caption = request.POST['input_caption']
-        image_text.description = request.POST['image_description']
+        image_text.caption = clean(request.POST['input_caption'], strip=True)
+        image_text.description = clean(request.POST['image_description'], strip=True)
         image_text.image = image
         image_text.user = request_user
         image_text.save()
@@ -60,9 +62,9 @@ def image_tags(request):
             for user_tag in tags_xy:
                 try:
                     tag = models.Tag()
-                    tag.tag = str(user_tag['tag'])
-                    tag.x_percent = str(user_tag['x_percent'])
-                    tag.y_percent = str(user_tag['y_percent'])
+                    tag.tag = clean(str(user_tag['tag']), strip=True)
+                    tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
+                    tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
                     try:
                         # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
                         date_object = parser.parse(str(user_tag['datetime']))
@@ -71,7 +73,7 @@ def image_tags(request):
                         print e3
                         pass
 
-                    tag.tag_order = user_tag['tag_order']
+                    tag.tag_order = clean(user_tag['tag_order'], strip=True)
 
                     image.views_completed += 1
                     if image:
@@ -130,6 +132,8 @@ def is_user_tag(tag):
 @requires_csrf_token
 def image(request, image_id):
     print image_id
+
+    image_id = clean(image_id, strip=True)
 
     image_info = db_tools.get_image_info(image_id)
 
@@ -460,6 +464,8 @@ def search(request, word):
     results = dict()
     total_results = 0
 
+    word = clean(word, strip=True)
+
     record_search(request, word)
 
     search_result = models.SearchQuery()
@@ -469,16 +475,13 @@ def search(request, word):
 
     results['tag'] = dict()
     results['author'] = dict()
+    results['caption'] = dict()
     for subword in word.split('+'):
 
         tag_results = models.Tag.objects.order_by('-image__views_begun').filter(Q( tag__contains=subword ))[:30]
-        print tag_results
         tag_results_dict = dict()
-
         for result in tag_results:
-            # results[result.image.flickr_id] = serializers.serialize("json", result)
             tag_result = dict()
-            tag_result['url'] = 'http://localhost:8000/image/' + result.image.flickr_id
             tag_result['tag'] = result.tag
             tag_result['title'] = result.image.title
             tag_result['img'] = result.image.flickr_small_source
@@ -492,13 +495,34 @@ def search(request, word):
 
         results['tag'].update(tag_results_dict)
 
+
+        caption_results = models.ImageText.objects.order_by('-image__views_begun').filter(Q( caption__contains=subword ) |
+                                                          Q( description__contains=subword ))[:30]
+        caption_results_dict = dict()
+        for result in caption_results:
+            caption_result = dict()
+            caption_result['caption'] = result.caption
+            caption_result['title'] = result.image.title
+            caption_result['img'] = result.image.flickr_small_source
+            caption_result['description'] = build_substring(subword, result.description, 6)
+
+
+            caption_results_dict[result.image.flickr_id] = caption_result
+            total_results += 1
+
+            result.image.views_begun +=1
+            result.image.save()
+
+        results['caption'].update(caption_results_dict)
+
+
+
+
         author_results = models.Image.objects.order_by('-views_begun').filter(Q(first_author__contains=subword) |
                                                                               Q(title__contains=subword))[:30]
         author_results_dict = dict()
-
         for result in author_results:
             tag_result = dict()
-            tag_result['url'] = 'http://localhost:8000/image/' + result.flickr_id
             tag_result['author'] = result.first_author
             tag_result['title'] = result.title
             tag_result['img'] = result.flickr_small_source
@@ -510,7 +534,6 @@ def search(request, word):
             total_results += 1
             result.views_begun +=1
             result.save()
-
         results['author'].update(author_results_dict)
 
     response_data = {'results': results, 'size': total_results, 'search_string': word.replace('+', ' OR ')}
@@ -519,7 +542,6 @@ def search(request, word):
                   {'results': response_data},
                   context_instance=RequestContext(request))
 
-    # return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 # method to find the search term in the string
@@ -601,3 +623,46 @@ def coords(request, image_id):
                   {'image_id': image_id,
                    'image_coords_msg': 'Thank you. You may save another region, or close this window'},
                   context_instance=RequestContext(request))
+
+
+@requires_csrf_token
+def save_image(request):
+    if request.is_ajax():
+        try:
+            user = get_request_user(request)
+            image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+
+            if user and image and user.username.username is not 'Anon_y_mouse':
+                image_to_save = models.SavedImages()
+                image_to_save.user = user
+                image_to_save.image = image
+
+                image_to_save.save()
+
+                return HttpResponse('All good')
+        except Exception as e:
+            print e
+            return HttpResponse('Error')
+    else:
+        raise Http404
+
+
+def user_home(request):
+
+    request_user = get_request_user(request)
+
+    saved_images = models.SavedImages.objects.filter(user=request_user)
+
+    saved_images_dict = dict()
+    for image in saved_images:
+
+        image_dict = dict()
+        image_dict['title'] = image.image.title
+        image_dict['page'] = image.image.page
+        image_dict['url'] = image.image.flickr_small_source
+
+        saved_images_dict[image.image.flickr_id] = image_dict
+
+    return render(request,
+                  'image_map.html',
+                  {'images': saved_images_dict})

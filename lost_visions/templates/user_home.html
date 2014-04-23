@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div id="result-container" class="js-masonry"
+         data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
+        <br>
+    {% for saved_image_key, saved_image_data in images.items %}
+        <div class="bl_item" >
+            <div class="panel">
+                <a href="{% url 'image' saved_image_key %}" target="_blank">
+                    <img src="{{ saved_image_data.url }}" style='width:100%; height:auto;'>
+                </a>
+                <div class="panel-footer">
+                    {{ saved_image_key }}
+                    <br>
+                    ...{{ saved_image_data.page }}...
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="bl_item" >
+            (You have not yet saved any images)
+        </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}

@@ -15,7 +15,6 @@
         });
     </script>
 
-    {#    <h2>Search results for : {{ results.search_string }}</h2>#}
     <h3>Images Tagged with <strong>{{ results.search_string }}</strong></h3>
     <div id="result-container" class="js-masonry"
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
@@ -41,6 +40,33 @@
     </div>
     <hr>
 
+    <h3>Images with Caption <strong>{{ results.search_string }}</strong></h3>
+    <div id="result-container" class="js-masonry"
+         data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
+
+        {% for caption_key, caption_data in results.results.caption.items %}
+            <div class="bl_item" style="max-width: 30%">
+                <div class="panel">
+                    <a href="/image/{{ caption_key }}" target="_blank">
+                        <img src="{{ caption_data.img }}" style='width:100%; height:auto;'>
+                    </a>
+                    <div class="panel-footer">
+                        {{ caption_data.caption }}
+                        <br>
+                        {{ caption_data.title }}
+                        <br>
+                        {{ caption_data.description }}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="bl_item">
+                <p>(No matches for your search within Captions)</p>
+            </div>
+        {% endfor %}
+    </div>
+    <hr>
+
     <h3>Images with <strong>{{ results.search_string }}</strong> within the Author or Title label</h3>
 
     <div id="result-container" class="js-masonry"
@@ -49,9 +75,7 @@
         {% for author_key, author_data in results.results.author.items %}
             <div class="bl_item" >
                 <div class="panel">
-                    {#                    <a href="/image/{{ author_key }}" target="_blank">#}
                     <a href="{% url 'image' author_key %}" target="_blank">
-
                         <img src="{{ author_data.img }}" style='width:100%; height:auto;'>
                     </a>
                     <div class="panel-footer">
