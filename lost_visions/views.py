@@ -175,16 +175,16 @@ def image(request, image_id):
             image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
 
     formatted_info = dict()
-    formatted_info['Issuance'] = image_info['Issuance']
-    formatted_info['Date of Publishing'] = image_info['Date of Publishing']
-    formatted_info['Title'] = image_info['Title']
-    formatted_info['Volume'] = image_info['vol']
-    formatted_info['Author'] = image_info['Author']
-    formatted_info['Book ID'] = image_info['imagesfrombook']
-    formatted_info['Place of Publishing'] = image_info['Place of Publishing']
-    formatted_info['Shelfmark'] = image_info['Shelfmark']
-    formatted_info['Page'] = image_info['Page']
-    formatted_info['Identifier'] = image_info['Identifier']
+    formatted_info['Issuance'] = image_info.get('Issuance', "")
+    formatted_info['Date of Publishing'] = image_info.get('Date of Publishing', "")
+    formatted_info['Title'] = image_info.get('Title', "")
+    formatted_info['Volume'] = image_info.get('vol', "")
+    formatted_info['Author'] = image_info.get('Author', "")
+    formatted_info['Book ID'] = image_info.get('imagesfrombook', "")
+    formatted_info['Place of Publishing'] = image_info.get('Place of Publishing', "")
+    formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
+    formatted_info['Page'] = image_info.get('Page', "")
+    formatted_info['Identifier'] = image_info.get('Identifier', "")
 
     # TagForm = forms.tag_form_factory(tags)
     # tag_form = TagForm()

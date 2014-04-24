@@ -39,7 +39,7 @@
     </div>
     <hr>
 
-    <h3>Images with Caption <strong>{{ results.search_string }}</strong></h3>
+    <h3>Images with <strong>{{ results.search_string }}</strong> in Caption or Description </h3>
     <div id="result-container" class="js-masonry"
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
 
@@ -54,7 +54,7 @@
                         <br>
                         {{ caption_data.title }}
                         <br>
-                        {{ caption_data.description }}
+                        {{ caption_data.description | safe }}
                     </div>
                 </div>
             </div>
