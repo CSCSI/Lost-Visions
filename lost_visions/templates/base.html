@@ -36,6 +36,7 @@
 
 
     {#    <script type="text/javascript" src="{% static "dtree/dtree.js" %}"></script>#}
+    <script type="text/javascript" src="{% static "masonry.pkgd.min.js" %}"></script>
 
     <script type="text/javascript" src="{% static "vakata-jstree-480a265/dist/jstree.js" %}"></script>
     <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>
@@ -121,7 +122,7 @@
     }
 
     function updateCheckboxes() {
-        $( "input[type=checkbox]" ).button()
+        $( "input[type=checkbox]").button();
     }
 
     $(document).ready(function () {
@@ -263,15 +264,15 @@
                         <p>Cardiff School Of Computer Science & Informatics</p>
                     </a>
                     <a class="list-group-item" href="http://www.cardiff.ac.uk/arcca/" target="_blank" style="text-align: center;">
-                        <img src="http://www.cf.ac.uk/arcca/images/homepage/image-56473-web.gif" style='width:auto; height:36px; padding: 10px; background-color: #ffffff'>
+                        <img src="http://www.cf.ac.uk/arcca/images/homepage/image-56473-web.gif" style='width:auto; height:40px; padding: 10px; background-color: #ffffff'>
                         <p>Advanced Research Computing @ Cardiff (ARCCA)</p>
                     </a>
                     <a class="list-group-item" href="http://www.bl.uk/" target="_blank" style="text-align: center;">
-                        <img id='bl-image' src="{% static "media/images/BL_Logo.JPG" %}" style='width:auto; height:80px; padding: 10px'>
+                        <img id='bl-image' src="{% static "media/images/BL_Logo.JPG" %}" style='width:auto; height:80px; padding: 10px; background-color: #ffffff'>
                         <p>British Library</p>
                     </a>
                     <a class="list-group-item" href="http://www.ahrc.ac.uk/Pages/Home.aspx" target="_blank" style="text-align: center;">
-                        <img id='ahrc-image' src="{% static "media/images/CMYK_LScape.jpg" %}" style='width:auto; height:70px; padding: 10px'>
+                        <img id='ahrc-image' src="{% static "media/images/CMYK_LScape.jpg" %}" style='width:auto; height:70px; padding: 10px; background-color: #ffffff'>
                         {#                                                <img src="http://www.ahrc.ac.uk/Style%20Library/Images/structure/logo.jpg" style='width:auto; height:115px; padding: 10px'>#}
                         <p>Arts & Humanities Research Council</p>
                     </a>
@@ -286,10 +287,10 @@
             <div class="panel-body">
 
                 <a class="list-group-item" href="http://www.jetbrains.com/pycharm/" target="_blank" style="text-align: center;">
-                    <img src="http://www.jetbrains.com/img/logos/pycharm_logo.gif" style='width:auto; height:40px;'>
+                    <img src="http://www.jetbrains.com/img/logos/pycharm_logo.gif" style='width:auto; height:60px; padding: 10px; background-color: #ffffff'>
                 </a>
                 <a class="list-group-item" href="http://www.jetbrains.com/" target="_blank" style="text-align: center;">
-                    <img src="http://www.jetbrains.com/img/logos/logo_JB_tagline.png" style='width:auto; height:40px;'>
+                    <img src="http://www.jetbrains.com/img/logos/logo_JB_tagline.png" style='width:auto; height:60px; padding: 10px; background-color: #ffffff'>
                 </a>
                 <a class="list-group-item" href="http://www.maxmind.com" target="_blank" style="text-align: center;">
                     This product includes GeoLite data created by MaxMind, available from http://www.maxmind.com.

@@ -78,23 +78,21 @@
             window.location.replace('{% url 'image.random' %}');
         });
 
-        $('#save_image').change(function() {
-            if(this.checked) {
-                $.ajax({
-                    type: "POST",
-                    url: "{% url 'user_profile.save_image' %}",
-                    data: {
-                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                        image_id: {{ image_id }}
-                    },
-                    success: function(data) {
-                        alert("Saved Image");
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
-                    }
-                });
-            }
+        $('#save_image').click(function() {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'user_profile.save_image' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    image_id: {{ image_id }}
+                },
+                success: function(data) {
+                    alert("Saved Image");
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
         });
 
         $('#add_tag').click(function(){
@@ -420,27 +418,25 @@
                 <li class="previous">
                     <a class="rota btn btn-default" data-degs="-90">← Rotate left</a>
                 </li>
-
-                <li>
-                    <a class="rota btn btn-default" data-degs="reset">Reset</a>
-                </li>
-
-                <li>
-                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
-                </li>
-
-                <li>
-                    <a class="btn btn-default" href="{% url 'image.map' image_id %}" target="_blank">Map</a>
-                </li>
-
-                <li>
-                    <input type="checkbox" id="save_image">
-                    <label for="save_image">Save</label>
-                </li>
-
                 <li class="next">
                     <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
                 </li>
+            </ul>
+            <ul class="pager">
+                <li>
+                    <a class="rota btn btn-default" data-degs="reset">Reset</a>
+                </li>
+                <li>
+                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
+                </li>
+                <li>
+                    <a class="btn btn-default" href="{% url 'image.map' image_id %}" target="_blank">Map</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li>
+                        <a class="btn btn-default save_image" id="save_image">Save</a>
+                    </li>
+                {% endif %}
             </ul>
             <div id="output"></div>
         </div>

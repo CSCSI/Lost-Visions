@@ -369,6 +369,8 @@ def do_login(request):
 
 @requires_csrf_token
 def logout(request):
+    logout_success = False
+    msg = 'Auth Error, please refresh the page'
     if request.user.is_authenticated():
         auth.logout(request)
         msg = 'You have successfully logged out'
@@ -497,7 +499,7 @@ def search(request, word):
 
 
         caption_results = models.ImageText.objects.order_by('-image__views_begun').filter(Q( caption__contains=subword ) |
-                                                          Q( description__contains=subword ))[:30]
+                                                                                          Q( description__contains=subword ))[:30]
         caption_results_dict = dict()
         for result in caption_results:
             caption_result = dict()
@@ -628,41 +630,50 @@ def coords(request, image_id):
 @requires_csrf_token
 def save_image(request):
     if request.is_ajax():
-        try:
-            user = get_request_user(request)
-            image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+        if request.POST.get('delete_image', False):
+            delete_image = models.SavedImages.objects.get(image__flickr_id=request.POST['image_id'])
+            delete_image.delete()
+            return HttpResponse('Removed Image ' + request.POST['image_id'])
+        else:
+            try:
+                user = get_request_user(request)
+                image = models.Image.objects.get(flickr_id=request.POST['image_id'])
 
-            if user and image and user.username.username is not 'Anon_y_mouse':
-                image_to_save = models.SavedImages()
-                image_to_save.user = user
-                image_to_save.image = image
+                if user and image and user.username.username is not 'Anon_y_mouse':
+                    image_to_save = models.SavedImages.objects.get_or_create(user=user, image=image)
+                    # image_to_save.user = user
+                    # image_to_save.image = image
+                    #
+                    # image_to_save.save()
 
-                image_to_save.save()
-
-                return HttpResponse('All good')
-        except Exception as e:
-            print e
-            return HttpResponse('Error')
+                    return HttpResponse('Saved Image ' + request.POST['image_id'])
+            except Exception as e:
+                print e
+                return HttpResponse('Error')
     else:
         raise Http404
 
 
+@requires_csrf_token
 def user_home(request):
+    if request.user.is_authenticated():
 
-    request_user = get_request_user(request)
+        request_user = get_request_user(request)
 
-    saved_images = models.SavedImages.objects.filter(user=request_user)
+        saved_images = models.SavedImages.objects.filter(user=request_user)
 
-    saved_images_dict = dict()
-    for image in saved_images:
+        saved_images_dict = dict()
+        for image in saved_images:
 
-        image_dict = dict()
-        image_dict['title'] = image.image.title
-        image_dict['page'] = image.image.page
-        image_dict['url'] = image.image.flickr_small_source
+            image_dict = dict()
+            image_dict['title'] = image.image.title
+            image_dict['page'] = image.image.page.lstrip('0')
+            image_dict['url'] = image.image.flickr_small_source
 
-        saved_images_dict[image.image.flickr_id] = image_dict
+            saved_images_dict[image.image.flickr_id] = image_dict
 
-    return render(request,
-                  'image_map.html',
-                  {'images': saved_images_dict})
+        return render(request,
+                      'user_home.html',
+                      {'images': saved_images_dict})
+    else:
+        raise Http404
