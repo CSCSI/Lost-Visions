@@ -1,9 +1,11 @@
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
+import json
+from django.db.models import Q
+from crowdsource.settings import BASE_DIR, STATIC_URL
 from random import randint
 from django.core import serializers
-from django.db.models import Min, Q
 from lost_visions import models
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -28,21 +30,48 @@ def get_next_image_id():
 
 
 def get_info_from_image_model(image_model):
-    image_info = dict()
+    image_json = serializers.serialize("json", [image_model, ])
+    image_object = json.loads(image_json)
+    image_info = image_object[0]['fields']
+
     image_info['imageurl'] = image_model.flickr_medium_source
     if image_info['imageurl'] == '':
         image_info['imageurl'] = image_model.flickr_original_source
 
-    image_info['book_title'] = image_model.title
-    image_info['author'] = image_model.first_author
-    # image_info['tags'] = image_model.tags1.tags.tag
     return image_info
 
 
+def find_image(image_id):
+    web_folder = 'bl_images'
+    root_folder = os.path.join(BASE_DIR, 'lost_visions')
+    root_folder = os.path.join(root_folder, 'static')
+    root_folder = os.path.join(root_folder, web_folder)
+
+    for a_file in os.listdir(root_folder):
+        try:
+            # image_for_id = models.Image.objects.get(flickr_id=a_file.split('_')[0])
+            # if image_for_id:
+            #     print 'found' + a_file
+            full_path = os.path.join(root_folder, a_file)
+            if os.path.isfile(full_path) and a_file.split('_')[0] == image_id:
+                image_root_url = os.path.join(STATIC_URL, 'bl_images')
+                file_url = os.path.join(image_root_url, a_file)
+                return file_url
+                # return STATIC_URL + 'bl_images/' + a_file
+        except:
+            pass
+    return None
+
+
 def get_image_info(image_id):
+    arcca_image = find_image(image_id)
+
     try:
-        image_for_id = models.Image.objects.get(id=image_id)
+        image_for_id = models.Image.objects.get(flickr_id=image_id)
         image_info = get_info_from_image_model(image_for_id)
+
+        if arcca_image:
+            image_info['imageurl'] = arcca_image
 
         if image_info['imageurl'] == '':
             print 'ERROR with IMAGE_ID = ' + image_id
@@ -54,6 +83,7 @@ def get_image_info(image_id):
             return image_info
 
     except ObjectDoesNotExist:
+        print 'no object in db for ' + image_id
         return None
 
 
@@ -121,17 +151,47 @@ def tests():
     # print len(image_set)
     # print '\n***********\n'
 
-    image_set = models.Image.objects.filter(id='9353')
+    find_me = 'illust'
+    image_set = models.Image.objects.filter(Q(title__contains=find_me))
 
+    found = dict()
+    number_found = 0
     for image in image_set:
-        print image.date + ' : ' + image.flickr_id
-        print image.title
+        found[image.title] = image
 
-        print image.flickr_url
-        print image.flickr_medium_source
-        print image.book_identifier
+    stopwords = []
 
-        print '*****\n'
+    for image in found:
+        try:
+            title = found[image].title
+            title_split = title.split()
+            for index, word in enumerate(title_split):
+                if find_me.lower() in word.lower():
+                    before = title_split[0:index]
+                    after = title_split[index+1:]
+                    after_str = ' '.join(after)
+                    if 'by' in after_str:
+                        for index2, word2 in enumerate(after):
+                            if 'by'.lower() in word2.lower():
+                                if 'author' in after_str:
+                                    print '(author) ' + found[image].first_author
+
+                                print ' '.join(after[index2:])
+                                print found[image].title
+                                print '\n'
+                                number_found += 1
+
+            # split_title = found[image].title.lower().split(find_me.lower())
+            # before = split_title[0].split()
+            # after = split_title[1].split()
+
+            # if after[0] not in stopwords and 'by' in split_title[1]:
+            #     print before[-1] + ' ' + find_me + ' ' + ' '.join(after[0:4])
+
+        except:
+            pass
+    print len(found)
+    print number_found
 
     # image_set = models.Image.objects.filter(book_identifier='')
     # for image in image_set:
@@ -142,7 +202,7 @@ def tests():
     # print len(image_set)
 
 
-
+tests()
 
 
 
