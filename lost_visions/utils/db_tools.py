@@ -1,4 +1,6 @@
 import os
+import re
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
 import json
@@ -129,17 +131,29 @@ def read_tsv_file(filename, line_number):
         return None
 
 
-def tests():
-    # 2207933
+def save_books_from_images():
 
-    # image_set = models.Image.objects.filter(book_identifier=2207933)
-    #
-    # for image in image_set:
-    #     print image.date + ' : ' + image.flickr_id
-    #     print image.flickr_url
-    #
-    #     print '*****\n'
-    #
+    image_set = models.Image.objects.all()
+
+    for image in image_set:
+        try:
+            models.Book.objects.get(book_identifier=image.book_identifier, volume=image.volume)
+            print 'Already have book ' + image.book_identifier + ' vol ' + image.volume
+        except ObjectDoesNotExist:
+            new_book = models.Book()
+            new_book.volume = image.volume
+            new_book.publisher = image.publisher
+            new_book.title = image.title
+            new_book.first_author = image.first_author
+            new_book.BL_DLS_ID = image.BL_DLS_ID
+            new_book.book_identifier = image.book_identifier
+            new_book.ARK_id_of_book = image.ARK_id_of_book
+            new_book.date = image.date
+
+            print 'Saving book ' + image.book_identifier + ' vol ' + image.volume
+
+            new_book.save()
+
     # image_set = models.Image.objects.exclude(volume=0)
     #
     # for image in image_set:
@@ -151,47 +165,6 @@ def tests():
     # print len(image_set)
     # print '\n***********\n'
 
-    find_me = 'illust'
-    image_set = models.Image.objects.filter(Q(title__contains=find_me))
-
-    found = dict()
-    number_found = 0
-    for image in image_set:
-        found[image.title] = image
-
-    stopwords = []
-
-    for image in found:
-        try:
-            title = found[image].title
-            title_split = title.split()
-            for index, word in enumerate(title_split):
-                if find_me.lower() in word.lower():
-                    before = title_split[0:index]
-                    after = title_split[index+1:]
-                    after_str = ' '.join(after)
-                    if 'by' in after_str:
-                        for index2, word2 in enumerate(after):
-                            if 'by'.lower() in word2.lower():
-                                if 'author' in after_str:
-                                    print '(author) ' + found[image].first_author
-
-                                print ' '.join(after[index2:])
-                                print found[image].title
-                                print '\n'
-                                number_found += 1
-
-            # split_title = found[image].title.lower().split(find_me.lower())
-            # before = split_title[0].split()
-            # after = split_title[1].split()
-
-            # if after[0] not in stopwords and 'by' in split_title[1]:
-            #     print before[-1] + ' ' + find_me + ' ' + ' '.join(after[0:4])
-
-        except:
-            pass
-    print len(found)
-    print number_found
 
     # image_set = models.Image.objects.filter(book_identifier='')
     # for image in image_set:
@@ -200,6 +173,10 @@ def tests():
     #
     #     print '*****'
     # print len(image_set)
+
+def tests():
+    print ''
+
 
 
 tests()
