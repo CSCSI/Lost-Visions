@@ -8,7 +8,7 @@ from lost_visions import models
 __author__ = 'ubuntu'
 
 
-def find(find_me, by_word):
+def find(find_me, by_word, save=True):
     image_set = models.Image.objects.filter(Q(title__contains=find_me))
 
     found = dict()
@@ -37,11 +37,12 @@ def find(find_me, by_word):
                                     if 'author' in after_str.lower() or "l'auteur" in after_str.lower() or "himself" in after_str.lower() or "herself" in after_str.lower():
                                         print '(author) ' + found[image].first_author
 
-                                        author_illustrator = models.BookIllustrator()
-                                        author_illustrator.name = found[image].first_author
-                                        author_illustrator.book = book_for_image
-                                        author_illustrator.technique = find_me
-                                        author_illustrator.save()
+                                        if save:
+                                            author_illustrator = models.BookIllustrator()
+                                            author_illustrator.name = found[image].first_author
+                                            author_illustrator.book = book_for_image
+                                            author_illustrator.technique = find_me
+                                            author_illustrator.save()
 
                                     name_uncleaned = ' '.join(after[index2+1:])
 
@@ -56,11 +57,12 @@ def find(find_me, by_word):
                                     print found[image].flickr_id
                                     print '\n'
 
-                                    illustrator = models.BookIllustrator()
-                                    illustrator.name = name
-                                    illustrator.book = book_for_image
-                                    illustrator.technique = find_me
-                                    illustrator.save()
+                                    if save:
+                                        illustrator = models.BookIllustrator()
+                                        illustrator.name = name
+                                        illustrator.book = book_for_image
+                                        illustrator.technique = find_me
+                                        illustrator.save()
 
                                     number_found += 1
         except:

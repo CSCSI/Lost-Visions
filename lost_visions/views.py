@@ -9,9 +9,10 @@ from datetime import datetime
 from dateutil import parser
 from django.contrib import auth
 from django.core import serializers
+from django.core.urlresolvers import reverse
 from django.db.models import Q, Min
 from django.http import HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.shortcuts import render_to_response
@@ -112,7 +113,9 @@ def is_number(string):
 
 def random_image(request):
     image_id = get_next_image_id()
-    return image(request, image_id)
+    # todo redirect
+    return redirect('image', image_id=image_id)
+    # return image(request, image_id)
 
 
 def is_user_tag(tag):
@@ -182,7 +185,7 @@ def image(request, image_id):
         formatted_info['Place of Publishing'] = image_info.get('Place of Publishing', "")
         formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
         formatted_info['Page'] = image_info.get('Page', "")
-        formatted_info['Identifier'] = image_info.get('Identifier', "")
+        formatted_info['Identifier'] = image_id
 
     except Exception as e:
         print 'flickr access error : ' + str(e)
@@ -196,7 +199,7 @@ def image(request, image_id):
     formatted_info['Place of Publishing'] = image_info.get('pubplace', "")
     formatted_info['Shelfmark'] = image_info.get('BL_DLS_ID', "")
     formatted_info['Page'] = image_info.get('page', "").lstrip('0')
-    formatted_info['Identifier'] = image_info.get('book_identifier', "")
+    formatted_info['Identifier'] = image_info.get('flickr_id', "")
 
     image_types = {'decoration': 'Decoration', 'map': 'Map', 'architecture': 'Architecture', 'geology': 'Geology'}
 
@@ -209,7 +212,8 @@ def image(request, image_id):
                    'formatted_info': formatted_info,
                    'image_id': str(image_url_part),
                    'image_types': image_types,
-                   'image_themes': image_themes},
+                   'image_themes': image_themes,
+                   'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
 
 def get_creation_techniques_html(request):

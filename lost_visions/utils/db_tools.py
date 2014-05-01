@@ -27,7 +27,7 @@ def get_next_image_id():
 
     print data
     # image_id = str(min_viewed_image.identifier)
-    image_id = str(min_viewed_image.id)
+    image_id = str(min_viewed_image.flickr_id)
     return image_id
 
 
