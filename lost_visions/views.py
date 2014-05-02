@@ -51,11 +51,15 @@ def image_tags(request):
             request_user = get_request_user(request)
 
             image_text = models.ImageText()
-            image_text.caption = clean(request.POST['input_caption'], strip=True)
+            image_text.caption = clean(request.POST.get('input_caption', ''), strip=True)
             image_text.description = clean(request.POST['image_description'], strip=True)
             image_text.image = image
             image_text.user = request_user
-            image_text.save()
+
+            if image_text.description == '' and image_text.caption == '':
+                print 'not worth saving'
+            else:
+                image_text.save()
 
             if request.POST['tag_info'] and len(request.POST['tag_info'].decode('utf-8')) > 0:
                 tag_info = request.POST['tag_info']
