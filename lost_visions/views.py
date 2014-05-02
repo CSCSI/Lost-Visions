@@ -57,7 +57,7 @@ def image_tags(request):
             image_text.user = request_user
 
             if image_text.description == '' and image_text.caption == '':
-                print 'not worth saving'
+                print 'not worth saving blank image text'
             else:
                 image_text.save()
 
@@ -79,19 +79,18 @@ def image_tags(request):
                             print e3
                             pass
 
-                        tag.tag_order = clean(user_tag['tag_order'], strip=True)
+                        tag.tag_order = clean(str(user_tag['tag_order']), strip=True)
 
-                        image.views_completed += 1
-                        if image:
+                        if image and request_user:
                             tag.image = image
+                            tag.user = request_user
+                            tag.save()
 
-                        tag.user = request_user
-
-                        tag.save()
                     except Exception as e2:
                         print 'error 2' + str(e2)
                         pass
 
+            image.views_completed += 1
             image.save()
         except:
             pass
