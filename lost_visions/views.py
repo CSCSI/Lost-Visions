@@ -46,48 +46,51 @@ def image_tags(request):
         print request.POST
         print request.user
 
-        image = models.Image.objects.get(flickr_id=request.POST['image_id'])
-        request_user = get_request_user(request)
+        try:
+            image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+            request_user = get_request_user(request)
 
-        image_text = models.ImageText()
-        image_text.caption = clean(request.POST['input_caption'], strip=True)
-        image_text.description = clean(request.POST['image_description'], strip=True)
-        image_text.image = image
-        image_text.user = request_user
-        image_text.save()
+            image_text = models.ImageText()
+            image_text.caption = clean(request.POST['input_caption'], strip=True)
+            image_text.description = clean(request.POST['image_description'], strip=True)
+            image_text.image = image
+            image_text.user = request_user
+            image_text.save()
 
-        if request.POST['tag_info'] and len(request.POST['tag_info'].decode('utf-8')) > 0:
-            tag_info = request.POST['tag_info']
-            tags_xy = ast.literal_eval(tag_info)
+            if request.POST['tag_info'] and len(request.POST['tag_info'].decode('utf-8')) > 0:
+                tag_info = request.POST['tag_info']
+                tags_xy = ast.literal_eval(tag_info)
 
-            for user_tag in tags_xy:
-                try:
-                    tag = models.Tag()
-                    tag.tag = clean(str(user_tag['tag']), strip=True)
-                    tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
-                    tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
+                for user_tag in tags_xy:
                     try:
-                        # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
-                        date_object = parser.parse(str(user_tag['datetime']))
-                        tag.timestamp = date_object
-                    except Exception as e3:
-                        print e3
+                        tag = models.Tag()
+                        tag.tag = clean(str(user_tag['tag']), strip=True)
+                        tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
+                        tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
+                        try:
+                            # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
+                            date_object = parser.parse(str(user_tag['datetime']))
+                            tag.timestamp = date_object
+                        except Exception as e3:
+                            print e3
+                            pass
+
+                        tag.tag_order = clean(user_tag['tag_order'], strip=True)
+
+                        image.views_completed += 1
+                        if image:
+                            tag.image = image
+
+                        tag.user = request_user
+
+                        tag.save()
+                    except Exception as e2:
+                        print 'error 2' + str(e2)
                         pass
 
-                    tag.tag_order = clean(user_tag['tag_order'], strip=True)
-
-                    image.views_completed += 1
-                    if image:
-                        tag.image = image
-
-                    tag.user = request_user
-
-                    tag.save()
-                except Exception as e2:
-                    print 'error 2' + str(e2)
-                    pass
-
-        image.save()
+            image.save()
+        except:
+            pass
 
     return random_image(request)
 
@@ -205,6 +208,13 @@ def image(request, image_id):
 
     image_themes = {'homeandfamily': 'Home and Family', 'mythology': 'Mythology'}
 
+    if formatted_info['Book ID'] and formatted_info['Book ID'] != '':
+        illustrator_string = ''
+        illustrators = models.BookIllustrator.objects.filter(book__book_identifier=formatted_info['Book ID'])
+        for illustrator in illustrators:
+            illustrator_string += illustrator.name + ' (' + illustrator.technique + '),'
+        if illustrator_string is not '':
+            formatted_info['Illustrator(s) **'] = illustrator_string
     print image_info
 
     return render(request, 'image.html',

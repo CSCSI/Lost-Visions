@@ -37,6 +37,62 @@
     expert_level: 0
     self_description : "Delete Me"
 
+#a user
+- model: auth.user
+  pk: 3000
+  fields:
+    first_name: julia
+    last_name: abcde
+    username: julia
+    password: "pbkdf2_sha256$12000$VsizsauzTiXC$QcNI963O+w3X67aPiUATh2MZeuFh17fTHL4eiIXaiuQ="
+
+- model: lost_visions.LostVisionUser
+  pk: 3
+  fields:
+    username: 3000
+    expert_level: 0
+    self_description : "Delete Me"
+
+
+
+
+
+#a user
+- model: auth.user
+  pk: 4000
+  fields:
+    first_name: nicky
+    last_name: abcdef
+    username: nicky
+    password: "pbkdf2_sha256$12000$VsizsauzTiXC$QcNI963O+w3X67aPiUATh2MZeuFh17fTHL4eiIXaiuQ="
+
+- model: lost_visions.LostVisionUser
+  pk: 4
+  fields:
+    username: 4000
+    expert_level: 0
+    self_description : "Delete Me"
+
+
+
+
+
+#a user
+- model: auth.user
+  pk: 5000
+  fields:
+    first_name: sheila
+    last_name: abcdef
+    username: sheila
+    password: "pbkdf2_sha256$12000$VsizsauzTiXC$QcNI963O+w3X67aPiUATh2MZeuFh17fTHL4eiIXaiuQ="
+
+- model: lost_visions.LostVisionUser
+  pk: 5
+  fields:
+    username: 5000
+    expert_level: 0
+    self_description : "Delete Me"
+
 
 #- model : lost_visions.Person
 #  pk : 1
