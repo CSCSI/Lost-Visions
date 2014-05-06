@@ -8,7 +8,7 @@ from lost_visions import models
 __author__ = 'ubuntu'
 
 
-def find(find_me, by_word, save=True):
+def find(find_me, by_word, save=False):
     image_set = models.Image.objects.filter(Q(title__contains=find_me))
 
     found = dict()

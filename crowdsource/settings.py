@@ -26,6 +26,14 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SITE_ID = 1
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = ''
+EMAIL_PORT = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 
 # Application definition
 
@@ -42,9 +50,16 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.sites',
     # 'social.apps.django_app.default',
     # 'dajaxice',
     # 'dajax',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
     'lost_visions',
 )
 
@@ -57,16 +72,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-# AUTHENTICATION_BACKENDS = (
-#       'social.backends.open_id.OpenIdAuth',
-#       'social.backends.google.GoogleOpenId',
-#       'social.backends.google.GoogleOAuth2',
-#       'social.backends.google.GoogleOAuth',
-#       'social.backends.twitter.TwitterOAuth',
-#       'social.backends.yahoo.YahooOpenId',
-#
-#       'django.contrib.auth.backends.ModelBackend',
-#   )
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    "allauth.account.auth_backends.AuthenticationBackend"
+)
 
 ROOT_URLCONF = 'crowdsource.urls'
 
@@ -80,6 +89,10 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.eggs.Loader',
 )
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'lost_visions/templates')
+)
+
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
@@ -89,7 +102,18 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
 
+    "allauth.account.context_processors.account",
+    "allauth.socialaccount.context_processors.socialaccount",
 )
+
+LOGIN_REDIRECT_URL = '/'
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email', 'publish_stream'],
+        'METHOD': 'js_sdk'  # instead of 'oauth2'
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -98,7 +122,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        }
 }
 
 # Internationalization
@@ -127,5 +151,5 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # 'dajaxice.finders.DajaxiceFinder',
 
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )

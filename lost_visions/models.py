@@ -186,10 +186,14 @@ class ImageText(models.Model):
     image = models.ForeignKey(Image, blank=False)
 
     def __unicode__(self):
-        user = self.user.username.username
+        username = ''
+        if self.user:
+            username = self.user.username.username
+        ts = ''
+        if self.timestamp:
+            ts = self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-        return str(self.id) + ':' + user + ':' + self.caption + ':' \
-               + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        return str(self.id) + ':' + username + ':' + self.caption + ':' + ts
 
 
 class SavedImages(models.Model):

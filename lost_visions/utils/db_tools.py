@@ -37,6 +37,8 @@ def get_info_from_image_model(image_model):
     image_info = image_object[0]['fields']
 
     image_info['imageurl'] = image_model.flickr_medium_source
+    image_info['imageurl_original'] = image_model.flickr_original_source
+
     if image_info['imageurl'] == '':
         image_info['imageurl'] = image_model.flickr_original_source
 
@@ -178,6 +180,48 @@ def tests():
     print ''
 
 
+def backup_db():
+
+    data = serializers.serialize("json", models.LostVisionUser.objects.all())
+    out = open("lostvisionsuser.json", "w")
+    out.write(data)
+    out.close()
+
+
+    data = serializers.serialize("json", models.Tag.objects.all())
+    out = open("tag.json", "w")
+    out.write(data)
+    out.close()
+
+
+    data = serializers.serialize("json", models.GeoTag.objects.all())
+    out = open("geotag.json", "w")
+    out.write(data)
+    out.close()
+
+
+    data = serializers.serialize("json", models.ImageText.objects.all())
+    out = open("imagetext.json", "w")
+    out.write(data)
+    out.close()
+
+
+    data = serializers.serialize("json", models.SavedImages.objects.all())
+    out = open("savedimages.json", "w")
+    out.write(data)
+    out.close()
+
+
+    data = serializers.serialize("json", models.SearchQuery.objects.all())
+    out = open("searchquery.json", "w")
+    out.write(data)
+    out.close()
+
+
+    data = serializers.serialize("json", models.User.objects.all())
+    out = open("tag.json", "w")
+    out.write(data)
+    out.close()
 
 tests()
 
