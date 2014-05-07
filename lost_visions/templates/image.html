@@ -110,7 +110,7 @@
                     image_id: {{ image_id }}
                 },
                 success: function(data) {
-                    alert("Saved Image");
+                    alert("Added Image to Favourites");
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
@@ -192,7 +192,7 @@
                 ctx.arc(entry.x_pixel-10, entry.y_pixel-10, 10, 0, 2*Math.PI);
                 ctx.fill();
                 {#                ctx.closePath();#}
-{#                ctx.stroke();#}
+                {#                ctx.stroke();#}
             });
 
             ctx.strokeStyle = '#FF0000';
@@ -207,9 +207,11 @@
             hightlighted_y_percent = coords.y_percent;
             highlighted_x_pixel = coords.x;
             highlighted_y_pixel = coords.y;
-                            $('#focus_alerts').fadeOut(1000);
+            $('#focus_alerts').fadeOut(1000);
 
             ctx.stroke();
+
+            $( "#dictionary").focus();
         });
 
         $('#category_tree').bind("ready.jstree", function(){
@@ -458,7 +460,9 @@
                 </li>
                 {% if user.is_authenticated %}
                     <li>
-                        <a class="btn btn-default save_image" id="save_image">Save</a>
+                        <a class="btn btn-default save_image" id="save_image">
+                            <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">
+                        </a>
                     </li>
                 {% endif %}
             </ul>

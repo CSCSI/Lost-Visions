@@ -19,7 +19,7 @@
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
 
         {% for tag_key, tag_data in results.results.tag.items %}
-            <div class="bl_item">
+            <div class="bl_item" style="max-width: 30%">
                 <div class="panel">
                     <a href="/image/{{ tag_key }}" target="_blank">
                         <img src="{{ tag_data.img }}" style='width:100%; height:auto;'>
@@ -44,7 +44,7 @@
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
 
         {% for caption_key, caption_data in results.results.caption.items %}
-            <div class="bl_item" style="max-width: 30%">
+            <div class="bl_item" style="max-width: 20%">
                 <div class="panel">
                     <a href="/image/{{ caption_key }}" target="_blank">
                         <img src="{{ caption_data.img }}" style='width:100%; height:auto;'>
