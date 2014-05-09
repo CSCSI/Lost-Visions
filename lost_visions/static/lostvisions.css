@@ -108,3 +108,58 @@ a#save_image.btn.btn-default.save_image  {
 a:hover#save_image.btn.btn-default.save_image  {
     background-image: linear-gradient(#D92432, #e32537 40%, #ff263b);
 }
+
+.navbar-brand {
+    height: 50px;
+    padding: 10px;
+    padding-bottom: 15px;
+}
+
+.lv_logos {
+    background-image: url('media/images/lost-visions-station.png');
+    height: 50px;
+    width: 85px
+}
+
+.logo1 {
+    background-size: 80px 40px;
+    background-position: -300px -500px;
+}
+
+.remove_button {
+    position: absolute;
+    right:5px;
+    top:0px
+}
+
+.category-answer {
+    /*height: 40px;*/
+    max-width: 30%;
+    /*position: absolute;*/
+    padding: 5px;
+    background-color: #3a3f44;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    background-image: -webkit-linear-gradient(#484e55,#3a3f44 60%,#313539);
+    background-image: linear-gradient(#484e55,#3a3f44 60%,#313539);
+    background-repeat: no-repeat;
+    border: 1px solid rgba(0,0,0,0.6);
+}
+
+.category-answer:hover {
+    background-color: #3a3f44;
+    background-image: linear-gradient(#020202,#101112 40%,#191b1d);
+    border: 1px solid rgba(0,0,0,0.6);
+
+}
+
+.category-answer-img>img {
+    margin: 0 auto;
+    /*height: 40px;*/
+    /*width: 40px;*/
+}
+
+.wrap-text {
+    text-align: center;
+    white-space: normal;
+    word-wrap: normal;
+}

@@ -207,9 +207,22 @@ def image(request, image_id):
     formatted_info['Page'] = image_info.get('page', "").lstrip('0')
     formatted_info['Identifier'] = image_info.get('flickr_id', "")
 
-    image_types = {'decoration': 'Decoration', 'map': 'Map', 'architecture': 'Architecture', 'geology': 'Geology'}
+    image_types = {'decoration': 'Decoration', 'map': 'Map', 'architecture1': 'Architecture',
+                   'architecture2': 'Architecture', 'architecture3': 'Architecture', 'architecture4': 'Architecture',
+                   'architecture5': 'Architecture', 'architecture6': 'Architecture', 'architecture7': 'Architecture',
+                   'architecture8': 'Architecture', 'architecture9': 'Architecture', 'architecture11': 'Architecture',
+                   'architecture12': 'Architecture', 'architecture13': 'Architecture', 'architecture14': 'Architecture',
+                   'architecture15': 'Architecture', 'architecture16': 'Architecture', 'architecture17': 'Architecture',
+                   'geology': 'Geology'}
 
     image_themes = {'homeandfamily': 'Home and Family', 'mythology': 'Mythology'}
+
+    category_data = {'question': 'Is the image a ...', 'answers': [
+        {'name': 'map', 'id': 1, 'text': 'Map?', 'img': 'media/images/icon/map.jpg'},
+            {'name': 'decorative_letter', 'id': 2, 'text': 'Decorative Letter?', 'img': 'media/images/icon/letter.jpg'},
+            {'name': 'landscape', 'id': 3, 'text': 'Landscape?', 'img': 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png'},
+            {'name': 'portrait', 'id': 4, 'text': 'Portrait?', 'img': 'media/images/icon/portrait.jpg'}
+    ]}
 
     if formatted_info['Book ID'] and formatted_info['Book ID'] != '':
         illustrator_string = ''
@@ -226,6 +239,7 @@ def image(request, image_id):
                    'image_id': str(image_url_part),
                    'image_types': image_types,
                    'image_themes': image_themes,
+                   'category_data': category_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
 
@@ -699,3 +713,9 @@ def user_home(request):
                       {'images': saved_images_dict})
     else:
         raise Http404
+
+
+def image_category(request):
+    print request.POST
+    response_data = {'data': 'stuff'}
+    return HttpResponse(json.dumps(response_data), content_type="application/json")

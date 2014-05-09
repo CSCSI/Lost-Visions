@@ -27,8 +27,13 @@
     {#                input_field.val("");#}
     {#            });#}
     {#        }#}
+    $(window).load(function(){
+        $('.js-masonry').masonry();
+    });
 
     $(document).ready(function () {
+        $('.js-masonry').masonry();
+
         var all_tags = [];
 
         $( "#dictionary" ).autocomplete({
@@ -114,6 +119,27 @@
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        });
+
+        $('.category-answer').click(function() {
+            console.log('cat ans click');
+            var cat_id = 0;
+            cat_id = $(this).data('category_id');
+            $.ajax({
+                type: "POST",
+                url: "{% url 'image.category' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    category_id: cat_id,
+                    image_id: {{ image_id }}
+                },
+                success: function(data) {
+                    alert("set category");
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
                 }
             });
         });
@@ -299,7 +325,12 @@
 
         $('#accordion').on('show.bs.collapse', function () {
             if (active) $('#accordion .in').collapse('hide');
-        });
+
+        }).on('shown.bs.collapse', function () {
+            console.log('this???')
+            $('.js-masonry').masonry();
+
+        });;
 
         {#        resize_box = function(){#}
         {##}
@@ -690,55 +721,58 @@
 
 
 
-    {#    <div class="panel panel-default">#}
-    {#        <div class="panel-heading">#}
-    {#            <h4 class="panel-title">#}
-    {#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix">#}
-    {#                    Please select the tags below which describe the image#}
-    {#                </a>#}
-    {#            </h4>#}
-    {#        </div>#}
-    {#        <div id="collapseSix" class="panel-collapse collapse">#}
-    {#            <div class="panel-body">#}
-    {##}
-    {##}
-    {#                {% for key in image.tags %}#}
-    {#                    <input type="checkbox" value="{{ key }}" id="check{{ forloop.counter }}" />#}
-    {##}
-    {#                    <label for="check{{ forloop.counter }}">{{ key }}</label>#}
-    {#                {% empty %}#}
-    {#                    <p>(No previous tags found for this image)</p>#}
-    {#                {% endfor %}#}
-    {##}
-    {##}
-    {##}
-    {#                <div class="panel-heading">Please select the Flickr tags below which describe the image</div>#}
-    {#                <div class="panel-body">#}
-    {#                    {% for field in tag_form %}#}
-    {#                        {{ field }}#}
-    {#                        <label for="{{ field.auto_id }}">{{ field.label }}</label>#}
-    {#                    {% empty %}#}
-    {#                        (No relevant Flickr tags found for this image)#}
-    {#                    {% endfor %}#}
-    {#                </div>#}
-    {##}
-    {##}
-    {#            </div>#}
-    {#            <div class="panel-footer">#}
-    {#                <ul class="pager">#}
-    {#                    <li class="previous">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"#}
-    {#                           class="btn btn-default">← Previous</a>#}
-    {#                    </li>#}
-    {#                    <li class="next">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseSevern"#}
-    {#                           class="btn btn-default">Next →</a>#}
-    {#                    </li>#}
-    {#                </ul>#}
-    {#            </div>#}
-    {#        </div>#}
-    {##}
-    {#    </div>#}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix">
+                    Please select the tags below which describe the image
+                </a>
+            </h4>
+        </div>
+        <div id="collapseSix" class="panel-collapse collapse">
+            <div class="panel-body">
+
+                <div class="category-question">{{ category_data.question }}</div>
+
+                <div id="category-container" class="js-masonry"
+                     data-masonry-options='{"columnWidth": 100, "itemSelector": ".category-answer" }'>
+                    {% for category_answer in category_data.answers %}
+                        <div class="category-answer" data-category_id="{{ category_answer.id }}">
+                            <div class="panel">
+                                {#                                <div class="panel-body ">#}
+                                <div class="category-answer-image">
+                                    <img src="{% static category_answer.img %}"
+                                         style="width:70px; margin:0 auto; display:block">
+                                </div>
+                                {#                                </div>#}
+                                <div class="panel-footer">
+                                    <div class="wrap-text">
+                                        {{ category_answer.text }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% empty %}
+                        <div class="category-answer">
+                            <p>(No categories available)</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <div class="panel-footer">
+                <ul class="pager">
+                    <li class="previous">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
+                           class="btn btn-default">← Previous</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+    </div>
 
 
 
@@ -811,7 +845,6 @@
     </div>
     </div>
 
-    {#            <div id="load_new_image" class="btn btn-info btn-lg">New Image</div>#}
     </div>
 
     </div>

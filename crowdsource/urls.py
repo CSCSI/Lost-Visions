@@ -33,6 +33,7 @@ urlpatterns = patterns('',
 
 
                        url(r'^image/tags', 'lost_visions.views.image_tags', name='image.tags'),
+                       url(r'^image/category', 'lost_visions.views.image_category', name='image.category'),
                        url(r'^image/random', 'lost_visions.views.random_image', name='image.random'),
                        url(r'^image/grabflickr', 'lost_visions.views.grab_flickr', name='image.grab_flickr'),
 
