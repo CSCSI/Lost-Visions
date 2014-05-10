@@ -19,7 +19,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
 from pygeoip import GeoIP
-from crowdsource.settings import BASE_DIR
+from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL
 from lost_visions import forms, models
 # from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
 from ipware.ip import get_ip
@@ -219,9 +219,11 @@ def image(request, image_id):
 
     category_data = {'question': 'Is the image a ...', 'answers': [
         {'name': 'map', 'id': 1, 'text': 'Map?', 'img': 'media/images/icon/map.jpg'},
-            {'name': 'decorative_letter', 'id': 2, 'text': 'Decorative Letter?', 'img': 'media/images/icon/letter.jpg'},
-            {'name': 'landscape', 'id': 3, 'text': 'Landscape?', 'img': 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png'},
-            {'name': 'portrait', 'id': 4, 'text': 'Portrait?', 'img': 'media/images/icon/portrait.jpg'}
+        {'name': 'decorative_letter', 'id': 2, 'text': 'Decorative Letter?', 'img': 'media/images/icon/letter.jpg'},
+        {'name': 'landscape', 'id': 3, 'text': 'Landscape?', 'img': 'media/images/icon/landscape.jpg'},
+        {'name': 'portrait', 'id': 4, 'text': 'Portrait?', 'img': 'media/images/icon/portrait.jpg'},
+        {'name': 'building', 'id': 5, 'text': 'Building?', 'img': 'media/images/icon/building.jpg'}
+
     ]}
 
     if formatted_info['Book ID'] and formatted_info['Book ID'] != '':
@@ -717,5 +719,14 @@ def user_home(request):
 
 def image_category(request):
     print request.POST
-    response_data = {'data': 'stuff'}
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+    category_data = {'question': 'No more questions', 'answers': []}
+
+    if request.POST.get('category_id', '-1') == '1':
+        category_data = {'question': 'Is the map a ...', 'answers': [
+            {'name': 'diagram', 'id': 1, 'text': 'Diagram?',
+             'img': STATIC_URL + 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png'},
+            {'name': 'nautical', 'id': 3, 'text': 'Nautical map?',
+             'img': STATIC_URL + 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png'}
+        ]}
+    return HttpResponse(json.dumps(category_data), content_type="application/json")

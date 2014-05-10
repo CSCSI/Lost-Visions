@@ -118,7 +118,8 @@ a:hover#save_image.btn.btn-default.save_image  {
 .lv_logos {
     background-image: url('media/images/lost-visions-station.png');
     height: 50px;
-    width: 85px
+    width: 85px;
+    margin: 3px
 }
 
 .logo1 {
@@ -135,6 +136,8 @@ a:hover#save_image.btn.btn-default.save_image  {
 .category-answer {
     /*height: 40px;*/
     max-width: 30%;
+    margin-bottom: 10px;
+    margin-right: 10px;
     /*position: absolute;*/
     padding: 5px;
     background-color: #3a3f44;
@@ -152,8 +155,8 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 }
 
-.category-answer-img>img {
-    margin: 0 auto;
+.category-answer-image {
+    margin: 1px;
     /*height: 40px;*/
     /*width: 40px;*/
 }
