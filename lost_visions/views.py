@@ -716,11 +716,30 @@ def user_home(request):
     else:
         raise Http404
 
+ICON_URL = STATIC_URL + 'media/images/icon/'
+
 
 def image_category(request):
     print request.POST
 
-    category_data = {'question': 'No more questions', 'answers': []}
+    category_data = {'question': 'Any more relevant categories?', 'answers': [
+        {'name': 'yes', 'id': 0, 'text': 'Yes', 'img': ICON_URL + 'tick.png'},
+        {'name': 'no', 'id': -1, 'text': 'No', 'img': ICON_URL + 'cross.png'}
+    ]}
+
+    if request.POST.get('category_id', '0') == '0':
+        category_data = {'question': 'Is the image a ...', 'answers': [
+            {'name': 'portrait', 'id': 3, 'text': 'Portrait?', 'img': ICON_URL + 'portrait.jpg'},
+            {'name': 'people', 'id': 8, 'text': 'People?', 'img': ICON_URL + 'people.jpg'},
+            {'name': 'animal', 'id': 9, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
+            {'name': 'map', 'id': 1, 'text': 'Map?', 'img': ICON_URL + 'map.jpg'},
+            {'name': 'landscape', 'id': 2, 'text': 'Landscape?', 'img': ICON_URL + 'landscape.jpg'},
+            {'name': 'building', 'id': 4, 'text': 'Building?', 'img': ICON_URL + 'building.jpg'},
+            {'name': 'words', 'id': 5, 'text': 'Written Text?', 'img': ICON_URL + 'words.jpg'},
+            {'name': 'motif', 'id': 6, 'text': 'Decorative Motif?', 'img': ICON_URL + 'motif.jpg'},
+            {'name': 'decorative_letter', 'id': 7, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg'},
+
+            ]}
 
     if request.POST.get('category_id', '-1') == '1':
         category_data = {'question': 'Is the map a ...', 'answers': [
@@ -729,4 +748,7 @@ def image_category(request):
             {'name': 'nautical', 'id': 3, 'text': 'Nautical map?',
              'img': STATIC_URL + 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png'}
         ]}
+
+    if request.POST.get('category_id', '-1') == '-1':
+        category_data = {'question': 'No more questions.', 'answers': []}
     return HttpResponse(json.dumps(category_data), content_type="application/json")

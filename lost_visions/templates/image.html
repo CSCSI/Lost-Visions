@@ -31,6 +31,10 @@
         $('.js-masonry').masonry();
     });
 
+    $(window).resize(function(){
+        $('.js-masonry').masonry();
+    });
+
     $(document).ready(function () {
         $('.js-masonry').masonry();
 
@@ -123,36 +127,32 @@
             });
         });
 
-        function enable_category_click() {
-            $('.category-answer').click(function() {
-                console.log('cat ans click');
-                var cat_id = 0;
-                cat_id = $(this).data('category_id');
-                $.ajax({
-                    type: "POST",
-                    url: "{% url 'image.category' %}",
-                    data: {
-                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                        category_id: cat_id,
-                        image_id: {{ image_id }}
-                    },
-                    success: function(data) {
-                        var question = data['question'];
-                        console.log(data);
-                        $('#category-question').html(question);
+        function populate_categories(cat_id, callback) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'image.category' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    category_id: cat_id,
+                    image_id: {{ image_id }}
+                },
+                success: function(data) {
+                    var question = data['question'];
+                    console.log(data);
+                    $('#category-question').html(question);
 
-                        var category_container = $('#category-container');
+                    var category_container = $('#category-container');
 
-                        var masonry_container = category_container.masonry();
-                        masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
+                    var masonry_container = category_container.masonry();
+                    masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
 
-                        for (var ans in data['answers']) {
+                    for (var ans in data['answers']) {
 
-                            var answer = '<div class="category-answer" data-category_id="' + data['answers'][ans].id + '"> \
+                        var answer = '<div class="category-answer" data-category_id="' + data['answers'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
                                     <img src="' + data['answers'][ans].img + '"\
-                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;\
+                                         style="min-width:80px; min-height: 80px; max-width:90px; max-height: 90px;\
                                          margin:0 auto; display:block; border:1px">\
                                 </div>\
                                 <div class="panel-footer">\
@@ -164,22 +164,30 @@
                         </div>\
                         ';
 
-                            var elem = $(answer);
-                            masonry_container.append(elem).masonry( 'appended', elem );
+                        var elem = $(answer);
+                        masonry_container.append(elem).masonry( 'appended', elem );
 
-                        }
-
-                        category_container.masonry();
-
-                        enable_category_click();
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        alert("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
                     }
-                });
+
+                    enable_category_click();
+
+                    category_container.masonry();
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+            callback();
+        }
+
+        function enable_category_click() {
+            $('.category-answer').click(function() {
+                console.log('cat ans click');
+                var cat_id = $(this).data('category_id');
+                populate_categories(cat_id, null);
             });
         };
-        enable_category_click();
+        populate_categories(0, enable_category_click);
 
         $('#add_tag').click(function(){
 
@@ -647,40 +655,40 @@
                 <div id="add_category_body"></div>
 
 
-            <div id="category-question">{{ category_data.question }}</div>
+                <div id="category-question">{{ category_data.question }}</div>
 
                 <div id="category-container" class="js-masonry"
                      data-masonry-options='{"itemSelector": ".category-answer" }'>
-                    {% for category_answer in category_data.answers %}
-                        <div class="category-answer" data-category_id="{{ category_answer.id }}">
-                            <div class="panel">
-                                <div class="category-answer-image">
-                                    <img src="{% static category_answer.img %}"
-                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;
-                                         margin:0 auto; display:block; border:1px">
-                                </div>
-                                <div class="panel-footer">
-                                    <div class="wrap-text">
-                                        {{ category_answer.text }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    {% empty %}
-                        <div class="category-answer">
-                            <p>(No categories available)</p>
-                        </div>
-                    {% endfor %}
+{#                    {% for category_answer in category_data.answers %}#}
+{#                        <div class="category-answer" data-category_id="{{ category_answer.id }}">#}
+{#                            <div class="panel">#}
+{#                                <div class="category-answer-image">#}
+{#                                    <img src="{% static category_answer.img %}"#}
+{#                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;#}
+{#                                         margin:0 auto; display:block; border:1px">#}
+{#                                </div>#}
+{#                                <div class="panel-footer">#}
+{#                                    <div class="wrap-text">#}
+{#                                        {{ category_answer.text }}#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{##}
+{#                    {% empty %}#}
+{#                        <div class="category-answer">#}
+{#                            <p>(No categories available)</p>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
                 </div>
 
-{#                {% for theme_key, theme_value in image_themes.items %}#}
-{#                    <input type="checkbox" value="{{ theme_key }}" id="theme_check{{ forloop.counter }}" />#}
-{#                    <label for="theme_check{{ forloop.counter }}">{{ theme_value }}</label>#}
-{#                {% empty %}#}
-{#                    <p>(No previous tags found for this image)</p>#}
-{#                {% endfor %}#}
-{#                <div id="category_tree"></div>#}
+                {#                {% for theme_key, theme_value in image_themes.items %}#}
+                {#                    <input type="checkbox" value="{{ theme_key }}" id="theme_check{{ forloop.counter }}" />#}
+                {#                    <label for="theme_check{{ forloop.counter }}">{{ theme_value }}</label>#}
+                {#                {% empty %}#}
+                {#                    <p>(No previous tags found for this image)</p>#}
+                {#                {% endfor %}#}
+                {#                <div id="category_tree"></div>#}
 
             </div>
             <div class="panel-footer">
@@ -765,57 +773,57 @@
 
 
 
-{#    <div class="panel panel-default">#}
-{#        <div class="panel-heading">#}
-{#            <h4 class="panel-title">#}
-{#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix">#}
-{#                    Please select the tags below which describe the image#}
-{#                </a>#}
-{#            </h4>#}
-{#        </div>#}
-{#        <div id="collapseSix" class="panel-collapse collapse">#}
-{#            <div class="panel-body">#}
-{##}
-{#                <div id="category-question">{{ category_data.question }}</div>#}
-{##}
-{#                <div id="category-container" class="js-masonry"#}
-{#                     data-masonry-options='{"itemSelector": ".category-answer" }'>#}
-{#                    {% for category_answer in category_data.answers %}#}
-{#                        <div class="category-answer" data-category_id="{{ category_answer.id }}">#}
-{#                            <div class="panel">#}
-{#                                <div class="category-answer-image">#}
-{#                                    <img src="{% static category_answer.img %}"#}
-{#                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;#}
-{#                                         margin:0 auto; display:block; border:1px">#}
-{#                                </div>#}
-{#                                <div class="panel-footer">#}
-{#                                    <div class="wrap-text">#}
-{#                                        {{ category_answer.text }}#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
-{##}
-{#                    {% empty %}#}
-{#                        <div class="category-answer">#}
-{#                            <p>(No categories available)</p>#}
-{#                        </div>#}
-{#                    {% endfor %}#}
-{#                </div>#}
-{##}
-{#            </div>#}
-{#            <div class="panel-footer">#}
-{#                <ul class="pager">#}
-{#                    <li class="previous">#}
-{#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"#}
-{#                           class="btn btn-default">← Previous</a>#}
-{#                    </li>#}
-{##}
-{#                </ul>#}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#    </div>#}
+    {#    <div class="panel panel-default">#}
+    {#        <div class="panel-heading">#}
+    {#            <h4 class="panel-title">#}
+    {#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix">#}
+    {#                    Please select the tags below which describe the image#}
+    {#                </a>#}
+    {#            </h4>#}
+    {#        </div>#}
+    {#        <div id="collapseSix" class="panel-collapse collapse">#}
+    {#            <div class="panel-body">#}
+    {##}
+    {#                <div id="category-question">{{ category_data.question }}</div>#}
+    {##}
+    {#                <div id="category-container" class="js-masonry"#}
+    {#                     data-masonry-options='{"itemSelector": ".category-answer" }'>#}
+    {#                    {% for category_answer in category_data.answers %}#}
+    {#                        <div class="category-answer" data-category_id="{{ category_answer.id }}">#}
+    {#                            <div class="panel">#}
+    {#                                <div class="category-answer-image">#}
+    {#                                    <img src="{% static category_answer.img %}"#}
+    {#                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;#}
+    {#                                         margin:0 auto; display:block; border:1px">#}
+    {#                                </div>#}
+    {#                                <div class="panel-footer">#}
+    {#                                    <div class="wrap-text">#}
+    {#                                        {{ category_answer.text }}#}
+    {#                                    </div>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {##}
+    {#                    {% empty %}#}
+    {#                        <div class="category-answer">#}
+    {#                            <p>(No categories available)</p>#}
+    {#                        </div>#}
+    {#                    {% endfor %}#}
+    {#                </div>#}
+    {##}
+    {#            </div>#}
+    {#            <div class="panel-footer">#}
+    {#                <ul class="pager">#}
+    {#                    <li class="previous">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"#}
+    {#                           class="btn btn-default">← Previous</a>#}
+    {#                    </li>#}
+    {##}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+    {##}
+    {#    </div>#}
 
 
 
