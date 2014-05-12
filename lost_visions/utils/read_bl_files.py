@@ -1,4 +1,5 @@
 import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 from lost_visions.models import Image
 
 __author__ = 'ubuntu'
@@ -51,6 +52,6 @@ def import_folder( folder ):
                             image.flickr_original_height = words[23]
                             image.flickr_original_width = words[24]
 
-                        image.save()
+                        # image.save()
 
 import_folder('/home/ubuntu/flickr_files/imagedirectory')
