@@ -62,8 +62,8 @@ class Book(models.Model):
 
 
 class Image(models.Model):
-    # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    id = models.IntegerField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     # a count of number of times image is presented to user
     # includes both search results and full image request
@@ -82,7 +82,9 @@ class Image(models.Model):
 
     volume = models.CharField(max_length=256L, blank=True)
     publisher = models.CharField(max_length=256L, blank=True)
-    title = models.CharField(max_length=256L, blank=True)
+    # title = models.CharField(max_length=256L, blank=True)
+    title = models.TextField(blank=True)
+
     first_author = models.CharField(max_length=256L, blank=True)
     BL_DLS_ID = models.CharField(max_length=256L, blank=True)
     pubplace = models.CharField(max_length=256L, blank=True)
