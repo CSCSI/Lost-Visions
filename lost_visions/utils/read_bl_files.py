@@ -11,7 +11,9 @@ def import_folder( folder ):
     for a_file in os.listdir(folder):
         
         full_path = os.path.join(folder, a_file)
-        if os.path.isfile(full_path): #and count < 20:
+        fileName, fileExtension = os.path.splitext(full_path)
+
+        if os.path.isfile(full_path) and fileExtension == '.tsv': #and count < 20:
             print full_path
             count += 1
 
