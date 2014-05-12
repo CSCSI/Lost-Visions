@@ -207,15 +207,21 @@ def image(request, image_id):
     formatted_info['Page'] = image_info.get('page', "").lstrip('0')
     formatted_info['Identifier'] = image_info.get('flickr_id', "")
 
-    image_types = {'decoration': 'Decoration', 'map': 'Map', 'architecture1': 'Architecture',
-                   'architecture2': 'Architecture', 'architecture3': 'Architecture', 'architecture4': 'Architecture',
-                   'architecture5': 'Architecture', 'architecture6': 'Architecture', 'architecture7': 'Architecture',
-                   'architecture8': 'Architecture', 'architecture9': 'Architecture', 'architecture11': 'Architecture',
-                   'architecture12': 'Architecture', 'architecture13': 'Architecture', 'architecture14': 'Architecture',
-                   'architecture15': 'Architecture', 'architecture16': 'Architecture', 'architecture17': 'Architecture',
-                   'geology': 'Geology'}
 
-    image_themes = {'homeandfamily': 'Home and Family', 'mythology': 'Mythology'}
+
+    image_types = {'Animals_and_Plants': 'Animals and Plants',
+                   'Art_and_Entertainment': 'Art and Entertainment',
+                   'Fashion_and_Costume': 'Fashion and Costume',
+                   'Home_and_Family': 'Home and Family', 'Ideas_and_Emotions': 'Ideas and Emotions',
+                   'Literature_and Fantasy': 'Literature and Fantasy',
+                   'Natural_World': 'Natural World', 'People': 'People', 'Power_and_Politics': 'Power and Politics',
+                   'Religion_and_Belief': 'Religion and Belief', 'Science_and_Knowledge': 'Science and Knowledge',
+                   'Sport_and_Leisure': 'Sport and Leisure',
+                   'Towns_and_Buildings': 'Towns and Buildings', 'Transport_and_Industry': 'Transport and Industry',
+                   'War_and_Conflict': 'War and Conflict',
+                   'Work_and_Business': 'Work and Business', 'Travel': 'Travel'}
+
+    # image_themes = {'homeandfamily': 'Home and Family', 'mythology': 'Mythology'}
 
     category_data = {'question': 'Is the image a ...', 'answers': [
         {'name': 'map', 'id': 1, 'text': 'Map?', 'img': 'media/images/icon/map.jpg'},
@@ -240,7 +246,7 @@ def image(request, image_id):
                    'formatted_info': formatted_info,
                    'image_id': str(image_url_part),
                    'image_types': image_types,
-                   'image_themes': image_themes,
+                   # 'image_themes': image_themes,
                    'category_data': category_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
@@ -744,10 +750,24 @@ def image_category(request):
     if request.POST.get('category_id', '-1') == '1':
         category_data = {'question': 'Is the map a ...', 'answers': [
             {'name': 'diagram', 'id': 1, 'text': 'Diagram?',
-             'img': STATIC_URL + 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png'},
+             'img': ICON_URL + 'lv-rect-station.png'},
             {'name': 'nautical', 'id': 3, 'text': 'Nautical map?',
-             'img': STATIC_URL + 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png'}
+             'img': ICON_URL + 'lv-rect-station.png'}
         ]}
+
+    if request.POST.get('category_id', '-1') == '2':
+        category_data = {'question': 'Does the landscape contain ...', 'answers': [
+            {'name': 'people', 'id': 8, 'text': 'People?', 'img': ICON_URL + 'people.jpg'},
+            {'name': 'animal', 'id': 9, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
+            {'name': 'building', 'id': 4, 'text': 'Building?', 'img': ICON_URL + 'building.jpg'},
+            ]}
+
+    if request.POST.get('category_id', '-1') == '4':
+        category_data = {'question': 'Is this the buildings ...', 'answers': [
+            {'name': 'interior', 'id': 10, 'text': 'Interior?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'exterior', 'id': 11, 'text': 'Exterior?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'schematic', 'id': 12, 'text': 'Schematic?', 'img': ICON_URL + 'lv-rect-station.png'},
+            ]}
 
     if request.POST.get('category_id', '-1') == '-1':
         category_data = {'question': 'No more questions.', 'answers': []}

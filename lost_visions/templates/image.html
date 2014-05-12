@@ -152,7 +152,7 @@
                             <div class="panel">\
                                 <div class="category-answer-image">\
                                     <img src="' + data['answers'][ans].img + '"\
-                                         style="min-width:80px; min-height: 80px; max-width:90px; max-height: 90px;\
+                                         style="width:100%; height: auto;\
                                          margin:0 auto; display:block; border:1px">\
                                 </div>\
                                 <div class="panel-footer">\
@@ -163,6 +163,7 @@
                             </div>\
                         </div>\
                         ';
+                        {#                        style="min-width:80px; min-height: 80px; max-width:90px; max-height: 90px;\#}
 
                         var elem = $(answer);
                         masonry_container.append(elem).masonry( 'appended', elem );
@@ -171,13 +172,16 @@
 
                     enable_category_click();
 
+                    setTimeout("$('#category-container').masonry()", 1500);
                     category_container.masonry();
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     alert("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
                 }
             });
-            callback();
+            if (callback != null) {
+                callback();
+            }
         }
 
         function enable_category_click() {
@@ -420,7 +424,6 @@
                 canvas = canvas_object.get(0),
                 ctx = canvas.getContext('2d'),
                 parent = canvas_object.parent(),
-                {#    line = new Line(ctx);#}
                 img = new Image;
 
         function getMousePos(canvas, evt) {
@@ -434,8 +437,6 @@
         function translateCoords(mouseX, mouseY, component, degreesRotation) {
             var centerpointX = (component.getBoundingClientRect().width /2);
             var centerpointY = (component.getBoundingClientRect().height /2);
-
-            var ratio = centerpointX / centerpointY;
 
             var mouseOffsetX = mouseX - centerpointX;
             var mouseOffsetY = mouseY - centerpointY;
@@ -520,14 +521,14 @@
                 <li class="previous">
                     <a class="rota btn btn-default" data-degs="-90">← Rotate left</a>
                 </li>
+                <li>
+                    <a class="rota btn btn-default" data-degs="reset">Reset</a>
+                </li>
                 <li class="next">
                     <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
                 </li>
             </ul>
             <ul class="pager">
-                <li>
-                    <a class="rota btn btn-default" data-degs="reset">Reset</a>
-                </li>
                 <li>
                     <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
                 </li>
@@ -541,6 +542,13 @@
                         </a>
                     </li>
                 {% endif %}
+
+            </ul>
+            <ul  class="pager">
+                <li>
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                </li>
             </ul>
             <div id="output"></div>
         </div>
@@ -565,18 +573,17 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                    Select and Name the Objects in this Image
+                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    Objects
                 </a>
-                <div class="navbar-right">
-                    <div id="collapse-init" class="btn btn-primary btn-xs">
-                        +
-                    </div>
+                <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">
+                    +
                 </div>
             </h4>
         </div>
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
+                <h4>Select and Name the Objects in this Image</h4>
                 <div id="focus_alerts"></div>
                 <div id="add_tags_body"></div>
 
@@ -602,25 +609,55 @@
 
 
 
-
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                    Please select the type of image this is, from the options below
+                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                    Theme
                 </a>
             </h4>
         </div>
+
         <div id="collapseTwo" class="panel-collapse collapse">
             <div class="panel-body">
+                <h4>Please select the Theme(s) of the image, from the options below</h4>
+                <div id="add_category_body"></div>
 
-                {% for type_key, type_value in image_types.items %}
-                    <input type="checkbox" value="{{ type_key }}" id="type_check{{ forloop.counter }}" />
 
-                    <label for="type_check{{ forloop.counter }}">{{ type_value }}</label>
-                {% empty %}
-                    <p>(No previous tags found for this image)</p>
-                {% endfor %}
+                <div id="category-question">{{ category_data.question }}</div>
+
+                <div id="category-container" class="js-masonry"
+                     data-masonry-options='{"itemSelector": ".category-answer" }'>
+                    {#                    {% for category_answer in category_data.answers %}#}
+                    {#                        <div class="category-answer" data-category_id="{{ category_answer.id }}">#}
+                    {#                            <div class="panel">#}
+                    {#                                <div class="category-answer-image">#}
+                    {#                                    <img src="{% static category_answer.img %}"#}
+                    {#                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;#}
+                    {#                                         margin:0 auto; display:block; border:1px">#}
+                    {#                                </div>#}
+                    {#                                <div class="panel-footer">#}
+                    {#                                    <div class="wrap-text">#}
+                    {#                                        {{ category_answer.text }}#}
+                    {#                                    </div>#}
+                    {#                                </div>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {##}
+                    {#                    {% empty %}#}
+                    {#                        <div class="category-answer">#}
+                    {#                            <p>(No categories available)</p>#}
+                    {#                        </div>#}
+                    {#                    {% endfor %}#}
+                </div>
+
+                {#                {% for theme_key, theme_value in image_themes.items %}#}
+                {#                    <input type="checkbox" value="{{ theme_key }}" id="theme_check{{ forloop.counter }}" />#}
+                {#                    <label for="theme_check{{ forloop.counter }}">{{ theme_value }}</label>#}
+                {#                {% empty %}#}
+                {#                    <p>(No previous tags found for this image)</p>#}
+                {#                {% endfor %}#}
+                {#                <div id="category_tree"></div>#}
 
             </div>
             <div class="panel-footer">
@@ -645,50 +682,22 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                    Please select the Theme(s) of the image, from the options below
+                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                    Type
                 </a>
             </h4>
         </div>
         <div id="collapseThree" class="panel-collapse collapse">
             <div class="panel-body">
-                <div id="add_category_body"></div>
+                <h4> Please select the type of image this is, from the options below</h4>
 
+                {% for type_key, type_value in image_types.items %}
+                    <input type="checkbox" value="{{ type_key }}" id="type_check{{ forloop.counter }}" />
 
-                <div id="category-question">{{ category_data.question }}</div>
-
-                <div id="category-container" class="js-masonry"
-                     data-masonry-options='{"itemSelector": ".category-answer" }'>
-{#                    {% for category_answer in category_data.answers %}#}
-{#                        <div class="category-answer" data-category_id="{{ category_answer.id }}">#}
-{#                            <div class="panel">#}
-{#                                <div class="category-answer-image">#}
-{#                                    <img src="{% static category_answer.img %}"#}
-{#                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;#}
-{#                                         margin:0 auto; display:block; border:1px">#}
-{#                                </div>#}
-{#                                <div class="panel-footer">#}
-{#                                    <div class="wrap-text">#}
-{#                                        {{ category_answer.text }}#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
-{##}
-{#                    {% empty %}#}
-{#                        <div class="category-answer">#}
-{#                            <p>(No categories available)</p>#}
-{#                        </div>#}
-{#                    {% endfor %}#}
-                </div>
-
-                {#                {% for theme_key, theme_value in image_themes.items %}#}
-                {#                    <input type="checkbox" value="{{ theme_key }}" id="theme_check{{ forloop.counter }}" />#}
-                {#                    <label for="theme_check{{ forloop.counter }}">{{ theme_value }}</label>#}
-                {#                {% empty %}#}
-                {#                    <p>(No previous tags found for this image)</p>#}
-                {#                {% endfor %}#}
-                {#                <div id="category_tree"></div>#}
+                    <label for="type_check{{ forloop.counter }}">{{ type_value }}</label>
+                {% empty %}
+                    <p>(No previous tags found for this image)</p>
+                {% endfor %}
 
             </div>
             <div class="panel-footer">
@@ -707,17 +716,21 @@
     </div>
 
 
+
+
+
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
-                    Please transcribe the Caption in this image, if present.
+                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                    Caption
                 </a>
             </h4>
         </div>
         <div id="collapseFour" class="panel-collapse collapse">
             <div class="panel-body">
-
+                <h4>Please transcribe the Caption in this image, if present.</h4>
                 <div id="free_text_caption" >
                     <label class="control-label" for="input_caption">Caption</label>
                     <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
@@ -745,13 +758,14 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
-                    Please enter a description of the image                                </a>
+                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
+                    Description
+                </a>
             </h4>
         </div>
         <div id="collapseFive" class="panel-collapse collapse">
             <div class="panel-body">
-
+                <h4>Please enter a description of the image</h4>
                 <div id="free_text_description" class="row-fluid">
                     <label class="'control-label" for="free-text-area">Description</label>
                     <textarea name="image_description" class="form-control"
