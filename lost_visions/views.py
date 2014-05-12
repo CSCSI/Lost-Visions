@@ -251,6 +251,7 @@ def image(request, image_id):
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
 
+
 def get_creation_techniques_html(request):
     CreationTech = forms.creation_technique_form_factory()
     create_tech = CreationTech()
@@ -524,7 +525,9 @@ def search(request, word):
     results['caption'] = dict()
     for subword in word.split('+'):
 
-        tag_results = models.Tag.objects.order_by('-image__views_begun').filter(Q( tag__contains=subword ))[:30]
+        tag_results = models.Tag.objects.order_by('-image__views_begun').filter(
+            Q( tag__contains=subword ))[:30]
+
         tag_results_dict = dict()
         for result in tag_results:
             tag_result = dict()
@@ -542,8 +545,9 @@ def search(request, word):
         results['tag'].update(tag_results_dict)
 
 
-        caption_results = models.ImageText.objects.order_by('-image__views_begun').filter(Q( caption__contains=subword ) |
-                                                                                          Q( description__contains=subword ))[:30]
+        caption_results = models.ImageText.objects.order_by('-image__views_begun').filter(
+            Q( caption__contains=subword ) | Q( description__contains=subword ))[:30]
+
         caption_results_dict = dict()
         for result in caption_results:
             caption_result = dict()
@@ -564,8 +568,9 @@ def search(request, word):
 
 
 
-        author_results = models.Image.objects.order_by('-views_begun').filter(Q(first_author__contains=subword) |
-                                                                              Q(title__contains=subword))[:30]
+        author_results = models.Image.objects.order_by('-views_begun').filter(
+            Q(first_author__contains=subword) | Q(title__contains=subword))[:30]
+
         author_results_dict = dict()
         for result in author_results:
             tag_result = dict()
