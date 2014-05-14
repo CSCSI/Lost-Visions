@@ -56,6 +56,7 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 
     <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.11/jquery.scrollTo.min.js"></script>
 
     {#    <script type="text/javascript" src="{% static "dajax/jquery.dajax.core.js" %}"></script>#}
 
@@ -133,7 +134,7 @@
         $(updateCheckboxes());
 
         $("#change-theme").find("li a").click(function() {
-            $("link").attr("href",$(this).attr('rel'))
+            $("link").attr("href",$(this).attr('rel'));
             {#                                .attr("href","//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css");#}
 
             $.cookie("css",$(this).attr('rel'), {expires: 365, path: '/'});
@@ -165,7 +166,7 @@
     <div class="navbar-header">
         <a href="../" class="navbar-brand">
             {#            <img class="lv_logos logo1"></a>#}
-            <img class="lv_logos" src="{% static 'media/images/lv-rect-station.png' %}">
+            <img class="lv_logos" src="{% static 'media/images/ill-arch-wide.png' %}">
         </a>
         <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#navbar-main">
             <span class="icon-bar"></span>
@@ -188,7 +189,7 @@
                 <ul class="dropdown-menu" id="change-theme">
                     <li><a href="#" rel="{% static "bootstrap.slate.min.css" %}">Grey</a></li>
                     <li><a href="#" rel="{% static "bootstrap.flatly.min.css" %}">Blue</a></li>
-                    <li><a href="#" rel="{% static "bootstrap.amelia.min.css" %}">Red</a></li>
+                    <li><a href="#" rel="{% static "bootstrap.lumin.min.css" %}">Lumin</a></li>
                     <li><a href="#" rel="http://www.dmvi.org.uk/css/dice-theme1.min.css">DMVI</a></li>
                 </ul>
             </li>

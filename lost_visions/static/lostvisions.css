@@ -14,28 +14,28 @@
 }
 
 .nav li {
-    border-left: 1px solid black;
+    /*border-left: 1px solid black;*/
     font-size: 13px;
 }
 
 .panel-body{
-    background-color: #7e98a8;
+    /*background-color: #7e98a8;*/
 }
 
 .panel-default>.panel-heading{
     /*background-color: #e89362;*/
     /*border-color: #e89362;*/
-    background-color: #2c3e50;
-    border-color: #2c3e50;
-    color: #ffffff;
+    /*background-color: #2c3e50;*/
+    /*border-color: #2c3e50;*/
+    /*color: #ffffff;*/
 }
 
 .panel-group .panel-footer{
     /*background-color: #e89362;*/
     /*border-color: #e89362;*/
-    background-color: #3e444c;
-    border-color: #3e444c;
-    color: #ffffff;
+    /*background-color: #3e444c;*/
+    /*border-color: #3e444c;*/
+    /*color: #ffffff;*/
 
     white-space: nowrap;
     width: 100%;                   /* IE6 needs any width */
@@ -62,7 +62,7 @@
 }
 
 body {
-    background-color: #a8a4a3;
+    /*background-color: #a8a4a3;*/
     margin-left: auto;
     margin-right: auto;
     margin-top: 0;
@@ -117,9 +117,10 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 .lv_logos {
     background-image: url('media/images/lost-visions-station.png');
-    height: 50px;
-    width: 85px;
-    margin: 3px
+    height: 40px;
+    width: auto;
+    border: 1px solid rgba(0, 0, 0, 0.60);
+    /*margin: 3px*/
 }
 
 .logo1 {
@@ -135,11 +136,11 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 .collapse-init {
     position: absolute;
-    right:25px;
+    right:40px;
     top:0px;
-    background-image: -webkit-linear-gradient(#484e55,#3a3f44 60%,#313539);
-    background-color: #3a3f44;
-    border: 1px solid rgba(255, 255, 255, 0.60);
+    /*background-image: -webkit-linear-gradient(#484e55,#3a3f44 60%,#313539);*/
+    /*background-color: #3a3f44;*/
+    /*border: 1px solid rgba(255, 255, 255, 0.60);*/
 
 }
 
@@ -160,14 +161,15 @@ a:hover#save_image.btn.btn-default.save_image  {
 }
 
 .category-answer:hover {
-    background-color: #3a3f44;
-    background-image: linear-gradient(#020202,#101112 40%,#191b1d);
-    border: 1px solid rgba(0,0,0,0.6);
+    /*background-color: #3a3f44;*/
+    /*background-image: linear-gradient(#020202,#101112 40%,#191b1d);*/
+    /*border: 1px solid rgba(0,0,0,0.6);*/
 
 }
 
 .category-answer-image {
     margin: 1px;
+    margin-top: 3px;
     /*height: 40px;*/
     /*width: 40px;*/
 }

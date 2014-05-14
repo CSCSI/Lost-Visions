@@ -72,7 +72,7 @@
                 highlighted_y_pixel = 0;
 
                 document.getElementById("tag_info").value = JSON.stringify(all_tags);
-                console.log(JSON.parse(document.getElementById("tag_info").value));
+                {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
 
                 $("#add_tags_body").prepend($label).prepend($check);
 
@@ -176,7 +176,7 @@
                     category_container.masonry();
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    alert("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
                 }
             });
             if (callback != null) {
@@ -186,11 +186,11 @@
 
         function enable_category_click() {
             $('.category-answer').click(function() {
-                console.log('cat ans click');
                 var cat_id = $(this).data('category_id');
                 populate_categories(cat_id, null);
             });
-        };
+        }
+
         populate_categories(0, enable_category_click);
 
         $('#add_tag').click(function(){
@@ -211,7 +211,6 @@
 
         var degs = 0;
         var r = $("#photo").get(0).getBoundingClientRect();
-        {#        console.log(r);#}
 
         $(".rota").click(function() {
             var photo = $("#photo");
@@ -376,10 +375,23 @@
             if (active) $('#accordion .in').collapse('hide');
 
         }).on('shown.bs.collapse', function () {
-            console.log('this???')
             $('.js-masonry').masonry();
 
-        });;
+        }).bind('accordionchange', function(event, ui) {
+            console.log('change scroll to ' + ui.newHeader.offset.top)
+            /* In here, ui.newHeader = the newly active header as a jQ object
+             ui.newContent = the newly active content area */
+            {#            $.scrollTo( ui.newHeader ); // or ui.newContent, if you prefer#}
+            $('html,body').animate({scrollTop: ui.newHeader.offset().top},'slow');
+        });
+
+        function scrollToAnchor(aid){
+            var aTag = $("a[name='"+ aid +"']");
+            $('html,body').animate({scrollTop: aTag.offset().top},'slow');
+        }
+
+        {#        <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">#}
+
 
         {#        resize_box = function(){#}
         {##}
@@ -553,6 +565,20 @@
             <div id="output"></div>
         </div>
 
+        <hr>
+
+        <div class="bs-example table-responsive">
+            <table class="table table-striped table-hover ">
+                <tbody>
+                <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
+                {% for mykey,value in formatted_info.items %}
+                    {% if mykey != 'tags' %}
+                        <tr><th>{{ mykey }}</th><td>{{ value }}</td></tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div><!--/span-->
 
     <div class="col-xs-12 col-sm-6">
@@ -613,7 +639,7 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                    Theme
+                    Category
                 </a>
             </h4>
         </div>
@@ -623,42 +649,11 @@
                 <h4>Please select the Theme(s) of the image, from the options below</h4>
                 <div id="add_category_body"></div>
 
-
                 <div id="category-question">{{ category_data.question }}</div>
 
                 <div id="category-container" class="js-masonry"
                      data-masonry-options='{"itemSelector": ".category-answer" }'>
-                    {#                    {% for category_answer in category_data.answers %}#}
-                    {#                        <div class="category-answer" data-category_id="{{ category_answer.id }}">#}
-                    {#                            <div class="panel">#}
-                    {#                                <div class="category-answer-image">#}
-                    {#                                    <img src="{% static category_answer.img %}"#}
-                    {#                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;#}
-                    {#                                         margin:0 auto; display:block; border:1px">#}
-                    {#                                </div>#}
-                    {#                                <div class="panel-footer">#}
-                    {#                                    <div class="wrap-text">#}
-                    {#                                        {{ category_answer.text }}#}
-                    {#                                    </div>#}
-                    {#                                </div>#}
-                    {#                            </div>#}
-                    {#                        </div>#}
-                    {##}
-                    {#                    {% empty %}#}
-                    {#                        <div class="category-answer">#}
-                    {#                            <p>(No categories available)</p>#}
-                    {#                        </div>#}
-                    {#                    {% endfor %}#}
                 </div>
-
-                {#                {% for theme_key, theme_value in image_themes.items %}#}
-                {#                    <input type="checkbox" value="{{ theme_key }}" id="theme_check{{ forloop.counter }}" />#}
-                {#                    <label for="theme_check{{ forloop.counter }}">{{ theme_value }}</label>#}
-                {#                {% empty %}#}
-                {#                    <p>(No previous tags found for this image)</p>#}
-                {#                {% endfor %}#}
-                {#                <div id="category_tree"></div>#}
-
             </div>
             <div class="panel-footer">
                 <ul class="pager">
@@ -683,52 +678,11 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                    Type
-                </a>
-            </h4>
-        </div>
-        <div id="collapseThree" class="panel-collapse collapse">
-            <div class="panel-body">
-                <h4> Please select the type of image this is, from the options below</h4>
-
-                {% for type_key, type_value in image_types.items %}
-                    <input type="checkbox" value="{{ type_key }}" id="type_check{{ forloop.counter }}" />
-
-                    <label for="type_check{{ forloop.counter }}">{{ type_value }}</label>
-                {% empty %}
-                    <p>(No previous tags found for this image)</p>
-                {% endfor %}
-
-            </div>
-            <div class="panel-footer">
-                <ul class="pager">
-                    <li class="previous">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                           class="btn btn-default">← Previous</a>
-                    </li>
-                    <li class="next">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
-                           class="btn btn-default">Next →</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-
-
-
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
                     Caption
                 </a>
             </h4>
         </div>
-        <div id="collapseFour" class="panel-collapse collapse">
+        <div id="collapseThree" class="panel-collapse collapse">
             <div class="panel-body">
                 <h4>Please transcribe the Caption in this image, if present.</h4>
                 <div id="free_text_caption" >
@@ -740,7 +694,7 @@
             <div class="panel-footer">
                 <ul class="pager">
                     <li class="previous">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
                            class="btn btn-default">← Previous</a>
                     </li>
                     <li class="next">
@@ -766,17 +720,20 @@
         <div id="collapseFive" class="panel-collapse collapse">
             <div class="panel-body">
                 <h4>Please enter a description of the image</h4>
+
                 <div id="free_text_description" class="row-fluid">
                     <label class="'control-label" for="free-text-area">Description</label>
                     <textarea name="image_description" class="form-control"
                               rows="3" id="free-text-area"></textarea>
                 </div>
+
+                <h4><a href="#">Or Discuss this Image on the Forum</a></h4>
             </div>
 
             <div class="panel-footer">
                 <ul class="pager">
                     <li class="previous">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
                            class="btn btn-default">← Previous</a>
                     </li>
                 </ul>
@@ -874,27 +831,6 @@
 
     </div>
 
-    </div>
-    <hr>
-
-    <div class="container">
-        <div class="col-xs-12 col-sm-6">
-            <div class="bs-example table-responsive">
-                <table class="table table-striped table-hover ">
-                    <tbody>
-                    <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
-                    {% for mykey,value in formatted_info.items %}
-                        {% if mykey != 'tags' %}
-
-                            <tr><th>{{ mykey }}</th><td>{{ value }}</td></tr>
-
-                        {% endif %}
-                    {% endfor %}
-                    <tr><th>**</th><td>Data retrieved automatically from Title info, no promises</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
     {#    <div>#}

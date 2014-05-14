@@ -209,17 +209,17 @@ def image(request, image_id):
 
 
 
-    image_types = {'Animals_and_Plants': 'Animals and Plants',
-                   'Art_and_Entertainment': 'Art and Entertainment',
-                   'Fashion_and_Costume': 'Fashion and Costume',
-                   'Home_and_Family': 'Home and Family', 'Ideas_and_Emotions': 'Ideas and Emotions',
-                   'Literature_and Fantasy': 'Literature and Fantasy',
-                   'Natural_World': 'Natural World', 'People': 'People', 'Power_and_Politics': 'Power and Politics',
-                   'Religion_and_Belief': 'Religion and Belief', 'Science_and_Knowledge': 'Science and Knowledge',
-                   'Sport_and_Leisure': 'Sport and Leisure',
-                   'Towns_and_Buildings': 'Towns and Buildings', 'Transport_and_Industry': 'Transport and Industry',
-                   'War_and_Conflict': 'War and Conflict',
-                   'Work_and_Business': 'Work and Business', 'Travel': 'Travel'}
+    # image_types = {'Animals_and_Plants': 'Animals and Plants',
+    #                'Art_and_Entertainment': 'Art and Entertainment',
+    #                'Fashion_and_Costume': 'Fashion and Costume',
+    #                'Home_and_Family': 'Home and Family', 'Ideas_and_Emotions': 'Ideas and Emotions',
+    #                'Literature_and Fantasy': 'Literature and Fantasy',
+    #                'Natural_World': 'Natural World', 'People': 'People', 'Power_and_Politics': 'Power and Politics',
+    #                'Religion_and_Belief': 'Religion and Belief', 'Science_and_Knowledge': 'Science and Knowledge',
+    #                'Sport_and_Leisure': 'Sport and Leisure',
+    #                'Towns_and_Buildings': 'Towns and Buildings', 'Transport_and_Industry': 'Transport and Industry',
+    #                'War_and_Conflict': 'War and Conflict',
+    #                'Work_and_Business': 'Work and Business', 'Travel': 'Travel'}
 
     # image_themes = {'homeandfamily': 'Home and Family', 'mythology': 'Mythology'}
 
@@ -239,14 +239,14 @@ def image(request, image_id):
             illustrator_string += illustrator.name + ' (' + illustrator.technique + '),'
         if illustrator_string is not '':
             formatted_info['Illustrator(s) **'] = illustrator_string
+            formatted_info['**'] = 'Data retrieved automatically from Title info, no promises'
+
     print image_info
 
     return render(request, 'image.html',
                   {'image': image_info,
                    'formatted_info': formatted_info,
                    'image_id': str(image_url_part),
-                   'image_types': image_types,
-                   # 'image_themes': image_themes,
                    'category_data': category_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
@@ -746,7 +746,8 @@ def image_category(request):
             {'name': 'map', 'id': 1, 'text': 'Map?', 'img': ICON_URL + 'map.jpg'},
             {'name': 'landscape', 'id': 2, 'text': 'Landscape?', 'img': ICON_URL + 'landscape.jpg'},
             {'name': 'building', 'id': 4, 'text': 'Building?', 'img': ICON_URL + 'building.jpg'},
-            {'name': 'words', 'id': 5, 'text': 'Written Text?', 'img': ICON_URL + 'words.jpg'},
+            {'name': 'words', 'id': 5, 'text': 'Handwritten Text?', 'img': ICON_URL + 'words.jpg'},
+            {'name': 'coat_of_arms', 'id': 13, 'text': 'Coat of Arms?', 'img': ICON_URL + 'coat_of_arms.jpg'},
             {'name': 'motif', 'id': 6, 'text': 'Decorative Motif?', 'img': ICON_URL + 'motif.jpg'},
             {'name': 'decorative_letter', 'id': 7, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg'},
 

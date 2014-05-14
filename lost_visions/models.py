@@ -9,7 +9,9 @@ from django.db import models
 
 
 class LostVisionUser(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+
     username = models.ForeignKey(User, blank=False)
     expert_level = models.IntegerField(default=0, blank=True)
     self_description = models.CharField(max_length=256L, blank=True)
@@ -22,7 +24,9 @@ class LostVisionUser(models.Model):
 
 
 class Book(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+
     volume = models.CharField(max_length=120L, blank=True)
     publisher = models.CharField(max_length=256L, blank=True)
     title = models.CharField(max_length=256L)
@@ -94,7 +98,7 @@ class Image(models.Model):
     flickr_url = models.CharField(max_length=256L, blank=True)
     image_idx = models.CharField(max_length=256L, blank=True)
     page = models.CharField(max_length=256L, blank=True)
-    flickr_id = models.CharField(max_length=256L, blank=True)
+    flickr_id = models.CharField(max_length=256L, blank=False, unique=True)
     flickr_small_source = models.CharField(max_length=256L, blank=True)
     flickr_small_height = models.CharField(max_length=256L, blank=True)
     flickr_small_width = models.CharField(max_length=256L, blank=True)
@@ -131,7 +135,9 @@ class Image(models.Model):
 
 
 class Tag(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+
     tag = models.CharField(max_length=256L, blank=False)
     user = models.ForeignKey(LostVisionUser, blank=False)
     image = models.ForeignKey(Image, blank=False)
@@ -148,7 +154,9 @@ class Tag(models.Model):
 
 
 class GeoTag(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+
     user = models.ForeignKey(LostVisionUser, blank=False)
     image = models.ForeignKey(Image, blank=False)
     north_east_x = models.CharField(max_length=256L, blank=True)
@@ -168,7 +176,9 @@ class GeoTag(models.Model):
 
 
 class SearchQuery(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+
     search_term = models.CharField(max_length=256L, blank=False)
     timestamp = models.DateTimeField(auto_now=True, blank=True)
     user = models.ForeignKey(LostVisionUser, blank=True)
@@ -181,7 +191,9 @@ class SearchQuery(models.Model):
 
 
 class ImageText(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+
     caption = models.TextField()
     description = models.TextField()
     timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -200,7 +212,9 @@ class ImageText(models.Model):
 
 
 class SavedImages(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+
     user = models.ForeignKey(LostVisionUser, blank=True)
     image = models.ForeignKey(Image, blank=False)
     timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -213,7 +227,9 @@ class SavedImages(models.Model):
 
 
 class BookIllustrator(models.Model):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+
     book = models.ForeignKey(Book, blank=False)
     name = models.CharField(max_length=120L, blank=True)
     technique = models.CharField(max_length=120L, blank=True)
