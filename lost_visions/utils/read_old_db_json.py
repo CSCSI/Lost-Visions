@@ -10,11 +10,11 @@ __author__ = 'ubuntu'
 def read_json_dbdump(full_path):
 
     all_things = dict()
-    all_things['imagetext'] = []
-    all_things['tag'] = []
-    all_things['geotag'] = []
-    all_things['searchquery'] = []
-    all_things['savedimages'] = []
+    all_things['imagetext'] = dict()
+    all_things['tag'] = dict()
+    all_things['geotag'] = dict()
+    all_things['searchquery'] = dict()
+    all_things['savedimages'] = dict()
 
     ignore = ['contenttypes.contenttype',
               'sessions.session',
@@ -45,7 +45,7 @@ def read_json_dbdump(full_path):
 
                             img['ts'] = obj['fields']['timestamp']
                             img['description'] = obj['fields']['description']
-                            all_things['imagetext'].append(img)
+                            all_things['imagetext'][obj['fields']['timestamp']] = img
 
                         elif obj['model'] == 'lost_visions.tag':
                             tag = dict()
@@ -62,7 +62,7 @@ def read_json_dbdump(full_path):
                             tag['y_percent'] = obj['fields']['y_percent']
                             tag['x_percent'] = obj['fields']['x_percent']
                             tag['tag_order'] = obj['fields']['tag_order']
-                            all_things['tag'].append(tag)
+                            all_things['tag'][obj['fields']['timestamp']] = tag
 
                         elif obj['model'] == 'lost_visions.geotag':
                             geotag = dict()
@@ -80,7 +80,7 @@ def read_json_dbdump(full_path):
                             geotag['south_west_x'] = obj['fields']['south_west_x']
                             geotag['south_west_y'] = obj['fields']['south_west_y']
                             geotag['tag_order'] = obj['fields']['tag_order']
-                            all_things['geotag'].append(geotag)
+                            all_things['geotag'][obj['fields']['timestamp']] = geotag
 
                         elif obj['model'] == 'lost_visions.searchquery':
                             searchquery = dict()
@@ -91,8 +91,9 @@ def read_json_dbdump(full_path):
                             except:
                                 pass
 
+                            searchquery['ts'] = obj['fields']['timestamp']
                             searchquery['search_term'] = obj['fields']['search_term']
-                            all_things['searchquery'].append(searchquery)
+                            all_things['searchquery'][obj['fields']['timestamp']] = searchquery
 
                         elif obj['model'] == 'lost_visions.savedimages':
                             savedimages = dict()
@@ -108,7 +109,7 @@ def read_json_dbdump(full_path):
                             savedimages['flickr_id'] = models.Image.objects.get(id=obj['fields']['image']).flickr_id
                             savedimages['ts'] = obj['fields']['timestamp']
 
-                            all_things['savedimages'].append(savedimages)
+                            all_things['savedimages'][obj['fields']['timestamp']] = savedimages
 
                         else:
                             print '*'
@@ -121,7 +122,7 @@ def read_cleaned_json(full_path):
     with open(full_path) as f:
         for i, line in enumerate(f):
             all_things = json.loads(line)
-            for obj in all_things['imagetext']:
+            for key, obj in all_things['imagetext']:
                 print obj
                 img_text = models.ImageText()
                 img_text.timestamp = obj['ts']
@@ -137,7 +138,7 @@ def read_cleaned_json(full_path):
                     pass
                 img_text.save()
 
-            for obj in all_things['tag']:
+            for key, obj in all_things['tag']:
                 print obj
                 tag_object = models.Tag()
                 tag_object.tag = obj['tag']
@@ -155,7 +156,7 @@ def read_cleaned_json(full_path):
                 tag_object.tag_order = obj['tag_order']
                 tag_object.save()
 
-            for obj in all_things['geotag']:
+            for key, obj in all_things['geotag']:
                 print obj
                 geo_object = models.GeoTag()
                 geo_object.image = models.Image.objects.get(flickr_id=obj['flickr_id'])
@@ -174,7 +175,7 @@ def read_cleaned_json(full_path):
                 geo_object.tag_order = obj['tag_order']
                 geo_object.save()
 
-            for obj in all_things['searchquery']:
+            for key, obj in all_things['searchquery']:
                 print obj
                 search_object = models.SearchQuery()
                 user_id = obj['user']
@@ -188,7 +189,7 @@ def read_cleaned_json(full_path):
                 search_object.search_term = obj['search_term']
                 search_object.save()
 
-            for obj in all_things['savedimages']:
+            for key, obj in all_things['savedimages']:
                 print obj
                 saved_object = models.SavedImages()
                 saved_object.image = models.Image.objects.get(flickr_id=obj['flickr_id'])
@@ -202,4 +203,4 @@ def read_cleaned_json(full_path):
 
 
 read_json_dbdump(settings.db_json_location)
-read_cleaned_json(settings.db_cleaned_json_location)
+# read_cleaned_json(settings.db_cleaned_json_location)
