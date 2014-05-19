@@ -1,4 +1,5 @@
 import os
+from django.db.utils import IntegrityError
 from crowdsource import settings
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
@@ -54,6 +55,9 @@ def import_folder( folder ):
                             image.flickr_original_height = words[23]
                             image.flickr_original_width = words[24]
 
-                        # image.save()
+                            try:
+                                image.save()
+                            except IntegrityError as i:
+                                print 'Already saved image : ' + image.flickr_id
 
 import_folder(settings.bl_folder)

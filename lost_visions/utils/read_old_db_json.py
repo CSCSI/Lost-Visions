@@ -112,7 +112,8 @@ def read_json_dbdump(full_path):
                         else:
                             print '*'
                             # print obj['model']
-    print all_things
+    with open('/home/ubuntu/dumped.json', 'a') as dump_file:
+        dump_file.write(json.dumps(all_things))
 
 
 def read_cleaned_json(full_path):
@@ -199,5 +200,5 @@ def read_cleaned_json(full_path):
                 saved_object.save()
 
 
-# read_json_dbdump('/home/ubuntu/wtf.json')
-read_cleaned_json('~/wtf_cleaned.json')
+read_json_dbdump('/home/ubuntu/wtf.json')
+# read_cleaned_json('~/wtf_cleaned.json')
