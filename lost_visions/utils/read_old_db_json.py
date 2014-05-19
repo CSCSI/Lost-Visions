@@ -37,8 +37,8 @@ def read_json_dbdump(full_path):
                             img['flickr_id'] = models.Image.objects.get(id=obj['fields']['image']).flickr_id
                             user_id = obj['fields']['user']
                             try:
-                                user_object = models.User.objects.get(id=user_id)
-                                img['user'] = user_object.username
+                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                img['user'] = user_id
                             except:
                                 pass
 
@@ -52,8 +52,8 @@ def read_json_dbdump(full_path):
                             tag['flickr_id'] = models.Image.objects.get(id=obj['fields']['image']).flickr_id
                             user_id = obj['fields']['user']
                             try:
-                                user_object = models.User.objects.get(id=user_id)
-                                tag['user'] = user_object.username
+                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                tag['user'] = user_id
                             except:
                                 pass
 
@@ -68,8 +68,8 @@ def read_json_dbdump(full_path):
                             geotag['flickr_id'] = models.Image.objects.get(id=obj['fields']['image']).flickr_id
                             user_id = obj['fields']['user']
                             try:
-                                user_object = models.User.objects.get(id=user_id)
-                                geotag['user'] = user_object.username
+                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                geotag['user'] = user_id
                             except:
                                 pass
 
@@ -85,8 +85,8 @@ def read_json_dbdump(full_path):
                             searchquery = dict()
                             user_id = obj['fields']['user']
                             try:
-                                user_object = models.User.objects.get(id=user_id)
-                                searchquery['user'] = user_object.username
+                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                searchquery['user'] = user_id
                             except:
                                 pass
 
@@ -98,8 +98,8 @@ def read_json_dbdump(full_path):
                             user_id = obj['fields']['user']
                             try:
                                 print user_id
-                                user_object = models.User.objects.get(id=user_id)
-                                savedimages['user'] = user_object.username
+                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                savedimages['user'] = user_id
                             except Exception as e:
                                 print e
                                 pass
@@ -129,7 +129,7 @@ def read_cleaned_json(full_path):
                 img_text.image = models.Image.objects.get(flickr_id=obj['flickr_id'])
 
                 try:
-                    user_object = models.User.objects.get(id=obj['user'])
+                    user_object = models.LostVisionUser.objects.get(id=obj['user'])
                     img_text.user = user_object
                 except Exception as e:
                     print e
@@ -143,7 +143,7 @@ def read_cleaned_json(full_path):
                 tag_object.image = models.Image.objects.get(flickr_id=obj['flickr_id'])
                 try:
                     user_id = obj['user']
-                    tag_object.user = models.User.objects.get(id=user_id)
+                    tag_object.user = models.LostVisionUser.objects.get(id=user_id)
                 except Exception as e:
                     print e
                     pass
@@ -160,7 +160,7 @@ def read_cleaned_json(full_path):
                 geo_object.image = models.Image.objects.get(flickr_id=obj['flickr_id'])
                 user_id = obj['user']
                 try:
-                    geo_object.user = models.User.objects.get(id=user_id)
+                    geo_object.user = models.LostVisionUser.objects.get(id=user_id)
                 except Exception as e:
                     print e
                     pass
@@ -178,7 +178,7 @@ def read_cleaned_json(full_path):
                 search_object = models.SearchQuery()
                 user_id = obj['user']
                 try:
-                    search_object.user = models.User.objects.get(id=user_id)
+                    search_object.user = models.LostVisionUser.objects.get(id=user_id)
                 except Exception as e:
                     print e
                     pass
@@ -193,12 +193,12 @@ def read_cleaned_json(full_path):
                 saved_object.image = models.Image.objects.get(flickr_id=obj['flickr_id'])
                 user_id = obj['user']
                 try:
-                    saved_object.user = models.User.objects.get(id=user_id)
+                    saved_object.user = models.LostVisionUser.objects.get(id=user_id)
                 except Exception as e:
                     print e
                     pass
                 saved_object.save()
 
 
-read_json_dbdump('/home/ubuntu/wtf.json')
-# read_cleaned_json('~/wtf_cleaned.json')
+# read_json_dbdump('/home/ubuntu/wtf.json')
+read_cleaned_json('~/wtf_cleaned.json')
