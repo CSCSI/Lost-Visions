@@ -21,9 +21,11 @@ def import_folder( folder ):
             print full_path
             count += 1
 
+            already_saved = 0
             with open(full_path) as f:
                 for i, line in enumerate(f):
                     if i > 0:
+
                         image = Image()
                         words = line.split('\t')
 
@@ -58,6 +60,10 @@ def import_folder( folder ):
                             try:
                                 image.save()
                             except IntegrityError as i:
+                                already_saved += 1
                                 print 'Already saved image : ' + image.flickr_id
+
+                            if already_saved > 10:
+                                    break
 
 import_folder(settings.bl_folder)
