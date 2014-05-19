@@ -1,5 +1,6 @@
 import json
 import os
+from crowdsource import settings
 from lost_visions import models
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
@@ -37,7 +38,7 @@ def read_json_dbdump(full_path):
                             img['flickr_id'] = models.Image.objects.get(id=obj['fields']['image']).flickr_id
                             user_id = obj['fields']['user']
                             try:
-                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                # user_object = models.LostVisionUser.objects.get(id=user_id)
                                 img['user'] = user_id
                             except:
                                 pass
@@ -48,11 +49,11 @@ def read_json_dbdump(full_path):
 
                         elif obj['model'] == 'lost_visions.tag':
                             tag = dict()
-                            tag['caption'] = obj['fields']['tag']
+                            tag['tag'] = obj['fields']['tag']
                             tag['flickr_id'] = models.Image.objects.get(id=obj['fields']['image']).flickr_id
                             user_id = obj['fields']['user']
                             try:
-                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                # user_object = models.LostVisionUser.objects.get(id=user_id)
                                 tag['user'] = user_id
                             except:
                                 pass
@@ -68,7 +69,7 @@ def read_json_dbdump(full_path):
                             geotag['flickr_id'] = models.Image.objects.get(id=obj['fields']['image']).flickr_id
                             user_id = obj['fields']['user']
                             try:
-                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                # user_object = models.LostVisionUser.objects.get(id=user_id)
                                 geotag['user'] = user_id
                             except:
                                 pass
@@ -85,7 +86,7 @@ def read_json_dbdump(full_path):
                             searchquery = dict()
                             user_id = obj['fields']['user']
                             try:
-                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                # user_object = models.LostVisionUser.objects.get(id=user_id)
                                 searchquery['user'] = user_id
                             except:
                                 pass
@@ -98,7 +99,7 @@ def read_json_dbdump(full_path):
                             user_id = obj['fields']['user']
                             try:
                                 print user_id
-                                user_object = models.LostVisionUser.objects.get(id=user_id)
+                                # user_object = models.LostVisionUser.objects.get(id=user_id)
                                 savedimages['user'] = user_id
                             except Exception as e:
                                 print e
@@ -200,5 +201,5 @@ def read_cleaned_json(full_path):
                 saved_object.save()
 
 
-# read_json_dbdump('/home/ubuntu/wtf.json')
-read_cleaned_json('~/wtf_cleaned.json')
+read_json_dbdump(settings.db_json_location)
+read_cleaned_json(settings.db_cleaned_json_location)

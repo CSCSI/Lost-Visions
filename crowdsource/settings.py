@@ -162,6 +162,8 @@ STATICFILES_FINDERS = (
 )
 
 bl_folder = ''
+db_json_location = ''
+db_cleaned_json_location = ''
 
 try:
     from crowdsource.settings_local import *
