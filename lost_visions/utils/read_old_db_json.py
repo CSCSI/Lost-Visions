@@ -122,7 +122,7 @@ def read_cleaned_json(full_path):
     with open(full_path) as f:
         for i, line in enumerate(f):
             all_things = json.loads(line)
-            for key, obj in all_things['imagetext']:
+            for key, obj in all_things['imagetext'].iteritems():
                 print obj
                 img_text = models.ImageText()
                 img_text.timestamp = obj['ts']
@@ -138,7 +138,7 @@ def read_cleaned_json(full_path):
                     pass
                 img_text.save()
 
-            for key, obj in all_things['tag']:
+            for key, obj in all_things['tag'].iteritems():
                 print obj
                 tag_object = models.Tag()
                 tag_object.tag = obj['tag']
@@ -156,7 +156,7 @@ def read_cleaned_json(full_path):
                 tag_object.tag_order = obj['tag_order']
                 tag_object.save()
 
-            for key, obj in all_things['geotag']:
+            for key, obj in all_things['geotag'].iteritems():
                 print obj
                 geo_object = models.GeoTag()
                 geo_object.image = models.Image.objects.get(flickr_id=obj['flickr_id'])
@@ -175,7 +175,7 @@ def read_cleaned_json(full_path):
                 geo_object.tag_order = obj['tag_order']
                 geo_object.save()
 
-            for key, obj in all_things['searchquery']:
+            for key, obj in all_things['searchquery'].iteritems():
                 print obj
                 search_object = models.SearchQuery()
                 user_id = obj['user']
@@ -189,7 +189,7 @@ def read_cleaned_json(full_path):
                 search_object.search_term = obj['search_term']
                 search_object.save()
 
-            for key, obj in all_things['savedimages']:
+            for key, obj in all_things['savedimages'].iteritems():
                 print obj
                 saved_object = models.SavedImages()
                 saved_object.image = models.Image.objects.get(flickr_id=obj['flickr_id'])
