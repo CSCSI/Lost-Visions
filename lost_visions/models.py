@@ -10,7 +10,7 @@ from django.db import models
 
 class LostVisionUser(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     username = models.ForeignKey(User, blank=False)
     expert_level = models.IntegerField(default=0, blank=True)
@@ -25,7 +25,7 @@ class LostVisionUser(models.Model):
 
 class Book(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     volume = models.CharField(max_length=120L, blank=True)
     publisher = models.CharField(max_length=256L, blank=True)
@@ -42,32 +42,10 @@ class Book(models.Model):
     class Meta:
         db_table = 'book'
 
-#
-# class Person(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     name = models.CharField(max_length=256L)
-#
-#     class Meta:
-#         db_table = 'person'
-
-#
-# class Tags(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     tag = models.CharField(max_length=256L, blank=False)
-
-
-# class UserImageTags(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     uid = models.ForeignKey(LostVisionUser)
-#     tags = models.ManyToManyField(Tags)
-#
-#     class Meta:
-#         unique_together = ("id", "uid")
-
 
 class Image(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     # a count of number of times image is presented to user
     # includes both search results and full image request
@@ -118,25 +96,10 @@ class Image(models.Model):
     def __unicode__(self):
         return str(self.id) + ':' + self.flickr_id
 
-#
-# class Category(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     term = models.CharField(max_length=256L, blank=False)
-#
-#
-# class UserInterests(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     categories = models.ManyToManyField(Category)
-#
-#
-# class ExpertLevel(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     description = models.CharField(max_length=256L, blank=True)
-
 
 class Tag(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     tag = models.CharField(max_length=256L, blank=False)
     user = models.ForeignKey(LostVisionUser, blank=False)
@@ -155,7 +118,7 @@ class Tag(models.Model):
 
 class GeoTag(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     user = models.ForeignKey(LostVisionUser, blank=False)
     image = models.ForeignKey(Image, blank=False)
@@ -177,7 +140,7 @@ class GeoTag(models.Model):
 
 class SearchQuery(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     search_term = models.CharField(max_length=256L, blank=False)
     timestamp = models.DateTimeField(auto_now=True, blank=True)
@@ -192,7 +155,7 @@ class SearchQuery(models.Model):
 
 class ImageText(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     caption = models.TextField()
     description = models.TextField()
@@ -213,7 +176,7 @@ class ImageText(models.Model):
 
 class SavedImages(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     user = models.ForeignKey(LostVisionUser, blank=True)
     image = models.ForeignKey(Image, blank=False)
@@ -228,7 +191,7 @@ class SavedImages(models.Model):
 
 class BookIllustrator(models.Model):
     # id = models.IntegerField(primary_key=True)
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
 
     book = models.ForeignKey(Book, blank=False)
     name = models.CharField(max_length=120L, blank=True)

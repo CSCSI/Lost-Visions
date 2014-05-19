@@ -160,8 +160,10 @@ STATICFILES_FINDERS = (
 
     #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-#
-# try:
-#     from crowdsource.settings_local import *
-# except ImportError:
-#     pass
+
+bl_folder = ''
+
+try:
+    from crowdsource.settings_local import *
+except ImportError:
+    pass

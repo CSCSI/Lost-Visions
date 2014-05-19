@@ -1,4 +1,6 @@
 import os
+from crowdsource import settings
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 from lost_visions.models import Image
 
@@ -54,4 +56,4 @@ def import_folder( folder ):
 
                         # image.save()
 
-import_folder('/home/ubuntu/flickr_files/imagedirectory')
+import_folder(settings.bl_folder)
