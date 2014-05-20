@@ -226,10 +226,13 @@ def image(request, image_id):
             formatted_info['**'] = 'Data retrieved automatically from Title info, no promises'
 
     linked_images = models.LinkedImage.objects.filter(image__flickr_id=image_id)
-    linked_image_data = dict()
+    linked_image_data = []
     for link_image in linked_images:
-        linked_image_data[link_image.name] = STATIC_URL + '/linked_images/' + link_image.file_name
-        linked_image_data['info'] = link_image.description
+        linked = dict()
+        linked['link'] = STATIC_URL + 'media/linked_images/' + link_image.file_name
+        linked['info'] = link_image.description
+        linked['name'] = link_image.name
+        linked_image_data.append(linked)
 
     print image_info
 
