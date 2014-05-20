@@ -225,9 +225,11 @@ def image(request, image_id):
             formatted_info['Illustrator(s) **'] = illustrator_string
             formatted_info['**'] = 'Data retrieved automatically from Title info, no promises'
 
-    # linked_images = models.LinkedImage.objects.filter(image=image_id)
-    # for index, link_image in enumerate(linked_images):
-    #     formatted_info[link_image.name] = link_image.file_name
+    linked_images = models.LinkedImage.objects.filter(image__flickr_id=image_id)
+    linked_image_data = dict()
+    for link_image in linked_images:
+        linked_image_data[link_image.name] = STATIC_URL + '/linked_images/' + link_image.file_name
+        linked_image_data['info'] = link_image.description
 
     print image_info
 
@@ -236,7 +238,7 @@ def image(request, image_id):
                    'formatted_info': formatted_info,
                    'image_id': str(image_url_part),
                    'category_data': category_data,
-                   'linked_images': models.LinkedImage.objects.filter(image__flickr_id=image_id),
+                   'linked_images': linked_image_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
 
