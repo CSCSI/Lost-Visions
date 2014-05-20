@@ -582,20 +582,20 @@
 
         <hr>
 
-        <div class="bs-example table-responsive">
-            <table class="table table-striped table-hover ">
-                <tbody>
-                {% for linked in linked_images %}
-                    <tr><th>Link</th><td><a href="{{ linked.link }}">{{ linked.name }}</a></td></tr>
-                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>
-                    <tr><th>Info</th><td>{{ linked.info }}</td></tr>
-                    <tr><th>***</th><td>***</td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
 
-        {{ linked_images }}
+        {% for linked in linked_images %}
+            <div class="bs-example table-responsive">
+                <table class="table table-striped table-hover ">
+                    <tbody>
+                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>
+                    <tr><th>Link</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
+                    <tr><th>Info</th><td>{{ linked.info }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+
     </div><!--/span-->
 
     <div class="col-xs-12 col-sm-6">
