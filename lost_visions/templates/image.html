@@ -579,6 +579,18 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="bs-example table-responsive">
+            <table class="table table-striped table-hover ">
+                <tbody>
+                {% for mykey,value in linked_images.items %}
+                    {% if mykey != 'tags' %}
+                        <tr><th>{{ mykey }}</th><td>{{ value }}</td></tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div><!--/span-->
 
     <div class="col-xs-12 col-sm-6">
@@ -886,5 +898,4 @@
             </div>
         </div>
     </div>
-    {{ linked_images }}
 {% endblock %}
