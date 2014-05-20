@@ -207,22 +207,6 @@ def image(request, image_id):
     formatted_info['Page'] = image_info.get('page', "").lstrip('0')
     formatted_info['Identifier'] = image_info.get('flickr_id', "")
 
-
-
-    # image_types = {'Animals_and_Plants': 'Animals and Plants',
-    #                'Art_and_Entertainment': 'Art and Entertainment',
-    #                'Fashion_and_Costume': 'Fashion and Costume',
-    #                'Home_and_Family': 'Home and Family', 'Ideas_and_Emotions': 'Ideas and Emotions',
-    #                'Literature_and Fantasy': 'Literature and Fantasy',
-    #                'Natural_World': 'Natural World', 'People': 'People', 'Power_and_Politics': 'Power and Politics',
-    #                'Religion_and_Belief': 'Religion and Belief', 'Science_and_Knowledge': 'Science and Knowledge',
-    #                'Sport_and_Leisure': 'Sport and Leisure',
-    #                'Towns_and_Buildings': 'Towns and Buildings', 'Transport_and_Industry': 'Transport and Industry',
-    #                'War_and_Conflict': 'War and Conflict',
-    #                'Work_and_Business': 'Work and Business', 'Travel': 'Travel'}
-
-    # image_themes = {'homeandfamily': 'Home and Family', 'mythology': 'Mythology'}
-
     category_data = {'question': 'Is the image a ...', 'answers': [
         {'name': 'map', 'id': 1, 'text': 'Map?', 'img': 'media/images/icon/map.jpg'},
         {'name': 'decorative_letter', 'id': 2, 'text': 'Decorative Letter?', 'img': 'media/images/icon/letter.jpg'},
@@ -241,6 +225,10 @@ def image(request, image_id):
             formatted_info['Illustrator(s) **'] = illustrator_string
             formatted_info['**'] = 'Data retrieved automatically from Title info, no promises'
 
+    linked_images = models.LinkedImage.objects.filter(image=image_id)
+    # for index, link_image in enumerate(linked_images):
+    #     formatted_info[link_image.name] = link_image.file_name
+
     print image_info
 
     return render(request, 'image.html',
@@ -248,6 +236,7 @@ def image(request, image_id):
                    'formatted_info': formatted_info,
                    'image_id': str(image_url_part),
                    'category_data': category_data,
+                   'linked_images': models.LinkedImage.objects.filter(image=image_id),
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
 
