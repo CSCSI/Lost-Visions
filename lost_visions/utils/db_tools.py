@@ -223,8 +223,7 @@ def backup_db():
     out.write(data)
     out.close()
 
-tests()
-
+save_books_from_images()
 
 
 
