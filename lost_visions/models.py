@@ -200,3 +200,16 @@ class BookIllustrator(models.Model):
     def __unicode__(self):
 
         return str(self.id) + ':' + self.book.book_identifier + ':' + self.name + ':' + self.technique
+
+
+class LinkedImage(models.Model):
+    image = models.ForeignKey(Image, blank=False)
+    name = models.CharField(max_length=120L, blank=True)
+    file_name = models.CharField(max_length=120L, blank=True)
+    location = models.CharField(max_length=120L, blank=True)
+    description = models.TextField()
+    timestamp = models.DateTimeField(auto_now=True, blank=True)
+
+    def __unicode__(self):
+
+        return str(self.id) + ':' + self.image.flickr_id + ':' + self.name
