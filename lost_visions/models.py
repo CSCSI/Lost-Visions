@@ -1,7 +1,7 @@
 import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
-
+import watson
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -213,3 +213,6 @@ class LinkedImage(models.Model):
     def __unicode__(self):
 
         return str(self.id) + ':' + self.image.flickr_id + ':' + self.name
+
+watson.register(Image)
+watson.register(ImageText)
