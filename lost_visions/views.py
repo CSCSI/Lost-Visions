@@ -734,40 +734,90 @@ def image_category(request):
 
     if request.POST.get('category_id', '0') == '0':
         category_data = {'question': 'Is the image a ...', 'answers': [
-            {'name': 'portrait', 'id': 3, 'text': 'Portrait?', 'img': ICON_URL + 'portrait.jpg'},
-            {'name': 'people', 'id': 8, 'text': 'People?', 'img': ICON_URL + 'people.jpg'},
-            {'name': 'animal', 'id': 9, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
-            {'name': 'map', 'id': 1, 'text': 'Map?', 'img': ICON_URL + 'map.jpg'},
-            {'name': 'landscape', 'id': 2, 'text': 'Landscape?', 'img': ICON_URL + 'landscape.jpg'},
-            {'name': 'building', 'id': 4, 'text': 'Building?', 'img': ICON_URL + 'building.jpg'},
-            {'name': 'words', 'id': 5, 'text': 'Handwritten Text?', 'img': ICON_URL + 'words.jpg'},
-            {'name': 'coat_of_arms', 'id': 13, 'text': 'Coat of Arms?', 'img': ICON_URL + 'coat_of_arms.jpg'},
-            {'name': 'motif', 'id': 6, 'text': 'Decorative Motif?', 'img': ICON_URL + 'motif.jpg'},
-            {'name': 'decorative_letter', 'id': 7, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg'},
+            {'name': 'advert', 'id': 100, 'text': 'Advertisements?', 'img': ICON_URL + 'advert.jpg'},
+            {'name': 'building', 'id': 200, 'text': 'Building?', 'img': ICON_URL + 'building.jpg'},
+            {'name': 'people', 'id': 300, 'text': 'People?', 'img': ICON_URL + 'people.jpg'},
+            {'name': 'motif', 'id': 400, 'text': 'Decorative Motif?', 'img': ICON_URL + 'motif.jpg'},
+            {'name': 'title_page', 'id': 500, 'text': 'Title Page?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'map', 'id': 600, 'text': 'Map?', 'img': ICON_URL + 'map.jpg'},
+            {'name': 'natural_world', 'id': 700, 'text': 'Natural World?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'scientific_drawing', 'id': 800, 'text': 'Scientific Drawing?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'music', 'id': 900, 'text': 'Musical Score?', 'img': ICON_URL + 'music.jpg'},
+            {'name': 'landscape', 'id': 1000, 'text': 'Landscape?', 'img': ICON_URL + 'landscape.jpg'},
+            {'name': 'portrait', 'id': 1100, 'text': 'Portrait?', 'img': ICON_URL + 'portrait.jpg'},
+            {'name': 'ethnographic', 'id': 1200, 'text': 'Travel/ Ethnographic images?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'words', 'id': 1300, 'text': 'Handwritten Text?', 'img': ICON_URL + 'words.jpg'},
+
+
+            # {'name': 'animal', 'id': 9, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
+            # {'name': 'coat_of_arms', 'id': 13, 'text': 'Coat of Arms?', 'img': ICON_URL + 'coat_of_arms.jpg'},
+            # {'name': 'decorative_letter', 'id': 7, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg'},
 
             ]}
 
-    if request.POST.get('category_id', '-1') == '1':
-        category_data = {'question': 'Is the map a ...', 'answers': [
-            {'name': 'diagram', 'id': 1, 'text': 'Diagram?',
-             'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'nautical', 'id': 3, 'text': 'Nautical map?',
-             'img': ICON_URL + 'lv-rect-station.png'}
+    cat_id = request.POST.get('category_id', '-1')
+#   advert
+    if cat_id == '100':
+        category_data = {'question': 'Is there a product/brand name?', 'answers': [
+            {'name': 'yes', 'id': 101, 'text': 'Yes', 'img': ICON_URL + 'tick.png'},
+            {'name': 'no', 'id': 102, 'text': 'No', 'img': ICON_URL + 'cross.png'}
         ]}
 
-    if request.POST.get('category_id', '-1') == '2':
-        category_data = {'question': 'Does the landscape contain ...', 'answers': [
-            {'name': 'people', 'id': 8, 'text': 'People?', 'img': ICON_URL + 'people.jpg'},
-            {'name': 'animal', 'id': 9, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
-            {'name': 'building', 'id': 4, 'text': 'Building?', 'img': ICON_URL + 'building.jpg'},
-            ]}
-
-    if request.POST.get('category_id', '-1') == '4':
+#   building
+    if cat_id == '200':
         category_data = {'question': 'Is this the buildings ...', 'answers': [
-            {'name': 'interior', 'id': 10, 'text': 'Interior?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'exterior', 'id': 11, 'text': 'Exterior?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'schematic', 'id': 12, 'text': 'Schematic?', 'img': ICON_URL + 'lv-rect-station.png'},
-            ]}
+            {'name': 'interior', 'id': 201, 'text': 'Interior?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'exterior', 'id': 202, 'text': 'Exterior?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'architectural', 'id': 203, 'text': 'Architectural Drawing?', 'img': ICON_URL + 'lv-rect-station.png'},
+        ]}
+
+#people
+    if cat_id == '300':
+        category_data = {'question': 'Is the map a ...', 'answers': [
+            {'name': 'individual', 'id': 301, 'text': 'Individual?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'group', 'id': 302, 'text': 'Group?', 'img': ICON_URL + 'lv-rect-station.png'}
+        ]}
+
+    if cat_id == '301' or cat_id == '302':
+        category_data = {'question': 'Are there any named historical figures?', 'answers': [
+            {'name': 'no', 'id': 311, 'text': 'No', 'img': ICON_URL + 'cross.png'},
+            {'name': 'add', 'id': 312, 'text': 'Add', 'img': ICON_URL + 'tick.png'}
+        ]}
+
+    if cat_id == '311' or cat_id == '312':
+        category_data = {'question': 'Any Activities?', 'answers': [
+            {'name': 'yes', 'id': 321, 'text': 'Yes', 'img': ICON_URL + 'tick.png'},
+            {'name': 'no', 'id': 322, 'text': 'No', 'img': ICON_URL + 'cross.png'}
+        ]}
+
+# Decorative motif
+    if cat_id == '400':
+        category_data = {'question': 'Is the decoration a ...', 'answers': [
+            {'name': 'border', 'id': 401, 'text': 'Border?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'emblem', 'id': 402, 'text': 'Emblem?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'coat_of_arms', 'id': 403, 'text': 'Coat of Arms?', 'img': ICON_URL + 'coat_of_arms.jpg'},
+            {'name': 'decorative_letter', 'id': 404, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg'},
+            {'name': 'motif', 'id': 401, 'text': 'Motif?', 'img': ICON_URL + 'motif.jpg'},
+        ]}
+
+# Natural World
+    if cat_id == '700':
+        category_data = {'question': 'Is the image of an ...', 'answers': [
+            {'name': 'animal', 'id': 701, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
+            {'name': 'vegetable', 'id': 702, 'text': 'Vegetable?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'mineral', 'id': 703, 'text': 'Mineral?', 'img': ICON_URL + 'lv-rect-station.png'},
+        ]}
+
+# Scientific Drawing
+    if cat_id == '800':
+        category_data = {'question': 'Is the Diagram ...', 'answers': [
+            {'name': 'Geological', 'id': 801, 'text': 'Geological?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'Medical', 'id': 802, 'text': 'Medical?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'Engineering', 'id': 803, 'text': 'Engineering?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'Botanical', 'id': 804, 'text': 'Botanical?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'Zoological', 'id': 805, 'text': 'Zoological?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'Archaeological', 'id': 806, 'text': 'Archaeological?', 'img': ICON_URL + 'lv-rect-station.png'}
+        ]}
 
     if request.POST.get('category_id', '-1') == '-1':
         category_data = {'question': 'No more questions.', 'answers': []}

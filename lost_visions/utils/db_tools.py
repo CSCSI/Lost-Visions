@@ -64,6 +64,8 @@ def find_image(image_id):
                 # return STATIC_URL + 'bl_images/' + a_file
         except:
             pass
+
+        # '/scratch/lost-visions/images-found/medium/1891/002496295_01_000141_1_Olde Leeke  historical  biographical  anecdotal  and arch ological  Edited by M _1891.jpg'
     return None
 
 
