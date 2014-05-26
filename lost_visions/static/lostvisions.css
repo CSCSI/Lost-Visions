@@ -212,7 +212,7 @@ a:hover#save_image.btn.btn-default.save_image  {
     overflow-y: auto;
     /* prevent horizontal scrollbar */
     /*overflow-x: hidden;*/
-    max-width: 100%;
+    max-width: 85%;
     white-space: pre-wrap;
   }
   /* IE 6 doesn't support max-height
