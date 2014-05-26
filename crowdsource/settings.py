@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
+    'haystack',
     'watson',
     'lost_visions',
 )
@@ -123,7 +124,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
+        },
+    'wordnet': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'sqlite-31.db'),
+        }
     # 'postgres': {
     #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     #     'NAME': 'x',

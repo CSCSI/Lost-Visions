@@ -14,6 +14,8 @@ from django.db.models import Q, Min
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 
+from nltk.corpus import wordnet as wn
+
 # Create your views here.
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -464,23 +466,32 @@ def findword(request):
 
     word = request.GET['term']
 
-    url = 'http://services.aonaware.com/DictService/DictService.asmx/MatchInDict?dictId=gcide&word=' + \
-          word + '&strategy=prefix'
-    print url
-    resp = urllib2.urlopen(url)
+    # url = 'http://services.aonaware.com/DictService/DictService.asmx/MatchInDict?dictId=gcide&word=' + \
+    #       word + '&strategy=prefix'
+    # print url
+    # resp = urllib2.urlopen(url)
+    #
+    # words = []
+    # if resp.code == 200:
+    #     data = resp.read()
+    #     xml = BeautifulSoup(data)
+    #
+    #     for arr in xml.findAll('arrayofdictionaryword'):
+    #         for dic_word in arr.findAll('dictionaryword'):
+    #             for title in dic_word.findAll('word'):
+    #                 if ' ' not in title.text:
+    #                     words.append(title.text)
+    #
+    # response_data = words
 
-    words = []
-    if resp.code == 200:
-        data = resp.read()
-        xml = BeautifulSoup(data)
+    words = db_tools.search_wordnet(word)
+    response_data = []
+    for found_word in words:
+        word_data = dict()
+        word_data['label'] = found_word.lemma
+        word_data['desc'] = found_word.definition
+        response_data.append(word_data)
 
-        for arr in xml.findAll('arrayofdictionaryword'):
-            for dic_word in arr.findAll('dictionaryword'):
-                for title in dic_word.findAll('word'):
-                    if ' ' not in title.text:
-                        words.append(title.text)
-
-    response_data = words
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
@@ -734,24 +745,19 @@ def image_category(request):
 
     if request.POST.get('category_id', '0') == '0':
         category_data = {'question': 'Is the image a ...', 'answers': [
-            {'name': 'advert', 'id': 100, 'text': 'Advertisements?', 'img': ICON_URL + 'advert.jpg'},
+            {'name': 'advert', 'id': 100, 'text': 'Advertisements?', 'img': ICON_URL + 'advert.jpg', 'wide': True},
             {'name': 'building', 'id': 200, 'text': 'Building?', 'img': ICON_URL + 'building.jpg'},
             {'name': 'people', 'id': 300, 'text': 'People?', 'img': ICON_URL + 'people.jpg'},
-            {'name': 'motif', 'id': 400, 'text': 'Decorative Motif?', 'img': ICON_URL + 'motif.jpg'},
-            {'name': 'title_page', 'id': 500, 'text': 'Title Page?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'motif', 'id': 400, 'text': 'Decoration?', 'img': ICON_URL + 'motif.jpg', 'wide': True},
+            {'name': 'title_page', 'id': 500, 'text': 'Title Page?', 'img': ICON_URL + 'title_page.jpg'},
             {'name': 'map', 'id': 600, 'text': 'Map?', 'img': ICON_URL + 'map.jpg'},
-            {'name': 'natural_world', 'id': 700, 'text': 'Natural World?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'scientific_drawing', 'id': 800, 'text': 'Scientific Drawing?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'natural_world', 'id': 700, 'text': 'Natural World?', 'img': ICON_URL + 'nature.jpg'},
+            {'name': 'scientific_drawing', 'id': 800, 'text': 'Scientific Drawing?', 'img': ICON_URL + 'science.jpg', 'wide': True},
             {'name': 'music', 'id': 900, 'text': 'Musical Score?', 'img': ICON_URL + 'music.jpg'},
-            {'name': 'landscape', 'id': 1000, 'text': 'Landscape?', 'img': ICON_URL + 'landscape.jpg'},
+            {'name': 'landscape', 'id': 1000, 'text': 'Landscape?', 'img': ICON_URL + 'landscape.jpg', 'wide': True},
             {'name': 'portrait', 'id': 1100, 'text': 'Portrait?', 'img': ICON_URL + 'portrait.jpg'},
-            {'name': 'ethnographic', 'id': 1200, 'text': 'Travel/ Ethnographic images?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'words', 'id': 1300, 'text': 'Handwritten Text?', 'img': ICON_URL + 'words.jpg'},
-
-
-            # {'name': 'animal', 'id': 9, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
-            # {'name': 'coat_of_arms', 'id': 13, 'text': 'Coat of Arms?', 'img': ICON_URL + 'coat_of_arms.jpg'},
-            # {'name': 'decorative_letter', 'id': 7, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg'},
+            {'name': 'ethnographic', 'id': 1200, 'text': 'Travel/ Ethnography?', 'img': ICON_URL + 'travel.jpg', 'wide': True},
+            {'name': 'words', 'id': 1300, 'text': 'Handwritten Text?', 'img': ICON_URL + 'words.jpg', 'wide': True}
 
             ]}
 
@@ -766,15 +772,15 @@ def image_category(request):
 #   building
     if cat_id == '200':
         category_data = {'question': 'Is this the buildings ...', 'answers': [
-            {'name': 'interior', 'id': 201, 'text': 'Interior?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'exterior', 'id': 202, 'text': 'Exterior?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'architectural', 'id': 203, 'text': 'Architectural Drawing?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'interior', 'id': 201, 'text': 'Interior?', 'img': ICON_URL + 'interior.jpg'},
+            {'name': 'exterior', 'id': 202, 'text': 'Exterior?', 'img': ICON_URL + 'exterior.jpg'},
+            {'name': 'architectural', 'id': 203, 'text': 'Architectural Drawing?', 'img': ICON_URL + 'schematic.jpg', 'wide': True},
         ]}
 
 #people
     if cat_id == '300':
         category_data = {'question': 'Is the map a ...', 'answers': [
-            {'name': 'individual', 'id': 301, 'text': 'Individual?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'individual', 'id': 301, 'text': 'Individual?', 'img': ICON_URL + 'lv-rect-station.png', 'wide': True},
             {'name': 'group', 'id': 302, 'text': 'Group?', 'img': ICON_URL + 'lv-rect-station.png'}
         ]}
 
@@ -793,10 +799,10 @@ def image_category(request):
 # Decorative motif
     if cat_id == '400':
         category_data = {'question': 'Is the decoration a ...', 'answers': [
-            {'name': 'border', 'id': 401, 'text': 'Border?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'border', 'id': 401, 'text': 'Border?', 'img': ICON_URL + 'border.jpg', 'wide': True},
             {'name': 'emblem', 'id': 402, 'text': 'Emblem?', 'img': ICON_URL + 'lv-rect-station.png'},
             {'name': 'coat_of_arms', 'id': 403, 'text': 'Coat of Arms?', 'img': ICON_URL + 'coat_of_arms.jpg'},
-            {'name': 'decorative_letter', 'id': 404, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg'},
+            {'name': 'decorative_letter', 'id': 404, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg', 'wide': True},
             {'name': 'motif', 'id': 401, 'text': 'Motif?', 'img': ICON_URL + 'motif.jpg'},
         ]}
 
@@ -804,7 +810,7 @@ def image_category(request):
     if cat_id == '700':
         category_data = {'question': 'Is the image of an ...', 'answers': [
             {'name': 'animal', 'id': 701, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
-            {'name': 'vegetable', 'id': 702, 'text': 'Vegetable?', 'img': ICON_URL + 'lv-rect-station.png'},
+            {'name': 'vegetable', 'id': 702, 'text': 'Vegetable?', 'img': ICON_URL + 'lv-rect-station.png', 'wide': True},
             {'name': 'mineral', 'id': 703, 'text': 'Mineral?', 'img': ICON_URL + 'lv-rect-station.png'},
         ]}
 

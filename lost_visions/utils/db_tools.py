@@ -8,7 +8,7 @@ from django.db.models import Q
 from crowdsource.settings import BASE_DIR, STATIC_URL
 from random import randint
 from django.core import serializers
-from lost_visions import models
+from lost_visions import models, wordnet
 from django.core.exceptions import ObjectDoesNotExist
 
 __author__ = 'ubuntu'
@@ -226,8 +226,18 @@ def backup_db():
     out.close()
 
 
+#
+# SELECT lemma, definition FROM words LEFT JOIN senses s USING (wordid)
+# LEFT JOIN synsets USING (synsetid) where lemma like '%churc%' order by pos limit 30
+#
+def search_wordnet(searchword, limit=30):
+
+    query = "SELECT wordid, lemma, definition FROM words LEFT JOIN senses s USING (wordid) " \
+            "LEFT JOIN synsets USING (synsetid) where lemma like %s order by pos, length(lemma) limit %s"
+
+    results = wordnet.Words.objects.db_manager('wordnet').raw(query, ['%' + searchword + '%', limit])
+    return results
 
 
-
-
+# print search_wordnet('word')
 

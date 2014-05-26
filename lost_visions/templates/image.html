@@ -89,7 +89,13 @@
                 }
             }
             return true;
-        }).focus(function(e){image_clicked()});
+        }).focus(function(e){
+            image_clicked()
+        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return $( "<li>" )
+                    .append( "<a>" + item.label + "<br>" + item.desc + "</a>" )
+                    .appendTo( ul );
+        };
 
         function image_clicked(){
             if(hightlighted_x_percent == 0
@@ -148,7 +154,14 @@
 
                     for (var ans in data['answers']) {
 
-                        var answer = '<div class="category-answer" data-category_id="' + data['answers'][ans].id + '"> \
+                        var classname = 'category-answer';
+                        if (data['answers'][ans].hasOwnProperty('wide')) {
+                            classname = 'category-answer wide';
+                        } else {
+
+                        }
+
+                        var answer = '<div class="' + classname + '" data-category_id="' + data['answers'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
                                     <img src="' + data['answers'][ans].img + '"\
@@ -522,7 +535,7 @@
 
     <div class="col-xs-12 col-sm-6">
         <div class="jumbotron">
-            <div id="photo_background" style="">
+            <div id="photo_background" class="photo_background">
                 <canvas id='photo'></canvas>
                 {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
             </div>
@@ -587,7 +600,7 @@
             <div class="bs-example table-responsive">
                 <table class="table table-striped table-hover ">
                     <tbody>
-{#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
+                    {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
                     <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
                     <tr><th>Info</th><td>{{ linked.info }}</td></tr>
                     </tbody>
@@ -614,16 +627,17 @@
 
 
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+            <div class="panel-heading">
+                <h4 class="panel-title">
                     Objects
-                </a>
-                <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">
-                    +
-                </div>
-            </h4>
-        </div>
+                    <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">
+                        +
+                    </div>
+                </h4>
+            </div>
+        </a>
+
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
                 <h4>Select and Name the Objects in this Image</h4>
@@ -664,6 +678,7 @@
         <div id="collapseTwo" class="panel-collapse collapse">
             <div class="panel-body">
                 <h4>Please select the Theme(s) of the image, from the options below</h4>
+                <div class="grid-sizer"></div>
                 <div id="add_category_body"></div>
 
                 <div id="category-question">{{ category_data.question }}</div>
