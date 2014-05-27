@@ -157,46 +157,46 @@ def image(request, image_id):
 
     formatted_info = dict()
 
-    try:
-        #cut image ID from image URL
-        #get Flickr tags for this image
-        flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_url_part, size='z')
-        author = ""
-        if 'Author' in flickr_tags:
-            print "found author : " + flickr_tags['Author']
-            author = flickr_tags['Author']
-
-        if not 'imageurl' in image_info and 'image_location' in flickr_tags:
-            image_info['imageurl'] = flickr_tags['image_location']
-
-        tags = {}
-        for tag in flickr_tags:
-            if is_number(tag) and is_user_tag(flickr_tags[tag]):
-                if flickr_tags[tag].lower() != author.lower():
-                    try:
-                        # TODO utf fix
-                        print "*" + str(flickr_tags[tag]).lower() + "* *" + str(author).lower() + "*"
-                    except:
-                        pass
-
-                    tags[tag] = flickr_tags[tag]
-            else:
-                image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
-
-
-        formatted_info['Issuance'] = image_info.get('Issuance', "")
-        formatted_info['Date of Publishing'] = image_info.get('Date of Publishing', "")
-        formatted_info['Title'] = image_info.get('Title', "")
-        formatted_info['Volume'] = image_info.get('vol', "")
-        formatted_info['Author'] = image_info.get('Author', "")
-        formatted_info['Book ID'] = image_info.get('imagesfrombook', "")
-        formatted_info['Place of Publishing'] = image_info.get('Place of Publishing', "")
-        formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
-        formatted_info['Page'] = image_info.get('Page', "")
-        formatted_info['Identifier'] = image_id
-
-    except Exception as e:
-        print 'flickr access error : ' + str(e)
+    # try:
+    #     #cut image ID from image URL
+    #     #get Flickr tags for this image
+    #     flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_url_part, size='z')
+    #     author = ""
+    #     if 'Author' in flickr_tags:
+    #         print "found author : " + flickr_tags['Author']
+    #         author = flickr_tags['Author']
+    #
+    #     if not 'imageurl' in image_info and 'image_location' in flickr_tags:
+    #         image_info['imageurl'] = flickr_tags['image_location']
+    #
+    #     tags = {}
+    #     for tag in flickr_tags:
+    #         if is_number(tag) and is_user_tag(flickr_tags[tag]):
+    #             if flickr_tags[tag].lower() != author.lower():
+    #                 try:
+    #                     # TODO utf fix
+    #                     print "*" + str(flickr_tags[tag]).lower() + "* *" + str(author).lower() + "*"
+    #                 except:
+    #                     pass
+    #
+    #                 tags[tag] = flickr_tags[tag]
+    #         else:
+    #             image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
+    #
+    #
+    #     formatted_info['Issuance'] = image_info.get('Issuance', "")
+    #     formatted_info['Date of Publishing'] = image_info.get('Date of Publishing', "")
+    #     formatted_info['Title'] = image_info.get('Title', "")
+    #     formatted_info['Volume'] = image_info.get('vol', "")
+    #     formatted_info['Author'] = image_info.get('Author', "")
+    #     formatted_info['Book ID'] = image_info.get('imagesfrombook', "")
+    #     formatted_info['Place of Publishing'] = image_info.get('Place of Publishing', "")
+    #     formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
+    #     formatted_info['Page'] = image_info.get('Page', "")
+    #     formatted_info['Identifier'] = image_id
+    #
+    # except Exception as e:
+    #     print 'flickr access error : ' + str(e)
 
     formatted_info['Issuance'] = image_info.get('Issuance', "")
     formatted_info['Date of Publishing'] = image_info.get('date', "")

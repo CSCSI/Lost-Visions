@@ -15,20 +15,28 @@ __author__ = 'ubuntu'
 
 
 def get_next_image_id():
+    image_id = None
+    try:
+        # min_view_count = models.Image.objects.aggregate(Min('user_count'))
+        # min_viewed_image = models.Image.objects.get(user_count=min_view_count['user_count__min'])
 
-    # min_view_count = models.Image.objects.aggregate(Min('user_count'))
-    # min_viewed_image = models.Image.objects.get(user_count=min_view_count['user_count__min'])
+        number_of_images = models.Image.objects.count()
+        rand_image_pk = randint(1, number_of_images)
+    # flickr_id=10998459416
+        min_viewed_image = models.Image.objects.get(pk=rand_image_pk)
+        # data = serializers.serialize("json", [min_viewed_image, ])
 
-    number_of_images = models.Image.objects.count()
-    rand_image_pk = randint(1, number_of_images)
-# flickr_id=10998459416
-    min_viewed_image = models.Image.objects.get(pk=rand_image_pk)
-    data = serializers.serialize("json", [min_viewed_image, ])
+        # print data
+        # image_id = str(min_viewed_image.identifier)
+        image_id = str(min_viewed_image.flickr_id)
+    except ObjectDoesNotExist as e:
+        print e
+        pass
 
-    print data
-    # image_id = str(min_viewed_image.identifier)
-    image_id = str(min_viewed_image.flickr_id)
-    return image_id
+    if image_id is None:
+        return get_next_image_id()
+    else:
+        return image_id
 
 
 def get_info_from_image_model(image_model):
@@ -81,7 +89,7 @@ def get_image_info(image_id):
 
         if image_info['imageurl'] == '':
             print 'ERROR with IMAGE_ID = ' + image_id
-            return get_image_info(get_next_image_id())
+            return None
         else:
             image_for_id.views_begun += 1
             image_for_id.save()
