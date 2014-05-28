@@ -7,6 +7,7 @@ import urllib2
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime
 from dateutil import parser
+from dateutil.tz import tzlocal
 from django.contrib import auth
 from django.core import serializers
 from django.core.urlresolvers import reverse
@@ -26,6 +27,7 @@ from lost_visions import forms, models
 # from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
 from ipware.ip import get_ip
 from bleach import clean
+from lost_visions.categories import CategoryManager
 
 from lost_visions.utils import db_tools
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
@@ -734,6 +736,8 @@ def user_home(request):
 
 ICON_URL = STATIC_URL + 'media/images/icon/'
 
+category_manager = CategoryManager()
+
 
 def image_category(request):
     print request.POST
@@ -827,4 +831,23 @@ def image_category(request):
 
     if request.POST.get('category_id', '-1') == '-1':
         category_data = {'question': 'No more questions.', 'answers': []}
+
+    try:
+        image_id = request.POST.get('image_id', None)
+        if image_id is not None:
+            category_name = category_manager.get_tag_for_category_id(cat_id)
+
+            tag = models.Tag()
+            tag.tag = category_name
+            tag.image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+            tag.user = get_request_user(request)
+            tag.timestamp = datetime.now(tzlocal())
+            tag.tag_order = 0
+            tag.save()
+    except Exception as e:
+        print e
+        pass
+
+    category_data = category_manager.get_category_data(cat_id)
+
     return HttpResponse(json.dumps(category_data), content_type="application/json")
