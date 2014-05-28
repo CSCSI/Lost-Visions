@@ -13,6 +13,7 @@ class Category():
         self.name = name
         self.question = ''
         self.answer_ids = []
+        self.should_save = True
 
     def set_question(self, text):
         self.question = text
@@ -20,6 +21,10 @@ class Category():
 
     def set_answers(self, answer_id_array):
         self.answer_ids = answer_id_array
+        return self
+
+    def set_save(self, save):
+        self.should_save = save
         return self
 
 
@@ -30,18 +35,19 @@ class CategoryManager():
 
     def load_defaults(self):
 
-        self.categories[0] = Category('0', 'yes', 'Yes', ICON_URL + 'tick.png')
-        self.categories[1] = Category('1', 'no', 'No', ICON_URL + 'cross.png')
+        self.categories[0] = Category('0', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False)
+        self.categories[1] = Category('1', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[0] = Category('-1', 'root', 'Root', '')\
             .set_question('Is the image a ...')\
-            .set_answers([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300])
+            .set_answers([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300])\
+            .set_save(False)
 
         self.categories[100] = Category('100', 'advert', 'Advertisements?', ICON_URL + 'advert.jpg') \
             .set_question('Is there a product/brand name?') \
             .set_answers([101, 102])
-        self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png')
-        self.categories[102] = Category('102', 'no', 'No', ICON_URL + 'cross.png')
+        self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False)
+        self.categories[102] = Category('102', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[200] = Category('200', 'building', 'Building?', ICON_URL + 'building.jpg', ) \
             .set_question('Is this the buildings ...') \
@@ -58,11 +64,11 @@ class CategoryManager():
             .set_question('Are there any named historical figures?').set_answers([321, 322])
 
         self.categories[311] = Category('311', 'no', 'No', ICON_URL + 'cross.png') \
-            .set_question('Any Activities?').set_answers([321, 322])
+            .set_question('Any Activities?').set_answers([321, 322]).set_save(False)
         self.categories[312] = Category('312', 'add', 'Add', ICON_URL + 'tick.png') \
-            .set_question('Any Activities?').set_answers([321, 322])
-        self.categories[321] = Category('321', 'yes', 'Yes', ICON_URL + 'tick.png')
-        self.categories[322] = Category('322', 'no', 'No', ICON_URL + 'cross.png')
+            .set_question('Any Activities?').set_answers([321, 322]).set_save(False)
+        self.categories[321] = Category('321', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False)
+        self.categories[322] = Category('322', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[400] = Category('400', 'motif', 'Decoration?', ICON_URL + 'motif.jpg')\
             .set_question('Is the decoration a ...').set_answers([401, 402, 403, 404, 405])
@@ -103,10 +109,13 @@ class CategoryManager():
         self.categories[1300] = Category('1300', 'words', 'Handwritten Text?', ICON_URL + 'words.jpg')
 
     def get_tag_for_category_id(self, category_id):
-        return self.categories.get(int(category_id)).name
+        category = self.categories.get(int(category_id))
+        if category.should_save:
+            return category.name
+        else:
+            return None
 
     def get_category_data(self, cat_id):
-        # print self.categories
         parent_category = self.categories.get(int(cat_id))
         answer_categories = []
         if len(parent_category.answer_ids) == 0:

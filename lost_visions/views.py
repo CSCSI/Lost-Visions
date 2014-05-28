@@ -651,13 +651,13 @@ def map(request, image_id):
 @requires_csrf_token
 def coords(request, image_id):
 
-    print image_id
+    # print image_id
     print request.POST
 
-    print request.POST['north_east_x']
-    print request.POST['north_east_y']
-    print request.POST['south_west_x']
-    print request.POST['south_west_y']
+    # print request.POST['north_east_x']
+    # print request.POST['north_east_y']
+    # print request.POST['south_west_x']
+    # print request.POST['south_west_y']
 
     try:
         geotag = models.GeoTag()
@@ -836,14 +836,14 @@ def image_category(request):
         image_id = request.POST.get('image_id', None)
         if image_id is not None:
             category_name = category_manager.get_tag_for_category_id(cat_id)
-
-            tag = models.Tag()
-            tag.tag = category_name
-            tag.image = models.Image.objects.get(flickr_id=request.POST['image_id'])
-            tag.user = get_request_user(request)
-            tag.timestamp = datetime.now(tzlocal())
-            tag.tag_order = 0
-            tag.save()
+            if category_name is not None:
+                tag = models.Tag()
+                tag.tag = category_name
+                tag.image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+                tag.user = get_request_user(request)
+                tag.timestamp = datetime.now(tzlocal())
+                tag.tag_order = 0
+                tag.save()
     except Exception as e:
         print e
         pass
