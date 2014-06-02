@@ -182,26 +182,28 @@
 
             <li><a href="{% url 'home' %}">Home</a></li>
 
-            <li><a href="{% url 'about_us' %}">About Us</a></li>
+            <li><a href="http://lostvisions.weebly.com/" target="_blank">About Us</a></li>
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Theme<b class="caret"></b></a>
-                <ul class="dropdown-menu" id="change-theme">
-                    <li><a href="#" rel="{% static "bootstrap.slate.min.css" %}">Grey</a></li>
-                    <li><a href="#" rel="{% static "bootstrap.flatly.min.css" %}">Blue</a></li>
-                    <li><a href="#" rel="{% static "bootstrap.lumin.min.css" %}">Lumin</a></li>
-                    <li><a href="#" rel="http://www.dmvi.org.uk/css/dice-theme1.min.css">DMVI</a></li>
-                </ul>
-            </li>
+{#            <li class="dropdown">#}
+{#                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Theme<b class="caret"></b></a>#}
+{#                <ul class="dropdown-menu" id="change-theme">#}
+{#                    <li><a href="#" rel="{% static "bootstrap.slate.min.css" %}">Grey</a></li>#}
+{#                    <li><a href="#" rel="{% static "bootstrap.flatly.min.css" %}">Blue</a></li>#}
+{#                    <li><a href="#" rel="{% static "bootstrap.lumin.min.css" %}">Lumin</a></li>#}
+{#                    <li><a href="#" rel="http://www.dmvi.org.uk/css/dice-theme1.min.css">DMVI</a></li>#}
+{#                </ul>#}
+{#            </li>#}
 
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tag Images<b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{% url 'image.random' %}">From ARCCA</a></li>
+            <li><a href="{% url 'image.random' %}" target="_blank">Tag Images</a></li>
+
+{#            <li class="dropdown">#}
+{#                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tag Images<b class="caret"></b></a>#}
+{#                <ul class="dropdown-menu">#}
+{#                    <li><a href="{% url 'image.random' %}">From ARCCA</a></li>#}
                     {#                    <li class="divider"></li>#}
                     {#                    <li><a href="{% url 'image.grab_flickr' %}">From Flickr</a></li>#}
-                </ul>
-            </li>
+{#                </ul>#}
+{#            </li>#}
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contact Us<b class="caret"></b></a>

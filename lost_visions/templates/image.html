@@ -584,6 +584,7 @@
             <table class="table table-striped table-hover ">
                 <tbody>
                 <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
+                <tr><th>Download Image</th><td><a href="{% static image.imageurl %}" target="_blank" download>here</a></td></tr>
                 {% for mykey,value in formatted_info.items %}
                     {% if mykey != 'tags' %}
                         <tr><th>{{ mykey }}</th><td>{{ value }}</td></tr>

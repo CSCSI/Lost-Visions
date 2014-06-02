@@ -210,6 +210,7 @@ def image(request, image_id):
     formatted_info['Shelfmark'] = image_info.get('BL_DLS_ID', "")
     formatted_info['Page'] = image_info.get('page', "").lstrip('0')
     formatted_info['Identifier'] = image_info.get('flickr_id', "")
+    # formatted_info['Download Image'] = image_info.get('imageurl', '')
 
     category_data = {'question': 'Is the image a ...', 'answers': [
         {'name': 'map', 'id': 1, 'text': 'Map?', 'img': 'media/images/icon/map.jpg'},
