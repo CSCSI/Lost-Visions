@@ -212,14 +212,14 @@ def image(request, image_id):
     formatted_info['Identifier'] = image_info.get('flickr_id', "")
     # formatted_info['Download Image'] = image_info.get('imageurl', '')
 
-    category_data = {'question': 'Is the image a ...', 'answers': [
-        {'name': 'map', 'id': 1, 'text': 'Map?', 'img': 'media/images/icon/map.jpg'},
-        {'name': 'decorative_letter', 'id': 2, 'text': 'Decorative Letter?', 'img': 'media/images/icon/letter.jpg'},
-        {'name': 'landscape', 'id': 3, 'text': 'Landscape?', 'img': 'media/images/icon/landscape.jpg'},
-        {'name': 'portrait', 'id': 4, 'text': 'Portrait?', 'img': 'media/images/icon/portrait.jpg'},
-        {'name': 'building', 'id': 5, 'text': 'Building?', 'img': 'media/images/icon/building.jpg'}
-
-    ]}
+    # category_data = {'question': 'Is the image a ...', 'answers': [
+    #     {'name': 'map', 'id': 1, 'text': 'Map?', 'img': 'media/images/icon/map.jpg'},
+    #     {'name': 'decorative_letter', 'id': 2, 'text': 'Decorative Letter?', 'img': 'media/images/icon/letter.jpg'},
+    #     {'name': 'landscape', 'id': 3, 'text': 'Landscape?', 'img': 'media/images/icon/landscape.jpg'},
+    #     {'name': 'portrait', 'id': 4, 'text': 'Portrait?', 'img': 'media/images/icon/portrait.jpg'},
+    #     {'name': 'building', 'id': 5, 'text': 'Building?', 'img': 'media/images/icon/building.jpg'}
+    #
+    # ]}
 
     if formatted_info['Book ID'] and formatted_info['Book ID'] != '':
         illustrator_string = ''
@@ -245,7 +245,7 @@ def image(request, image_id):
                   {'image': image_info,
                    'formatted_info': formatted_info,
                    'image_id': str(image_url_part),
-                   'category_data': category_data,
+                   # 'category_data': category_data,
                    'linked_images': linked_image_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))

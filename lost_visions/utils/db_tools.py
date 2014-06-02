@@ -22,7 +22,7 @@ def get_next_image_id():
 
         number_of_images = models.Image.objects.count()
         rand_image_pk = randint(1, number_of_images)
-    # flickr_id=10998459416
+        # flickr_id=10998459416
         min_viewed_image = models.Image.objects.get(pk=rand_image_pk)
         # data = serializers.serialize("json", [min_viewed_image, ])
 
@@ -54,75 +54,103 @@ def get_info_from_image_model(image_model):
 
 
 def find_image(image_info):
-    print image_info
+    try:
+        # print image_info
 
-    # web_folder = os.path.join('', 'static')
-    web_folder = os.path.join('', 'media')
-    web_folder = os.path.join(web_folder, 'images')
-    web_folder = os.path.join(web_folder, 'scans')
+        # web_folder = os.path.join('', 'static')
+        web_folder = os.path.join('', 'media')
+        web_folder = os.path.join(web_folder, 'images')
+        web_folder = os.path.join(web_folder, 'scans')
 
-    medium_folder = os.path.join(web_folder, 'medium')
-    medium_folder = os.path.join(medium_folder, image_info['date'].strip())
-    root_folder = os.path.join(BASE_DIR, 'lost_visions')
-    root_folder = os.path.join(root_folder, 'static')
-    root_folder = os.path.join(root_folder, medium_folder)
+        medium_folder = os.path.join(web_folder, 'medium')
+        medium_folder = os.path.join(medium_folder, image_info['date'].strip())
+        root_folder = os.path.join(BASE_DIR, 'lost_visions')
+        root_folder = os.path.join(root_folder, 'static')
+        root_folder = os.path.join(root_folder, medium_folder)
 
-    for a_file in os.listdir(root_folder):
-        try:
-            # image_for_id = models.Image.objects.get(flickr_id=a_file.split('_')[0])
-            # if image_for_id:
-            #     print 'found' + a_file
-            full_path = os.path.join(root_folder, a_file)
-            filename_split = a_file.split('_')
-            if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
-                if filename_split[1] == image_info['volume']:
-                    print '**' + full_path
-                    print filename_split[2]
-                    print image_info['page']
-                    if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
-                        image_root_url = os.path.join(STATIC_URL, medium_folder)
-                        file_url = os.path.join(image_root_url, a_file)
-                        print file_url
-                        return file_url
-                        # return STATIC_URL + 'bl_images/' + a_file
-        except Exception as e:
-            print e
-            pass
+        for a_file in os.listdir(root_folder):
+            try:
+                # image_for_id = models.Image.objects.get(flickr_id=a_file.split('_')[0])
+                # if image_for_id:
+                #     print 'found' + a_file
+                full_path = os.path.join(root_folder, a_file)
+                filename_split = a_file.split('_')
+                if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
+                    if filename_split[1] == image_info['volume']:
+                        print '**' + full_path
+                        print filename_split[2]
+                        print image_info['page']
+                        if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
+                            image_root_url = os.path.join(STATIC_URL, medium_folder)
+                            file_url = os.path.join(image_root_url, a_file)
+                            print file_url
+                            return file_url
+                            # return STATIC_URL + 'bl_images/' + a_file
+            except Exception as e:
+                print e
+                pass
 
-    scan_folder = os.path.join(web_folder, 'plates')
-    scan_folder = os.path.join(scan_folder, image_info['date'].strip())
-    root_folder = os.path.join(BASE_DIR, 'lost_visions')
-    root_folder = os.path.join(root_folder, 'static')
-    root_folder = os.path.join(root_folder, scan_folder)
+        scan_folder = os.path.join(web_folder, 'plates')
+        scan_folder = os.path.join(scan_folder, image_info['date'].strip())
+        root_folder = os.path.join(BASE_DIR, 'lost_visions')
+        root_folder = os.path.join(root_folder, 'static')
+        root_folder = os.path.join(root_folder, scan_folder)
 
-    for a_file in os.listdir(root_folder):
-        try:
-            # image_for_id = models.Image.objects.get(flickr_id=a_file.split('_')[0])
-            # if image_for_id:
-            #     print 'found' + a_file
-            full_path = os.path.join(root_folder, a_file)
-            filename_split = a_file.split('_')
-            if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
-                if filename_split[1] == image_info['volume']:
-                    print full_path
-                    print filename_split[2]
-                    print image_info['page']
-                    if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
-                        image_root_url = os.path.join(STATIC_URL, scan_folder)
-                        file_url = os.path.join(image_root_url, a_file)
-                        print file_url
-                        return file_url
-                        # return STATIC_URL + 'bl_images/' + a_file
-        except Exception as e:
-            print e
-            pass
+        for a_file in os.listdir(root_folder):
+            try:
+                # image_for_id = models.Image.objects.get(flickr_id=a_file.split('_')[0])
+                # if image_for_id:
+                #     print 'found' + a_file
+                full_path = os.path.join(root_folder, a_file)
+                filename_split = a_file.split('_')
+                if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
+                    if filename_split[1] == image_info['volume']:
+                        print full_path
+                        print filename_split[2]
+                        print image_info['page']
+                        if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
+                            image_root_url = os.path.join(STATIC_URL, scan_folder)
+                            file_url = os.path.join(image_root_url, a_file)
+                            print file_url
+                            return file_url
+                            # return STATIC_URL + 'bl_images/' + a_file
+            except Exception as e:
+                print e
+                pass
 
-        # '/scratch/lost-visions/images-found/medium/1891/002496295_01_000141_1_Olde Leeke  historical  biographical  anecdotal  and arch ological  Edited by M _1891.jpg'
+        scan_folder = os.path.join(web_folder, 'covers')
+        scan_folder = os.path.join(scan_folder, image_info['date'].strip())
+        root_folder = os.path.join(BASE_DIR, 'lost_visions')
+        root_folder = os.path.join(root_folder, 'static')
+        root_folder = os.path.join(root_folder, scan_folder)
+
+        for a_file in os.listdir(root_folder):
+            try:
+                # image_for_id = models.Image.objects.get(flickr_id=a_file.split('_')[0])
+                # if image_for_id:
+                #     print 'found' + a_file
+                full_path = os.path.join(root_folder, a_file)
+                filename_split = a_file.split('_')
+                if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
+                    if filename_split[1] == image_info['volume']:
+                        print full_path
+                        print filename_split[2]
+                        print image_info['page']
+                        if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
+                            image_root_url = os.path.join(STATIC_URL, scan_folder)
+                            file_url = os.path.join(image_root_url, a_file)
+                            print file_url
+                            return file_url
+                            # return STATIC_URL + 'bl_images/' + a_file
+            except Exception as e:
+                print e
+                pass
+    except:
+        pass
     return None
 
 
 def get_image_info(image_id):
-
     try:
         image_for_id = models.Image.objects.get(flickr_id=image_id)
         image_info = get_info_from_image_model(image_for_id)
@@ -131,6 +159,9 @@ def get_image_info(image_id):
 
         if arcca_image:
             image_info['imageurl'] = arcca_image
+            image_info['arcca'] = True
+        else:
+            image_info['arcca'] = False
 
         if image_info['imageurl'] == '':
             print 'ERROR with IMAGE_ID = ' + image_id
@@ -147,11 +178,9 @@ def get_image_info(image_id):
 
 
 def read_tsv_file(filename, line_number):
-
     with open(filename) as f:
         for i, line in enumerate(f):
             if i == line_number:
-
                 words = line.split('\t')
                 image = dict()
                 image['volume'] = words[0]
@@ -189,7 +218,6 @@ def read_tsv_file(filename, line_number):
 
 
 def save_books_from_images():
-
     image_set = models.Image.objects.all()
 
     for image in image_set:
@@ -211,67 +239,61 @@ def save_books_from_images():
 
             new_book.save()
 
-    # image_set = models.Image.objects.exclude(volume=0)
-    #
-    # for image in image_set:
-    #     print image.date + ' : ' + image.flickr_id
-    #     print image.flickr_url
-    #     print image.book_identifier
-    #
-    #     print '*****'
-    # print len(image_set)
-    # print '\n***********\n'
+            # image_set = models.Image.objects.exclude(volume=0)
+            #
+            # for image in image_set:
+            #     print image.date + ' : ' + image.flickr_id
+            #     print image.flickr_url
+            #     print image.book_identifier
+            #
+            #     print '*****'
+            # print len(image_set)
+            # print '\n***********\n'
 
 
-    # image_set = models.Image.objects.filter(book_identifier='')
-    # for image in image_set:
-    #     print image.id
-    #     print image
-    #
-    #     print '*****'
-    # print len(image_set)
+            # image_set = models.Image.objects.filter(book_identifier='')
+            # for image in image_set:
+            #     print image.id
+            #     print image
+            #
+            #     print '*****'
+            # print len(image_set)
+
 
 def tests():
     print ''
 
 
 def backup_db():
-
     data = serializers.serialize("json", models.LostVisionUser.objects.all())
     out = open("lostvisionsuser.json", "w")
     out.write(data)
     out.close()
-
 
     data = serializers.serialize("json", models.Tag.objects.all())
     out = open("tag.json", "w")
     out.write(data)
     out.close()
 
-
     data = serializers.serialize("json", models.GeoTag.objects.all())
     out = open("geotag.json", "w")
     out.write(data)
     out.close()
-
 
     data = serializers.serialize("json", models.ImageText.objects.all())
     out = open("imagetext.json", "w")
     out.write(data)
     out.close()
 
-
     data = serializers.serialize("json", models.SavedImages.objects.all())
     out = open("savedimages.json", "w")
     out.write(data)
     out.close()
 
-
     data = serializers.serialize("json", models.SearchQuery.objects.all())
     out = open("searchquery.json", "w")
     out.write(data)
     out.close()
-
 
     data = serializers.serialize("json", models.User.objects.all())
     out = open("tag.json", "w")
@@ -284,7 +306,6 @@ def backup_db():
 # LEFT JOIN synsets USING (synsetid) where lemma like '%churc%' order by pos limit 30
 #
 def search_wordnet(searchword, limit=30):
-
     query = "SELECT wordid, lemma, definition FROM words LEFT JOIN senses s USING (wordid) " \
             "LEFT JOIN synsets USING (synsetid) where lemma like %s " \
             "order by length(lemma) COLLATE NOCASE ASC limit %s"

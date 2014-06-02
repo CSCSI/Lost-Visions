@@ -1,4 +1,6 @@
 import os
+from time import sleep
+import urllib
 from django.db.utils import IntegrityError
 from crowdsource import settings
 
@@ -8,12 +10,65 @@ from lost_visions.models import Image
 __author__ = 'ubuntu'
 
 
+def ss(row):
+    return row.strip("\n").split("\t")
+
+
+def find_small(folder, output_folder):
+    print output_folder
+    count = 0
+
+    for a_file in os.listdir(folder):
+
+        full_path = os.path.join(folder, a_file)
+        fileName, fileExtension = os.path.splitext(full_path)
+        date = a_file.split('_')[0]
+        if os.path.isfile(full_path) and 'small' in fileName and fileExtension == '.tsv': #and count < 20:
+            print full_path
+
+            with open(full_path, "r") as metadata_src:
+                headers = ss(metadata_src.readline())
+                for line in metadata_src:
+                    metadata = dict(zip(headers, ss(line)))
+
+                    date_path = os.path.join(os.path.join(settings.BASE_DIR, 'bl_images'), date)
+                    # print date_path
+                    download_output_path = os.path.join(date_path, bl_filename(metadata))
+
+                    # date_path = settings.BASE_DIR + '/bl_images/' + date
+                    print date_path
+
+                    # download_output_path = date_path + '/' + bl_filename(metadata)
+
+                    url_to_azure = azure_url(metadata)
+
+                    print url_to_azure
+                    print download_output_path
+
+                    # sleep(2)
+                    try:
+                        os.stat(date_path)
+                    except:
+                        pass
+                        os.mkdir(date_path)
+
+                    urllib.urlretrieve (url_to_azure, download_output_path)
+
+
+def azure_url(metadata):
+    return u"http://blmc.blob.core.windows.net/{0[date]}/{0[book_identifier]}_{0[volume]}_{0[page]}_{0[image_idx]}_{0[date]}_embellishments.jpg".format(metadata)
+
+
+def bl_filename(metadata):
+    return u"" \
+           u"{0[book_identifier]}_{0[volume]}_{0[page]}_{0[image_idx]}_{0[date]}_embellishments.jpg".format(metadata)
+
 def import_folder( folder ):
 
     count = 0
 
     for a_file in os.listdir(folder):
-        
+
         full_path = os.path.join(folder, a_file)
         fileName, fileExtension = os.path.splitext(full_path)
 
@@ -30,7 +85,7 @@ def import_folder( folder ):
                         words = line.split('\t')
 
                         if len(words) > 24:
-                        
+
                             image.volume = words[0]
                             image.publisher = words[1]
                             image.title = words[2]
@@ -64,6 +119,8 @@ def import_folder( folder ):
                                 print 'Already saved image : ' + image.flickr_id
 
                             if already_saved > 10:
-                                    break
+                                break
 
-import_folder(settings.bl_folder)
+# import_folder(settings.bl_folder)
+
+# find_small(settings.bl_folder, os.path.join(settings.BASE_DIR, 'bl_images'))
