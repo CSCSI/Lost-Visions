@@ -60,6 +60,8 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
+    'raven.contrib.django.raven_compat',
+
     'haystack',
     'watson',
     'lost_visions',

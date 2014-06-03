@@ -23,36 +23,46 @@ def find_small(folder, output_folder):
         full_path = os.path.join(folder, a_file)
         fileName, fileExtension = os.path.splitext(full_path)
         date = a_file.split('_')[0]
-        if os.path.isfile(full_path) and 'small' in fileName and fileExtension == '.tsv': #and count < 20:
-            print full_path
+        date_path = os.path.join(os.path.join(settings.BASE_DIR, 'bl_images'), date)
+        print date_path
 
-            with open(full_path, "r") as metadata_src:
-                headers = ss(metadata_src.readline())
-                for line in metadata_src:
-                    metadata = dict(zip(headers, ss(line)))
+        if not os.path.exists(date_path): # or date is '1891' or date is '1880' or date is '1894':
 
-                    date_path = os.path.join(os.path.join(settings.BASE_DIR, 'bl_images'), date)
-                    # print date_path
-                    download_output_path = os.path.join(date_path, bl_filename(metadata))
+            if os.path.isfile(full_path) and 'small' in fileName and fileExtension == '.tsv': #and count < 20:
+                print full_path
 
-                    # date_path = settings.BASE_DIR + '/bl_images/' + date
-                    print date_path
+                with open(full_path, "r") as metadata_src:
+                    headers = ss(metadata_src.readline())
+                    for line in metadata_src:
+                        metadata = dict(zip(headers, ss(line)))
 
-                    # download_output_path = date_path + '/' + bl_filename(metadata)
+                        # print date_path
+                        download_output_path = os.path.join(date_path, bl_filename(metadata))
 
-                    url_to_azure = azure_url(metadata)
+                        # date_path = settings.BASE_DIR + '/bl_images/' + date
 
-                    print url_to_azure
-                    print download_output_path
+                        # download_output_path = date_path + '/' + bl_filename(metadata)
 
-                    # sleep(2)
-                    try:
-                        os.stat(date_path)
-                    except:
-                        pass
-                        os.mkdir(date_path)
+                        url_to_azure = azure_url(metadata)
 
-                    urllib.urlretrieve (url_to_azure, download_output_path)
+                        print url_to_azure
+                        print download_output_path
+
+                        try:
+                            os.stat(date_path)
+                        except:
+                            os.mkdir(date_path)
+                            pass
+
+                        try:
+                            os.stat(download_output_path)
+                            print download_output_path + ' already exists'
+                        except:
+                            urllib.urlretrieve (url_to_azure, download_output_path)
+                            pass
+
+        else:
+            print 'folder ' + date_path + ' exists.'
 
 
 def azure_url(metadata):

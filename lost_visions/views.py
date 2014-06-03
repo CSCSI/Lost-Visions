@@ -50,54 +50,54 @@ def image_tags(request):
         print request.POST
         print request.user
 
-        try:
-            image = models.Image.objects.get(flickr_id=request.POST['image_id'])
-            request_user = get_request_user(request)
+        # try:
+        image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+        request_user = get_request_user(request)
 
-            image_text = models.ImageText()
-            image_text.caption = clean(request.POST.get('input_caption', ''), strip=True)
-            image_text.description = clean(request.POST['image_description'], strip=True)
-            image_text.image = image
-            image_text.user = request_user
+        image_text = models.ImageText()
+        image_text.caption = clean(request.POST.get('input_caption', ''), strip=True)
+        image_text.description = clean(request.POST['image_description'], strip=True)
+        image_text.image = image
+        image_text.user = request_user
 
-            if image_text.description == '' and image_text.caption == '':
-                print 'not worth saving blank image text'
-            else:
-                image_text.save()
+        if image_text.description == '' and image_text.caption == '':
+            print 'not worth saving blank image text'
+        else:
+            image_text.save()
 
-            if request.POST['tag_info'] and len(request.POST['tag_info'].decode('utf-8')) > 0:
-                tag_info = request.POST['tag_info']
-                tags_xy = ast.literal_eval(tag_info)
+        if request.POST['tag_info'] and len(request.POST['tag_info'].decode('utf-8')) > 0:
+            tag_info = request.POST['tag_info']
+            tags_xy = ast.literal_eval(tag_info)
 
-                for user_tag in tags_xy:
-                    try:
-                        tag = models.Tag()
-                        tag.tag = clean(str(user_tag['tag']), strip=True)
-                        tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
-                        tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
-                        try:
-                            # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
-                            date_object = parser.parse(str(user_tag['datetime']))
-                            tag.timestamp = date_object
-                        except Exception as e3:
-                            print e3
-                            pass
+            for user_tag in tags_xy:
+                # try:
+                tag = models.Tag()
+                tag.tag = clean(str(user_tag['tag']), strip=True)
+                tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
+                tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
+                # try:
+                # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
+                date_object = parser.parse(str(user_tag['datetime']))
+                tag.timestamp = date_object
+                # except Exception as e3:
+                #     print e3
+                #     pass
 
-                        tag.tag_order = clean(str(user_tag['tag_order']), strip=True)
+                tag.tag_order = clean(str(user_tag['tag_order']), strip=True)
 
-                        if image and request_user:
-                            tag.image = image
-                            tag.user = request_user
-                            tag.save()
+                if image and request_user:
+                    tag.image = image
+                    tag.user = request_user
+                    tag.save()
 
-                    except Exception as e2:
-                        print 'error 2' + str(e2)
-                        pass
+                    # except Exception as e2:
+                    #     print 'error 2' + str(e2)
+                    #     pass
 
-            image.views_completed += 1
-            image.save()
-        except:
-            pass
+        image.views_completed += 1
+        image.save()
+        # except:
+        #     pass
 
     return random_image(request)
 
@@ -764,25 +764,25 @@ def image_category(request):
             {'name': 'ethnographic', 'id': 1200, 'text': 'Travel/ Ethnography?', 'img': ICON_URL + 'travel.jpg', 'wide': True},
             {'name': 'words', 'id': 1300, 'text': 'Handwritten Text?', 'img': ICON_URL + 'words.jpg', 'wide': True}
 
-            ]}
+        ]}
 
     cat_id = request.POST.get('category_id', '-1')
-#   advert
+    #   advert
     if cat_id == '100':
         category_data = {'question': 'Is there a product/brand name?', 'answers': [
             {'name': 'yes', 'id': 101, 'text': 'Yes', 'img': ICON_URL + 'tick.png'},
             {'name': 'no', 'id': 102, 'text': 'No', 'img': ICON_URL + 'cross.png'}
         ]}
 
-#   building
+    #   building
     if cat_id == '200':
         category_data = {'question': 'Is this the buildings ...', 'answers': [
             {'name': 'interior', 'id': 201, 'text': 'Interior?', 'img': ICON_URL + 'interior.jpg'},
             {'name': 'exterior', 'id': 202, 'text': 'Exterior?', 'img': ICON_URL + 'exterior.jpg'},
             {'name': 'architectural', 'id': 203, 'text': 'Architectural Drawing?', 'img': ICON_URL + 'schematic.jpg', 'wide': True},
-        ]}
+            ]}
 
-#people
+    #people
     if cat_id == '300':
         category_data = {'question': 'Is the map a ...', 'answers': [
             {'name': 'individual', 'id': 301, 'text': 'Individual?', 'img': ICON_URL + 'lv-rect-station.png', 'wide': True},
@@ -801,7 +801,7 @@ def image_category(request):
             {'name': 'no', 'id': 322, 'text': 'No', 'img': ICON_URL + 'cross.png'}
         ]}
 
-# Decorative motif
+    # Decorative motif
     if cat_id == '400':
         category_data = {'question': 'Is the decoration a ...', 'answers': [
             {'name': 'border', 'id': 401, 'text': 'Border?', 'img': ICON_URL + 'border.jpg', 'wide': True},
@@ -809,17 +809,17 @@ def image_category(request):
             {'name': 'coat_of_arms', 'id': 403, 'text': 'Coat of Arms?', 'img': ICON_URL + 'coat_of_arms.jpg'},
             {'name': 'decorative_letter', 'id': 404, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg', 'wide': True},
             {'name': 'motif', 'id': 401, 'text': 'Motif?', 'img': ICON_URL + 'motif.jpg'},
-        ]}
+            ]}
 
-# Natural World
+    # Natural World
     if cat_id == '700':
         category_data = {'question': 'Is the image of an ...', 'answers': [
             {'name': 'animal', 'id': 701, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
             {'name': 'vegetable', 'id': 702, 'text': 'Vegetable?', 'img': ICON_URL + 'lv-rect-station.png', 'wide': True},
             {'name': 'mineral', 'id': 703, 'text': 'Mineral?', 'img': ICON_URL + 'lv-rect-station.png'},
-        ]}
+            ]}
 
-# Scientific Drawing
+    # Scientific Drawing
     if cat_id == '800':
         category_data = {'question': 'Is the Diagram ...', 'answers': [
             {'name': 'Geological', 'id': 801, 'text': 'Geological?', 'img': ICON_URL + 'lv-rect-station.png'},
