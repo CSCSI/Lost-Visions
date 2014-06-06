@@ -244,7 +244,7 @@ def image(request, image_id):
     return render(request, 'image.html',
                   {'image': image_info,
                    'formatted_info': formatted_info,
-                   'image_id': str(image_url_part),
+                   'image_id': image_id,
                    # 'category_data': category_data,
                    'linked_images': linked_image_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
