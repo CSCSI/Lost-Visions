@@ -31,7 +31,7 @@ urlpatterns = patterns('',
 
                        url(r'^search/(?P<word>[\w\+]+)', 'lost_visions.views.search', name='do_search'),
                        url(r'^search_advanced', 'lost_visions.views.search_advanced', name='search_advanced'),
-                       url(r'^search_advanced', 'lost_visions.views.do_advanced_search', name='do_advanced_search'),
+                       url(r'^do_search_advanced', 'lost_visions.views.do_advanced_search', name='do_advanced_search'),
 
                        url(r'^data_autocomplete', 'lost_visions.views.data_autocomplete', name='data.autocomplete'),
 
