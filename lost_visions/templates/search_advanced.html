@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block content %}
+
+
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+        var date_from = 1510;
+        var date_to = 1946;
+
+        $(document).ready(function () {
+            {#            $('#date').datepicker({format: 'yyy'});#}
+
+            var date_from_selector = $('#date_from');
+            for (var i = date_to; i > date_from; i--)
+            {
+                date_from_selector.append($('<option />').val(i).html(i));
+                $('#date_to').append($('<option />').val(i).html(i));
+            }
+
+            date_from_selector.change(function(){
+                $('#date_to').empty();
+                date_from = $(this).val()
+                for (var j = date_to; j > date_from; j--)
+                {
+                    $('#date_to').append($('<option />').val(j).html(j));
+                }
+            });
+
+
+            $( "#author" ).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{% url 'data.autocomplete' %}",
+                        dataType: "json",
+                        data: {
+                            term : request.term,
+                            data_object : "author"
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 3,
+                select: function( event, ui ) {
+
+
+                }
+            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>" )
+                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
+                        .appendTo( ul );
+            };
+
+            $( "#title" ).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{% url 'data.autocomplete' %}",
+                        dataType: "json",
+                        data: {
+                            term : request.term,
+                            data_object : "title"
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 3,
+                select: function( event, ui ) {
+
+
+                }
+            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>" )
+                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
+                        .appendTo( ul );
+            };
+
+            $( "#publishing_place" ).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{% url 'data.autocomplete' %}",
+                        dataType: "json",
+                        data: {
+                            term : request.term,
+                            data_object : "publisher"
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 3,
+                select: function( event, ui ) {
+
+
+                }
+            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>" )
+                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
+                        .appendTo( ul );
+            };
+        })
+    </script>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Advanced Search
+            </h4>
+        </div>
+
+        <form action="{% url 'do_advanced_search' %}" id="advanced-search-form"
+              method="post" class="advanced-search-form">{% csrf_token %}
+            {{ tag_form.non_field_errors }}
+
+            <div class="ui-widget">
+                <label class="'control-label" for="keyword">Keyword: </label>
+                <input class="'form-control" id="keyword">
+            </div>
+
+            <div class="ui-widget">
+                <label class="'control-label" for="date_from">Date From: </label>
+                <select class="'form-control" id="date_from" name="date_from"></select>
+            </div>
+            <div class="ui-widget">
+                <label class="'control-label" for="date_to">Date To: </label>
+                <select class="'form-control" id="date_to" name="date_to"></select>
+            </div>
+
+            <div class="ui-widget">
+                <label class="'control-label" for="author">Author: </label>
+                <input class="'form-control" id="author">
+            </div>
+
+            <div class="ui-widget">
+                <label class="'control-label" for="illustrator">Illustrator: </label>
+                <input class="'form-control" id="illustrator">
+            </div>
+
+            <div class="ui-widget">
+                <label class="'control-label" for="title">Title: </label>
+                <input class="'form-control" id="title">
+            </div>
+
+            <div class="ui-widget">
+                <label class="'control-label" for="publishing_place">Publishing Place: </label>
+                <input class="'form-control" id="publishing_place">
+            </div>
+
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-primary">Search!</button>
+            </div>
+        </form>
+
+    </div>
+
+{% endblock %}

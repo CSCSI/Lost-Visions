@@ -564,7 +564,6 @@ def search(request, word):
             caption_result['img'] = result.image.flickr_small_source
             caption_result['description'] = build_substring(subword, result.description, 6)
 
-
             caption_results_dict[result.image.flickr_id] = caption_result
             total_results += 1
 
@@ -572,8 +571,6 @@ def search(request, word):
             result.image.save()
 
         results['caption'].update(caption_results_dict)
-
-
 
 
         author_results = models.Image.objects.order_by('-views_begun').filter(
@@ -852,3 +849,56 @@ def image_category(request):
     category_data = category_manager.get_category_data(cat_id)
 
     return HttpResponse(json.dumps(category_data), content_type="application/json")
+
+
+def search_advanced(request):
+    return render_to_response('search_advanced.html')
+
+
+@requires_csrf_token
+def do_advanced_search(request):
+    results = []
+    total_results = 0
+    word = ''
+    response_data = {'results': results, 'size': total_results, 'search_string': word.replace('+', ' OR ')}
+
+    return render(request, 'results.html',
+              {'results': response_data},
+              context_instance=RequestContext(request))
+
+
+def data_autocomplete(request):
+    print request.GET
+
+    term = request.GET['term']
+
+    response_data = []
+
+    if request.GET['data_object'] == 'author':
+        all_authors = models.Image.objects.filter(Q(first_author__icontains=term))\
+            .order_by('first_author').values_list('first_author').distinct()
+        for author in all_authors:
+            word_data = dict()
+            word_data['label'] = author[0]
+            word_data['desc'] = 'author'
+            response_data.append(word_data)
+
+    if request.GET['data_object'] == 'title':
+        all_authors = models.Image.objects.filter(Q(title__icontains=term))\
+            .order_by('title').values_list('title').distinct()
+        for author in all_authors:
+            word_data = dict()
+            word_data['label'] = author[0]
+            word_data['desc'] = 'title'
+            response_data.append(word_data)
+
+    if request.GET['data_object'] == 'publisher':
+        all_authors = models.Image.objects.filter(Q(publisher__icontains=term))\
+            .order_by('publisher').values_list('publisher').distinct()
+        for author in all_authors:
+            word_data = dict()
+            word_data['label'] = author[0]
+            word_data['desc'] = 'publisher'
+            response_data.append(word_data)
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")

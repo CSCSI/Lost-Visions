@@ -223,6 +223,12 @@ a:hover#save_image.btn.btn-default.save_image  {
   }
 
 
+.advanced-search-form label {
+    display: inline-block;
+    width: 150px;
+}
+
+
 /*##################################################*/
 
 .man {
