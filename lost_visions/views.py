@@ -15,7 +15,6 @@ from django.db.models import Q, Min
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 
-from nltk.corpus import wordnet as wn
 
 # Create your views here.
 from django.shortcuts import render_to_response
@@ -71,28 +70,33 @@ def image_tags(request):
 
             for user_tag in tags_xy:
                 # try:
-                tag = models.Tag()
-                tag.tag = clean(str(user_tag['tag']), strip=True)
-                tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
-                tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
-                # try:
-                # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
-                date_object = parser.parse(str(user_tag['datetime']))
-                tag.timestamp = date_object
-                # except Exception as e3:
-                #     print e3
-                #     pass
 
-                tag.tag_order = clean(str(user_tag['tag_order']), strip=True)
+                alternative_words = db_tools.list_wordnet_links(user_tag['synset'])[::-1]
+                alternative_words.append(user_tag['tag'])
 
-                if image and request_user:
-                    tag.image = image
-                    tag.user = request_user
-                    tag.save()
-
-                    # except Exception as e2:
-                    #     print 'error 2' + str(e2)
+                for index, word in enumerate(alternative_words):
+                    tag = models.Tag()
+                    tag.tag = clean(word, strip=True)
+                    tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
+                    tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
+                    # try:
+                    # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
+                    date_object = parser.parse(str(user_tag['datetime']))
+                    tag.timestamp = date_object
+                    # except Exception as e3:
+                    #     print e3
                     #     pass
+
+                    tag.tag_order = str(int(clean(str(user_tag['tag_order']), strip=True)) + 1 * (index + 1))
+
+                    if image and request_user:
+                        tag.image = image
+                        tag.user = request_user
+                        tag.save()
+
+                        # except Exception as e2:
+                        #     print 'error 2' + str(e2)
+                        #     pass
 
         image.views_completed += 1
         image.save()
@@ -487,13 +491,15 @@ def findword(request):
     #
     # response_data = words
 
-    words = db_tools.search_wordnet(word)
-    response_data = []
-    for found_word in words:
-        word_data = dict()
-        word_data['label'] = found_word.lemma
-        word_data['desc'] = found_word.definition
-        response_data.append(word_data)
+    # words = db_tools.search_wordnet(word)
+    # response_data = []
+    # for found_word in words:
+    #     word_data = dict()
+    #     word_data['label'] = found_word.lemma
+    #     word_data['desc'] = str(found_word.synsetid) + ' ' + str(found_word.wordid) + ' ' + str(found_word.pos) \
+    #                         + ' ' + str(found_word.sensenum)+ ' ' + str(found_word.definition)
+    #     response_data.append(word_data)
+    response_data = db_tools.wordnet_formatted(word)
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 

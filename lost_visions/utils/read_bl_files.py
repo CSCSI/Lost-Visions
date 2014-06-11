@@ -26,7 +26,7 @@ def find_small(folder, output_folder):
         date_path = os.path.join(os.path.join(settings.BASE_DIR, 'bl_images'), date)
         print date_path
 
-        if not os.path.exists(date_path): # or date is '1891' or date is '1880' or date is '1894':
+        if os.path.exists(date_path):
 
             if os.path.isfile(full_path) and 'small' in fileName and fileExtension == '.tsv': #and count < 20:
                 print full_path
@@ -45,8 +45,7 @@ def find_small(folder, output_folder):
 
                         url_to_azure = azure_url(metadata)
 
-                        print url_to_azure
-                        print download_output_path
+
 
                         try:
                             os.stat(date_path)
@@ -54,12 +53,22 @@ def find_small(folder, output_folder):
                             os.mkdir(date_path)
                             pass
 
-                        try:
-                            os.stat(download_output_path)
-                            print download_output_path + ' already exists'
-                        except:
-                            urllib.urlretrieve (url_to_azure, download_output_path)
-                            pass
+                        if not os.path.exists(download_output_path):
+                            print url_to_azure
+                            print download_output_path
+                            try:
+                                urllib.urlretrieve (url_to_azure, download_output_path)
+                            except Exception as e:
+                                print e
+
+                                pass
+                    # try:
+                    #     os.stat(download_output_path)
+                    #     else:
+                    #         print download_output_path + ' already exists'
+                        # except:
+                        #
+                        #     pass
 
         else:
             print 'folder ' + date_path + ' exists.'

@@ -50,6 +50,7 @@
 
                 var tag_string = ui.item.value;
                 var id = 'id_' + tag_string;
+                var synset = ui.item.synset;
 
                 var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});
                 var $label = $('<label/>').attr({for: id}).html(tag_string);
@@ -58,6 +59,7 @@
                 var d = new Date();
                 var datetime = d.toISOString();
                 all_tags.push({tag: tag_string,
+                    synset: synset,
                     x_percent: hightlighted_x_percent,
                     y_percent: hightlighted_y_percent,
                     x_pixel: highlighted_x_pixel,

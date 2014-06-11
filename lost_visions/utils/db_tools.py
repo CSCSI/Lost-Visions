@@ -11,6 +11,9 @@ from django.core import serializers
 from lost_visions import models, wordnet
 from django.core.exceptions import ObjectDoesNotExist
 
+import nltk
+from nltk.corpus import wordnet as wn
+
 __author__ = 'ubuntu'
 
 
@@ -306,7 +309,7 @@ def backup_db():
 # LEFT JOIN synsets USING (synsetid) where lemma like '%churc%' order by pos limit 30
 #
 def search_wordnet(searchword, limit=30):
-    query = "SELECT wordid, lemma, definition FROM words LEFT JOIN senses s USING (wordid) " \
+    query = "SELECT wordid, lemma, definition, synsetid, pos, sensenum FROM words LEFT JOIN senses s USING (wordid) " \
             "LEFT JOIN synsets USING (synsetid) where lemma like %s " \
             "order by length(lemma) COLLATE NOCASE ASC limit %s"
 
@@ -314,5 +317,47 @@ def search_wordnet(searchword, limit=30):
     return results
 
 
-# print search_wordnet('word')
+def wordnet_formatted(word):
+    words = search_wordnet(word)
+    response_data = []
+    for found_word in words:
+        word_data = dict()
+        word_data['label'] = found_word.lemma
+        word_data['desc'] = str(found_word.definition)
+        response_data.append(word_data)
 
+        synsetid = found_word.lemma + '.' + str(found_word.pos) + '.' + str(found_word.sensenum)
+        word_data['synset'] = synsetid
+    return response_data
+
+
+def list_wordnet_links(tag_synset_id):
+
+    initial_list = []
+    try:
+        synset, synset_list = get_hypernyms(wn.synset(tag_synset_id), initial_list)
+        return synset_list
+    except:
+        return initial_list
+
+# we stop looking upwards for parent words once we reach these pretty useless tags
+useless_words = ['artifact', 'being', 'abstraction', 'state', 'part', 'thing', 'entity', 'event', 'device', 'stuff']
+
+
+def get_hypernyms(synset, synset_list, loop=0):
+    try:
+        for word in synset.hypernyms():
+            for lemma in word.lemmas[0:2]:
+                word_string = str(lemma.name)
+                if word_string in useless_words:
+                    return synset_list
+                else:
+                    synset_list.append(word_string.replace('_', ' '))
+
+            loop += 1
+            if loop > 2:
+                return synset_list
+            else:
+                return get_hypernyms(word, synset_list, loop), synset_list
+    except:
+        return synset_list
