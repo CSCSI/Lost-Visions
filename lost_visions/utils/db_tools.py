@@ -84,10 +84,11 @@ def find_image(image_info):
                         print filename_split[2]
                         print image_info['page']
                         if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
-                            image_root_url = os.path.join(STATIC_URL, medium_folder)
-                            file_url = os.path.join(image_root_url, a_file)
-                            print file_url
-                            return file_url
+                            if filename_split[3] == image_info['image_idx']:
+                                image_root_url = os.path.join(STATIC_URL, medium_folder)
+                                file_url = os.path.join(image_root_url, a_file)
+                                print file_url
+                                return file_url
                             # return STATIC_URL + 'bl_images/' + a_file
             except Exception as e:
                 print e
@@ -112,11 +113,11 @@ def find_image(image_info):
                         print filename_split[2]
                         print image_info['page']
                         if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
-                            image_root_url = os.path.join(STATIC_URL, scan_folder)
-                            file_url = os.path.join(image_root_url, a_file)
-                            print file_url
-                            return file_url
-                            # return STATIC_URL + 'bl_images/' + a_file
+                            if filename_split[3] == image_info['image_idx']:
+                                image_root_url = os.path.join(STATIC_URL, scan_folder)
+                                file_url = os.path.join(image_root_url, a_file)
+                                print file_url
+                                return file_url
             except Exception as e:
                 print e
                 pass
@@ -140,11 +141,11 @@ def find_image(image_info):
                         print filename_split[2]
                         print image_info['page']
                         if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
-                            image_root_url = os.path.join(STATIC_URL, scan_folder)
-                            file_url = os.path.join(image_root_url, a_file)
-                            print file_url
-                            return file_url
-                            # return STATIC_URL + 'bl_images/' + a_file
+                            if filename_split[3] == image_info['image_idx']:
+                                image_root_url = os.path.join(STATIC_URL, scan_folder)
+                                file_url = os.path.join(image_root_url, a_file)
+                                print file_url
+                                return file_url
             except Exception as e:
                 print e
                 pass

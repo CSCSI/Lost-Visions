@@ -3,6 +3,16 @@
 
 {% block content %}
 
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+        var date_from = 1510;
+        var date_to = 1946;
+
+        $(document).ready(function () {
+            $('#carousel-example-generic').carousel();
+        });
+
+    </script>
+
     {% if login_success %}
         {% if login_success == True %}
             <div class="alert alert-dismissable alert-success">
@@ -34,8 +44,50 @@
 
             <hr>
 
-            <img id='home-image' src="{% static "media/images/hot_air.jpg" %}" style='max-width:100%; height:auto'>
-<hr>
+            {#            <img id='home-image' src="{% static "media/images/hot_air.jpg" %}" style='max-width:100%; height:auto'>#}
+
+            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                </ol>
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <img src="{% static "media/images/hot_air.jpg" %}" alt="hot air balloon">
+                        <div class="carousel-caption">
+                            A hot air balloon
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <img src="{% static "media/images/icon/science.jpg" %}" alt="science">
+                        <div class="carousel-caption">
+                            Science
+                        </div>
+                    </div>
+
+                    <div class="item">
+                        <img src="{% static "media/images/icon/animal.jpg" %}" alt="Animal">
+                        <div class="carousel-caption">
+                            Animal
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+            </div>
+
+            <hr>
 
             <p>
                 The starting point for the Lost Visions project was the realisation that whilst books are being digitised on an unprecedented scale, illustrations and other important visual material are frequently omitted from this process.  In cases where the illustrations have been digitised, they are often of such a low quality and lacking the metadata required to make them searchable. In a very real sense these illustrations, which are a significant aspect of our cultural heritage and play a crucial role in how we understand visual culture today, are lost. The provision of metadata for over a million illustrations from the eighteenth to the twentieth century will allow these illustrations to be searched for and retrieved in a web-based interface that will be free and accessible to the public. Furthermore, the scale and scope of the project means that Illustration Studies, as an academic discipline, will have a resource which will enable researchers to identify how, for example, illustration changes over time, how certain images are re-used in different contexts, and how texts may shift from being illustrated initially, to losing their illustrations at a later date or vice-versa.

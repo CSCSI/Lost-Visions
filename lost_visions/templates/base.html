@@ -19,6 +19,10 @@
 
     <!-- Bootstrap -->
 
+    <!--[if lt IE 9]>
+<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+<![endif]-->
+
     <script src="//code.jquery.com/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.js"></script>
 
@@ -184,27 +188,27 @@
 
             <li><a href="http://lostvisions.weebly.com/" target="_blank">About Us</a></li>
 
-{#            <li class="dropdown">#}
-{#                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Theme<b class="caret"></b></a>#}
-{#                <ul class="dropdown-menu" id="change-theme">#}
-{#                    <li><a href="#" rel="{% static "bootstrap.slate.min.css" %}">Grey</a></li>#}
-{#                    <li><a href="#" rel="{% static "bootstrap.flatly.min.css" %}">Blue</a></li>#}
-{#                    <li><a href="#" rel="{% static "bootstrap.lumin.min.css" %}">Lumin</a></li>#}
-{#                    <li><a href="#" rel="http://www.dmvi.org.uk/css/dice-theme1.min.css">DMVI</a></li>#}
-{#                </ul>#}
-{#            </li>#}
+            {#            <li class="dropdown">#}
+            {#                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Theme<b class="caret"></b></a>#}
+            {#                <ul class="dropdown-menu" id="change-theme">#}
+            {#                    <li><a href="#" rel="{% static "bootstrap.slate.min.css" %}">Grey</a></li>#}
+            {#                    <li><a href="#" rel="{% static "bootstrap.flatly.min.css" %}">Blue</a></li>#}
+            {#                    <li><a href="#" rel="{% static "bootstrap.lumin.min.css" %}">Lumin</a></li>#}
+            {#                    <li><a href="#" rel="http://www.dmvi.org.uk/css/dice-theme1.min.css">DMVI</a></li>#}
+            {#                </ul>#}
+            {#            </li>#}
 
             <li><a href="{% url 'image.random' %}" target="_blank">Tag Images</a></li>
             <li><a href="{% url 'search_advanced' %}" target="_blank">Advanced Search</a></li>
 
-{#            <li class="dropdown">#}
-{#                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tag Images<b class="caret"></b></a>#}
-{#                <ul class="dropdown-menu">#}
-{#                    <li><a href="{% url 'image.random' %}">From ARCCA</a></li>#}
-                    {#                    <li class="divider"></li>#}
-                    {#                    <li><a href="{% url 'image.grab_flickr' %}">From Flickr</a></li>#}
-{#                </ul>#}
-{#            </li>#}
+            {#            <li class="dropdown">#}
+            {#                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tag Images<b class="caret"></b></a>#}
+            {#                <ul class="dropdown-menu">#}
+            {#                    <li><a href="{% url 'image.random' %}">From ARCCA</a></li>#}
+            {#                    <li class="divider"></li>#}
+            {#                    <li><a href="{% url 'image.grab_flickr' %}">From Flickr</a></li>#}
+            {#                </ul>#}
+            {#            </li>#}
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contact Us<b class="caret"></b></a>
@@ -316,7 +320,7 @@
 
 <footer>
     <p>&copy; Cardiff University 2014</p>
-{#<div class="man"></div>#}
+    {#<div class="man"></div>#}
 </footer>
 </body>
 </html>

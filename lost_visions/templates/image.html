@@ -157,7 +157,7 @@
                     for (var ans in data['answers']) {
 
                         var classname = 'category-answer';
-                        if (data['answers'][ans].hasOwnProperty('wide')) {
+                        if (data['answers'][ans].text.length > 9) {
                             classname = 'category-answer wide';
                         } else {
 
