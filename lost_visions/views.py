@@ -839,6 +839,7 @@ def image_category(request):
     try:
         image_id = request.POST.get('image_id', None)
         if image_id is not None:
+            category_manager.update_image_actions(image_id)
             category_name = category_manager.get_tag_for_category_id(cat_id)
             if category_name is not None:
                 tag = models.Tag()

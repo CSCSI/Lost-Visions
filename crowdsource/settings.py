@@ -140,6 +140,10 @@ DATABASES = {
     # }
 }
 
+RAVEN_CONFIG = {
+    'dsn': 'http://8eedfb9d1deb48a39af1f63b825e4ccc:e0f83797e67a462c9c65f270296e672c@lost-visions.cf.ac.uk/sentry/2',
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 

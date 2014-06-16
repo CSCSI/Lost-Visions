@@ -185,6 +185,39 @@
 
                     }
 
+
+                    for (var ans in data['actions']) {
+
+                        var classname = 'category-answer';
+                        if (data['actions'][ans].text.length > 9) {
+                            classname = 'category-answer wide';
+                        } else {
+
+                        }
+
+                        var answer = '<div class="' + classname +'" data-link="' + data['actions'][ans].link +
+                                '" data-category_id="' + data['actions'][ans].id + '"> \
+                            <div class="panel">\
+                                <div class="category-answer-image">\
+                                    <img src="' + data['actions'][ans].img + '"\
+                                         style="width:100%; height: auto;\
+                                         margin:0 auto; display:block; border:1px">\
+                                </div>\
+                                <div class="panel-footer">\
+                                    <div class="wrap-text">\
+                                        ' + data['actions'][ans].text + '\
+                                    </div>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        ';
+                        {#                        style="min-width:80px; min-height: 80px; max-width:90px; max-height: 90px;\#}
+
+                        var elem = $(answer);
+                        masonry_container.append(elem).masonry( 'appended', elem );
+
+                    }
+
                     enable_category_click();
 
                     setTimeout("$('#category-container').masonry()", 1500);
@@ -203,6 +236,17 @@
             $('.category-answer').click(function() {
                 var cat_id = $(this).data('category_id');
                 populate_categories(cat_id, null);
+
+                if ($(this).data('link')) {
+                    var win = window.open($(this).data('link'), '_blank');
+                    if(win){
+                        //Browser has allowed it to be opened
+                        win.focus();
+                    }else{
+                        //Broswer has blocked it
+                        alert('Please allow popups for this site');
+                    }
+                }
             });
         }
 
@@ -641,7 +685,7 @@
         <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    Objects
+                    Objects and Ideas
                     <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">
                         +
                     </div>
@@ -651,7 +695,7 @@
 
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
-                <h4>Select and Name the Objects in this Image</h4>
+                What things or ideas can you see in this image? For example:  "bird", "table", "winter", "love"
                 <div id="focus_alerts"></div>
                 <div id="add_tags_body"></div>
 
@@ -681,14 +725,14 @@
         <div class="panel-heading">
             <h4 class="panel-title">
                 <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                    Category
+                    Types of image
                 </a>
             </h4>
         </div>
 
         <div id="collapseTwo" class="panel-collapse collapse">
             <div class="panel-body">
-                <h4>Please select the Theme(s) of the image, from the options below</h4>
+                Please select the type of image, if any, from the options below
                 <div class="grid-sizer"></div>
                 <div id="add_category_body"></div>
 
