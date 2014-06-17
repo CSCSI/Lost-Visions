@@ -336,13 +336,19 @@ def list_wordnet_links(tag_synset_id):
 
     initial_list = []
     try:
-        synset, synset_list = get_hypernyms(wn.synset(tag_synset_id), initial_list)
+        word_synset = wn.synset(tag_synset_id)
+        for lemma in word_synset.lemmas:
+            initial_list.append(lemma.name)
+
+        synset, synset_list = get_hypernyms(word_synset, initial_list)
         return synset_list
     except:
         return initial_list
 
 # we stop looking upwards for parent words once we reach these pretty useless tags
-useless_words = ['artifact', 'being', 'abstraction', 'state', 'part', 'thing', 'entity', 'event', 'device', 'stuff']
+useless_words = ['artifact', 'being', 'abstraction', 'state',
+                 'part', 'thing', 'entity', 'event', 'device', 'stuff',
+                 'representational process', 'percept']
 
 
 def get_hypernyms(synset, synset_list, loop=0):

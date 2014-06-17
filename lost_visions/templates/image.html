@@ -253,7 +253,7 @@
                 else if ($(this).data('action_name') == 'gazetteer') {
                     var cat_id = $(this).data('category_id');
 
-                    console.log('clicked a request to show gazetteer')
+                    console.log('clicked a request to show gazetteer');
 
                     var places_autocomplete = '<label class="control-label" for="places">Location: </label> \
                     <input class="form-control" id="places">'
@@ -287,8 +287,9 @@
                             }
                         }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
                             return $( "<li>" )
-                                    .append( "<a><strong>" + item.properties.name +
-                                            "</strong><br>" + item.properties.centroid + "</a>" )
+                                    .append( "<a><strong>" + item.properties.name + " - " + item.properties.country +
+                                            "</strong><br>" + item.properties.featuretype
+                                            + "<br>" + item.properties.centroid + "</a>" )
                                     .appendTo( ul );
                         };
                     })
