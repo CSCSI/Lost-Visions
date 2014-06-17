@@ -113,7 +113,9 @@ class CategoryManager():
 
         self.categories[500] = Category('500', 'title_page', 'Title Page?', ICON_URL + 'title_page.jpg')
 
-        self.categories[600] = Category('600', 'map', 'Map?', ICON_URL + 'map.jpg')
+        self.categories[600] = Category('600', 'map', 'Map?', ICON_URL + 'map.jpg') \
+            .set_question('Can you describe the mapped location..').set_answers([1001, 1002, 1])
+
 
         # self.categories[700] = Category('700', 'natural_world', 'Natural World?', ICON_URL + 'nature.jpg')\
         #     .set_question('Is the image of an ...').set_answers([701, 702, 703])
@@ -156,7 +158,7 @@ class CategoryManager():
 
     def get_tag_for_category_id(self, category_id):
         try:
-            category = self.categories.get(int(category_id))
+            category = self.categories.get(int(category_id), 0)
             if category.should_save:
                 return category.name
             else:
@@ -171,7 +173,7 @@ class CategoryManager():
         parent_category = self.categories.get(int(cat_id))
         answer_categories = []
         actions = []
-        if len(parent_category.answer_ids) == 0:
+        if parent_category is None or len(parent_category.answer_ids) == 0:
             parent_category = self.categories.get(0)
         for child_id in parent_category.answer_ids:
             child_category = self.categories.get(child_id)
@@ -183,14 +185,14 @@ class CategoryManager():
                                               'text': child_category.text,
                                               'img': child_category.img})
                 else:
-                    print self.actions
-                    link = self.actions.get(child_category.action_name)
-                    print link
+                    action = self.actions.get(child_category.action_name)
                     actions.append({'name': child_category.name,
                                     'id': child_category.category_id,
                                     'text': child_category.text,
                                     'img': child_category.img,
-                                    'link': link.link})
+                                    'link': action.link,
+                                    'action': action.name
+                                    })
 
             except:
                 client = Client(RAVEN_CONFIG['dsn'])

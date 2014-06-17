@@ -105,14 +105,14 @@
                     && highlighted_x_pixel == 0
                     && highlighted_y_pixel == 0) {
 
-                var focus_message = '<div class="alert alert-dismissable alert-danger">\
+                var focus_message = '<div class="alert alert-dismissable alert-warning">\
   <button type="button" class="close" data-dismiss="alert">×</button>\
-  Please click the object on the image before tagging it!</div>'
+  Please try clicking part of the image before tagging objects.</div>'
                 $('#focus_alerts').html(focus_message).fadeIn(100);
             } else {
                 $('#focus_alerts').fadeOut(1000);
             }
-        };
+        }
 
         $('#load_new_image').click(function(){
             window.location.replace('{% url 'image.random' %}');
@@ -195,7 +195,8 @@
 
                         }
 
-                        var answer = '<div class="' + classname +'" data-link="' + data['actions'][ans].link +
+                        var answer = '<div class="' + classname + '" data-link="' + data['actions'][ans].link +
+                                '" data-action_name="' + data['actions'][ans].action +
                                 '" data-category_id="' + data['actions'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
@@ -234,8 +235,7 @@
 
         function enable_category_click() {
             $('.category-answer').click(function() {
-                var cat_id = $(this).data('category_id');
-                populate_categories(cat_id, null);
+
 
                 if ($(this).data('link')) {
                     var win = window.open($(this).data('link'), '_blank');
@@ -246,6 +246,56 @@
                         //Broswer has blocked it
                         alert('Please allow popups for this site');
                     }
+                    var cat_id = $(this).data('category_id');
+                    populate_categories(cat_id, null);
+                }
+
+                else if ($(this).data('action_name') == 'gazetteer') {
+                    var cat_id = $(this).data('category_id');
+
+                    console.log('clicked a request to show gazetteer')
+
+                    var places_autocomplete = '<label class="control-label" for="places">Location: </label> \
+                    <input class="form-control" id="places">'
+
+                    var elem = $(places_autocomplete);
+                    var category_extra_div = $('#category-extra');
+                    category_extra_div.append(elem).on('click', '.form-control', function() {
+
+                        $( "#places" ).autocomplete({
+                            source: function(request, response) {
+                                $.ajax({
+                                    type: 'GET',
+                                    url: "http://unlock.edina.ac.uk/ws/nameSearch",
+                                    dataType: "json",
+                                    data: {
+                                        name : request.term,
+                                        format: "json",
+                                        maxRows: 15
+                                        {#                                    data_object : "publisher"#}
+                                    },
+                                    success: function(data) {
+                                        response(data.features);
+                                    }
+                                });
+                            },
+                            minLength: 3,
+                            select: function( event, ui ) {
+                                populate_categories(cat_id, null);
+                                category_extra_div.empty();
+
+                            }
+                        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                            return $( "<li>" )
+                                    .append( "<a><strong>" + item.properties.name +
+                                            "</strong><br>" + item.properties.centroid + "</a>" )
+                                    .appendTo( ul );
+                        };
+                    })
+                }
+                else {
+                    var cat_id = $(this).data('category_id');
+                    populate_categories(cat_id, null);
                 }
             });
         }
@@ -733,6 +783,8 @@
         <div id="collapseTwo" class="panel-collapse collapse">
             <div class="panel-body">
                 Please select the type of image, if any, from the options below
+                <div id="category-extra"></div>
+
                 <div class="grid-sizer"></div>
                 <div id="add_category_body"></div>
 
