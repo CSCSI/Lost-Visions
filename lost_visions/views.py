@@ -646,9 +646,44 @@ def word_in_word(string, word_array):
 @requires_csrf_token
 def map(request, image_id):
     print 'map for image : ' + image_id
+
+    x = 51.49006473014369
+    y = -3.1805146484375
+    nex = 50.49006473014369
+    ney = -4.1805146484375
+    sex = 52.49006473014369
+    sey = -2.1805146484375
+
+    print request.GET
+
+    if request.GET.get('x', 10000) is not 10000:
+        x = request.GET.get('x')
+
+    if request.GET.get('y', 10000) is not 10000:
+        y = request.GET.get('y')
+
+    if request.GET.get('nex', 10000) is not 10000:
+        nex = request.GET.get('nex')
+
+    if request.GET.get('ney', 10000) is not 10000:
+        ney = request.GET.get('ney')
+
+    if request.GET.get('sex', 10000) is not 10000:
+        sex = request.GET.get('sex')
+
+    if request.GET.get('sey', 10000) is not 10000:
+        sey = request.GET.get('sey')
+
     return render(request,
                   'image_map.html',
-                  {'image_id': image_id},
+                  {'image_id': image_id,
+                   'center_x': x,
+                   'center_y': y,
+                   'ne_x': nex,
+                   'ne_y': ney,
+                   'se_x': sex,
+                   'se_y': sey
+                   },
                   context_instance=RequestContext(request))
 
 
@@ -908,4 +943,12 @@ def data_autocomplete(request):
             word_data['desc'] = 'publisher'
             response_data.append(word_data)
 
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def map_coords(request):
+
+    print request.POST
+
+    reverse('image', kwargs={'image_id': image_id})
     return HttpResponse(json.dumps(response_data), content_type="application/json")

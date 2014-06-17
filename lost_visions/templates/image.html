@@ -236,22 +236,9 @@
         function enable_category_click() {
             $('.category-answer').click(function() {
 
-
-                if ($(this).data('link')) {
-                    var win = window.open($(this).data('link'), '_blank');
-                    if(win){
-                        //Browser has allowed it to be opened
-                        win.focus();
-                    }else{
-                        //Broswer has blocked it
-                        alert('Please allow popups for this site');
-                    }
+                if ($(this).data('action_name') == 'gazetteer') {
                     var cat_id = $(this).data('category_id');
-                    populate_categories(cat_id, null);
-                }
-
-                else if ($(this).data('action_name') == 'gazetteer') {
-                    var cat_id = $(this).data('category_id');
+                    var map_link = $(this).data('link');
 
                     console.log('clicked a request to show gazetteer');
 
@@ -260,7 +247,7 @@
 
                     var elem = $(places_autocomplete);
                     var category_extra_div = $('#category-extra');
-                    category_extra_div.append(elem).on('click', '.form-control', function() {
+                    category_extra_div.append(elem).on('focus', '.form-control', function() {
 
                         $( "#places" ).autocomplete({
                             source: function(request, response) {
@@ -281,6 +268,27 @@
                             },
                             minLength: 3,
                             select: function( event, ui ) {
+
+                                var map_link_string = map_link
+                                        + '?x=' + ui.item.properties.centroid.split(', ')[0]
+                                        + '&y=' + ui.item.properties.centroid.split(', ')[1]
+
+                                        + '&nex=' + ui.item.bbox[0]
+                                        + '&ney=' + ui.item.bbox[1]
+                                        + '&sex=' + ui.item.bbox[2]
+                                        + '&sey=' + ui.item.bbox[3];
+
+                                console.log(map_link_string);
+
+                                var win = window.open( map_link_string, '_blank');
+                                if(win){
+                                    //Browser has allowed it to be opened
+                                    win.focus();
+                                }else{
+                                    //Broswer has blocked it
+                                    alert('Please allow popups for this site');
+                                }
+
                                 populate_categories(cat_id, null);
                                 category_extra_div.empty();
 
@@ -292,8 +300,26 @@
                                             + "<br>" + item.properties.centroid + "</a>" )
                                     .appendTo( ul );
                         };
-                    })
+                    });
+                    var masonry_container = $('#category-container').masonry();
+                    masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
+
+                    setTimeout("$('.form-control').focus()", 500);
                 }
+
+                else if ($(this).data('link')) {
+                    var win = window.open($(this).data('link'), '_blank');
+                    if(win){
+                        //Browser has allowed it to be opened
+                        win.focus();
+                    }else{
+                        //Broswer has blocked it
+                        alert('Please allow popups for this site');
+                    }
+                    var cat_id = $(this).data('category_id');
+                    populate_categories(cat_id, null);
+                }
+
                 else {
                     var cat_id = $(this).data('category_id');
                     populate_categories(cat_id, null);
@@ -646,26 +672,27 @@
                 <li>
                     <a class="rota btn btn-default" data-degs="reset">Reset</a>
                 </li>
+                <li>
+                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
+                </li>
                 <li class="next">
                     <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
                 </li>
             </ul>
-            <ul class="pager">
-                <li>
-                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
-                </li>
-                <li>
-                    <a class="btn btn-default" href="{% url 'image.map' image_id %}" target="_blank">Map</a>
-                </li>
-                {% if user.is_authenticated %}
+            {% if user.is_authenticated %}
+                <ul class="pager">
+                    {#                <li>#}
+                    {#                    <a class="btn btn-default" href="{% url 'image.map' image_id %}" target="_blank">Map</a>#}
+                    {#                </li>#}
                     <li>
                         <a class="btn btn-default save_image" id="save_image">
                             <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">
                         </a>
                     </li>
-                {% endif %}
 
-            </ul>
+                </ul>
+            {% endif %}
+
             <ul  class="pager">
                 <li>
                     <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>

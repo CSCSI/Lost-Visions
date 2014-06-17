@@ -62,7 +62,7 @@ class CategoryManager():
         print link
 
         self.actions['map'] = Action('map', link=link)
-        self.actions['gazetteer'] = Action('gazetteer')
+        self.actions['gazetteer'] = Action('gazetteer', link=link)
 
     def load_default_categories(self):
 

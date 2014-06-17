@@ -27,6 +27,7 @@ urlpatterns = patterns('',
 
                        url(r'^image/coords/(?P<image_id>\d+)', 'lost_visions.views.coords', name='image.coords'),
                        url(r'^image/map/(?P<image_id>\d+)', 'lost_visions.views.map', name='image.map'),
+
                        url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),
 
                        url(r'^search/(?P<word>[\w\+]+)', 'lost_visions.views.search', name='do_search'),
@@ -62,6 +63,6 @@ urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^accounts/', include('allauth.urls'))
 
-                       )
+)
 
 urlpatterns += staticfiles_urlpatterns()

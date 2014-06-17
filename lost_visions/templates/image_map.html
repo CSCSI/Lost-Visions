@@ -32,8 +32,10 @@
                     mapOptions);
 
             var bounds = new google.maps.LatLngBounds(
-                    new google.maps.LatLng(50.49006473014369,-4.1805146484375),
-                    new google.maps.LatLng(52.49006473014369,-2.1805146484375)
+                    {#                    new google.maps.LatLng(50.49006473014369,-4.1805146484375),#}
+                    {#                    new google.maps.LatLng(52.49006473014369,-2.1805146484375)#}
+                    new google.maps.LatLng({{ se_y }}, {{ se_x }}),
+                    new google.maps.LatLng({{ ne_y }}, {{ ne_x }})
             );
 
             // Define the rectangle and set its editable property to true.
@@ -91,7 +93,7 @@
             infoWindow.setContent(contentString);
             infoWindow.setPosition(ne);
 
-{#            infoWindow.open(map);#}
+            {#            infoWindow.open(map);#}
 
             document.getElementById("north_east_x").value = ne.lat();
             document.getElementById("north_east_y").value = ne.lng();
@@ -113,7 +115,7 @@
                 content: content
             };
 
-{#            var infowindow = new google.maps.InfoWindow(options);#}
+            {#            var infowindow = new google.maps.InfoWindow(options);#}
             map.setCenter(options.position);
         }
 
@@ -129,12 +131,12 @@
         }
 
     </script>
-        {% if image_coords_msg %}
-            <div class="alert alert-dismissable alert-success">
-                <button type="button" class="close" data-dismiss="alert">×</button>
-                {{ image_coords_msg }}
-            </div>
-{% endif %}
+    {% if image_coords_msg %}
+        <div class="alert alert-dismissable alert-success">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ image_coords_msg }}
+        </div>
+    {% endif %}
     <form action="{% url 'image.coords' image_id=image_id %}" id="image-map-form" method="post">{% csrf_token %}
         <input type="hidden" name="image_id" value="{{ image_id }}" />
         <input type="hidden" id = 'north_east_x' name="north_east_x" value="" />
