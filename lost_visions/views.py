@@ -463,32 +463,6 @@ def findword(request):
 
     word = request.GET['term']
 
-    # url = 'http://services.aonaware.com/DictService/DictService.asmx/MatchInDict?dictId=gcide&word=' + \
-    #       word + '&strategy=prefix'
-    # print url
-    # resp = urllib2.urlopen(url)
-    #
-    # words = []
-    # if resp.code == 200:
-    #     data = resp.read()
-    #     xml = BeautifulSoup(data)
-    #
-    #     for arr in xml.findAll('arrayofdictionaryword'):
-    #         for dic_word in arr.findAll('dictionaryword'):
-    #             for title in dic_word.findAll('word'):
-    #                 if ' ' not in title.text:
-    #                     words.append(title.text)
-    #
-    # response_data = words
-
-    # words = db_tools.search_wordnet(word)
-    # response_data = []
-    # for found_word in words:
-    #     word_data = dict()
-    #     word_data['label'] = found_word.lemma
-    #     word_data['desc'] = str(found_word.synsetid) + ' ' + str(found_word.wordid) + ' ' + str(found_word.pos) \
-    #                         + ' ' + str(found_word.sensenum)+ ' ' + str(found_word.definition)
-    #     response_data.append(word_data)
     response_data = db_tools.wordnet_formatted(word)
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
@@ -637,12 +611,12 @@ def word_in_word(string, word_array):
 def map(request, image_id):
     print 'map for image : ' + image_id
 
-    x = 51.49006473014369
-    y = -3.1805146484375
-    nex = 50.49006473014369
-    ney = -4.1805146484375
-    swx = 52.49006473014369
-    swy = -2.1805146484375
+    y = 51.49006473014369
+    x = -3.1805146484375
+    ney = 50.49006473014369
+    nex = -4.1805146484375
+    swy = 52.49006473014369
+    swx = -2.1805146484375
 
     print request.GET
 
@@ -653,16 +627,24 @@ def map(request, image_id):
         y = request.GET.get('y')
 
     if request.GET.get('nex', 10000) is not 10000:
-        nex = request.GET.get('nex')
+        nex = float(request.GET.get('nex'))
 
     if request.GET.get('ney', 10000) is not 10000:
-        ney = request.GET.get('ney')
+        ney = float(request.GET.get('ney'))
 
-    if request.GET.get('sex', 10000) is not 10000:
-        swx = request.GET.get('swx')
+    if request.GET.get('swx', 10000) is not 10000:
+        swx = float(request.GET.get('swx'))
 
-    if request.GET.get('sey', 10000) is not 10000:
-        swy = request.GET.get('swy')
+    if request.GET.get('swy', 10000) is not 10000:
+        swy = float(request.GET.get('swy'))
+
+    if nex == swx:
+        nex = float(nex) + 0.1
+        swx = float(swx) - 0.1
+
+    if ney == swy:
+        ney = float(ney) + 0.1
+        swy = float(swy) - 0.1
 
     return render(request,
                   'image_map.html',
@@ -671,8 +653,8 @@ def map(request, image_id):
                    'y': y,
                    'ne_x': nex,
                    'ne_y': ney,
-                   'se_x': swx,
-                   'se_y': swy
+                   'sw_x': swx,
+                   'sw_y': swy
                   },
                   context_instance=RequestContext(request))
 

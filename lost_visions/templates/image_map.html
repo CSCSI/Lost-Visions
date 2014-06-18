@@ -25,16 +25,14 @@
             {#                    mapOptions);#}
 
             var mapOptions = {
-                center: new google.maps.LatLng({{ x }},{{ y }}),
+                center: new google.maps.LatLng({{ y }},{{ x }}),
                 zoom: 6
             };
             map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
             var bounds = new google.maps.LatLngBounds(
-                    {#                    new google.maps.LatLng(50.49006473014369,-4.1805146484375),#}
-                    {#                    new google.maps.LatLng(52.49006473014369,-2.1805146484375)#}
-                    new google.maps.LatLng({{ se_y }}, {{ se_x }}),
+                    new google.maps.LatLng({{ sw_y }}, {{ sw_x }}),
                     new google.maps.LatLng({{ ne_y }}, {{ ne_x }})
             );
 
@@ -45,8 +43,21 @@
                 draggable: true
             });
 
-            map.fitBounds(bounds);
             rectangle.setMap(map);
+
+{#            // Define the rectangle and set its editable property to true.#}
+{#            rectangle2 = new google.maps.Rectangle({#}
+{#                bounds: new google.maps.LatLngBounds(#}
+{#                        new google.maps.LatLng({{ ne_y }}, {{ ne_x }}),#}
+{#                        new google.maps.LatLng({{ sw_y }}, {{ sw_x }})#}
+{#                ),#}
+{#                editable: true,#}
+{#                draggable: true#}
+{#            });#}
+{##}
+{#            rectangle2.setMap(map);#}
+
+            map.fitBounds(bounds);
 
             // Add an event listener on the rectangle.
             google.maps.event.addListener(rectangle, 'bounds_changed', showNewRect);
@@ -112,7 +123,7 @@
 
             var options = {
                 map: map,
-                position: new google.maps.LatLng({{ x }}, {{ y }}),
+                position: new google.maps.LatLng({{ y }}, {{ x }}),
                 content: content
             };
 

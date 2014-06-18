@@ -275,8 +275,8 @@
 
                                         + '&nex=' + ui.item.bbox[0]
                                         + '&ney=' + ui.item.bbox[1]
-                                        + '&sex=' + ui.item.bbox[2]
-                                        + '&sey=' + ui.item.bbox[3];
+                                        + '&swx=' + ui.item.bbox[2]
+                                        + '&swy=' + ui.item.bbox[3];
 
                                 console.log(map_link_string);
 
@@ -670,10 +670,10 @@
                     <a class="rota btn btn-default" data-degs="-90">← Rotate left</a>
                 </li>
                 <li>
-                    <a class="rota btn btn-default" data-degs="reset">Reset</a>
+                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
                 </li>
                 <li>
-                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
+                    <a class="rota btn btn-default" data-degs="reset">Reset</a>
                 </li>
                 <li class="next">
                     <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
