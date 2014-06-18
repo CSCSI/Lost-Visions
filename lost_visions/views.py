@@ -613,10 +613,10 @@ def map(request, image_id):
 
     y = 51.49006473014369
     x = -3.1805146484375
-    ney = 50.49006473014369
-    nex = -4.1805146484375
-    swy = 52.49006473014369
-    swx = -2.1805146484375
+    swy = 50.49006473014369
+    swx = -4.1805146484375
+    ney = 52.49006473014369
+    nex = -2.1805146484375
 
     print request.GET
 
@@ -639,12 +639,12 @@ def map(request, image_id):
         swy = float(request.GET.get('swy'))
 
     if nex == swx:
-        nex = float(nex) + 0.1
-        swx = float(swx) - 0.1
+        nex = float(nex) + 0.05
+        swx = float(swx) - 0.05
 
     if ney == swy:
-        ney = float(ney) + 0.1
-        swy = float(swy) - 0.1
+        ney = float(ney) + 0.05
+        swy = float(swy) - 0.05
 
     return render(request,
                   'image_map.html',
