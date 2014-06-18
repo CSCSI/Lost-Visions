@@ -214,16 +214,6 @@ def image(request, image_id):
     formatted_info['Shelfmark'] = image_info.get('BL_DLS_ID', "")
     formatted_info['Page'] = image_info.get('page', "").lstrip('0')
     formatted_info['Identifier'] = image_info.get('flickr_id', "")
-    # formatted_info['Download Image'] = image_info.get('imageurl', '')
-
-    # category_data = {'question': 'Is the image a ...', 'answers': [
-    #     {'name': 'map', 'id': 1, 'text': 'Map?', 'img': 'media/images/icon/map.jpg'},
-    #     {'name': 'decorative_letter', 'id': 2, 'text': 'Decorative Letter?', 'img': 'media/images/icon/letter.jpg'},
-    #     {'name': 'landscape', 'id': 3, 'text': 'Landscape?', 'img': 'media/images/icon/landscape.jpg'},
-    #     {'name': 'portrait', 'id': 4, 'text': 'Portrait?', 'img': 'media/images/icon/portrait.jpg'},
-    #     {'name': 'building', 'id': 5, 'text': 'Building?', 'img': 'media/images/icon/building.jpg'}
-    #
-    # ]}
 
     if formatted_info['Book ID'] and formatted_info['Book ID'] != '':
         illustrator_string = ''
@@ -651,8 +641,8 @@ def map(request, image_id):
     y = -3.1805146484375
     nex = 50.49006473014369
     ney = -4.1805146484375
-    sex = 52.49006473014369
-    sey = -2.1805146484375
+    swx = 52.49006473014369
+    swy = -2.1805146484375
 
     print request.GET
 
@@ -669,21 +659,21 @@ def map(request, image_id):
         ney = request.GET.get('ney')
 
     if request.GET.get('sex', 10000) is not 10000:
-        sex = request.GET.get('sex')
+        swx = request.GET.get('swx')
 
     if request.GET.get('sey', 10000) is not 10000:
-        sey = request.GET.get('sey')
+        swy = request.GET.get('swy')
 
     return render(request,
                   'image_map.html',
                   {'image_id': image_id,
-                   'center_x': x,
-                   'center_y': y,
+                   'x': x,
+                   'y': y,
                    'ne_x': nex,
                    'ne_y': ney,
-                   'se_x': sex,
-                   'se_y': sey
-                   },
+                   'se_x': swx,
+                   'se_y': swy
+                  },
                   context_instance=RequestContext(request))
 
 
@@ -715,12 +705,12 @@ def coords(request, image_id):
     except Exception as e:
         print e
 
-    return render(request,
-                  'image_map.html',
-                  {'image_id': image_id,
-                   'image_coords_msg': 'Thank you. You may save another region, or close this window'},
-                  context_instance=RequestContext(request))
-
+    # return render(request,
+    #               'image_map.html',
+    #               {'image_id': image_id,
+    #                'image_coords_msg': 'Thank you. You may save another region, or close this window'},
+    #               context_instance=RequestContext(request))
+    return map(request, image_id)
 
 @requires_csrf_token
 def save_image(request):
@@ -780,96 +770,7 @@ category_manager = CategoryManager()
 
 def image_category(request):
     print request.POST
-
-    category_data = {'question': 'Any more relevant categories?', 'answers': [
-        {'name': 'yes', 'id': 0, 'text': 'Yes', 'img': ICON_URL + 'tick.png'},
-        {'name': 'no', 'id': -1, 'text': 'No', 'img': ICON_URL + 'cross.png'}
-    ]}
-
-    if request.POST.get('category_id', '0') == '0':
-        category_data = {'question': 'Is the image a ...', 'answers': [
-            {'name': 'advert', 'id': 100, 'text': 'Advertisements?', 'img': ICON_URL + 'advert.jpg', 'wide': True},
-            {'name': 'building', 'id': 200, 'text': 'Building?', 'img': ICON_URL + 'building.jpg'},
-            {'name': 'people', 'id': 300, 'text': 'People?', 'img': ICON_URL + 'people.jpg'},
-            {'name': 'motif', 'id': 400, 'text': 'Decoration?', 'img': ICON_URL + 'motif.jpg', 'wide': True},
-            {'name': 'title_page', 'id': 500, 'text': 'Title Page?', 'img': ICON_URL + 'title_page.jpg'},
-            {'name': 'map', 'id': 600, 'text': 'Map?', 'img': ICON_URL + 'map.jpg'},
-            {'name': 'natural_world', 'id': 700, 'text': 'Natural World?', 'img': ICON_URL + 'nature.jpg'},
-            {'name': 'scientific_drawing', 'id': 800, 'text': 'Scientific Drawing?', 'img': ICON_URL + 'science.jpg', 'wide': True},
-            {'name': 'music', 'id': 900, 'text': 'Musical Score?', 'img': ICON_URL + 'music.jpg'},
-            {'name': 'landscape', 'id': 1000, 'text': 'Landscape?', 'img': ICON_URL + 'landscape.jpg', 'wide': True},
-            {'name': 'portrait', 'id': 1100, 'text': 'Portrait?', 'img': ICON_URL + 'portrait.jpg'},
-            {'name': 'ethnographic', 'id': 1200, 'text': 'Travel/ Ethnography?', 'img': ICON_URL + 'travel.jpg', 'wide': True},
-            {'name': 'words', 'id': 1300, 'text': 'Handwritten Text?', 'img': ICON_URL + 'words.jpg', 'wide': True}
-
-        ]}
-
     cat_id = request.POST.get('category_id', '-1')
-    #   advert
-    if cat_id == '100':
-        category_data = {'question': 'Is there a product/brand name?', 'answers': [
-            {'name': 'yes', 'id': 101, 'text': 'Yes', 'img': ICON_URL + 'tick.png'},
-            {'name': 'no', 'id': 102, 'text': 'No', 'img': ICON_URL + 'cross.png'}
-        ]}
-
-    #   building
-    if cat_id == '200':
-        category_data = {'question': 'Is this the buildings ...', 'answers': [
-            {'name': 'interior', 'id': 201, 'text': 'Interior?', 'img': ICON_URL + 'interior.jpg'},
-            {'name': 'exterior', 'id': 202, 'text': 'Exterior?', 'img': ICON_URL + 'exterior.jpg'},
-            {'name': 'architectural', 'id': 203, 'text': 'Architectural Drawing?', 'img': ICON_URL + 'schematic.jpg', 'wide': True},
-            ]}
-
-    #people
-    if cat_id == '300':
-        category_data = {'question': 'Is the map a ...', 'answers': [
-            {'name': 'individual', 'id': 301, 'text': 'Individual?', 'img': ICON_URL + 'lv-rect-station.png', 'wide': True},
-            {'name': 'group', 'id': 302, 'text': 'Group?', 'img': ICON_URL + 'lv-rect-station.png'}
-        ]}
-
-    if cat_id == '301' or cat_id == '302':
-        category_data = {'question': 'Are there any named historical figures?', 'answers': [
-            {'name': 'no', 'id': 311, 'text': 'No', 'img': ICON_URL + 'cross.png'},
-            {'name': 'add', 'id': 312, 'text': 'Add', 'img': ICON_URL + 'tick.png'}
-        ]}
-
-    if cat_id == '311' or cat_id == '312':
-        category_data = {'question': 'Any Activities?', 'answers': [
-            {'name': 'yes', 'id': 321, 'text': 'Yes', 'img': ICON_URL + 'tick.png'},
-            {'name': 'no', 'id': 322, 'text': 'No', 'img': ICON_URL + 'cross.png'}
-        ]}
-
-    # Decorative motif
-    if cat_id == '400':
-        category_data = {'question': 'Is the decoration a ...', 'answers': [
-            {'name': 'border', 'id': 401, 'text': 'Border?', 'img': ICON_URL + 'border.jpg', 'wide': True},
-            {'name': 'emblem', 'id': 402, 'text': 'Emblem?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'coat_of_arms', 'id': 403, 'text': 'Coat of Arms?', 'img': ICON_URL + 'coat_of_arms.jpg'},
-            {'name': 'decorative_letter', 'id': 404, 'text': 'Decorative Letter?', 'img': ICON_URL + 'letter.jpg', 'wide': True},
-            {'name': 'motif', 'id': 401, 'text': 'Motif?', 'img': ICON_URL + 'motif.jpg'},
-            ]}
-
-    # Natural World
-    if cat_id == '700':
-        category_data = {'question': 'Is the image of an ...', 'answers': [
-            {'name': 'animal', 'id': 701, 'text': 'Animal?', 'img': ICON_URL + 'animal.jpg'},
-            {'name': 'vegetable', 'id': 702, 'text': 'Vegetable?', 'img': ICON_URL + 'lv-rect-station.png', 'wide': True},
-            {'name': 'mineral', 'id': 703, 'text': 'Mineral?', 'img': ICON_URL + 'lv-rect-station.png'},
-            ]}
-
-    # Scientific Drawing
-    if cat_id == '800':
-        category_data = {'question': 'Is the Diagram ...', 'answers': [
-            {'name': 'Geological', 'id': 801, 'text': 'Geological?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'Medical', 'id': 802, 'text': 'Medical?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'Engineering', 'id': 803, 'text': 'Engineering?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'Botanical', 'id': 804, 'text': 'Botanical?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'Zoological', 'id': 805, 'text': 'Zoological?', 'img': ICON_URL + 'lv-rect-station.png'},
-            {'name': 'Archaeological', 'id': 806, 'text': 'Archaeological?', 'img': ICON_URL + 'lv-rect-station.png'}
-        ]}
-
-    if request.POST.get('category_id', '-1') == '-1':
-        category_data = {'question': 'No more questions.', 'answers': []}
 
     try:
         image_id = request.POST.get('image_id', None)
@@ -894,19 +795,67 @@ def image_category(request):
 
 
 def search_advanced(request):
-    return render_to_response('search_advanced.html')
+    return render(request, 'search_advanced.html', {}, context_instance=RequestContext(request))
 
 
-@requires_csrf_token
 def do_advanced_search(request):
-    results = []
-    total_results = 0
-    word = ''
-    response_data = {'results': results, 'size': total_results, 'search_string': word.replace('+', ' OR ')}
 
-    return render(request, 'results.html',
-              {'results': response_data},
-              context_instance=RequestContext(request))
+    print request.POST
+
+    keywords = request.POST.get('keyword', '')
+    year = request.POST.get('year', '')
+    number_of_results = request.POST.get('num_results', '')
+
+    results = dict()
+    results['advanced'] = dict()
+    total_results = 0
+
+    all_results = models.Image.objects.all()
+
+    readable_query = ''
+
+    if len(keywords):
+        all_results = all_results.filter(Q(title__icontains=keywords))
+        readable_query += ' with keyword ' + keywords
+
+    if len(year):
+        decade = year[0:3]
+        all_results = all_results.filter((Q(date__startswith=decade)))
+        readable_query += ' for the ' + year + "'s"
+
+    number_of_results_int = 100
+    if number_of_results is not '':
+        try:
+            number_of_results_int = int(number_of_results)
+        except:
+            pass
+    readable_query += '. Showing up to ' + str(number_of_results_int) + ' results. '
+
+    # print len(all_results)
+
+    tag_results_dict = dict()
+    for result in all_results[:number_of_results_int]:
+        tag_result = dict()
+        tag_result['title'] = result.title
+        tag_result['img'] = result.flickr_small_source
+        tag_result['date'] = result.date
+        tag_result['author'] = result.first_author
+        tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
+
+        tag_results_dict[result.flickr_id] = tag_result
+        total_results += 1
+
+    results['advanced'].update(tag_results_dict)
+
+    readable_query += '(' + str(len(all_results)) + ' found)'
+
+    # print results
+
+    response_data = {'results': results, 'size': total_results, 'search_string': keywords}
+
+    return render(request, 'advanced_search_results.html',
+                  {'results': response_data, 'query': readable_query},
+                  context_instance=RequestContext(request))
 
 
 def data_autocomplete(request):
@@ -917,7 +866,7 @@ def data_autocomplete(request):
     response_data = []
 
     if request.GET['data_object'] == 'author':
-        all_authors = models.Image.objects.filter(Q(first_author__icontains=term))\
+        all_authors = models.Image.objects.filter(Q(first_author__icontains=term)) \
             .order_by('first_author').values_list('first_author').distinct()
         for author in all_authors:
             word_data = dict()
@@ -926,7 +875,7 @@ def data_autocomplete(request):
             response_data.append(word_data)
 
     if request.GET['data_object'] == 'title':
-        all_authors = models.Image.objects.filter(Q(title__icontains=term))\
+        all_authors = models.Image.objects.filter(Q(title__icontains=term)) \
             .order_by('title').values_list('title').distinct()
         for author in all_authors:
             word_data = dict()
@@ -935,7 +884,7 @@ def data_autocomplete(request):
             response_data.append(word_data)
 
     if request.GET['data_object'] == 'publisher':
-        all_authors = models.Image.objects.filter(Q(publisher__icontains=term))\
+        all_authors = models.Image.objects.filter(Q(publisher__icontains=term)) \
             .order_by('publisher').values_list('publisher').distinct()
         for author in all_authors:
             word_data = dict()
@@ -945,10 +894,3 @@ def data_autocomplete(request):
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-
-def map_coords(request):
-
-    print request.POST
-
-    reverse('image', kwargs={'image_id': image_id})
-    return HttpResponse(json.dumps(response_data), content_type="application/json")

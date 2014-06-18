@@ -10,7 +10,6 @@
         var date_to = 1946;
 
         $(document).ready(function () {
-            {#            $('#date').datepicker({format: 'yyy'});#}
 
             var date_from_selector = $('#date_from');
             for (var i = date_to; i > date_from; i--)
@@ -19,9 +18,16 @@
                 $('#date_to').append($('<option />').val(i).html(i));
             }
 
+            var year_selector = $('#year');
+            year_selector.append($('<option selected="selected"/>').val('').html('--'));
+            for (var j = 1950; j > date_from; j-=10)
+            {
+                year_selector.append($('<option />').val(j).html(j));
+            }
+
             date_from_selector.change(function(){
                 $('#date_to').empty();
-                date_from = $(this).val()
+                date_from = $(this).val();
                 for (var j = date_to; j > date_from; j--)
                 {
                     $('#date_to').append($('<option />').val(j).html(j));
@@ -119,36 +125,47 @@
 
             <div class="ui-widget">
                 <label class="'control-label" for="keyword">Keyword: </label>
-                <input class="'form-control" id="keyword">
+                <input class="'form-control" id="keyword" name="keyword">
             </div>
 
             <div class="ui-widget">
                 <label class="'control-label" for="date_from">Date From: </label>
-                <select class="'form-control" id="date_from" name="date_from"></select>
+                <select disabled class="'form-control" id="date_from" name="date_from"></select>
             </div>
+
             <div class="ui-widget">
                 <label class="'control-label" for="date_to">Date To: </label>
-                <select class="'form-control" id="date_to" name="date_to"></select>
+                <select disabled class="'form-control" id="date_to" name="date_to"></select>
+            </div>
+
+            <div class="ui-widget">
+                <label class="'control-label" for="year">Decade: </label>
+                <select class="'form-control" id="year" name="year"></select>
             </div>
 
             <div class="ui-widget">
                 <label class="'control-label" for="author">Author: </label>
-                <input class="'form-control" id="author">
+                <input class="'form-control" id="author" name="author">
             </div>
 
             <div class="ui-widget">
                 <label class="'control-label" for="illustrator">Illustrator: </label>
-                <input class="'form-control" id="illustrator">
+                <input class="'form-control" id="illustrator" name="illustrator">
             </div>
 
             <div class="ui-widget">
                 <label class="'control-label" for="title">Title: </label>
-                <input class="'form-control" id="title">
+                <input class="'form-control" id="title" name="title">
             </div>
 
             <div class="ui-widget">
                 <label class="'control-label" for="publishing_place">Publishing Place: </label>
-                <input class="'form-control" id="publishing_place">
+                <input class="'form-control" id="publishing_place" name="publishing_place">
+            </div>
+
+            <div class="ui-widget">
+                <label class="'control-label" for="num_results">Number of Results: </label>
+                <input class="'form-control" id="num_results" name="num_results" value="100">
             </div>
 
             <div class="panel-footer">

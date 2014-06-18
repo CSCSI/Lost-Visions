@@ -25,7 +25,7 @@
             {#                    mapOptions);#}
 
             var mapOptions = {
-                center: new google.maps.LatLng(51.49006473014369,-3.1805146484375),
+                center: new google.maps.LatLng({{ x }},{{ y }}),
                 zoom: 6
             };
             map = new google.maps.Map(document.getElementById('map-canvas'),
@@ -45,6 +45,7 @@
                 draggable: true
             });
 
+            map.fitBounds(bounds);
             rectangle.setMap(map);
 
             // Add an event listener on the rectangle.
@@ -111,7 +112,7 @@
 
             var options = {
                 map: map,
-                position: new google.maps.LatLng(51.49006473014369,-3.1805146484375),
+                position: new google.maps.LatLng({{ x }}, {{ y }}),
                 content: content
             };
 

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+
+{% block content %}
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+        $(document).ready(function(){
+        });
+        $(window).load(function(){
+        });
+    </script>
+
+    <h3>Images {{ query }}</h3>
+    <div id="result-container">
+
+        <div class="bs-example table-responsive">
+            <table class="table table-striped table-hover ">
+                <tbody>
+                <tr>
+                    <th>
+                        Image
+                    </th>
+                    <th>
+                        Author
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Title
+                    </th>
+                </tr>
+                {% for image_key, image_data in results.results.advanced.items %}
+                    <tr>
+                        <th>
+                            <a href="{{ image_data.link }}" target="_blank">
+                                <img src="{{ image_data.img }}"
+                                     style='max-height: 80px; width:auto; display: block; margin: 0 auto'>
+                            </a>
+                        </th>
+
+                        <td>
+                            {{ image_data.author }}
+                        </td>
+                        <td>
+                            {{ image_data.date }}
+                        </td>
+                        <td>
+                            {{ image_data.title }}
+                        </td>
+                    </tr>
+
+                {% empty %}
+                    <div class="bl_item">
+                        <p>(No matches for your search)</p>
+                    </div>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr>
+
+
+
+{% endblock %}
