@@ -13,16 +13,17 @@
         var images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
 
         function read_next_batch(){
-{#            alert(all_image_ids_list.length + ' ' + start_id_index + ' ' + end_id_index)#}
+            {#            alert(all_image_ids_list.length + ' ' + start_id_index + ' ' + end_id_index)#}
             images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
             load_more(images_to_load.join(','));
+
+            if (start_id_index > 0 && end_id_index > all_image_ids_list.length){
+                alert('No more images to load.');
+                {#                + all_image_ids_list.length + '<' + end_id_index);#}
+            }
+
             start_id_index = end_id_index;
             end_id_index  += 30;
-
-            if (end_id_index > all_image_ids_list.length){
-                alert('No more images to load.');
-{#                + all_image_ids_list.length + '<' + end_id_index);#}
-            }
         }
 
         function load_more(ids){
@@ -97,31 +98,31 @@
                         Title
                     </th>
                 </tr>
-                {% for image_key, image_data in results.results.advanced.items %}
-                    <tr>
-                        <th>
-                            <a href="{{ image_data.link }}" target="_blank">
-                                <img src="{{ image_data.img }}"
-                                     style='max-height: 80px; width:auto; display: block; margin: 0 auto'>
-                            </a>
-                        </th>
-
-                        <td>
-                            {{ image_data.author }}
-                        </td>
-                        <td>
-                            {{ image_data.date }}
-                        </td>
-                        <td>
-                            {{ image_data.title }}
-                        </td>
-                    </tr>
-
-                {% empty %}
-                    <div class="bl_item">
-                        <p>(No matches for your search)</p>
-                    </div>
-                {% endfor %}
+{#                {% for image_key, image_data in results.results.advanced.items %}#}
+{#                    <tr>#}
+{#                        <th>#}
+{#                            <a href="{{ image_data.link }}" target="_blank">#}
+{#                                <img src="{{ image_data.img }}"#}
+{#                                     style='max-height: 80px; width:auto; display: block; margin: 0 auto'>#}
+{#                            </a>#}
+{#                        </th>#}
+{##}
+{#                        <td>#}
+{#                            {{ image_data.author }}#}
+{#                        </td>#}
+{#                        <td>#}
+{#                            {{ image_data.date }}#}
+{#                        </td>#}
+{#                        <td>#}
+{#                            {{ image_data.title }}#}
+{#                        </td>#}
+{#                    </tr>#}
+{##}
+{#                {% empty %}#}
+{#                    <div class="bl_item">#}
+{#                        <p>(No matches for your search)</p>#}
+{#                    </div>#}
+{#                {% endfor %}#}
 
                 </tbody>
             </table>
