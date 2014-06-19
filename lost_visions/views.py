@@ -20,6 +20,7 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
+import operator
 from pygeoip import GeoIP
 from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL
 from lost_visions import forms, models
@@ -795,6 +796,7 @@ def do_advanced_search(request):
     all_results = models.Image.objects.all()
 
     readable_query = ''
+    all_image_ids = ''
 
     if len(keywords):
         all_results = all_results.filter(Q(title__icontains=keywords))
@@ -805,18 +807,19 @@ def do_advanced_search(request):
         all_results = all_results.filter((Q(date__startswith=decade)))
         readable_query += ' for the ' + year + "'s"
 
-    number_of_results_int = 100
+    number_of_results_int = 50
     if number_of_results is not '':
         try:
             number_of_results_int = int(number_of_results)
         except:
             pass
-    readable_query += '. Showing up to ' + str(number_of_results_int) + ' results. '
+    readable_query += '. Showing first ' + str(number_of_results_int) + ' results. '
 
     # print len(all_results)
 
     tag_results_dict = dict()
-    for result in all_results[:number_of_results_int]:
+    # for result in all_results[:number_of_results_int]:
+    for result in all_results:
         tag_result = dict()
         tag_result['title'] = result.title
         tag_result['img'] = result.flickr_small_source
@@ -827,16 +830,24 @@ def do_advanced_search(request):
         tag_results_dict[result.flickr_id] = tag_result
         total_results += 1
 
+        all_image_ids += result.flickr_id + ','
+
     results['advanced'].update(tag_results_dict)
 
     readable_query += '(' + str(len(all_results)) + ' found)'
 
     # print results
 
+    results['advanced'] = []
+
     response_data = {'results': results, 'size': total_results, 'search_string': keywords}
 
     return render(request, 'advanced_search_results.html',
-                  {'results': response_data, 'query': readable_query},
+                  {'results': response_data,
+                   'query': readable_query,
+                   'all_image_ids': all_image_ids,
+                   'number_to_show' : number_of_results_int
+                  },
                   context_instance=RequestContext(request))
 
 
@@ -876,3 +887,40 @@ def data_autocomplete(request):
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
+
+def get_image_data(request):
+
+    print request.POST
+
+    ids = request.POST.get('image_ids', '')
+    tag_results_dict = dict()
+
+    if ids:
+        id_list = ids.split(',')
+
+        print id_list
+
+        q_or_objects = []
+        for image_id in id_list:
+            q_or_objects.append(Q(flickr_id=image_id))
+
+        image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
+
+        print image_data
+
+        for result in image_data:
+            try:
+                tag_result = dict()
+                tag_result['title'] = result.title
+                tag_result['img'] = result.flickr_small_source
+                tag_result['date'] = result.date
+                tag_result['author'] = result.first_author
+                tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
+
+                tag_results_dict[result.flickr_id] = tag_result
+            except:
+                print result
+                pass
+                # print tag_results_dict
+
+    return HttpResponse(json.dumps(tag_results_dict), content_type="application/json")

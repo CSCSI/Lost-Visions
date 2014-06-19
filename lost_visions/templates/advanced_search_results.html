@@ -5,7 +5,73 @@
 
 {% block content %}
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+
+        var all_image_ids = "{{ all_image_ids }}";
+        var all_image_ids_list = all_image_ids.split(',');
+        var start_id_index = 0;
+        var end_id_index = {{ number_to_show }};
+        var images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
+
+        function read_next_batch(){
+{#            alert(all_image_ids_list.length + ' ' + start_id_index + ' ' + end_id_index)#}
+            images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
+            load_more(images_to_load.join(','));
+            start_id_index = end_id_index;
+            end_id_index  += 30;
+
+            if (end_id_index > all_image_ids_list.length){
+                alert('No more images to load.');
+{#                + all_image_ids_list.length + '<' + end_id_index);#}
+            }
+        }
+
+        function load_more(ids){
+            $.ajax({
+                type: "POST",
+                url: "{% url 'get_image_data' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    image_ids: ids
+                },
+                success: function(data) {
+                    console.log(data);
+
+                    var table = $('#results_table');
+
+                    for (var image_id in data) {
+                        console.log(image_id);
+
+                        var image_data = data[image_id];
+
+                        var row = '<tr>'
+                                + '<td>' +
+                                '<a href="' + image_data['link'] + '" target="_blank">' +
+                                '<img src="' + image_data['img']  + '"' +
+                                'style="max-height: 80px; width:auto; display: block; margin: 0 auto">' +
+                                '</a>'
+                                + '</td>'
+                                + '<td>' + image_data['author'] + '</td>'
+                                + '<td>' + image_data['date'] + '</td>'
+                                + '<td>' + image_data['title'] + '</td>'
+                                + '</tr>';
+
+                        table.append($(row));
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Problem requesting Image: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+
         $(document).ready(function(){
+
+            $('#load_more').click(function(){
+                read_next_batch()
+            });
+
+            read_next_batch();
+
         });
         $(window).load(function(){
         });
@@ -15,7 +81,7 @@
     <div id="result-container">
 
         <div class="bs-example table-responsive">
-            <table class="table table-striped table-hover ">
+            <table class="table table-striped table-hover" id="results_table">
                 <tbody>
                 <tr>
                     <th>
@@ -62,7 +128,7 @@
         </div>
     </div>
     <hr>
-
+    <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>
 
 
 {% endblock %}
