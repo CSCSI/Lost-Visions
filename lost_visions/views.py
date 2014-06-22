@@ -782,12 +782,12 @@ def search_advanced(request):
 
 
 def do_advanced_search(request):
+    print request.GET
 
-    print request.POST
-
-    keywords = request.POST.get('keyword', '')
-    year = request.POST.get('year', '')
-    number_of_results = request.POST.get('num_results', '')
+    keywords = request.GET.get('keyword', '')
+    year = request.GET.get('year', '')
+    number_of_results = request.GET.get('num_results', '')
+    book_id = request.GET.get('book_id', '')
 
     results = dict()
     results['advanced'] = dict()
@@ -807,6 +807,12 @@ def do_advanced_search(request):
         all_results = all_results.filter((Q(date__startswith=decade)))
         readable_query += ' for the ' + year + "'s"
 
+    if len(book_id):
+        all_results = all_results.filter(book_identifier=book_id)
+        title = models.Image.objects.values_list('title', flat=True).filter(book_identifier=book_id)[:1].get()
+        print title
+        readable_query += ' for book title ' + title
+
     number_of_results_int = 50
     if number_of_results is not '':
         try:
@@ -819,22 +825,28 @@ def do_advanced_search(request):
 
     tag_results_dict = dict()
     # for result in all_results[:number_of_results_int]:
-    for result in all_results:
-        tag_result = dict()
-        tag_result['title'] = result.title
-        tag_result['img'] = result.flickr_small_source
-        tag_result['date'] = result.date
-        tag_result['author'] = result.first_author
-        tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
 
-        tag_results_dict[result.flickr_id] = tag_result
-        total_results += 1
+    if all_results.count() < 5000:
 
-        all_image_ids += result.flickr_id + ','
+        for result in all_results:
+            # tag_result = dict()
+            # tag_result['title'] = result.title
+            # tag_result['img'] = result.flickr_small_source
+            # tag_result['date'] = result.date
+            # tag_result['author'] = result.first_author
+            # if result.flickr_id:
+            #     tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
+            #
+            # tag_results_dict[result.flickr_id] = tag_result
+            total_results += 1
 
-    results['advanced'].update(tag_results_dict)
+            all_image_ids += result.flickr_id + ','
 
-    readable_query += '(' + str(len(all_results)) + ' found)'
+        # results['advanced'].update(tag_results_dict)
+
+        readable_query += '(' + str(len(all_results)) + ' found)'
+    else:
+        readable_query += 'More than 5000 results returned, please add more detail to the query'
 
     # print results
 
@@ -846,8 +858,7 @@ def do_advanced_search(request):
                   {'results': response_data,
                    'query': readable_query,
                    'all_image_ids': all_image_ids,
-                   'number_to_show' : number_of_results_int
-                  },
+                   'number_to_show': number_of_results_int},
                   context_instance=RequestContext(request))
 
 
@@ -890,7 +901,7 @@ def data_autocomplete(request):
 
 def get_image_data(request):
 
-    print request.POST
+    # print request.POST
 
     ids = request.POST.get('image_ids', '')
     tag_results_dict = dict()
@@ -898,15 +909,16 @@ def get_image_data(request):
     if ids:
         id_list = ids.split(',')
 
-        print id_list
+        # print id_list
 
         q_or_objects = []
         for image_id in id_list:
-            q_or_objects.append(Q(flickr_id=image_id))
+            if image_id:
+                q_or_objects.append(Q(flickr_id=image_id))
 
         image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
 
-        print image_data
+        # print image_data
 
         for result in image_data:
             try:
@@ -914,12 +926,14 @@ def get_image_data(request):
                 tag_result['title'] = result.title
                 tag_result['img'] = result.flickr_small_source
                 tag_result['date'] = result.date
+                tag_result['book_id'] = result.book_identifier
                 tag_result['author'] = result.first_author
                 tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
 
                 tag_results_dict[result.flickr_id] = tag_result
-            except:
-                print result
+            except Exception as e:
+                # print 'err'
+                # print result
                 pass
                 # print tag_results_dict
 

@@ -18,7 +18,7 @@
             load_more(images_to_load.join(','));
 
             if (start_id_index > 0 && end_id_index > all_image_ids_list.length){
-                alert('No more images to load.');
+                alert('All images from the search have now been loaded.');
                 {#                + all_image_ids_list.length + '<' + end_id_index);#}
             }
 
@@ -52,8 +52,15 @@
                                 '</a>'
                                 + '</td>'
                                 + '<td>' + image_data['author'] + '</td>'
-                                + '<td>' + image_data['date'] + '</td>'
-                                + '<td>' + image_data['title'] + '</td>'
+                                + '<td>' + image_data['date'] + '</td>' +
+{#                                + '<td>' + image_data['title'] + '</td>'#}
+
+                                '<td><a href="{% url 'do_advanced_search' %}'
+                                + '?book_id=' + image_data['book_id']
+                                + '&csrfmiddlewaretoken={{ csrf_token }}"'
+                                +  ' target="_blank">'
+                                + image_data['title']  +
+                                '</a></td>'
                                 + '</tr>';
 
                         table.append($(row));

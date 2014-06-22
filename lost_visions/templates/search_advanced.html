@@ -120,7 +120,7 @@
         </div>
 
         <form action="{% url 'do_advanced_search' %}" id="advanced-search-form"
-              method="post" class="advanced-search-form">{% csrf_token %}
+              method="get" class="advanced-search-form">{% csrf_token %}
             {{ tag_form.non_field_errors }}
 
             <div class="ui-widget">
