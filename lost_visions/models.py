@@ -202,7 +202,7 @@ class BookIllustrator(models.Model):
 
     def __unicode__(self):
 
-        return str(self.id) + ':' + str(self.book_id) + ':' + str(self.name) + ':' + str(self.technique)
+        return str(self.id) + ':' + str(self.book_id) + ':' + self.name + ':' + str(self.technique)
 
 
 class LinkedImage(models.Model):
