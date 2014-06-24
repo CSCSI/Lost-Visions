@@ -14,14 +14,14 @@
 
         function read_next_batch(){
 
-            if (end_id_index > (all_image_ids_list.length + 30)){
+            if (end_id_index > (all_image_ids_list.length + {{ number_to_show }})){
                 alert('All images from the search have now been loaded.');
             } else {
                 images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
                 load_more(images_to_load.join(','));
 
                 start_id_index = end_id_index;
-                end_id_index += 30;
+                end_id_index += {{ number_to_show }};
             }
         }
 
@@ -84,7 +84,7 @@
         });
     </script>
 
-    <h3>Images {{ query }}</h3>
+    <h3>{{ query }}</h3>
     <div id="result-container">
 
         <div class="bs-example table-responsive">

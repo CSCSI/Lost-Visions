@@ -218,7 +218,7 @@ def image(request, image_id):
 
     if formatted_info['Book ID'] and formatted_info['Book ID'] != '':
         illustrator_string = ''
-        illustrators = models.BookIllustrator.objects.filter(book__book_identifier=formatted_info['Book ID'])
+        illustrators = models.BookIllustrator.objects.filter(book_id=formatted_info['Book ID'])
         for illustrator in illustrators:
             illustrator_string += illustrator.name + ' (' + illustrator.technique + '),'
         if illustrator_string is not '':
@@ -785,11 +785,15 @@ def do_advanced_search(request):
     print request.GET
 
     keywords = request.GET.get('keyword', '')
+    keywords = keywords.replace(' ', '+')
+
     year = request.GET.get('year', '')
     author = request.GET.get('author', '')
     illustrator = request.GET.get('illustrator', '')
     number_of_results = request.GET.get('num_results', '')
     book_id = request.GET.get('book_id', '')
+    publisher = request.GET.get('publishing_place', '')
+    title = request.GET.get('title', '')
 
     results = dict()
     results['advanced'] = dict()
@@ -797,22 +801,48 @@ def do_advanced_search(request):
 
     all_results = models.Image.objects.all()
 
-    readable_query = ''
+    readable_query = 'Images '
     all_image_ids = ''
+    filtered = False
 
     if len(keywords):
-        all_results = all_results.filter(Q(title__icontains=keywords))
-        readable_query += ' with keyword ' + keywords
+        q_or_objects = []
+
+        for subword in keywords.split('+'):
+
+            for keyword_image_flickr_id in models.Tag.objects\
+                    .filter(tag__icontains=subword).values_list('image__flickr_id', flat=True).distinct():
+                if keyword_image_flickr_id:
+                    q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
+
+            for keyword_image_flickr_id in models.ImageText.objects\
+                    .filter( Q(caption__icontains=subword ) | Q( description__icontains=subword))\
+                    .values_list('image__flickr_id', flat=True).distinct():
+                if keyword_image_flickr_id:
+                    q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
+
+        if len(q_or_objects) > 0:
+            all_results = all_results.filter(reduce(operator.or_, q_or_objects))
+            filtered = True
+
+        readable_query += ' with keyword(s) ' + keywords
 
     if len(year):
         decade = year[0:3]
         all_results = all_results.filter((Q(date__startswith=decade)))
+        filtered = True
         readable_query += ' for the ' + year + "'s"
 
     if len(author):
         print author
         all_results = all_results.filter(Q(first_author__icontains=author))
+        filtered = True
         readable_query += ' with author ' + author
+
+    if len(title):
+        all_results = all_results.filter(Q(title__icontains=title))
+        filtered = True
+        readable_query += ' with title ' + title
 
     if len(illustrator):
         q_or_objects = []
@@ -821,14 +851,21 @@ def do_advanced_search(request):
             if illustrator_book_id:
                 q_or_objects.append(Q(book_identifier=str(illustrator_book_id)))
 
-        all_results = all_results.filter(reduce(operator.or_, q_or_objects))
-        readable_query += ' with illustrator ' + illustrator
+        if len(q_or_objects) > 0:
+            all_results = all_results.filter(reduce(operator.or_, q_or_objects))
+            filtered = True
+            readable_query += ' with illustrator ' + illustrator
 
     if len(book_id):
         all_results = all_results.filter(book_identifier=book_id)
+        filtered = True
         title = models.Image.objects.values_list('title', flat=True).filter(book_identifier=book_id)[:1].get()
-        # print title
         readable_query += ' for book title ' + title
+
+    if len(publisher):
+        all_results = all_results.filter(Q(publisher__icontains=publisher))
+        filtered = True
+        readable_query += ' from publisher ' + publisher
 
     number_of_results_int = 50
     if number_of_results is not '':
@@ -838,21 +875,19 @@ def do_advanced_search(request):
             pass
     readable_query += '. Showing first ' + str(number_of_results_int) + ' results. '
 
-    # print len(all_results)
-
-    tag_results_dict = dict()
-    # for result in all_results[:number_of_results_int]:
+    all_results = all_results.values_list('flickr_id', flat=True).distinct()
+    # print all_results.query
 
     if all_results.count() < 5000:
-
-        print all_results.query
-
-        for result in all_results.values_list('flickr_id', flat=True):
+        for result in all_results:
             total_results += 1
             all_image_ids += result + ','
         readable_query += '(' + str(len(all_results)) + ' found)'
     else:
-        readable_query += 'More than 5000 results returned, please add more detail to the query'
+        if not filtered:
+            readable_query = 'No search filters applied, please add more detail to the query'
+        else:
+            readable_query += 'More than 5000 results returned, please add more detail to the query'
 
     results['advanced'] = []
 
@@ -929,26 +964,27 @@ def get_image_data(request):
             if image_id:
                 q_or_objects.append(Q(flickr_id=image_id))
 
-        image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
+        if len(q_or_objects) > 0:
+            image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
 
         # print image_data
 
-        for result in image_data:
-            try:
-                tag_result = dict()
-                tag_result['title'] = result.title
-                tag_result['img'] = result.flickr_small_source
-                tag_result['date'] = result.date
-                tag_result['page'] = result.page.lstrip('0')
-                tag_result['book_id'] = result.book_identifier
-                tag_result['author'] = result.first_author
-                tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
+            for result in image_data:
+                try:
+                    tag_result = dict()
+                    tag_result['title'] = result.title
+                    tag_result['img'] = result.flickr_small_source
+                    tag_result['date'] = result.date
+                    tag_result['page'] = result.page.lstrip('0')
+                    tag_result['book_id'] = result.book_identifier
+                    tag_result['author'] = result.first_author
+                    tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
 
-                tag_results_dict[result.flickr_id] = tag_result
-            except Exception as e:
-                # print 'err'
-                # print result
-                pass
-                # print tag_results_dict
+                    tag_results_dict[result.flickr_id] = tag_result
+                except Exception as e:
+                    # print 'err'
+                    # print result
+                    pass
+                    # print tag_results_dict
 
     return HttpResponse(json.dumps(tag_results_dict), content_type="application/json")
