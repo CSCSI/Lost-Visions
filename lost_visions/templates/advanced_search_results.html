@@ -13,17 +13,16 @@
         var images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
 
         function read_next_batch(){
-            {#            alert(all_image_ids_list.length + ' ' + start_id_index + ' ' + end_id_index)#}
-            images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
-            load_more(images_to_load.join(','));
 
-            if (start_id_index > 0 && end_id_index > all_image_ids_list.length){
+            if (end_id_index > (all_image_ids_list.length + 30)){
                 alert('All images from the search have now been loaded.');
-                {#                + all_image_ids_list.length + '<' + end_id_index);#}
-            }
+            } else {
+                images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
+                load_more(images_to_load.join(','));
 
-            start_id_index = end_id_index;
-            end_id_index  += 30;
+                start_id_index = end_id_index;
+                end_id_index += 30;
+            }
         }
 
         function load_more(ids){
@@ -52,10 +51,10 @@
                                 '</a>'
                                 + '</td>'
                                 + '<td>' + image_data['author'] + '</td>'
-                                + '<td>' + image_data['date'] + '</td>' +
-{#                                + '<td>' + image_data['title'] + '</td>'#}
+                                + '<td>' + image_data['date'] + '</td>'
+                                + '<td>' + image_data['page'] + '</td>'
 
-                                '<td><a href="{% url 'do_advanced_search' %}'
+                                + '<td><a href="{% url 'do_advanced_search' %}'
                                 + '?book_id=' + image_data['book_id']
                                 + '&csrfmiddlewaretoken={{ csrf_token }}"'
                                 +  ' target="_blank">'
@@ -100,6 +99,9 @@
                     </th>
                     <th>
                         Date
+                    </th>
+                    <th>
+                        Page
                     </th>
                     <th>
                         Title

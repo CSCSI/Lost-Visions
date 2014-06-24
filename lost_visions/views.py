@@ -786,6 +786,8 @@ def do_advanced_search(request):
 
     keywords = request.GET.get('keyword', '')
     year = request.GET.get('year', '')
+    author = request.GET.get('author', '')
+    illustrator = request.GET.get('illustrator', '')
     number_of_results = request.GET.get('num_results', '')
     book_id = request.GET.get('book_id', '')
 
@@ -807,10 +809,25 @@ def do_advanced_search(request):
         all_results = all_results.filter((Q(date__startswith=decade)))
         readable_query += ' for the ' + year + "'s"
 
+    if len(author):
+        print author
+        all_results = all_results.filter(Q(first_author__icontains=author))
+        readable_query += ' with author ' + author
+
+    if len(illustrator):
+        q_or_objects = []
+        for illustrator_book_id in models.BookIllustrator.objects\
+                .filter(name__icontains=illustrator).values_list('book_id', flat=True).distinct():
+            if illustrator_book_id:
+                q_or_objects.append(Q(book_identifier=str(illustrator_book_id)))
+
+        all_results = all_results.filter(reduce(operator.or_, q_or_objects))
+        readable_query += ' with illustrator ' + illustrator
+
     if len(book_id):
         all_results = all_results.filter(book_identifier=book_id)
         title = models.Image.objects.values_list('title', flat=True).filter(book_identifier=book_id)[:1].get()
-        print title
+        # print title
         readable_query += ' for book title ' + title
 
     number_of_results_int = 50
@@ -828,27 +845,14 @@ def do_advanced_search(request):
 
     if all_results.count() < 5000:
 
-        for result in all_results:
-            # tag_result = dict()
-            # tag_result['title'] = result.title
-            # tag_result['img'] = result.flickr_small_source
-            # tag_result['date'] = result.date
-            # tag_result['author'] = result.first_author
-            # if result.flickr_id:
-            #     tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
-            #
-            # tag_results_dict[result.flickr_id] = tag_result
+        print all_results.query
+
+        for result in all_results.values_list('flickr_id', flat=True):
             total_results += 1
-
-            all_image_ids += result.flickr_id + ','
-
-        # results['advanced'].update(tag_results_dict)
-
+            all_image_ids += result + ','
         readable_query += '(' + str(len(all_results)) + ' found)'
     else:
         readable_query += 'More than 5000 results returned, please add more detail to the query'
-
-    # print results
 
     results['advanced'] = []
 
@@ -876,6 +880,15 @@ def data_autocomplete(request):
             word_data = dict()
             word_data['label'] = author[0]
             word_data['desc'] = 'author'
+            response_data.append(word_data)
+
+    if request.GET['data_object'] == 'illustrator':
+        all_illustrators = models.BookIllustrator.objects.filter(name__icontains=term) \
+            .order_by('name').values_list('name').distinct()
+        for illustrator in all_illustrators:
+            word_data = dict()
+            word_data['label'] = illustrator[0]
+            word_data['desc'] = 'illustrator'
             response_data.append(word_data)
 
     if request.GET['data_object'] == 'title':
@@ -926,6 +939,7 @@ def get_image_data(request):
                 tag_result['title'] = result.title
                 tag_result['img'] = result.flickr_small_source
                 tag_result['date'] = result.date
+                tag_result['page'] = result.page.lstrip('0')
                 tag_result['book_id'] = result.book_identifier
                 tag_result['author'] = result.first_author
                 tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})

@@ -193,13 +193,16 @@ class BookIllustrator(models.Model):
     # id = models.IntegerField(primary_key=True)
     # id = models.AutoField(primary_key=True)
 
-    book = models.ForeignKey(Book, blank=False)
+    book_id = models.CharField(max_length=120L, blank=False)
     name = models.CharField(max_length=120L, blank=True)
     technique = models.CharField(max_length=120L, blank=True)
 
+    class Meta:
+        unique_together = ('book_id', 'name', 'technique')
+
     def __unicode__(self):
 
-        return str(self.id) + ':' + self.book.book_identifier + ':' + self.name + ':' + self.technique
+        return str(self.id) + ':' + self.book_id + ':' + self.name + ':' + self.technique
 
 
 class LinkedImage(models.Model):
