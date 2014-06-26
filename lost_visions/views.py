@@ -792,7 +792,8 @@ def do_advanced_search(request):
     illustrator = request.GET.get('illustrator', '')
     number_of_results = request.GET.get('num_results', '')
     book_id = request.GET.get('book_id', '')
-    publisher = request.GET.get('publishing_place', '')
+    publisher = request.GET.get('publisher', '')
+    publishing_place = request.GET.get('publishing_place', '')
     title = request.GET.get('title', '')
 
     results = dict()
@@ -867,6 +868,12 @@ def do_advanced_search(request):
         filtered = True
         readable_query += ' from publisher ' + publisher
 
+    if len(publishing_place):
+        all_results = all_results.filter(Q(pubplace__icontains=publishing_place))
+        filtered = True
+        readable_query += ' published in ' + publishing_place
+
+
     number_of_results_int = 50
     if number_of_results is not '':
         try:
@@ -936,14 +943,22 @@ def data_autocomplete(request):
             response_data.append(word_data)
 
     if request.GET['data_object'] == 'publisher':
-        all_authors = models.Image.objects.filter(Q(publisher__icontains=term)) \
+        all_publishers = models.Image.objects.filter(Q(publisher__icontains=term)) \
             .order_by('publisher').values_list('publisher').distinct()
-        for author in all_authors:
+        for publisher in all_publishers:
             word_data = dict()
-            word_data['label'] = author[0]
+            word_data['label'] = publisher[0]
             word_data['desc'] = 'publisher'
             response_data.append(word_data)
 
+    if request.GET['data_object'] == 'publishing_place':
+        all_publishing_places = models.Image.objects.filter(Q(pubplace__icontains=term)) \
+            .order_by('pubplace').values_list('pubplace').distinct()
+        for pubplace in all_publishing_places:
+            word_data = dict()
+            word_data['label'] = pubplace[0]
+            word_data['desc'] = 'Place of Publishing'
+            response_data.append(word_data)
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 

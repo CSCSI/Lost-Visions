@@ -107,10 +107,10 @@
 
             {#            infoWindow.open(map);#}
 
-            document.getElementById("north_east_x").value = ne.lat();
-            document.getElementById("north_east_y").value = ne.lng();
-            document.getElementById("south_west_x").value = sw.lat();
-            document.getElementById("south_west_y").value = sw.lng();
+            document.getElementById("north_east_y").value = ne.lat();
+            document.getElementById("north_east_x").value = ne.lng();
+            document.getElementById("south_west_y").value = sw.lat();
+            document.getElementById("south_west_x").value = sw.lng();
 
         }
 
@@ -151,10 +151,10 @@
     {% endif %}
     <form action="{% url 'image.coords' image_id=image_id %}" id="image-map-form" method="post">{% csrf_token %}
         <input type="hidden" name="image_id" value="{{ image_id }}" />
-        <input type="hidden" id = 'north_east_x' name="north_east_x" value="" />
-        <input type="hidden" id = 'north_east_y' name="north_east_y" value="" />
-        <input type="hidden" id = 'south_west_x' name="south_west_x" value="" />
-        <input type="hidden" id = 'south_west_y' name="south_west_y" value="" />
+        <input type="hidden" id = 'north_east_x' name="north_east_x" value="{{ ne_x }}" />
+        <input type="hidden" id = 'north_east_y' name="north_east_y" value="{{ ne_y }}" />
+        <input type="hidden" id = 'south_west_x' name="south_west_x" value="{{ sw_x }}" />
+        <input type="hidden" id = 'south_west_y' name="south_west_y" value="{{ sw_y }}" />
 
 
         <div class="jumbotron" style="height: auto; width: 100%">

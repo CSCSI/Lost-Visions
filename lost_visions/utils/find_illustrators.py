@@ -199,17 +199,20 @@ def find_illustrators(save=True):
 
 
 def find_distinct():
-    image_set = models.Image.objects.filter().values_list('title', 'book_identifier', 'volume').distinct()
+    image_set = models.Image.objects.filter().values_list('title', 'book_identifier').distinct()
     print image_set.query
     print image_set
 
 
 def db_test():
-    illustrator = 'author'
-    found = models.BookIllustrator.objects\
-                .filter(name__icontains=illustrator).values_list('book_id', flat=True).distinct()
+    # illustrator = 'author'
+    # found = models.BookIllustrator.objects\
+    #             .filter(name__icontains=illustrator).values_list('book_id', flat=True).distinct()
 
-    for a in found:
+    image_set = models.Image.objects.filter()\
+        .values_list('title', 'book_identifier', 'volume', 'first_author').distinct()
+
+    for a in image_set:
         print a
 
 db_test()

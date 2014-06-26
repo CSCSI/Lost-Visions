@@ -119,6 +119,31 @@
                         dataType: "json",
                         data: {
                             term : request.term,
+                            data_object : "publishing_place"
+                        },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 3,
+                select: function( event, ui ) {
+
+
+                }
+            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>" )
+                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
+                        .appendTo( ul );
+            };
+
+            $( "#publisher" ).autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{% url 'data.autocomplete' %}",
+                        dataType: "json",
+                        data: {
+                            term : request.term,
                             data_object : "publisher"
                         },
                         success: function(data) {
@@ -139,67 +164,83 @@
         })
     </script>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Advanced Search
-            </h4>
-        </div>
+    <form action="{% url 'do_advanced_search' %}" id="advanced-search-form"
+          method="get" class="advanced-search-form">{% csrf_token %}
+        {{ tag_form.non_field_errors }}
 
-        <form action="{% url 'do_advanced_search' %}" id="advanced-search-form"
-              method="get" class="advanced-search-form">{% csrf_token %}
-            {{ tag_form.non_field_errors }}
-
-            <div class="ui-widget">
-                <label class="'control-label" for="keyword">Keyword: </label>
-                <input class="'form-control" id="keyword" name="keyword">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Advanced Search
+                </h4>
             </div>
 
-            <div class="ui-widget">
-                <label class="'control-label" for="date_from">Date From: </label>
-                <select disabled class="'form-control" id="date_from" name="date_from"></select>
-            </div>
+            <table>
+                <tbody>
+                <tr>
 
-            <div class="ui-widget">
-                <label class="'control-label" for="date_to">Date To: </label>
-                <select disabled class="'form-control" id="date_to" name="date_to"></select>
-            </div>
+                    <div class="ui-widget">
+                        <label class="'control-label" for="keyword">Keyword: </label>
+                        <input class="'form-control" id="keyword" name="keyword">
+                    </div>
 
-            <div class="ui-widget">
-                <label class="'control-label" for="year">Decade: </label>
-                <select class="'form-control" id="year" name="year"></select>
-            </div>
+                    <div class="ui-widget">
+                        <label class="'control-label" for="date_from">Date From: </label>
+                        <select disabled class="'form-control" id="date_from" name="date_from"></select>
+                    </div>
 
-            <div class="ui-widget">
-                <label class="'control-label" for="author">Author: </label>
-                <input class="'form-control" id="author" name="author">
-            </div>
+                    <div class="ui-widget">
+                        <label class="'control-label" for="date_to">Date To: </label>
+                        <select disabled class="'form-control" id="date_to" name="date_to"></select>
+                    </div>
 
-            <div class="ui-widget">
-                <label class="'control-label" for="illustrator">Illustrator: </label>
-                <input class="'form-control" id="illustrator" name="illustrator">
-            </div>
+                    <div class="ui-widget">
+                        <label class="'control-label" for="year">Decade: </label>
+                        <select class="'form-control" id="year" name="year"></select>
+                    </div>
 
-            <div class="ui-widget">
-                <label class="'control-label" for="title">Title: </label>
-                <input class="'form-control" id="title" name="title">
-            </div>
+                    <div class="ui-widget">
+                        <label class="'control-label" for="author">Author: </label>
+                        <input class="'form-control" id="author" name="author">
+                    </div>
+                </tr>
+                <tr>
 
-            <div class="ui-widget">
-                <label class="'control-label" for="publishing_place">Publishing Place: </label>
-                <input class="'form-control" id="publishing_place" name="publishing_place">
-            </div>
+                    <div class="ui-widget">
+                        <label class="'control-label" for="illustrator">Illustrator: </label>
+                        <input class="'form-control" id="illustrator" name="illustrator">
+                    </div>
 
-            <div class="ui-widget">
-                <label class="'control-label" for="num_results">Number of Results: </label>
-                <input class="'form-control" id="num_results" name="num_results" value="50">
-            </div>
+                    <div class="ui-widget">
+                        <label class="'control-label" for="title">Title: </label>
+                        <input class="'form-control" id="title" name="title">
+                    </div>
+
+                    <div class="ui-widget">
+                        <label class="'control-label" for="publisher">Publisher: </label>
+                        <input class="'form-control" id="publisher" name="publisher">
+                    </div>
+
+                    <div class="ui-widget">
+                        <label class="'control-label" for="publishing_place">Publishing Place: </label>
+                        <input class="'form-control" id="publishing_place" name="publishing_place">
+                    </div>
+
+                    <div class="ui-widget">
+                        <label class="'control-label" for="num_results">Number of Results: </label>
+                        <input class="'form-control" id="num_results" name="num_results" value="50">
+                    </div>
+
+                </tr>
+                </tbody>
+            </table>
 
             <div class="panel-footer">
                 <button type="submit" class="btn btn-primary">Search!</button>
             </div>
-        </form>
 
-    </div>
+        </div>
+    </form>
+
 
 {% endblock %}
