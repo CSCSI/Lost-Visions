@@ -105,7 +105,7 @@ class CategoryManager():
 
         self.categories[400] = Category('400', 'motif', 'Decoration?', ICON_URL + 'motif.jpg') \
             .set_question('Is the decoration a ...').set_answers([401, 402, 403, 404, 405])
-        self.categories[401] = Category('401', 'border', 'Border?', ICON_URL + 'border.jpg')
+        self.categories[401] = Category('401', 'border', 'Decorative Border?', ICON_URL + 'border.jpg')
         self.categories[402] = Category('402', 'emblem', 'Emblem?', ICON_URL + 'lv-rect-station.png')
         self.categories[403] = Category('403', 'motif', 'Motif?', ICON_URL + 'motif.jpg')
         self.categories[404] = Category('404', 'coat_of_arms', 'Coat of Arms?', ICON_URL + 'coat_of_arms.jpg')

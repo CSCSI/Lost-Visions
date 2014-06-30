@@ -146,15 +146,24 @@ a:hover#save_image.btn.btn-default.save_image  {
 .navbar-brand {
     height: 50px;
     padding: 10px;
-    padding-bottom: 15px;
+    padding-bottom: 5px;
+
+}
+
+.navbar {
+    /*height: 45px;*/
 }
 
 .lv_logos {
     background-image: url('media/images/lost-visions-station.png');
     height: 40px;
     width: auto;
-    border: 1px solid rgba(0, 0, 0, 0.60);
     /*margin: 3px*/
+}
+
+.quick-search-field {
+    height: 35px;
+    margin-top: 5px;
 }
 
 .logo1 {
