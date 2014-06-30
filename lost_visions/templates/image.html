@@ -55,6 +55,12 @@
                 var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});
                 var $label = $('<label/>').attr({for: id}).html(tag_string);
 
+                var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                        + 'id="' + id +
+                        '" name="' + tag_string +
+                        '" x_percent="' + hightlighted_x_percent +
+                        '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';
+
 
                 var d = new Date();
                 var datetime = d.toISOString();
@@ -76,10 +82,18 @@
                 document.getElementById("tag_info").value = JSON.stringify(all_tags);
                 {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
 
-                $("#add_tags_body").prepend($label).prepend($check);
+{#                $("#add_tags_body").prepend($label).prepend($check);#}
 
-                $( "input[type=checkbox]" )
-                        .button();
+                var button_toggle_component = $($button_toggle).click(function(){
+                    $(this).remove();
+                }).tooltip();
+
+                $("#add_tags_body").append(button_toggle_component);
+
+{#                    $("[data-toggle='tooltip']").tooltip();#}
+
+{#                $( "input[type=checkbox]" )#}
+{#                        .button();#}
 
                 ui.item.value = "";
             }
@@ -336,11 +350,11 @@
             if (tag_string != "") {
                 var id = 'id_' + tag_string;
 
-                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
-                var $label = $('<label/>').attr({for: id}).html(tag_string);
-
-                $( "input[type=checkbox]" )
-                        .button();
+{#                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});#}
+{#                var $label = $('<label/>').attr({for: id}).html(tag_string);#}
+{##}
+{#                $( "input[type=checkbox]" )#}
+{#                        .button();#}
             }
             input_field.val("");
         });
@@ -445,10 +459,10 @@
                     var $label = $('<label/>').attr({for: id}).html(tag_string);
 
 
-                    $("#add_category_body").prepend($label).prepend($check);
+{#                    $("#add_category_body").prepend($label).prepend($check);#}
 
-                    $( "input[type=checkbox]" )
-                            .button();
+{#                    $( "input[type=checkbox]" )#}
+{#                            .button();#}
                 } else {
                     inst.toggle_node(inst.get_node(data.selected[i]));
                 }
@@ -773,7 +787,7 @@
 
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
-                What things or ideas can you see in this image? For example:  "bird", "table", "winter", "love"
+                What things or ideas can you see in this image?<br>For example:  "bird", "table", "winter", "love"
                 <div id="focus_alerts"></div>
                 <div id="add_tags_body"></div>
 

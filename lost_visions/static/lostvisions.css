@@ -22,6 +22,9 @@ a{
     color: #2C3E50;
 }
 
+.tag-button {
+    margin: 5px;
+}
 
 .photo_background {
     cursor: crosshair;
@@ -257,7 +260,15 @@ a:hover#save_image.btn.btn-default.save_image  {
     width: 150px;
 }
 
+.signup label {
+    display: inline-block;
+    width: 150px;
+}
 
+.login label {
+    display: inline-block;
+    width: 150px;
+}
 /*##################################################*/
 
 .man {
