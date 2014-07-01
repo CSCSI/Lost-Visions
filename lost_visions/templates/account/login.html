@@ -12,29 +12,7 @@
         <div class="panel-heading"><h1>{% trans "Sign In" %}</h1></div>
         <div class="panel-body">
 
-
-
-            {% if socialaccount.providers  %}
-                <p>{% blocktrans with site.name as site_name %}Please sign in with one
-                    of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-                    for a Lost Visions account and sign in below:{% endblocktrans %}</p>
-
-                <div class="socialaccount_ballot">
-
-                    <ul class="socialaccount_providers">
-                        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-                    </ul>
-
-                    <div class="login-or">{% trans 'or' %}</div>
-
-                </div>
-
-                {% include "socialaccount/snippets/login_extra.html" %}
-
-            {% else %}
-                <p>{% blocktrans %}If you have not created an account yet, then please
-                    <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
-            {% endif %}
+            <p>Sign in to your Lost Visions account, or <a href="{{ signup_url }}">sign up</a> below:</p>
 
             <form class="login" method="POST" action="{% url 'account_login' %}">
                 {% csrf_token %}
@@ -45,6 +23,23 @@
 
 
                 <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+                <hr>
+                {% if socialaccount.providers  %}
+                    <p>You can also sign in with an existing third party account:</p>
+
+                    <div class="socialaccount_ballot">
+
+                        <ul class="socialaccount_providers">
+                            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+                        </ul>
+
+                        <div class="login-or"></div>
+
+                    </div>
+
+                    {% include "socialaccount/snippets/login_extra.html" %}
+
+                {% endif %}
                 <hr>
                 <a class="btn btn-default" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
                 <a class="btn btn-default" href="{{ signup_url }}">{% trans "Create new account?" %}</a>
