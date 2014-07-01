@@ -838,7 +838,7 @@ def do_advanced_search(request):
         readable_query += ' for the ' + year + "'s"
 
     if len(author):
-        print author
+        # print author
         all_results = all_results.filter(Q(first_author__icontains=author))
         filtered = True
         readable_query += ' with author ' + author
