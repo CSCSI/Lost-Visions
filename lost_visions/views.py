@@ -822,6 +822,9 @@ def do_advanced_search(request):
                 if keyword_image_flickr_id:
                     q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
 
+            q_or_objects.append(Q(title__icontains=keywords))
+
+
         if len(q_or_objects) > 0:
             all_results = all_results.filter(reduce(operator.or_, q_or_objects))
             filtered = True
