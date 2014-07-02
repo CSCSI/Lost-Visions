@@ -740,9 +740,17 @@ def user_home(request):
 
             saved_images_dict[image.image.flickr_id] = image_dict
 
+        metrics = dict()
+        metrics['user_tags_number'] = models.Tag.objects.filter(user=request_user).count()
+        metrics['user_tagged_image_number'] = models.Tag.objects.filter(user=request_user)\
+            .values('image__id').distinct().count()
+
+        metrics['total_tags_number'] = models.Tag.objects.count()
+        metrics['total_tagged_image_number'] = models.Tag.objects.values('image__id').distinct().count()
+
         return render(request,
                       'user_home.html',
-                      {'images': saved_images_dict})
+                      {'images': saved_images_dict, 'metrics': metrics})
     else:
         raise Http404
 
