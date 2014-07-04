@@ -41,23 +41,32 @@
             });
 
 
-            {#            $('#download_all').click(function(){#}
-            {#                $.ajax({#}
-            {#                    type: "POST",#}
-            {#                    url: "{% url 'user_dl_all' %}",#}
-            {#                    data: {#}
-            {#                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,#}
-            {#                        collection_ids: [{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}]#}
-            {#                    },#}
-            {#                    success: function(data) {#}
-            {#                        alert("Downloaded");#}
-            {##}
-            {#                    },#}
-            {#                    error: function(xhr, textStatus, errorThrown) {#}
-            {#                        alert("Problem creating zip: "+errorThrown+xhr.status+xhr.responseText);#}
-            {#                    }#}
-            {#                });#}
-            {#            });#}
+            $('#download_all').click(function(){
+                var dl_link = '{% url 'user_dl_all' %}' +
+                        '?csrfmiddlewaretoken=' +
+                        document.getElementsByName('csrfmiddlewaretoken')[0].value +
+                        '&collection_ids=' +
+                        '{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}';
+                window.open(dl_link, '_blank');
+            });
+
+            $('#share_all_dialogue').dialog({
+                autoOpen: false,
+                width: $(window).width() * 0.7,
+                show: {
+                    effect: "blind",
+                    duration: 500
+                },
+                hide: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+
+            $('#share_all').click(function(){
+                $('#share_all_dialogue').dialog("open")
+            });
+
         });
         $(window).load(function(){
             $('.js-masonry').masonry();
@@ -65,6 +74,13 @@
 
 
     </script>
+
+    <div id="share_all_dialogue" title="Share Entire Image Collection">
+        Share this URL : <br>
+        <a href="{% url 'user_dl_all' %}?collection_ids={% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}">http://lost-visions.cf.ac.uk{% url 'user_dl_all' %}?collection_ids={% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}</a>
+        <br><br>
+
+    </div>
 
     <div class="col-xs-12 col-sm-6">
         <div class="bs-example table-responsive">
@@ -100,14 +116,29 @@
 
     <h3>Your Saved Images</h3>
 
-    <form action="{% url 'user_dl_all' %}" method="get">{% csrf_token %}
-        <input type="hidden" name="collection_ids" value="{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}"/>
-        <button type="submit" class="btn btn-default">Download All</button>
-    </form>
-    <hr>
+    {#    <form action="{% url 'user_dl_all' %}" method="get">{% csrf_token %}#}
+    {#        <input type="hidden" name="collection_ids" value="{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}"/>#}
+    {#        <button type="submit" class="btn btn-default">Download All</button>#}
+    {#    </form>#}
+    {#    <hr>#}
 
-    {#    <div id="download_all" class="btn btn-default">Download all</div>#}
-
+    <table>
+        <tr>
+            <td>
+                <div id="download_all" class="btn btn-default">Download all</div>
+            </td>
+            <td>
+                <div id="share_all" class="btn btn-warning">Share this collection</div>
+            </td>
+            <td>
+            <div style="padding: 10px; margin-top: 10px">
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'user_dl_all' %}?collection_ids={% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </div>
+            </td>
+        </tr>
+    </table>
+<hr>
     <div id="result-container" class="js-masonry"
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
         <br>

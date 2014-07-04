@@ -1055,7 +1055,7 @@ def user_dl_all(request):
 
             fpath = filenames[image_id].replace(' ', '%20')
 
-            filename = os.path.join('/tmp/', image_id)
+            filename = os.path.join('/tmp/', image_id + '.jpg')
             if 'static/media' in fpath:
                 fpath = 'http://lost-visions.cf.ac.uk' + fpath
             urllib.urlretrieve(fpath, filename)
