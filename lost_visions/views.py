@@ -1028,12 +1028,12 @@ def user_dl_all(request):
         # collection_list = ast.literal_eval(collection_ids)
         collection_list = collection_ids.split(',')
 
-        filenames = []
+        filenames = dict()
         for image_id in collection_list:
             image_info = db_tools.get_image_info(image_id)
 
             if image_info:
-                filenames.append(image_info['imageurl'])
+                filenames[image_id] = (image_info['imageurl'])
 
         # Files (local path) to put in the .zip
         # FIXME: Change this (get paths from DB etc)
@@ -1049,12 +1049,14 @@ def user_dl_all(request):
         s = StringIO.StringIO()
 
         # The zip compressor
-        zf = zipfile.ZipFile(s, "w")
+        zf = zipfile.ZipFile(s, "w", zipfile.ZIP_DEFLATED)
 
-        for fpath in filenames:
+        for image_id in filenames:
+
+            fpath = filenames[image_id]
 
             # if 'flickr.com' in fpath:
-            filename = os.path.join('/tmp/', fpath.split('/')[-1])
+            filename = os.path.join('/tmp/', image_id)
             urllib.urlretrieve(fpath, filename)
             fpath = filename
 
