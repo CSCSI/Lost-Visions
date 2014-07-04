@@ -1053,10 +1053,11 @@ def user_dl_all(request):
 
         for image_id in filenames:
 
-            fpath = filenames[image_id]
+            fpath = filenames[image_id].replace(' ', '%20')
 
-            # if 'flickr.com' in fpath:
             filename = os.path.join('/tmp/', image_id)
+            if 'static/media' in fpath:
+                fpath = 'http://lost-visions.cf.ac.uk' + fpath
             urllib.urlretrieve(fpath, filename)
             fpath = filename
 
