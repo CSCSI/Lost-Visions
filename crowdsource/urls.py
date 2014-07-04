@@ -19,7 +19,9 @@ urlpatterns = patterns('',
                        url(r'^do_login', 'lost_visions.views.do_login', name='login.do_login'),
 
                        url(r'^logout', 'lost_visions.views.logout', name='logout'),
+                       url(r'^user_dl_all', 'lost_visions.views.user_dl_all', name='user_dl_all'),
                        url(r'^user_profile', 'lost_visions.views.user_home', name='user_profile_home'),
+
                        url(r'^save_image', 'lost_visions.views.save_image', name='user_profile.save_image'),
 
                        url(r'^signup', 'lost_visions.views.signup', name='signup'),

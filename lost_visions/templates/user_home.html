@@ -39,10 +39,31 @@
             }, function(){
                 $button.hide();
             });
+
+
+            {#            $('#download_all').click(function(){#}
+            {#                $.ajax({#}
+            {#                    type: "POST",#}
+            {#                    url: "{% url 'user_dl_all' %}",#}
+            {#                    data: {#}
+            {#                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,#}
+            {#                        collection_ids: [{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}]#}
+            {#                    },#}
+            {#                    success: function(data) {#}
+            {#                        alert("Downloaded");#}
+            {##}
+            {#                    },#}
+            {#                    error: function(xhr, textStatus, errorThrown) {#}
+            {#                        alert("Problem creating zip: "+errorThrown+xhr.status+xhr.responseText);#}
+            {#                    }#}
+            {#                });#}
+            {#            });#}
         });
         $(window).load(function(){
             $('.js-masonry').masonry();
         });
+
+
     </script>
 
     <div class="col-xs-12 col-sm-6">
@@ -78,6 +99,14 @@
     <hr>
 
     <h3>Your Saved Images</h3>
+
+    <form action="{% url 'user_dl_all' %}" method="get">{% csrf_token %}
+        <input type="hidden" name="collection_ids" value="{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}"/>
+        <button type="submit" class="btn btn-default">Download All</button>
+    </form>
+    <hr>
+
+    {#    <div id="download_all" class="btn btn-default">Download all</div>#}
 
     <div id="result-container" class="js-masonry"
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>

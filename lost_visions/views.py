@@ -3,9 +3,12 @@ import json
 import os
 from random import randint
 import re
+import urllib
 import urllib2
+import zipfile
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime
+import StringIO
 from dateutil import parser
 from dateutil.tz import tzlocal
 from django.contrib import auth
@@ -1014,3 +1017,62 @@ def get_image_data(request):
                     # print tag_results_dict
 
     return HttpResponse(json.dumps(tag_results_dict), content_type="application/json")
+
+def user_dl_all(request):
+    print request.GET
+
+    collection_ids = request.GET.get('collection_ids')
+
+    print collection_ids
+    if collection_ids:
+        # collection_list = ast.literal_eval(collection_ids)
+        collection_list = collection_ids.split(',')
+
+        filenames = []
+        for image_id in collection_list:
+            image_info = db_tools.get_image_info(image_id)
+
+            if image_info:
+                filenames.append(image_info['imageurl'])
+
+        # Files (local path) to put in the .zip
+        # FIXME: Change this (get paths from DB etc)
+        # filenames = ["/tmp/file1.txt", "/tmp/file2.txt"]
+
+        # Folder name in ZIP archive which contains the above files
+        # E.g [thearchive.zip]/somefiles/file2.txt
+        # FIXME: Set this to something better
+        zip_subdir = 'bl_images'
+        zip_filename = "%s.zip" % zip_subdir
+
+        # Open StringIO to grab in-memory ZIP contents
+        s = StringIO.StringIO()
+
+        # The zip compressor
+        zf = zipfile.ZipFile(s, "w")
+
+        for fpath in filenames:
+
+            # if 'flickr.com' in fpath:
+            filename = os.path.join('/tmp/', fpath.split('/')[-1])
+            urllib.urlretrieve(fpath, filename)
+            fpath = filename
+
+            # Calculate path for file in zip
+            fdir, fname = os.path.split(fpath)
+            zip_path = os.path.join(zip_subdir, fname)
+
+            # Add file, at correct path
+            zf.write(fpath, zip_path)
+
+        # Must close zip for all contents to be written
+        zf.close()
+
+        # Grab ZIP file from in-memory, make response with correct MIME-type
+        resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+        # ..and correct content-disposition
+        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+        return resp
+    else:
+        return redirect('user_profile_home')
