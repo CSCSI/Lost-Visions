@@ -239,15 +239,8 @@ def image(request, image_id):
 
     print image_info
 
-    tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag')\
+    tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag') \
         .annotate(uses=Count('tag'))
-
-    # print tags_for_image
-    # print ''
-    # print list(tags_for_image)
-    #
-    # print ''
-    # print json.dumps(list(tags_for_image))
 
     return render(request, 'image.html',
                   {'image': image_info,
@@ -756,7 +749,7 @@ def user_home(request):
 
         metrics = dict()
         metrics['user_tags_number'] = models.Tag.objects.filter(user=request_user).count()
-        metrics['user_tagged_image_number'] = models.Tag.objects.filter(user=request_user)\
+        metrics['user_tagged_image_number'] = models.Tag.objects.filter(user=request_user) \
             .values('image__id').distinct().count()
 
         metrics['total_tags_number'] = models.Tag.objects.count()
@@ -833,13 +826,13 @@ def do_advanced_search(request):
 
         for subword in keywords.split('+'):
 
-            for keyword_image_flickr_id in models.Tag.objects\
+            for keyword_image_flickr_id in models.Tag.objects \
                     .filter(tag__icontains=subword).values_list('image__flickr_id', flat=True).distinct():
                 if keyword_image_flickr_id:
                     q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
 
-            for keyword_image_flickr_id in models.ImageText.objects\
-                    .filter( Q(caption__icontains=subword ) | Q( description__icontains=subword))\
+            for keyword_image_flickr_id in models.ImageText.objects \
+                    .filter( Q(caption__icontains=subword ) | Q( description__icontains=subword)) \
                     .values_list('image__flickr_id', flat=True).distinct():
                 if keyword_image_flickr_id:
                     q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
@@ -872,7 +865,7 @@ def do_advanced_search(request):
 
     if len(illustrator):
         q_or_objects = []
-        for illustrator_book_id in models.BookIllustrator.objects\
+        for illustrator_book_id in models.BookIllustrator.objects \
                 .filter(name__icontains=illustrator).values_list('book_id', flat=True).distinct():
             if illustrator_book_id:
                 q_or_objects.append(Q(book_identifier=str(illustrator_book_id)))
@@ -1007,7 +1000,7 @@ def get_image_data(request):
         if len(q_or_objects) > 0:
             image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
 
-        # print image_data
+            # print image_data
 
             for result in image_data:
                 try:
@@ -1090,3 +1083,25 @@ def user_dl_all(request):
         return resp
     else:
         return redirect('user_profile_home')
+
+
+def stats(request):
+
+    tags_for_image = models.Tag.objects.all().values('tag').annotate(uses=Count('tag'))
+
+    metrics = dict()
+    # metrics['user_tags_number'] = models.Tag.objects.filter(user=request_user).count()
+    # metrics['user_tagged_image_number'] = models.Tag.objects.filter(user=request_user) \
+    #     .values('image__id').distinct().count()
+
+    metrics['total_tags_number'] = models.Tag.objects.count()
+    metrics['total_tagged_image_number'] = models.Tag.objects.values('image__id').distinct().count()
+
+
+    return render(request, 'stats.html',
+                  {
+                      'metrics': metrics,
+                      'image_tags': json.dumps(list(tags_for_image)),
+
+                      },
+                  context_instance=RequestContext(request))

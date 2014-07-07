@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block content %}
+
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+
+        function getDefaultFontSize(pa){
+            pa= pa || document.body;
+            var who= document.createElement('div');
+
+            who.style.cssText='display:inline-block; padding:0; line-height:1; position:absolute; visibility:hidden; font-size:1em';
+
+            who.appendChild(document.createTextNode('M'));
+            pa.appendChild(who);
+            var fs= [who.offsetWidth, who.offsetHeight];
+            pa.removeChild(who);
+            return fs;
+        }
+
+        $(document).ready(function () {
+
+            $('#collapse_cloud').accordion({
+                active: false,
+                collapsible: true,
+                heightStyle: "content"
+
+            });
+
+            var tags = '';
+            var the_tags = {{ image_tags|safe }};
+            var font_size = getDefaultFontSize()[1];
+
+            for (var tag in the_tags) {
+                tags += '<div class="btn btn-success" ' +
+                        'style="margin: 5px; display: inline-block; font-size: '
+                        + (font_size/2 + (the_tags[tag]['uses'] * (font_size/2))) + 'px">' + the_tags[tag]['tag'] + '</div>';
+            }
+
+            console.log(the_tags);
+
+            $('#tag_cloud').html(tags);
+
+
+        });
+
+    </script>
+
+    <div class="bs-example table-responsive">
+        <table class="table table-striped table-hover">
+            <tr>
+                <td>Total number of tagged images : </td>
+                <td>{{ metrics.total_tagged_image_number }}</td>
+            </tr>
+            <tr>
+                <td>Total number of image tags : </td>
+                <td>{{ metrics.total_tags_number }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <hr>
+
+    <div id="collapse_cloud" class="panel-group">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Cloud of Tags
+            </h4>
+        </div>
+
+        <div class="panel-body">
+            <div id="tag_cloud" class="container-fluid" style="width:auto">
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+{% endblock %}
