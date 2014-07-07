@@ -1,7 +1,8 @@
 * {
-    font-size: 100%;
+    font-size: 14px;
     font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
     line-height: 1.8em;
+
     /*font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
 }
 
@@ -9,13 +10,13 @@
     /*background: white url('media/images/ui-anim_basic_16x16.gif') right center no-repeat;*/
     background: white url(data:image/gif;base64,R0lGODlhEAAQAMQAAP///+7u7t3d3bu7u6qqqpmZmYiIiHd3d2ZmZlVVVURERDMzMyIiIhEREQARAAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFBwAQACwAAAAAEAAQAAAFdyAkQgGJJOWoQgIjBM8jkKsoPEzgyMGsCjPDw7ADpkQBxRDmSCRetpRA6Rj4kFBkgLC4IlUGhbNQIwXOYYWCXDufzYPDMaoKGBoKb886OjAKdgZAAgQkfCwzAgsDBAUCgl8jAQkHEAVkAoA1AgczlyIDczUDA2UhACH5BAUHABAALAAAAAAPABAAAAVjICSO0IGIATkqIiMKDaGKC8Q49jPMYsE0hQdrlABCGgvT45FKiRKQhWA0mPKGPAgBcTjsspBCAoH4gl+FmXNEUEBVAYHToJAVZK/XWoQQDAgBZioHaX8igigFKYYQVlkCjiMhACH5BAUHABAALAAAAAAQAA8AAAVgICSOUGGQqIiIChMESyo6CdQGdRqUENESI8FAdFgAFwqDISYwPB4CVSMnEhSej+FogNhtHyfRQFmIol5owmEta/fcKITB6y4choMBmk7yGgSAEAJ8JAVDgQFmKUCCZnwhACH5BAUHABAALAAAAAAQABAAAAViICSOYkGe4hFAiSImAwotB+si6Co2QxvjAYHIgBAqDoWCK2Bq6A40iA4yYMggNZKwGFgVCAQZotFwwJIF4QnxaC9IsZNgLtAJDKbraJCGzPVSIgEDXVNXA0JdgH6ChoCKKCEAIfkEBQcAEAAsAAAAABAADgAABUkgJI7QcZComIjPw6bs2kINLB5uW9Bo0gyQx8LkKgVHiccKVdyRlqjFSAApOKOtR810StVeU9RAmLqOxi0qRG3LptikAVQEh4UAACH5BAUHABAALAAAAAAQABAAAAVxICSO0DCQKBQQonGIh5AGB2sYkMHIqYAIN0EDRxoQZIaC6bAoMRSiwMAwCIwCggRkwRMJWKSAomBVCc5lUiGRUBjO6FSBwWggwijBooDCdiFfIlBRAlYBZQ0PWRANaSkED1oQYHgjDA8nM3kPfCmejiEAIfkEBQcAEAAsAAAAABAAEAAABWAgJI6QIJCoOIhFwabsSbiFAotGMEMKgZoB3cBUQIgURpFgmEI0EqjACYXwiYJBGAGBgGIDWsVicbiNEgSsGbKCIMCwA4IBCRgXt8bDACkvYQF6U1OADg8mDlaACQtwJCEAIfkEBQcAEAAsAAABABAADwAABV4gJEKCOAwiMa4Q2qIDwq4wiriBmItCCREHUsIwCgh2q8MiyEKODK7ZbHCoqqSjWGKI1d2kRp+RAWGyHg+DQUEmKliGx4HBKECIMwG61AgssAQPKA19EAxRKz4QCVIhACH5BAUHABAALAAAAAAQABAAAAVjICSOUBCQqHhCgiAOKyqcLVvEZOC2geGiK5NpQBAZCilgAYFMogo/J0lgqEpHgoO2+GIMUL6p4vFojhQNg8rxWLgYBQJCASkwEKLC17hYFJtRIwwBfRAJDk4ObwsidEkrWkkhACH5BAUHABAALAAAAQAQAA8AAAVcICSOUGAGAqmKpjis6vmuqSrUxQyPhDEEtpUOgmgYETCCcrB4OBWwQsGHEhQatVFhB/mNAojFVsQgBhgKpSHRTRxEhGwhoRg0CCXYAkKHHPZCZRAKUERZMAYGMCEAIfkEBQcAEAAsAAABABAADwAABV0gJI4kFJToGAilwKLCST6PUcrB8A70844CXenwILRkIoYyBRk4BQlHo3FIOQmvAEGBMpYSop/IgPBCFpCqIuEsIESHgkgoJxwQAjSzwb1DClwwgQhgAVVMIgVyKCEAIfkECQcAEAAsAAAAABAAEAAABWQgJI5kSQ6NYK7Dw6xr8hCw+ELC85hCIAq3Am0U6JUKjkHJNzIsFAqDqShQHRhY6bKqgvgGCZOSFDhAUiWCYQwJSxGHKqGAE/5EqIHBjOgyRQELCBB7EAQHfySDhGYQdDWGQyUhADs=) right center no-repeat;
 
-  }
+}
 
 .carousel-inner>.item>img{
     margin: 0 auto;
     width: auto;
-  height: 525px;
-  max-height: 525px;
+    height: 525px;
+    max-height: 525px;
 }
 
 a{
@@ -37,7 +38,7 @@ a{
 }
 
 .home-width{
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -52,6 +53,9 @@ a{
 
 .jumbotron {
     background-color: rgba(183, 199, 215, 0.25);
+    padding: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 /*.panel-default>.panel-heading{*/
@@ -147,26 +151,29 @@ a:hover#save_image.btn.btn-default.save_image  {
 }
 
 .navbar-brand {
-    height: 50px;
+    height: 40px;
     padding: 10px;
     padding-bottom: 5px;
 
 }
 
 .navbar {
-    /*height: 45px;*/
+    height: 45px;
+font-size: 10px;
 }
 
 .lv_logos {
     background-image: url('media/images/lost-visions-station.png');
-    height: 40px;
+    height: 25px;
+    margin-top: 5px;
     width: auto;
     /*margin: 3px*/
 }
 
 .quick-search-field {
-    height: 30px;
-    margin-top: 5px;
+    height: 20px;
+    /*padding: 7px;*/
+    margin-top: 10px;
 }
 
 .logo1 {
@@ -269,6 +276,114 @@ a:hover#save_image.btn.btn-default.save_image  {
     display: inline-block;
     width: 150px;
 }
+
+
+
+
+
+
+
+
+
+
+
+.magnify {
+    /*$dimension: 300px;*/
+
+    width: 300px;
+    position: relative;
+    cursor: none;
+
+    border:2px solid black;
+    margin: 38px;
+    display:inline-block;
+}
+/* magnifying glass overlay */
+.glass {
+    z-index:9000; /* always on top? */
+    width: 268px; height: 268px;
+    position: absolute;
+    border-radius: 100%;
+    background-repeat:no-repeat;
+    background-color:white;
+
+    /* Multiple box shadows to achieve the glass effect*/
+    box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.85),
+    0 0 7px 7px rgba(0, 0, 0, 0.25),
+    inset 0 0 40px 2px rgba(0, 0, 0, 0.25);
+
+    /*hide the glass by default*/
+    display: none;
+}
+
+/*To solve overlap bug at the edges during magnification*/
+.thumb {
+    display: block; width:300px;
+}
+
+
+
+
+
+
+
+/* fonts */
+
+div.jqcloud {
+  font-family: "Helvetica", "Arial", sans-serif;
+  font-size: 10px;
+  line-height: normal;
+}
+
+div.jqcloud a {
+  font-size: inherit;
+  text-decoration: none;
+}
+
+div.jqcloud span.w10 { font-size: 550%; }
+div.jqcloud span.w9 { font-size: 500%; }
+div.jqcloud span.w8 { font-size: 450%; }
+div.jqcloud span.w7 { font-size: 400%; }
+div.jqcloud span.w6 { font-size: 350%; }
+div.jqcloud span.w5 { font-size: 300%; }
+div.jqcloud span.w4 { font-size: 250%; }
+div.jqcloud span.w3 { font-size: 200%; }
+div.jqcloud span.w2 { font-size: 150%; }
+div.jqcloud span.w1 { font-size: 100%; }
+
+/* colors */
+
+div.jqcloud { color: #09f; }
+div.jqcloud a { color: inherit; }
+div.jqcloud a:hover { color: #0df; }
+div.jqcloud a:hover { color: #0cf; }
+div.jqcloud span.w10 { color: #0cf; }
+div.jqcloud span.w9 { color: #0cf; }
+div.jqcloud span.w8 { color: #0cf; }
+div.jqcloud span.w7 { color: #39d; }
+div.jqcloud span.w6 { color: #90c5f0; }
+div.jqcloud span.w5 { color: #90a0dd; }
+div.jqcloud span.w4 { color: #90c5f0; }
+div.jqcloud span.w3 { color: #a0ddff; }
+div.jqcloud span.w2 { color: #99ccee; }
+div.jqcloud span.w1 { color: #aab5f0; }
+
+/* layout */
+
+div.jqcloud {
+  overflow: hidden;
+  position: relative;
+}
+
+div.jqcloud span { padding: 0; }
+
+
+
+
+
+
+
+
 /*##################################################*/
 
 .man {
@@ -500,3 +615,6 @@ a:hover#save_image.btn.btn-default.save_image  {
                      -ms-transform: rotate(360deg) scaleX(1) scaleY(1) skewX(0deg) skewY(0deg);
                  }
              }
+
+
+

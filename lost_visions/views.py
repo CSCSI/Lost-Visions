@@ -14,7 +14,7 @@ from dateutil.tz import tzlocal
 from django.contrib import auth
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.db.models import Q, Min
+from django.db.models import Q, Min, Count
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 
@@ -239,10 +239,21 @@ def image(request, image_id):
 
     print image_info
 
+    tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag')\
+        .annotate(uses=Count('tag'))
+
+    # print tags_for_image
+    # print ''
+    # print list(tags_for_image)
+    #
+    # print ''
+    # print json.dumps(list(tags_for_image))
+
     return render(request, 'image.html',
                   {'image': image_info,
                    'formatted_info': formatted_info,
                    'image_id': image_id,
+                   'image_tags': json.dumps(list(tags_for_image)),
                    # 'category_data': category_data,
                    'linked_images': linked_image_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},

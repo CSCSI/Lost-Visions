@@ -47,6 +47,8 @@
     {#    <script type="text/javascript" src="{% static "dtree/dtree.js" %}"></script>#}
     {#    <script type="text/javascript" src="{% static "masonry.pkgd.min.js" %}"></script>#}
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.1.2/masonry.pkgd.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud-1.0.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "//cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud.css" %}" />
 
     <script type="text/javascript" src="{% static "vakata-jstree-480a265/dist/jstree.js" %}"></script>
     <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>
@@ -176,7 +178,7 @@
     {#    </div>#}
 
     <div class="navbar-header">
-        <a href="../" class="navbar-brand">
+        <a href="{% url 'home' %}" class="navbar-brand">
             {#            <img class="lv_logos logo1"></a>#}
             <img class="lv_logos" src="{% static 'media/images/ill-arch-wide.png' %}">
         </a>
@@ -192,9 +194,8 @@
     <div class="collapse navbar-collapse" id="navbar-main">
         <ul class="nav navbar-nav">
 
-            <li><a href="{% url 'home' %}">Home</a></li>
+            {#            <li><a href="{% url 'home' %}">Home</a></li>#}
 
-            <li><a href="http://lostvisions.weebly.com/" target="_blank">About Us</a></li>
 
             {#            <li class="dropdown">#}
             {#                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Theme<b class="caret"></b></a>#}
@@ -206,32 +207,28 @@
             {#                </ul>#}
             {#            </li>#}
 
-            <li><a href="{% url 'image.random' %}">Tag Images</a></li>
-            <li><a href="{% url 'search_advanced' %}">Advanced Search</a></li>
-
-            {#            <li class="dropdown">#}
-            {#                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tag Images<b class="caret"></b></a>#}
-            {#                <ul class="dropdown-menu">#}
-            {#                    <li><a href="{% url 'image.random' %}">From ARCCA</a></li>#}
-            {#                    <li class="divider"></li>#}
-            {#                    <li><a href="{% url 'image.grab_flickr' %}">From Flickr</a></li>#}
-            {#                </ul>#}
-            {#            </li>#}
-
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contact Us<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">About Us<b class="caret"></b></a>
                 <ul class="dropdown-menu social-buttons">
-                    <a href="" class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook"></i> Facebook </a>
+                    <li>
+                        <a class="btn btn-block btn-social" href="http://lostvisions.weebly.com/" target="_blank">Our Blog</a>
+                    </li>
+
                     <li class="divider"></li>
                     <a href="https://www.flickr.com/photos/britishlibrary" target="_blank" class="btn btn-block btn-social btn-flickr"><i class="fa fa-flickr"></i> British Library Images on Flickr </a>
                     <li class="divider"></li>
                     <a href="https://github.com/CSCSI/Lost-Visions" target="_blank" class="btn btn-block btn-social btn-github"><i class="fa fa-github"></i> Open Source on Github </a>
                     <li class="divider"></li>
-                    <a href="http://lost-visions-cardiff.blogspot.co.uk/" target="_blank" class="btn btn-block btn-social btn-google-plus"><i class="fa fa-google-plus"></i> Blog on Blogger </a>
-                    <li class="divider"></li>
+                    {#                    <a href="http://lost-visions-cardiff.blogspot.co.uk/" target="_blank" class="btn btn-block btn-social btn-google-plus"><i class="fa fa-google-plus"></i> Blog on Blogger </a>#}
+                    {#                    <li class="divider"></li>#}
                     <a href="https://twitter.com/Lost_Visions" target="_blank" class="btn btn-block btn-social btn-twitter"><i class="fa fa-twitter"></i> Twitter </a>
+                    <li class="divider"></li>
+                    <a href="" class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook"></i> Facebook </a>
                 </ul>
             </li>
+
+            <li><a href="{% url 'image.random' %}">Tag Images</a></li>
+            <li><a href="{% url 'search_advanced' %}">Advanced Search</a></li>
 
             {% if user.is_authenticated %}
                 <li class="dropdown">
@@ -251,9 +248,9 @@
         <form id='search_form' action='{% url 'do_advanced_search' %}' method="get"
               class="navbar-form navbar-right" role="search" method="post">{% csrf_token %}
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" id="keyword" name="keyword">
+                <input type="text" class="form-control quick-search-field" placeholder="Search" id="keyword" name="keyword">
             </div>
-            <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="left"
+            <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="left"
                     title="Perform Quick Search" data-original-title="Quick Search">Submit</button>
         </form>
 
