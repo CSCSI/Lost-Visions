@@ -48,6 +48,12 @@
         return fs;
     }
 
+    var font_size = getDefaultFontSize()[1];
+
+{#    function getFontSize(small, big, value) {#}
+{#        return font_size + ((value -1) * (10 / {{ most_used_tag_count }}) * font_size);#}
+{#    }#}
+
     $(document).ready(function () {
         $('.js-masonry').masonry();
 
@@ -69,10 +75,11 @@
 
         var tags = '';
         var the_tags = {{ image_tags|safe }};
-        var font_size = getDefaultFontSize()[1];
 
         for (var tag in the_tags) {
-            tags += '<div class="btn btn-success" ' +
+            tags += '<div id="search_tag" class="btn btn-success search_tag" ' +
+                    'data-val="' + the_tags[tag]['uses'] + '" ' +
+                    'data-term="' + the_tags[tag]['tag'] + '" ' +
                     'style="margin: 5px; display: inline-block; font-size: '
                     + (font_size/2 + (the_tags[tag]['uses'] * (font_size/2))) + 'px">' + the_tags[tag]['tag'] + '</div>';
         }
@@ -81,7 +88,11 @@
 
         $('#tag_cloud').html(tags);
 
-
+        $('.search_tag').click(function(){
+            var word = $(this).data('term');
+            var link = "{% url 'do_advanced_search' %}" + '?keyword=' + word;
+            window.open(link, '_blank');
+        });
 
         var all_tags = [];
 
