@@ -837,7 +837,7 @@ def do_advanced_search(request):
                 if keyword_image_flickr_id:
                     q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
 
-            q_or_objects.append(Q(title__icontains=keywords))
+            # q_or_objects.append(Q(title__icontains=keywords))
 
 
         if len(q_or_objects) > 0:
@@ -1088,20 +1088,22 @@ def user_dl_all(request):
 def stats(request):
 
     tags_for_image = models.Tag.objects.all().values('tag').annotate(uses=Count('tag'))
+    u = 1
+    most_used_tag = ''
+    for v in list(tags_for_image):
+        if v['uses'] > u:
+            u = v['uses']
+            most_used_tag = v['tag']
 
     metrics = dict()
-    # metrics['user_tags_number'] = models.Tag.objects.filter(user=request_user).count()
-    # metrics['user_tagged_image_number'] = models.Tag.objects.filter(user=request_user) \
-    #     .values('image__id').distinct().count()
-
     metrics['total_tags_number'] = models.Tag.objects.count()
     metrics['total_tagged_image_number'] = models.Tag.objects.values('image__id').distinct().count()
-
 
     return render(request, 'stats.html',
                   {
                       'metrics': metrics,
                       'image_tags': json.dumps(list(tags_for_image)),
-
+                      'most_used_tag_count': u,
+                      'most_used_tag' : most_used_tag
                       },
                   context_instance=RequestContext(request))
