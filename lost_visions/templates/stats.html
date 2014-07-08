@@ -22,7 +22,7 @@
         var defaultSize = getDefaultFontSize()[1];
 
         function getFontSize(small, big, value) {
-            return defaultSize + ((value -1) * (10 / {{ most_used_tag_count }}) * 8);
+            return defaultSize + ((value -1) * (10 / {{ most_used_tag_count }}) * (defaultSize /1.5));
         }
 
         $(document).ready(function () {
