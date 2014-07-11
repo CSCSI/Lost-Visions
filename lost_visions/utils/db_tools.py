@@ -149,6 +149,35 @@ def find_image(image_info):
             except Exception as e:
                 print e
                 pass
+
+
+        scan_folder = os.path.join(web_folder, 'embellishments')
+        scan_folder = os.path.join(scan_folder, image_info['date'].strip())
+        root_folder = os.path.join(BASE_DIR, 'lost_visions')
+        root_folder = os.path.join(root_folder, 'static')
+        root_folder = os.path.join(root_folder, scan_folder)
+
+        for a_file in os.listdir(root_folder):
+            try:
+                # image_for_id = models.Image.objects.get(flickr_id=a_file.split('_')[0])
+                # if image_for_id:
+                #     print 'found' + a_file
+                full_path = os.path.join(root_folder, a_file)
+                filename_split = a_file.split('_')
+                if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
+                    if filename_split[1] == image_info['volume']:
+                        print full_path
+                        print filename_split[2]
+                        print image_info['page']
+                        if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
+                            if filename_split[3] == image_info['image_idx']:
+                                image_root_url = os.path.join(STATIC_URL, scan_folder)
+                                file_url = os.path.join(image_root_url, a_file)
+                                print file_url
+                                return file_url
+            except Exception as e:
+                print e
+                pass
     except:
         pass
     return None
