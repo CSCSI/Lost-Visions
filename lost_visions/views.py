@@ -76,10 +76,12 @@ def image_tags(request):
                 # try:
 
                 alternative_words = db_tools.list_wordnet_links(user_tag['synset'])[::-1]
-                alternative_words.append(user_tag['tag'])
+                alternative_words.append([user_tag['tag'], [0, 0]])
 
-                for index, word in enumerate(alternative_words):
+                for index, weighted_word in enumerate(alternative_words):
                     tag = models.Tag()
+                    word = weighted_word[0]
+                    print word
                     tag.tag = clean(word, strip=True)
                     tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
                     tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
@@ -91,7 +93,16 @@ def image_tags(request):
                     #     print e3
                     #     pass
 
-                    tag.tag_order = str(int(clean(str(user_tag['tag_order']), strip=True)) + 1 * (index + 1))
+                    tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
+
+                    print tag_order
+
+                    tag_hyp_dist = int(weighted_word[1][0]) + 1
+                    tag_syn_val = int(weighted_word[1][1]) + 1
+                    tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+
+                    print tag_order
+                    tag.tag_order = tag_order
 
                     if image and request_user:
                         tag.image = image

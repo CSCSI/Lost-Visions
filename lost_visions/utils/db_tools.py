@@ -1,5 +1,6 @@
 import os
 import re
+from raven import Client
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
@@ -364,14 +365,20 @@ def wordnet_formatted(word):
 def list_wordnet_links(tag_synset_id):
 
     initial_list = []
+    loop = 1
     try:
         word_synset = wn.synset(tag_synset_id)
-        for lemma in word_synset.lemmas:
-            initial_list.append(lemma.name)
+        for index, lemma in enumerate(word_synset.lemmas):
+            if lemma.name != tag_synset_id.split('.')[0]:
+                print lemma.name + ':' + tag_synset_id.split('.')[0]
+                initial_list.append([lemma.name, [loop, index]])
 
-        synset, synset_list = get_hypernyms(word_synset, initial_list)
+        loop += 1
+        synset, synset_list = get_hypernyms(word_synset, initial_list, loop)
         return synset_list
-    except:
+    except Exception as e:
+        client = Client('http://8eedfb9d1deb48a39af1f63b825e4ccc:e0f83797e67a462c9c65f270296e672c@lost-visions.cf.ac.uk/sentry/2')
+        client.captureException()
         return initial_list
 
 # we stop looking upwards for parent words once we reach these pretty useless tags
@@ -383,15 +390,15 @@ useless_words = ['artifact', 'being', 'abstraction', 'state',
 def get_hypernyms(synset, synset_list, loop=0):
     try:
         for word in synset.hypernyms():
-            for lemma in word.lemmas[0:2]:
+            for index, lemma in enumerate(word.lemmas[0:2]):
                 word_string = str(lemma.name)
                 if word_string in useless_words:
                     return synset_list
                 else:
-                    synset_list.append(word_string.replace('_', ' '))
+                    synset_list.append([word_string.replace('_', ' '), [loop, index]])
 
             loop += 1
-            if loop > 2:
+            if loop > 4:
                 return synset_list
             else:
                 return get_hypernyms(word, synset_list, loop), synset_list
