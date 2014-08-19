@@ -43,6 +43,11 @@ class Book(models.Model):
         db_table = 'book'
 
 
+class ImageLocation(models.Model):
+    location = models.TextField(blank=True)
+    image = models.ForeignKey('Image', null=True, blank=True, related_name='image')
+
+
 class Image(models.Model):
     # id = models.IntegerField(primary_key=True)
     # id = models.AutoField(primary_key=True)
