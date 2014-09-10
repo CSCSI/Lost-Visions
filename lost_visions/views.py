@@ -923,7 +923,12 @@ def do_advanced_search(request):
         if not filtered:
             readable_query = 'No search filters applied, please add more detail to the query'
         else:
-            readable_query += 'More than 5000 results returned, please add more detail to the query'
+            readable_query += 'Please add more detail to the query. '
+
+            for result in all_results[:5000]:
+                total_results += 1
+                all_image_ids += result + ','
+            readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
 
     results['advanced'] = []
 
