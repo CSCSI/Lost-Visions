@@ -1123,3 +1123,9 @@ def stats(request):
                       'most_used_tag' : most_used_tag
                       },
                   context_instance=RequestContext(request))
+
+
+def haystack_search(request):
+    query_response = {'hello': 'world', 'test': ['a', 'b', 3]}
+
+    return HttpResponse(json.dumps(query_response), content_type="application/json")

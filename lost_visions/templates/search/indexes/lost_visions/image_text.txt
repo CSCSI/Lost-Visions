@@ -1,0 +1,6 @@
+{{ object.title }}
+{{ object.first_author }}
+{{ object.publisher }}
+{{ object.pubplace }}
+{{ object.flickr_id }}
+{{ object.book_identifier }}

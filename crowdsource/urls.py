@@ -48,7 +48,7 @@ urlpatterns = patterns('',
                        url(r'^image/random', 'lost_visions.views.random_image', name='image.random'),
                        url(r'^image/grabflickr', 'lost_visions.views.grab_flickr', name='image.grab_flickr'),
 
-
+                       url(r'^search_haystack/', include('haystack.urls')),
 
                        url(r'^oed/(?P<word>\w+)', 'lost_visions.views.oed', name='oed'),
                        url(r'^findword', 'lost_visions.views.findword', name='find.word'),

@@ -63,7 +63,7 @@ INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
 
     'haystack',
-    'watson',
+    # 'watson',
     'lost_visions',
 )
 
