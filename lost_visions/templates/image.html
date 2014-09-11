@@ -201,7 +201,8 @@
                 },
                 success: function(data) {
                     var ok = data['success'];
-{#                    alert('created collection' + ok);#}
+                    alert("Added Image to Favourites : " + collection_name);
+
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
@@ -240,21 +241,23 @@
             if (strUser == "NEW COLLECTION"){
                 dialog.dialog("open");
 
-            } else if (strUser == 'default'){
-                $.ajax({
-                    type: "POST",
-                    url: "{% url 'user_profile.save_image' %}",
-                    data: {
-                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                        image_id: {{ image_id }}
-                    },
-                    success: function(data) {
-                        alert("Added Image to Favourites");
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
-                    }
-                });
+                {#            } #}
+                {#            #}
+                {#            else if (strUser == 'default'){#}
+                {#                $.ajax({#}
+                {#                    type: "POST",#}
+                {#                    url: "{% url 'user_profile.save_image' %}",#}
+                {#                    data: {#}
+                {#                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,#}
+                {#                        image_id: {{ image_id }}#}
+                {#                    },#}
+                {#                    success: function(data) {#}
+                {#                        alert("Added Image to Favourites");#}
+                {#                    },#}
+                {#                    error: function(xhr, textStatus, errorThrown) {#}
+                {#                        alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);#}
+                {#                    }#}
+                {#                });#}
             } else {
                 saveImageToCollection(strUser);
             }

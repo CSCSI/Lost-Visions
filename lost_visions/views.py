@@ -254,10 +254,11 @@ def image(request, image_id):
         .annotate(uses=Count('tag'))
 
     collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
-    users_collections = ['default']
+    users_collections = set()
+    users_collections.add('default')
     for c in collection_models:
-        users_collections.append(str(c.name))
-    users_collections.append('NEW COLLECTION')
+        users_collections.add(str(c.name))
+    users_collections.add('NEW COLLECTION')
 
     return render(request, 'image.html',
                   {'image': image_info,
@@ -265,7 +266,7 @@ def image(request, image_id):
                    'image_id': image_id,
                    'image_tags': json.dumps(list(tags_for_image)),
                    # 'category_data': category_data,
-                   'user_collections': users_collections,
+                   'user_collections': list(users_collections),
                    'linked_images': linked_image_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
@@ -595,7 +596,6 @@ def search(request, word):
                   context_instance=RequestContext(request))
 
 
-
 # method to find the search term in the string
 # produces a substring containing the term
 # adds html strong tag around the search term
@@ -724,8 +724,23 @@ def coords(request, image_id):
 def save_image(request):
     if request.is_ajax():
         if request.POST.get('delete_image', False):
-            delete_image = models.SavedImages.objects.get(image__flickr_id=request.POST['image_id'])
-            delete_image.delete()
+            try:
+                # TODO this can go soon
+                delete_image = models.SavedImages.objects.get(image__flickr_id=request.POST['image_id'])
+                delete_image.delete()
+            except Exception as e:
+                print e
+
+            try:
+                # TODO use this from now on
+                c_id = request.POST['collection_id']
+                collection = models.ImageCollection.objects.get(id=c_id, user=get_request_user(request))
+
+                saved_image = models.ImageMapping.objects.get(collection=collection, image__flickr_id=request.POST['image_id'])
+                saved_image.delete()
+            except Exception as e:
+                print e
+
             return HttpResponse('Removed Image ' + request.POST['image_id'])
         else:
             try:
@@ -765,6 +780,13 @@ def user_home(request):
 
             saved_images_dict[image.image.flickr_id] = image_dict
 
+            # TODO : remove this once users have switched over to multiple collection system
+            try:
+                collection, created = models.ImageCollection.objects.get_or_create(name='default', user=request_user)
+                saved_image, created = models.ImageMapping.objects.get_or_create(collection=collection, image=image.image)
+            except Exception as e:
+                print e
+
         metrics = dict()
         metrics['user_tags_number'] = models.Tag.objects.filter(user=request_user).count()
         metrics['user_tagged_image_number'] = models.Tag.objects.filter(user=request_user) \
@@ -774,20 +796,26 @@ def user_home(request):
         metrics['total_tagged_image_number'] = models.Tag.objects.values('image__id').distinct().count()
 
         collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
-        users_collections = [{'default': saved_images_dict}]
+        users_collections = dict()
+
         for c in collection_models:
 
+            collection_data = {}
             mapped_images = models.ImageMapping.objects.filter(collection=c)
-            mapped_images_dict = dict()
+            mapped_images_array = []
             for image in mapped_images:
                 image_dict = dict()
+                image_dict['flickr_id'] = image.image.flickr_id
                 image_dict['title'] = image.image.title
                 image_dict['page'] = image.image.page.lstrip('0')
                 image_dict['url'] = image.image.flickr_small_source
 
-                mapped_images_dict[image.image.flickr_id] = image_dict
+                mapped_images_array.append(image_dict)
 
-            users_collections.append({str(c.name): mapped_images_dict})
+            collection_data['images'] = mapped_images_array
+            collection_data['collection_name'] = c.name
+
+            users_collections.update({str(c.id): collection_data})
         return render(request,
                       'user_home.html',
                       {'images': saved_images_dict,
@@ -1156,11 +1184,75 @@ def haystack_search(request):
     return HttpResponse(json.dumps(query_response), content_type="application/json")
 
 
+def download_collection(request):
+    collection_id = request.GET.get('collection_id')
+
+    image_collection = models.ImageCollection.objects.all().get(id=collection_id)
+
+    images = models.ImageMapping.objects.filter(collection=image_collection)
+
+    image_ids = []
+    for image_mapping in images:
+            image_ids.append(image_mapping.image.flickr_id)
+
+    filenames = dict()
+    for image_id in image_ids:
+        image_info = db_tools.get_image_info(image_id)
+
+        if image_info:
+            filenames[image_id] = (image_info['imageurl'])
+
+    # Files (local path) to put in the .zip
+    # FIXME: Change this (get paths from DB etc)
+    # filenames = ["/tmp/file1.txt", "/tmp/file2.txt"]
+
+    # Folder name in ZIP archive which contains the above files
+    # E.g [thearchive.zip]/somefiles/file2.txt
+    # FIXME: Set this to something better
+    zip_subdir = image_collection.name
+    zip_filename = "%s.zip" % zip_subdir
+
+    # Open StringIO to grab in-memory ZIP contents
+    s = StringIO.StringIO()
+
+    # The zip compressor
+    zf = zipfile.ZipFile(s, "w", zipfile.ZIP_DEFLATED)
+
+    for image_id in filenames:
+
+        fpath = filenames[image_id].replace(' ', '%20')
+
+        filename = os.path.join('/tmp/', image_id + '.jpg')
+        if 'static/media' in fpath:
+            fpath = 'http://lost-visions.cf.ac.uk' + fpath
+        urllib.urlretrieve(fpath, filename)
+        fpath = filename
+
+        # Calculate path for file in zip
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(zip_subdir, fname)
+
+        # Add file, at correct path
+        zf.write(fpath, zip_path)
+
+    # Must close zip for all contents to be written
+    zf.close()
+
+    # Grab ZIP file from in-memory, make response with correct MIME-type
+    resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+    # ..and correct content-disposition
+    resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+    return resp
+    # return redirect('user_profile_home')
+
+
 def new_collection(request):
     image = models.Image.objects.get(flickr_id=request.POST['image_id'])
     request_user = get_request_user(request)
     success = True
-    users_collections = ['default']
+    users_collections = set()
+    users_collections.add('default')
 
     try:
         name = request.POST.get('collection_name', 'default')
@@ -1181,7 +1273,7 @@ def new_collection(request):
 
     query_response = {
         'success': success,
-        'collections': users_collections
+        'collections': list(users_collections)
     }
 
     return HttpResponse(json.dumps(query_response), content_type="application/json")
