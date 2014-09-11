@@ -50,9 +50,9 @@
 
     var font_size = getDefaultFontSize()[1];
 
-{#    function getFontSize(small, big, value) {#}
-{#        return font_size + ((value -1) * (10 / {{ most_used_tag_count }}) * font_size);#}
-{#    }#}
+    {#    function getFontSize(small, big, value) {#}
+    {#        return font_size + ((value -1) * (10 / {{ most_used_tag_count }}) * font_size);#}
+    {#    }#}
 
     $(document).ready(function () {
         $('.js-masonry').masonry();
@@ -188,21 +188,75 @@
             window.location.replace('{% url 'image.random' %}');
         });
 
-        $('#save_image').click(function() {
+        var dialog;
+
+        function saveImageToCollection(collection_name) {
             $.ajax({
                 type: "POST",
-                url: "{% url 'user_profile.save_image' %}",
+                url: "{% url 'user_profile.new_collection' %}",
                 data: {
                     csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    collection_name: collection_name,
                     image_id: {{ image_id }}
                 },
                 success: function(data) {
-                    alert("Added Image to Favourites");
+                    var ok = data['success'];
+{#                    alert('created collection' + ok);#}
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
                 }
             });
+        }
+
+        function addCollection(){
+            var collection_name = $( "#collection_name").val();
+            saveImageToCollection(collection_name);
+            dialog.dialog( "close" );
+        }
+
+        dialog = $( "#dialog-form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Create a collection": addCollection,
+                Cancel: function() {
+                    dialog.dialog( "close" );
+                }
+            },
+            close: function() {
+                {#                form[ 0 ].reset();#}
+                {#                allFields.removeClass( "ui-state-error" );#}
+            }
+        });
+
+        $('#save_image').click(function() {
+
+            var e = document.getElementById("user_collection_select");
+            var strUser = e.options[e.selectedIndex].text;
+
+            if (strUser == "NEW COLLECTION"){
+                dialog.dialog("open");
+
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'user_profile.save_image' %}",
+                    data: {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        image_id: {{ image_id }}
+                    },
+                    success: function(data) {
+                        alert("Added Image to Favourites");
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
+                    }
+                });
+                saveImageToCollection(strUser);
+            }
         });
 
         function populate_categories(cat_id, callback) {
@@ -755,6 +809,15 @@
                     {#                    <a class="btn btn-default" href="{% url 'image.map' image_id %}" target="_blank">Map</a>#}
                     {#                </li>#}
                     <li>
+                        <select id="user_collection_select">
+                            {% for option in user_collections %}
+                                <option id="{{ option }}" value="{{ option }}">
+                                    {{ option }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </li>
+                    <li>
                         <a class="btn btn-default save_image" id="save_image">
                             <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">
                         </a>
@@ -1144,5 +1207,19 @@
                 <img id='zoom-photo' src="{{ image.flickr_original_source }}" style='width: auto; height:75%; '>
             </div>
         </div>
+    </div>
+
+    <div id="dialog-form" title="Create new collection">
+        <p class="validateTips">Enter name of new image collection</p>
+
+        <form>
+            <fieldset>
+                <label for="collection_name">Name</label>
+                <input type="text" name="collection_name" id="collection_name" value="" class="text ui-widget-content ui-corner-all">
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
     </div>
 {% endblock %}

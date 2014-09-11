@@ -131,14 +131,14 @@
                 <div id="share_all" class="btn btn-warning">Share this collection</div>
             </td>
             <td>
-            <div style="padding: 10px; margin-top: 10px">
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'user_dl_all' %}?collection_ids={% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
+                <div style="padding: 10px; margin-top: 10px">
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'user_dl_all' %}?collection_ids={% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                </div>
             </td>
         </tr>
     </table>
-<hr>
+    <hr>
     <div id="result-container" class="js-masonry"
          data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
         <br>
@@ -161,5 +161,40 @@
             </div>
         {% endfor %}
     </div>
-    </div>
+
+    {% for saved_collection in users_collections %}
+
+        {% for saved_image_key, saved_image_data in saved_collection.items %}
+            {% if saved_image_key != 'default' %}
+                {{ saved_image_key }}
+                <div id="result-container" class="js-masonry"
+                     data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
+                    {% for s, d in saved_image_data.items %}
+                        <div class="bl_item" id="bl_item_{{ s }}" data-id="{{ s }}">
+                            <div class="panel">
+                                <a href="{% url 'image' s %}" target="_blank">
+                                    <img src="{{ d.url }}" style='width:100%; height:auto;'>
+                                </a>
+                                <div class="panel-footer">
+                                    Image ID : {{ d.id }}
+                                    <br>
+                                    Page : {{ d.page }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        {% empty %}
+            <div class="bl_item" >
+                (You have not yet saved any images)
+            </div>
+        {% endfor %}
+        <hr>
+        {#    </div>#}
+
+    {% endfor %}
+
+
 {% endblock %}

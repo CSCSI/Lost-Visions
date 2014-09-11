@@ -1,7 +1,7 @@
 import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
-import watson
+# import watson
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -219,8 +219,29 @@ class LinkedImage(models.Model):
     timestamp = models.DateTimeField(auto_now=True, blank=True)
 
     def __unicode__(self):
-
         return str(self.id) + ':' + self.image.flickr_id + ':' + self.name
 
-watson.register(Image)
-watson.register(ImageText)
+
+class ImageCollection(models.Model):
+    name = models.CharField(max_length=120L, blank=True)
+    user = models.ForeignKey(LostVisionUser, blank=False)
+    public = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    def __unicode__(self):
+        return str(self.id) + ':' + str(self.user.username.username) + ':' + self.name + ':' + str(self.public)
+
+
+class ImageMapping(models.Model):
+    image = models.ForeignKey(Image, blank=False)
+    collection = models.ForeignKey(ImageCollection, blank=False)
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    def __unicode__(self):
+        return str(self.id) + ':' + str(self.image.flickr_id) + ':' + self.collection.name
+
+
+
+
+# watson.register(Image)
+# watson.register(ImageText)

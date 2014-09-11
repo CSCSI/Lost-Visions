@@ -25,6 +25,7 @@ urlpatterns = patterns('',
                        url(r'^user_profile', 'lost_visions.views.user_home', name='user_profile_home'),
 
                        url(r'^save_image', 'lost_visions.views.save_image', name='user_profile.save_image'),
+                       url(r'^new_collection', 'lost_visions.views.new_collection', name='user_profile.new_collection'),
 
                        url(r'^signup', 'lost_visions.views.signup', name='signup'),
                        url(r'^do_signup', 'lost_visions.views.do_signup', name='signup.do_signup'),

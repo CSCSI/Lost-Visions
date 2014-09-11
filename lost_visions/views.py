@@ -253,12 +253,19 @@ def image(request, image_id):
     tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag') \
         .annotate(uses=Count('tag'))
 
+    collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
+    users_collections = ['default']
+    for c in collection_models:
+        users_collections.append(str(c.name))
+    users_collections.append('NEW COLLECTION')
+
     return render(request, 'image.html',
                   {'image': image_info,
                    'formatted_info': formatted_info,
                    'image_id': image_id,
                    'image_tags': json.dumps(list(tags_for_image)),
                    # 'category_data': category_data,
+                   'user_collections': users_collections,
                    'linked_images': linked_image_data,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
@@ -766,9 +773,26 @@ def user_home(request):
         metrics['total_tags_number'] = models.Tag.objects.count()
         metrics['total_tagged_image_number'] = models.Tag.objects.values('image__id').distinct().count()
 
+        collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
+        users_collections = [{'default': saved_images_dict}]
+        for c in collection_models:
+
+            mapped_images = models.ImageMapping.objects.filter(collection=c)
+            mapped_images_dict = dict()
+            for image in mapped_images:
+                image_dict = dict()
+                image_dict['title'] = image.image.title
+                image_dict['page'] = image.image.page.lstrip('0')
+                image_dict['url'] = image.image.flickr_small_source
+
+                mapped_images_dict[image.image.flickr_id] = image_dict
+
+            users_collections.append({str(c.name): mapped_images_dict})
         return render(request,
                       'user_home.html',
-                      {'images': saved_images_dict, 'metrics': metrics})
+                      {'images': saved_images_dict,
+                       'users_collections': users_collections,
+                       'metrics': metrics})
     else:
         raise Http404
 
@@ -848,7 +872,7 @@ def do_advanced_search(request):
                 if keyword_image_flickr_id:
                     q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
 
-            # q_or_objects.append(Q(title__icontains=keywords))
+                    # q_or_objects.append(Q(title__icontains=keywords))
 
 
         if len(q_or_objects) > 0:
@@ -1038,6 +1062,7 @@ def get_image_data(request):
 
     return HttpResponse(json.dumps(tag_results_dict), content_type="application/json")
 
+
 def user_dl_all(request):
     print request.GET
 
@@ -1121,11 +1146,42 @@ def stats(request):
                       'image_tags': json.dumps(list(tags_for_image)),
                       'most_used_tag_count': u,
                       'most_used_tag' : most_used_tag
-                      },
+                  },
                   context_instance=RequestContext(request))
 
 
 def haystack_search(request):
     query_response = {'hello': 'world', 'test': ['a', 'b', 3]}
+
+    return HttpResponse(json.dumps(query_response), content_type="application/json")
+
+
+def new_collection(request):
+    image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+    request_user = get_request_user(request)
+    success = True
+    users_collections = ['default']
+
+    try:
+        name = request.POST.get('collection_name', 'default')
+        collection, created = models.ImageCollection.objects.get_or_create(name=name, user=request_user)
+
+        saved_image, created = models.ImageMapping.objects.get_or_create(collection=collection, image=image)
+
+        collection_models = models.ImageCollection.objects.all().filter(user=request_user)
+        users_collections = []
+
+        for c in collection_models:
+            users_collections.append(c.name)
+        users_collections.append('NEW COLLECTION')
+
+    except Exception as e:
+        print e
+        success = False
+
+    query_response = {
+        'success': success,
+        'collections': users_collections
+    }
 
     return HttpResponse(json.dumps(query_response), content_type="application/json")
