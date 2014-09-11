@@ -240,7 +240,7 @@
             if (strUser == "NEW COLLECTION"){
                 dialog.dialog("open");
 
-            } else {
+            } else if (strUser == 'default'){
                 $.ajax({
                     type: "POST",
                     url: "{% url 'user_profile.save_image' %}",
@@ -255,6 +255,7 @@
                         alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);
                     }
                 });
+            } else {
                 saveImageToCollection(strUser);
             }
         });
