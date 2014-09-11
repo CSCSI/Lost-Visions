@@ -23,7 +23,10 @@ urlpatterns = patterns('',
                        url(r'^logout', 'lost_visions.views.logout', name='logout'),
                        url(r'^user_dl_all', 'lost_visions.views.user_dl_all', name='user_dl_all'),
                        url(r'^download_collection', 'lost_visions.views.download_collection', name='dl_collection'),
+                       url(r'^manage_collection', 'lost_visions.views.manage_collection', name='manage_collection'),
+
                        url(r'^user_profile', 'lost_visions.views.user_home', name='user_profile_home'),
+                       url(r'^tweet_card', 'lost_visions.views.tweet_card', name='tweet_card'),
 
                        url(r'^save_image', 'lost_visions.views.save_image', name='user_profile.save_image'),
                        url(r'^new_collection', 'lost_visions.views.new_collection', name='user_profile.new_collection'),

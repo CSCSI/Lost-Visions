@@ -1193,7 +1193,7 @@ def download_collection(request):
 
     image_ids = []
     for image_mapping in images:
-            image_ids.append(image_mapping.image.flickr_id)
+        image_ids.append(image_mapping.image.flickr_id)
 
     filenames = dict()
     for image_id in image_ids:
@@ -1276,4 +1276,42 @@ def new_collection(request):
         'collections': list(users_collections)
     }
 
+    return HttpResponse(json.dumps(query_response), content_type="application/json")
+
+
+def tweet_card(request):
+    image = 'http://lost-visions.cf.ac.uk/static/media/images/ill-arch-wide.png'
+    text = 'Here is a test twitter card'
+    title = 'this is the title'
+    user = '@Lost_Visions'
+    site = 'lost-visions.cf.ac.uk'
+
+    return render(request, 'twitter_card.html',
+                  {'tweet_image': image,
+                   'tweet_text': text,
+                   'tweet_title': title,
+                   'tweet_site': site,
+                   'tweet_user': user},
+                  context_instance=RequestContext(request))
+
+
+def manage_collection(request):
+    if request.user.is_authenticated():
+        action = request.POST.get('action', '')
+        col_id = request.POST.get('collection_id', '')
+        if action == 'delete':
+            print 'deleting collection ' + str(col_id)
+            image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
+            image_collection.delete()
+
+        if action == 'rename':
+            name = request.POST.get('collection_name', '')
+            print 'renaming ' + str(col_id) + ' to ' + str(name)
+            image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
+            image_collection.name = name
+            image_collection.save()
+
+    query_response = {
+        'success': True,
+    }
     return HttpResponse(json.dumps(query_response), content_type="application/json")

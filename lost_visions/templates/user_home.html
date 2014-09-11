@@ -79,7 +79,82 @@
                 var link = '{% url 'dl_collection' %}?' +
                         'collection_id=' + collection_id;
                 $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
-                $('#share_all_dialogue').dialog("open")
+                $('#edit_collection_dialog_form').dialog("open");
+
+                window.open("{% url 'tweet_card' %}", '_blank');
+            });
+
+            $('.edit_collection').click(function(){
+                var collection_id = $(this).data('collection_id');
+                var collection_name = $(this).data('collection_name');
+
+                $('#edit_collection_data').data('collection_id', collection_id).data('collection_name', collection_name);
+
+                $('#edit_collection_dialog_form').data('id', collection_id).data('name', collection_name).dialog("open");
+
+
+            });
+
+            var dialog = $( "#edit_collection_dialog_form" ).dialog({
+                autoOpen: false,
+                height: 300,
+                width: 350,
+                modal: true,
+                buttons: {
+                    "Rename collection": function() {
+                        var id = $(this).data('id');
+                        var new_collection_name = $('#rename_collection_field').val();
+                        var name = $(this).data('name');
+
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'manage_collection' %}",
+                            data: {
+                                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                                collection_id: id,
+                                collection_name: new_collection_name,
+                                action: 'rename'
+                            },
+                            success: function(data) {
+                                dialog.dialog( "close" );
+                                alert('Renamed collection ' + name + ' to ' + new_collection_name);
+                                location.reload();
+                            },
+                            error: function(xhr, textStatus, errorThrown) {}
+                        });
+                    },
+                    "Delete collection": function() {
+                        var id = $(this).data('id');
+                        var name = $(this).data('name');
+
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'manage_collection' %}",
+                            data: {
+                                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                                collection_id: id,
+                                action: 'delete'
+                            },
+                            success: function(data) {
+                                dialog.dialog( "close" );
+                                alert('Deleted collection ' + name);
+                                location.reload();
+                            },
+                            error: function(xhr, textStatus, errorThrown) {}
+                        });                    },
+                    Cancel: function() {
+                        dialog.dialog( "close" );
+                    }
+                },
+                open : function() {
+                    var name = $(this).data('name');
+                    var id = $(this).data('id');
+                    $('#rename_collection_field').val(name);
+                },
+                close: function() {
+                    {#                form[ 0 ].reset();#}
+                    {#                allFields.removeClass( "ui-state-error" );#}
+                }
             });
 
         });
@@ -184,6 +259,12 @@
         <table>
             <tr>
                 <td>
+                    <div id="edit_collection_{{ k }}"
+                         data-collection_id="{{ k }}"
+                         data-collection_name="{{ b.collection_name }}"
+                         class="btn btn-default edit_collection">Edit Collection</div>
+                </td>
+                <td>
                     <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
                          class="btn btn-default dl_collection">Download Collection</div>
                 </td>
@@ -218,7 +299,7 @@
                 </div>
             {% endfor %}
         </div>
-<hr>
+        <hr>
     {% empty %}
         <div class="bl_item" >
             (You have not yet saved any images)
@@ -226,6 +307,18 @@
         <hr>
     {% endfor %}
 
-{#    {{ users_collections }}#}
+    {#    {{ users_collections }}#}
+    <div id="edit_collection_dialog_form" title="Edit this collection">
+        <p class="validateTips">Edit collection details</p>
+        <div id="edit_collection_data" data-collection_id="" data-collection_name=""></div>
+        <form>
+            <fieldset>
+                <label for="rename_collection_field">New Name</label>
+                <input type="text" name="rename_collection_field" id="rename_collection_field" value="" class="text ui-widget-content ui-corner-all">
 
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
 {% endblock %}
