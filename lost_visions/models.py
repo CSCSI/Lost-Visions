@@ -238,7 +238,8 @@ class ImageMapping(models.Model):
     timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def __unicode__(self):
-        return str(self.id) + ':' + str(self.image.flickr_id) + ':' + self.collection.name
+        return str(self.id) + ':' + str(self.image.flickr_id) \
+               + ':' + self.collection.name + ':' + self.collection.user.username.username
 
 
 

@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.contrib import admin
 from django.db.models import get_models, get_app
-from lost_visions.models import Tag, GeoTag, SavedImages, ImageText, LinkedImage
+from lost_visions.models import Tag, GeoTag, SavedImages, ImageText, LinkedImage, ImageCollection, ImageMapping
 
 
 class ImageSanityAdmin(admin.ModelAdmin):
@@ -14,6 +14,7 @@ admin.site.register(SavedImages, ImageSanityAdmin)
 admin.site.register(GeoTag, ImageSanityAdmin)
 admin.site.register(ImageText, ImageSanityAdmin)
 admin.site.register(LinkedImage, ImageSanityAdmin)
+admin.site.register(ImageMapping, ImageSanityAdmin)
 
 for model in get_models(get_app('lost_visions')):
     try:
