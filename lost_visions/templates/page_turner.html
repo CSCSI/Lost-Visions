@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+    <ul class="pager">
+        <li class="previous">
+            <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev%}">Previous Page</a>
+
+        </li>
+        <div class="rota btn btn-info">Page {{ page }}</div>
+        <li class="next">
+            <a class="rota btn btn-default" href="{% url 'page_turner' book_id next%}">Next Page</a>
+        </li>
+    </ul>
+
+    <img src="{% url 'find_page' book_id page%}" style="width: 100%">
+
+{% endblock %}

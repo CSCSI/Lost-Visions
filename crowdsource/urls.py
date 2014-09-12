@@ -58,6 +58,10 @@ urlpatterns = patterns('',
                        url(r'^oed/(?P<word>\w+)', 'lost_visions.views.oed', name='oed'),
                        url(r'^findword', 'lost_visions.views.findword', name='find.word'),
 
+                       url(r'^find_page/(?P<book_id>\w+)/(?P<page>\w+)', 'lost_visions.views.find_page', name='find_page'),
+                       url(r'^page_turner/(?P<book_id>\w+)/(?P<page>\w+)', 'lost_visions.views.page_turner', name='page_turner'),
+
+
 
                        # url(r'^categories', 'lost_visions.views.get_categories_html', name='categories_url'),
                        # url(r'^creation_techniques', 'lost_visions.views.get_creation_techniques_html', name='creation_techniques_url'),

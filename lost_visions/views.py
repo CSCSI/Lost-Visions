@@ -9,12 +9,12 @@ import zipfile
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime
 import StringIO
+from PIL import Image
 from dateutil import parser
 from dateutil.tz import tzlocal
 from django.contrib import auth
-from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.db.models import Q, Min, Count
+from django.db.models import Q, Count
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 
@@ -1315,3 +1315,31 @@ def manage_collection(request):
         'success': True,
     }
     return HttpResponse(json.dumps(query_response), content_type="application/json")
+
+
+def find_page(request, book_id, page):
+    print book_id
+    print page
+
+    zip_path = '/home/ubuntu/PycharmProjects/Lost-Visions/lost_visions/static/media/images/003871282_0_1-324pgs__1023322_dat.zip'
+
+    archive = zipfile.ZipFile(zip_path, 'r')
+    print str(archive.namelist())
+    imgdata = archive.read('JP2\\003871282_000015.jp2')
+
+    response = HttpResponse(content_type="image/jpeg")
+
+    input_image = StringIO.StringIO(imgdata)
+    input_image.seek(0)
+    img = Image.open(input_image)
+    # save as jpeg instead of jpeg2000. Probable loss of quality
+    img.save(response, "JPEG", quality=80, optimize=True, progressive=True)
+
+    return response
+
+
+def page_turner(request, book_id, page):
+    prev = int(page) - 1
+    next_page = int(page) + 1
+
+    return render(request, 'page_turner.html', {'book_id': book_id, 'page': page, 'prev': prev, 'next': next_page})

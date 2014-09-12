@@ -1,4 +1,4 @@
-django-watson
+pillow
 django-haystack
 BeautifulSoup==3.2.1
 Django==1.6.2
