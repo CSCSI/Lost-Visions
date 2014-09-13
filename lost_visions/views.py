@@ -262,6 +262,8 @@ def image(request, image_id):
 
     return render(request, 'image.html',
                   {'image': image_info,
+                   'book_id': image_info.get('book_identifier', ""),
+                   'page': image_info.get('page', ""),
                    'formatted_info': formatted_info,
                    'image_id': image_id,
                    'image_tags': json.dumps(list(tags_for_image)),
@@ -1317,17 +1319,49 @@ def manage_collection(request):
     return HttpResponse(json.dumps(query_response), content_type="application/json")
 
 
+def get_zip_path(root_folder, book_id):
+    try:
+        for a_file in os.listdir(root_folder):
+            for b_file in os.listdir(a_file):
+                if book_id in b_file:
+                    print 'found file ' + str(b_file)
+                    return b_file
+    except:
+        return None
+
+
 def find_page(request, book_id, page):
     print book_id
     print page
 
-    zip_path = '/home/ubuntu/PycharmProjects/Lost-Visions/lost_visions/static/media/images/003871282_0_1-324pgs__1023322_dat.zip'
+    web_folder = os.path.join('', 'media')
+    web_folder = os.path.join(web_folder, 'page_zips')
 
-    archive = zipfile.ZipFile(zip_path, 'r')
-    print str(archive.namelist())
-    imgdata = archive.read('JP2\\003871282_000015.jp2')
+    root_folder = os.path.join(BASE_DIR, 'lost_visions')
+    root_folder = os.path.join(root_folder, 'static')
+    root_folder = os.path.join(root_folder, web_folder)
+    # zip_path = '/home/ubuntu/PycharmProjects/Lost-Visions/lost_visions/static/media/images/003871282_0_1-324pgs__1023322_dat.zip'
+
+    zip_path = get_zip_path(root_folder, book_id)
 
     response = HttpResponse(content_type="image/jpeg")
+
+    if zip_path is None:
+        return response
+
+    inner_zipped_file = None
+    archive = zipfile.ZipFile(zip_path, 'r')
+    print str(archive.namelist())
+    for zipped_file in archive.namelist():
+        if page in zipped_file.split('_')[1]:
+            print '***' + zipped_file + '****'
+            inner_zipped_file = zipped_file
+
+    if inner_zipped_file is None:
+        return response
+
+    # imgdata = archive.read('JP2\\003871282_000015.jp2')
+    imgdata = archive.read(inner_zipped_file)
 
     input_image = StringIO.StringIO(imgdata)
     input_image.seek(0)
@@ -1341,5 +1375,8 @@ def find_page(request, book_id, page):
 def page_turner(request, book_id, page):
     prev = int(page) - 1
     next_page = int(page) + 1
-
-    return render(request, 'page_turner.html', {'book_id': book_id, 'page': page, 'prev': prev, 'next': next_page})
+    return render(request, 'page_turner.html', {
+                    'book_id': book_id,
+                    'page': page,
+                    'prev': prev,
+                    'next': next_page})

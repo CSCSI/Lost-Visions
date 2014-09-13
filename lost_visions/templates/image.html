@@ -876,6 +876,10 @@
                     {% endif %}
 
                 </td></tr>
+                <tr>
+                    <th>Full page</th>
+                    <td><a target="_blank" href="{% url 'page_turner' book_id page %}">Click here</a></td>
+                </tr>
                 {% for mykey,value in formatted_info.items %}
                     {% if mykey != 'tags' %}
                         <tr><th>{{ mykey }}</th><td>{{ value }}</td></tr>

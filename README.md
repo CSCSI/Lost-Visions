@@ -24,3 +24,5 @@ cmake .
 make
 make install
 sudo ldconfig
+
+python-boost
