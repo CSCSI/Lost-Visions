@@ -1353,7 +1353,9 @@ def find_page(request, book_id, page):
     archive = zipfile.ZipFile(zip_path, 'r')
     print str(archive.namelist())
     for zipped_file in archive.namelist():
-        if page in zipped_file.split('_')[1]:
+        page_number_found = zipped_file.split('_')[1]
+        page_number_found = page_number_found.split('.')[0]
+        if int(page) == int(page_number_found):
             print '***' + zipped_file + '****'
             inner_zipped_file = zipped_file
 
