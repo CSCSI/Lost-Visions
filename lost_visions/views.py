@@ -1346,8 +1346,8 @@ def find_page(request, book_id, page):
 
     response = HttpResponse(content_type="image/jpeg")
 
-    if zip_path is None:
-        return response
+    # if zip_path is None:
+    #     return response
 
     inner_zipped_file = None
     archive = zipfile.ZipFile(zip_path, 'r')
@@ -1359,8 +1359,8 @@ def find_page(request, book_id, page):
             print '***' + zipped_file + '****'
             inner_zipped_file = zipped_file
 
-    if inner_zipped_file is None:
-        return response
+    # if inner_zipped_file is None:
+    #     return response
 
     # imgdata = archive.read('JP2\\003871282_000015.jp2')
     imgdata = archive.read(inner_zipped_file)
