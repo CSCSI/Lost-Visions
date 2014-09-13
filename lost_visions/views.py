@@ -1370,7 +1370,7 @@ def find_page(request, book_id, page):
     input_image.seek(0)
     img = Image.open(input_image)
     # save as jpeg instead of jpeg2000. Probable loss of quality
-    img.save(response, "JPEG", quality=80, optimize=True, progressive=True)
+    img.save(response, "png", quality=80, optimize=True, progressive=True)
 
     return response
 
