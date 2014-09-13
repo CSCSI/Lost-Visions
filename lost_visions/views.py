@@ -1322,11 +1322,13 @@ def manage_collection(request):
 def get_zip_path(root_folder, book_id):
     try:
         for a_file in os.listdir(root_folder):
-            for b_file in os.listdir(a_file):
+            disk_folder = os.path.join(root_folder, a_file)
+            for b_file in os.listdir(disk_folder):
                 if book_id in b_file:
-                    print 'found file ' + str(b_file)
-                    return b_file
-    except:
+                    return os.path.join(root_folder, os.path.join(a_file, b_file))
+    except Exception as e:
+        print e
+
         return None
 
 
@@ -1346,21 +1348,20 @@ def find_page(request, book_id, page):
 
     response = HttpResponse(content_type="image/jpeg")
 
-    # if zip_path is None:
-    #     return response
+    if zip_path is None:
+        return response
 
     inner_zipped_file = None
     archive = zipfile.ZipFile(zip_path, 'r')
-    print str(archive.namelist())
+
     for zipped_file in archive.namelist():
         page_number_found = zipped_file.split('_')[1]
         page_number_found = page_number_found.split('.')[0]
         if int(page) == int(page_number_found):
-            print '***' + zipped_file + '****'
             inner_zipped_file = zipped_file
 
-    # if inner_zipped_file is None:
-    #     return response
+    if inner_zipped_file is None:
+        return response
 
     # imgdata = archive.read('JP2\\003871282_000015.jp2')
     imgdata = archive.read(inner_zipped_file)
