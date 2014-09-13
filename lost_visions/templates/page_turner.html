@@ -1,30 +1,109 @@
 {% extends "base.html" %}
-
+{% load staticfiles %}
 
 {% block content %}
-    {{ zip_path }}
+    <link rel="stylesheet" type="text/css" href="{% static "sidebar.css" %}" />
 
-    <ul class="pager">
-        <li class="previous">
-            <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev%}">Previous Page</a>
+    {#    {{ zip_path }}#}
+    {#    {{ pages }}#}
 
-        </li>
-        <div class="rota btn btn-info">Page {{ page }}</div>
-        <li class="next">
-            <a class="rota btn btn-default" href="{% url 'page_turner' book_id next%}">Next Page</a>
-        </li>
-    </ul>
 
-    <img src="{% url 'find_page' book_id page%}" style="width: 100%">
+    <div id="wrapper">
 
-    <ul class="pager">
-        <li class="previous">
-            <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev%}">Previous Page</a>
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <h4>
+                        <a>Page Turner</a>
+                    </h4>
+                </li>
+                {% for a_page in pages %}
+                    <li>
+                        <a href="{% url 'page_turner' book_id a_page%}">Page {{ a_page }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
 
-        </li>
-        <div class="rota btn btn-info">Page {{ page }}</div>
-        <li class="next">
-            <a class="rota btn btn-default" href="{% url 'page_turner' book_id next%}">Next Page</a>
-        </li>
-    </ul>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="full_page">
+
+                            <ul class="pager">
+                                <li class="previous">
+                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev%}">Previous Page</a>
+
+                                </li>
+                                <a href="#menu-toggle" class="rota btn btn-default" id="menu-toggle">Page options</a>
+                                <div class="rota btn btn-info">Page {{ page }}</div>
+                                <li class="next">
+                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id next%}">Next Page</a>
+                                </li>
+                            </ul>
+
+                            <img src="{% url 'find_page' book_id page%}" style="width: 100%">
+
+                            <ul class="pager">
+                                <li class="previous">
+                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev%}">Previous Page</a>
+
+                                </li>
+                                <div class="rota btn btn-info">Page {{ page }}</div>
+                                <li class="next">
+                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id next%}">Next Page</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+
+
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+
+
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+        $("#sidebar-wrapper").height($(window).height() * 0.8);
+
+        $(document).ready(function(){
+            setTimeout(function(){
+                $("#menu-toggle").click();
+            }, 3);
+        });
+        {#            function hide() {#}
+        {#                $(this).closest('.list-group').fadeOut('slide',function(){#}
+        {#                    $('.mini-submenu').fadeIn();#}
+        {#                });#}
+        {#            }#}
+        {##}
+        {#            function reveal() {#}
+        {#                $(this).next('.list-group').toggle('slide');#}
+        {#                $('.mini-submenu').hide();#}
+        {#            }#}
+        {#            $('.mini-submenu').on('click', reveal);#}
+        {##}
+        {#            $('#slide-submenu').on('click', hide).click();#}
+
+
+        {#        });#}
+    </script>
+
+
+
+
+
+
 {% endblock %}

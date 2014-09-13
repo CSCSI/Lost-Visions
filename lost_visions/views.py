@@ -1315,7 +1315,7 @@ def manage_collection(request):
 
     query_response = {
         'success': True,
-    }
+        }
     return HttpResponse(json.dumps(query_response), content_type="application/json")
 
 
@@ -1331,11 +1331,7 @@ def get_zip_path(root_folder, book_id):
 
         return None
 
-
-def find_page(request, book_id, page):
-    print book_id
-    print page
-
+def find_zip(book_id) :
     web_folder = os.path.join('', 'media')
     web_folder = os.path.join(web_folder, 'page_zips')
 
@@ -1346,14 +1342,22 @@ def find_page(request, book_id, page):
 
     zip_path = get_zip_path(root_folder, book_id)
 
+    if zip_path is None:
+        return None
+
+    archive = zipfile.ZipFile(zip_path, 'r')
+
+    return archive
+
+def find_page(request, book_id, page):
+
     response = HttpResponse(content_type="image/jpeg")
 
-    if zip_path is None:
+    archive = find_zip(book_id)
+    if archive is None:
         return response
 
     inner_zipped_file = None
-    archive = zipfile.ZipFile(zip_path, 'r')
-
     for zipped_file in archive.namelist():
         page_number_found = zipped_file.split('_')[1]
         page_number_found = page_number_found.split('.')[0]
@@ -1370,16 +1374,25 @@ def find_page(request, book_id, page):
     input_image.seek(0)
     img = Image.open(input_image)
     # save as jpeg instead of jpeg2000. Probable loss of quality
-    img.save(response, "png", quality=80, optimize=True, progressive=True)
+    img.save(response, "JPEG", quality=80, optimize=True, progressive=True)
 
     return response
 
 
 def page_turner(request, book_id, page):
+    archive = find_zip(book_id)
+    pages = []
+    if archive is not None:
+        for page_name in archive.namelist():
+            page_number_found = page_name.split('_')[1]
+            page_number_found = page_number_found.split('.')[0]
+            pages.append(int(page_number_found))
+
     prev = int(page) - 1
     next_page = int(page) + 1
     return render(request, 'page_turner.html', {
-                    'book_id': book_id,
-                    'page': page,
-                    'prev': prev,
-                    'next': next_page})
+        'book_id': book_id,
+        'pages': sorted(pages, key=int),
+        'page': page,
+        'prev': prev,
+        'next': next_page})
