@@ -64,15 +64,6 @@
 
         });
 
-        var word_array = [
-            {text: "Lorem", weight: 25},
-            {text: "Ipsum", weight: 19, link: "http://jquery.com/"},
-            {text: "Dolor", weight: 16, html: {title: "I can haz any html attribute"}},
-            {text: "Sit", weight: 17},
-            {text: "Amet", weight: 15}
-            // ...as many words as you want
-        ];
-
         var tags = '';
         var the_tags = {{ image_tags|safe }};
 
@@ -83,8 +74,6 @@
                     'style="margin: 5px; display: inline-block; font-size: '
                     + (font_size/2 + (the_tags[tag]['uses'] * (font_size/2))) + 'px">' + the_tags[tag]['tag'] + '</div>';
         }
-
-        console.log(the_tags);
 
         $('#tag_cloud').html(tags);
 
@@ -878,7 +867,10 @@
                 </td></tr>
                 <tr>
                     <th>Full page</th>
-                    <td><a target="_blank" href="{% url 'page_turner' book_id page %}">Click here</a></td>
+                    {{ book_id }}
+                    {{ page }}
+                    {{ volume }}
+                    <td><a target="_blank" href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Click here</a></td>
                 </tr>
                 {% for mykey,value in formatted_info.items %}
                     {% if mykey != 'tags' %}

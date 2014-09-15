@@ -263,6 +263,7 @@ def image(request, image_id):
     return render(request, 'image.html',
                   {'image': image_info,
                    'book_id': image_info.get('book_identifier', ""),
+                   'volume': image_info.get('volume', ""),
                    'page': image_info.get('page', ""),
                    'formatted_info': formatted_info,
                    'image_id': image_id,
@@ -1319,7 +1320,9 @@ def manage_collection(request):
     return HttpResponse(json.dumps(query_response), content_type="application/json")
 
 
-def get_zip_path(root_folder, book_id):
+def get_zip_path(root_folder, book_id, volume='0'):
+    book_id = book_id + '_' + volume.lstrip('0')
+    print book_id
     try:
         for a_file in os.listdir(root_folder):
             disk_folder = os.path.join(root_folder, a_file)
@@ -1331,7 +1334,8 @@ def get_zip_path(root_folder, book_id):
 
         return None
 
-def find_zip(book_id) :
+
+def find_zip(book_id, volume='0') :
     web_folder = os.path.join('', 'media')
     web_folder = os.path.join(web_folder, 'page_zips')
 
@@ -1340,7 +1344,7 @@ def find_zip(book_id) :
     root_folder = os.path.join(root_folder, web_folder)
     # zip_path = '/home/ubuntu/PycharmProjects/Lost-Visions/lost_visions/static/media/images/003871282_0_1-324pgs__1023322_dat.zip'
 
-    zip_path = get_zip_path(root_folder, book_id)
+    zip_path = get_zip_path(root_folder, book_id, volume)
 
     if zip_path is None:
         return None
@@ -1349,11 +1353,12 @@ def find_zip(book_id) :
 
     return archive
 
-def find_page(request, book_id, page):
+
+def find_page(request, book_id, page, volume):
 
     response = HttpResponse(content_type="image/jpeg")
 
-    archive = find_zip(book_id)
+    archive = find_zip(book_id, volume)
     if archive is None:
         return response
 
@@ -1379,8 +1384,8 @@ def find_page(request, book_id, page):
     return response
 
 
-def page_turner(request, book_id, page):
-    archive = find_zip(book_id)
+def page_turner(request, book_id, page, volume):
+    archive = find_zip(book_id, volume)
     pages = []
     if archive is not None:
         for page_name in archive.namelist():
@@ -1392,6 +1397,7 @@ def page_turner(request, book_id, page):
     next_page = int(page) + 1
     return render(request, 'page_turner.html', {
         'book_id': book_id,
+        'volume': volume,
         'pages': sorted(pages, key=int),
         'page': page,
         'prev': prev,

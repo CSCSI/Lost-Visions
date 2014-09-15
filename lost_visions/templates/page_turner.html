@@ -20,7 +20,7 @@
                 </li>
                 {% for a_page in pages %}
                     <li>
-                        <a href="{% url 'page_turner' book_id a_page%}">Page {{ a_page }}</a>
+                        <a href="{% url 'page_turner' book_id a_page volume%}">Page {{ a_page }}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -36,26 +36,26 @@
 
                             <ul class="pager">
                                 <li class="previous">
-                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev%}">Previous Page</a>
+                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev volume%}">Previous Page</a>
 
                                 </li>
                                 <a href="#menu-toggle" class="rota btn btn-default" id="menu-toggle">Page options</a>
                                 <div class="rota btn btn-info">Page {{ page }}</div>
                                 <li class="next">
-                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id next%}">Next Page</a>
+                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id next volume%}">Next Page</a>
                                 </li>
                             </ul>
 
-                            <img src="{% url 'find_page' book_id page%}" style="width: 100%">
+                            <img src="{% url 'find_page' book_id page volume%}" style="width: 100%">
 
                             <ul class="pager">
                                 <li class="previous">
-                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev%}">Previous Page</a>
+                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev volume%}">Previous Page</a>
 
                                 </li>
                                 <div class="rota btn btn-info">Page {{ page }}</div>
                                 <li class="next">
-                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id next%}">Next Page</a>
+                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id next volume%}">Next Page</a>
                                 </li>
                             </ul>
                         </div>
