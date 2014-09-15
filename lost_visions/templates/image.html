@@ -867,9 +867,6 @@
                 </td></tr>
                 <tr>
                     <th>Full page</th>
-                    {{ book_id }}
-                    {{ page }}
-                    {{ volume }}
                     <td><a target="_blank" href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Click here</a></td>
                 </tr>
                 {% for mykey,value in formatted_info.items %}

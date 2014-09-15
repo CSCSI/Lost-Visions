@@ -1390,7 +1390,7 @@ def page_turner(request, book_id, page, volume):
     pages = []
     if archive is not None:
         for page_name in archive.namelist():
-            page_number_found = page_name.split('_')[1]
+            page_number_found = page_name.split('_')[:1]
             page_number_found = page_number_found.split('.')[0]
             pages.append(int(page_number_found))
 
