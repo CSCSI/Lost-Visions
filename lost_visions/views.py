@@ -1321,8 +1321,8 @@ def manage_collection(request):
 
 
 def get_zip_path(root_folder, book_id, volume='0'):
-    book_id = book_id + '_' + volume.lstrip('0')
-    print book_id
+    # book_id = book_id + '_' + volume.lstrip('0')
+    # print book_id
     try:
         for a_file in os.listdir(root_folder):
             disk_folder = os.path.join(root_folder, a_file)
