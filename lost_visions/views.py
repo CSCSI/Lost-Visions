@@ -1321,13 +1321,15 @@ def manage_collection(request):
 
 
 def get_zip_path(root_folder, book_id, volume='0'):
-    # book_id = book_id + '_' + volume.lstrip('0')
+    book_id = book_id + '_' + volume.lstrip('0')
     # print book_id
+
     try:
         for a_file in os.listdir(root_folder):
             disk_folder = os.path.join(root_folder, a_file)
             for b_file in os.listdir(disk_folder):
                 if book_id in b_file:
+                    # print b_file
                     if int(b_file.split('_')[1]) == int(volume):
                         return os.path.join(root_folder, os.path.join(a_file, b_file))
     except Exception as e:
@@ -1336,7 +1338,7 @@ def get_zip_path(root_folder, book_id, volume='0'):
         return None
 
 
-def find_zip(book_id, volume='0') :
+def find_zip(book_id, volume='0'):
     web_folder = os.path.join('', 'media')
     web_folder = os.path.join(web_folder, 'page_zips')
 
@@ -1365,7 +1367,7 @@ def find_page(request, book_id, page, volume):
 
     inner_zipped_file = None
     for zipped_file in archive.namelist():
-        page_number_found = zipped_file.split('_')[1]
+        page_number_found = zipped_file.split('_')[-1]
         page_number_found = page_number_found.split('.')[0]
         if int(page) == int(page_number_found):
             inner_zipped_file = zipped_file
@@ -1376,16 +1378,20 @@ def find_page(request, book_id, page, volume):
     # imgdata = archive.read('JP2\\003871282_000015.jp2')
     imgdata = archive.read(inner_zipped_file)
 
+
     input_image = StringIO.StringIO(imgdata)
     input_image.seek(0)
     img = Image.open(input_image)
+
     # save as jpeg instead of jpeg2000. Probable loss of quality
+    response['Content-Disposition'] = 'attachment; filename=%s' % str(inner_zipped_file).replace('.jp2', '.jpg')
     img.save(response, "JPEG", quality=80, optimize=True, progressive=True)
 
     return response
 
 
 def page_turner(request, book_id, page, volume):
+    page = str(int(page))
     archive = find_zip(book_id, volume)
     pages = []
     if archive is not None:

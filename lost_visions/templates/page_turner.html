@@ -15,7 +15,11 @@
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
                     <h4>
-                        <a>Page Turner</a>
+                        <a style="text-align: center; text-decoration: underline">Page Turner</a>
+                    </h4>
+
+                    <h4>
+                        <a href="{% url 'find_page' book_id page volume%}" target="_blank" download>Download Current Page</a>
                     </h4>
                 </li>
                 {% for a_page in pages %}
@@ -34,26 +38,33 @@
                     <div class="col-lg-12">
                         <div id="full_page">
 
-                            <ul class="pager">
+                            <ul class="pager" style="padding-bottom: 10px">
                                 <li class="previous">
                                     <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev volume%}">Previous Page</a>
 
                                 </li>
-                                <a href="#menu-toggle" class="rota btn btn-default" id="menu-toggle">Page options</a>
-                                <div class="rota btn btn-info">Page {{ page }}</div>
+                                <li>
+                                    <div class="rota btn btn-info" id="menu-toggle">Page Options</div>
+                                </li>
+                                <li>
+                                    <div class="rota btn btn-info">Page {{ page }}</div>
+                                </li>
                                 <li class="next">
                                     <a class="rota btn btn-default" href="{% url 'page_turner' book_id next volume%}">Next Page</a>
                                 </li>
                             </ul>
 
-                            <img src="{% url 'find_page' book_id page volume%}" style="width: 100%">
+                            <a href="{% url 'page_turner' book_id next volume%}">
+                                <img src="{% url 'find_page' book_id page volume%}" style="width: 100%">
+                            </a>
 
                             <ul class="pager">
                                 <li class="previous">
                                     <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev volume%}">Previous Page</a>
-
                                 </li>
-                                <div class="rota btn btn-info">Page {{ page }}</div>
+                                <li>
+                                    <div class="rota btn btn-info">Page {{ page }}</div>
+                                </li>
                                 <li class="next">
                                     <a class="rota btn btn-default" href="{% url 'page_turner' book_id next volume%}">Next Page</a>
                                 </li>
