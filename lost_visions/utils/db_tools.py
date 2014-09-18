@@ -58,6 +58,24 @@ def get_info_from_image_model(image_model):
 
 
 def find_image(image_info):
+
+    book_id = image_info['book_identifier']
+    volume = image_info['volume']
+    page = image_info['page']
+    index = image_info['image_idx']
+
+    try:
+        found_image = models.Image.objects.get(book_identifier=book_id, volume=volume, page=page, image_idx=index)
+        image_location = models.ImageLocation.objects.get(image=found_image)
+
+        image_path = image_location.location
+
+        scratch_start = '/scratch/lost-visions/images-found/'
+        web_server_start = '/static/media/images/scans/'
+        return image_path.replace(scratch_start, web_server_start)
+    except:
+        pass
+
     try:
         # print image_info
 
