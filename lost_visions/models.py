@@ -45,7 +45,12 @@ class Book(models.Model):
 
 class ImageLocation(models.Model):
     location = models.TextField(blank=True)
-    image = models.ForeignKey('Image', null=True, blank=True, related_name='image')
+    # image = models.ForeignKey('Image', null=True, blank=True, related_name='image')
+
+    book_id = models.TextField(blank=True)
+    volume = models.TextField(blank=True)
+    page = models.TextField(blank=True)
+    idx = models.TextField(blank=True)
 
 
 class Image(models.Model):

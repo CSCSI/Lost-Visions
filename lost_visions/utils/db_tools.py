@@ -65,16 +65,22 @@ def find_image(image_info):
     index = image_info['image_idx']
 
     try:
-        found_image = models.Image.objects.get(book_identifier=book_id, volume=volume, page=page, image_idx=index)
-        image_location = models.ImageLocation.objects.get(image=found_image)
+        # found_image = models.Image.objects.get(book_identifier=book_id, volume=volume, page=page, image_idx=index)
+        # image_location = models.ImageLocation.objects.get(image=found_image)
 
-        image_path = image_location.location
+        image_location = models.ImageLocation.objects.filter(book_id=book_id,
+                                                             volume=volume,
+                                                             page=page,
+                                                             idx=index)
+
+        image_path = image_location[0].location
 
         scratch_start = '/scratch/lost-visions/images-found/'
         web_server_start = '/static/media/images/scans/'
         return image_path.replace(scratch_start, web_server_start)
-    except:
-        pass
+    except Exception as e:
+        print e
+
 
     try:
         # print image_info
