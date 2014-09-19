@@ -30,7 +30,7 @@ def make_file_list(sizes):
                     year_folder_path = os.path.join(size_path, year_folder)
 
                     for size_file in os.listdir(year_folder_path):
-                        f.write(os.path.join(year_folder_path, size_file))
+                        f.write(str(os.path.join(year_folder_path, size_file)) + '\n')
 
 
 def db_from_file(sizes):
