@@ -14,9 +14,9 @@ def save_location(book_id, volume, page, index, year, full_path):
         print 'No image for {} {} {} {} {} {}'.format(book_id, volume, page, index, year, full_path)
     else:
         new_location = models.ImageLocation.objects.get_or_create(image=found_image, location=full_path)
-    # new_location.image = found_image
-    # new_location.location = full_path
-    # new_location.save()
+        # new_location.image = found_image
+        # new_location.location = full_path
+        # new_location.save()
 
 
 def make_file_list(sizes):
@@ -74,13 +74,15 @@ def db_from_file(sizes):
 
                     if len(writable_objects) > 100:
                         counter += len(writable_objects)
-                        print 'writing to db {} line {} total ({} linenumber)'.format(len(writable_objects), counter, line_number)
+                        print 'writing to db - (' + str(len(writable_objects)) + \
+                              ' lines) (' + str(counter) + ' total) (file_name ' + size + ')'
                         models.ImageLocation.objects.bulk_create(writable_objects)
                         writable_objects = []
 
                 if len(writable_objects) > 0:
                     counter += len(writable_objects)
-                    print 'writing to db {} line {} total ({} filename)'.format(len(writable_objects), counter, size)
+                    print 'writing to db - (' + str(len(writable_objects)) + \
+                          ' lines) (' + str(counter) + ' total) (file_name ' + size + ')'
                     models.ImageLocation.objects.bulk_create(writable_objects)
                     writable_objects = []
 
