@@ -7,7 +7,8 @@ from lost_visions import models
 
 
 def save_location(book_id, volume, page, index, year, full_path):
-    found_image = models.Image.objects.get(book_identifier=book_id, volume=volume, page=page, image_idx=index, date=year)
+    found_images = models.Image.objects.filter(book_identifier=book_id, volume=volume, page=page, image_idx=index, date=year)
+    found_image = found_images[0]
 
     if found_image == None:
         print 'No image for {} {} {} {} {} {}'.format(book_id, volume, page, index, year, full_path)
@@ -29,6 +30,8 @@ def load_scratch_to_db(sizes):
         embellishment_path = os.path.join(root_folder, 'embellishments')
         for year_folder in os.listdir(embellishment_path):
             year_folder_path = os.path.join(embellishment_path, year_folder)
+
+            writable_objects = []
             for embellishment_file in os.listdir(year_folder_path):
                 filename_split = embellishment_file.split('_')
 
@@ -38,7 +41,27 @@ def load_scratch_to_db(sizes):
                 index = filename_split[3]
 
                 full_path = str(os.path.join(year_folder_path, embellishment_file))
-                save_location(book_id, volume, page, index, year_folder, full_path)
+                # save_location(book_id, volume, page, index, year_folder, full_path)
+                found_images = models.Image.objects.filter(
+                    book_identifier=book_id,
+                    volume=volume,
+                    page=page,
+                    image_idx=index)
+                if found_images.count() > 0:
+                    found_image = found_images[0]
+                    new_location = models.ImageLocation(image=found_image, location=full_path)
+                    writable_objects.append(new_location)
+                else :
+                    print 'No image for {} {} {} {} {} {}'.format(book_id, volume, page, index, year_folder, full_path)
+
+                if len(writable_objects) > 100:
+                    models.ImageLocation.objects.bulk_create(writable_objects)
+                    writable_objects = []
+
+            if len(writable_objects) > 0:
+                models.ImageLocation.objects.bulk_create(writable_objects)
+                writable_objects = []
+
 
     if 'medium' in sizes:
         # medium sized images folder
