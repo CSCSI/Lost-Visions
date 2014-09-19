@@ -64,7 +64,7 @@ def db_from_file(sizes):
                     #     print 'No image for {} {} {} {} {} {}'.format(book_id, volume, page, index, filepath_split[-2], line)
 
                     new_location = models.ImageLocation(
-                        location=line,
+                        location=line.strip(),
                         book_id=book_id,
                         volume=volume,
                         page=page,
