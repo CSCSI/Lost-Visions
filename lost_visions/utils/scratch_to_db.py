@@ -14,9 +14,7 @@ def save_location(book_id, volume, page, index, year, full_path):
         print 'No image for {} {} {} {} {} {}'.format(book_id, volume, page, index, year, full_path)
     else:
         new_location = models.ImageLocation.objects.get_or_create(image=found_image, location=full_path)
-        # new_location.image = found_image
-        # new_location.location = full_path
-        # new_location.save()
+
 
 
 def make_file_list(sizes):
@@ -24,13 +22,17 @@ def make_file_list(sizes):
 
     for size in sizes:
         size_path = os.path.join(root_folder, size)
-        if os.path.exists(size_path):
-            with open(size, 'w') as f:
-                for year_folder in os.listdir(size_path):
-                    year_folder_path = os.path.join(size_path, year_folder)
 
-                    for size_file in os.listdir(year_folder_path):
-                        f.write(str(os.path.join(year_folder_path, size_file)) + '\n')
+        if os.path.exists(size_path):
+            if os.path.exists(size):
+                print 'skipping making ' + size + ' file'
+            else:
+                with open(size, 'w') as f:
+                    for year_folder in os.listdir(size_path):
+                        year_folder_path = os.path.join(size_path, year_folder)
+
+                        for size_file in os.listdir(year_folder_path):
+                            f.write(str(os.path.join(year_folder_path, size_file)) + '\n')
 
 
 def db_from_file(sizes):
@@ -42,37 +44,41 @@ def db_from_file(sizes):
                 writable_objects = []
 
                 for line_number, line in enumerate(f.readlines()):
-                    filepath_split = line.split('/')[-1]
-                    filename_split = filepath_split.split('_')
+                    try:
+                        filepath_split = line.split('/')[-1]
+                        filename_split = filepath_split.split('_')
 
-                    book_id = filename_split[0]
-                    volume = filename_split[1]
-                    page = filename_split[2]
-                    index = filename_split[3]
+                        book_id = filename_split[0]
+                        volume = filename_split[1]
+                        page = filename_split[2]
+                        index = filename_split[3]
 
-                    # save_location(book_id, volume, page, index, year_folder, full_path)
-                    # try:
-                    #     found_images = models.Image.objects.filter(
-                    #         book_identifier=book_id,
-                    #         volume=volume,
-                    #         page=page,
-                    #         image_idx=index)
-                    #     found_image = found_images[0]
-                    #     new_location = models.ImageLocation(image=found_image, location=line)
-                    #     writable_objects.append(new_location)
-                    # except:
-                    #     print 'No image for {} {} {} {} {} {}'.format(book_id, volume, page, index, filepath_split[-2], line)
+                        # save_location(book_id, volume, page, index, year_folder, full_path)
+                        # try:
+                        #     found_images = models.Image.objects.filter(
+                        #         book_identifier=book_id,
+                        #         volume=volume,
+                        #         page=page,
+                        #         image_idx=index)
+                        #     found_image = found_images[0]
+                        #     new_location = models.ImageLocation(image=found_image, location=line)
+                        #     writable_objects.append(new_location)
+                        # except:
+                        #     print 'No image for {} {} {} {} {} {}'.format(book_id, volume, page, index, filepath_split[-2], line)
 
-                    new_location = models.ImageLocation(
-                        location=line.strip(),
-                        book_id=book_id,
-                        volume=volume,
-                        page=page,
-                        idx=index
-                    )
-                    writable_objects.append(new_location)
+                        new_location = models.ImageLocation(
+                            location=line.strip(),
+                            book_id=book_id,
+                            volume=volume,
+                            page=page,
+                            idx=index
+                        )
+                        writable_objects.append(new_location)
+                    except Exception as e:
+                        print 'error on line ' + line
+                        print e
 
-                    if len(writable_objects) > 100:
+                    if len(writable_objects) > 300:
                         counter += len(writable_objects)
                         print 'writing to db - (' + str(len(writable_objects)) + \
                               ' lines) (' + str(counter) + ' total) (file_name ' + size + ')'
