@@ -1391,7 +1391,19 @@ def find_page(request, book_id, page, volume):
 
 
 def page_turner(request, book_id, page, volume):
-    page = str(int(page))
+    page_detail = page.split(':')
+    page_long = page_detail[0]
+    page_short = str(int(page_long))
+
+    print book_id
+    print page_detail
+    print page_long
+    print page_short
+    print volume
+
+    image_data = models.Image.objects.filter(book_identifier=book_id)[0]
+    title = image_data.title
+
     archive = find_zip(book_id, volume)
     pages = []
     if archive is not None:
@@ -1400,12 +1412,34 @@ def page_turner(request, book_id, page, volume):
             page_number_found = page_number_found.split('.')[0]
             pages.append(int(page_number_found))
 
-    prev = int(page) - 1
-    next_page = int(page) + 1
-    return render(request, 'page_turner.html', {
+    prev = int(page_short) - 1
+    next_page = int(page_short) + 1
+
+    render_details = {
         'book_id': book_id,
         'volume': volume,
         'pages': sorted(pages, key=int),
-        'page': page,
-        'prev': prev,
-        'next': next_page})
+        'page': page_short,
+        'title': title,
+        'prev': str(prev).zfill(6),
+        'next': str(next_page).zfill(6),
+        'split_pre': page_short + ':-1',
+        'split_post': page_short + ':+1'
+    }
+
+    if len(page_detail) > 1:
+        pre_post_page = page_detail[1]
+        pre_post = ''
+        extra_page_number = 0
+
+        if '-1' in pre_post_page:
+            extra_page_number = str(int(page_detail[0]) -1)
+            pre_post = 'pre'
+        if '+1' in pre_post_page:
+            extra_page_number = str(int(page_detail[0]) +1)
+            pre_post = 'post'
+
+        render_details['pre_post']= pre_post
+        render_details['pre_post_number'] = extra_page_number
+
+    return render(request, 'page_turner.html', render_details)

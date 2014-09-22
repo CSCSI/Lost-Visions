@@ -17,7 +17,13 @@
                     <h4>
                         <a style="text-align: center; text-decoration: underline">Page Turner</a>
                     </h4>
-
+                </li>
+                <li>
+                    <h5>
+                        {{ title }}
+                    </h5>
+                </li>
+                <li>
                     <h4>
                         <a href="{% url 'find_page' book_id page volume%}" target="_blank" download>Download Current Page</a>
                     </h4>
@@ -37,26 +43,76 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div id="full_page">
-
                             <ul class="pager" style="padding-bottom: 10px">
                                 <li class="previous">
-                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id prev volume%}">Previous Page</a>
+                                    <a class="rota btn btn-sm btn-default" href="{% url 'page_turner' book_id prev volume%}">Previous Page</a>
 
                                 </li>
                                 <li>
-                                    <div class="rota btn btn-info" id="menu-toggle">Page Options</div>
+                                    <div class="rota btn btn-sm btn-info" id="menu-toggle">Book Details</div>
                                 </li>
                                 <li>
-                                    <div class="rota btn btn-info">Page {{ page }}</div>
+                                    <a class="rota btn btn-sm btn-info fa fa-2x fa-arrows-h" id="resize-width"></a>
+
+                                </li>
+                                <li>
+                                    <a class="rota btn btn-sm btn-info fa fa-2x fa-arrows-v" id="resize-height"></a>
+
+                                </li>
+                                <li>
+                                    <a href="{% url 'page_turner' book_id page volume%}"
+                                       class="rota btn btn-sm btn-info fa fa-2x fa-file-text" id="single-page">
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'page_turner' book_id split_pre volume%}"
+                                       class="rota btn btn-sm btn-info" id="double-left">
+                                        <div class="fa fa-2x fa-file-text-o"></div>
+                                        <div class="fa fa-2x fa-file-text"></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'page_turner' book_id split_post volume%}"
+                                       class="rota btn btn-sm btn-info" id="double-right">
+                                        <div class="fa fa-2x fa-file-text"></div>
+                                        <div class="fa fa-2x fa-file-text-o"></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="rota btn btn-sm btn-info">Page {{ page }}</a>
                                 </li>
                                 <li class="next">
-                                    <a class="rota btn btn-default" href="{% url 'page_turner' book_id next volume%}">Next Page</a>
+                                    <a class="rota btn btn-sm btn-default" href="{% url 'page_turner' book_id next volume%}">Next Page</a>
                                 </li>
                             </ul>
 
-                            <a href="{% url 'page_turner' book_id next volume%}">
-                                <img src="{% url 'find_page' book_id page volume%}" style="width: 100%">
-                            </a>
+                            <div id="page_image_wrapper">
+                                <table align="center" cellpadding="5px">
+                                    <tr>
+                                        {% if pre_post == 'pre' %}
+                                            <td>
+                                                <img id="page_image_pre" src="{% url 'find_page' book_id pre_post_number volume%}"
+                                                     style="background-color: #27268c; padding:1px;
+                                                     border: 3px; border-style: dashed; display: block; margin: 0 auto">
+                                            </td>
+                                        {% endif %}
+                                        <td>
+                                            <a href="{% url 'page_turner' book_id next volume%}">
+                                                <img id="page_image" src="{% url 'find_page' book_id page volume%}"
+                                                     style="background-color: #27268c; padding:1px; display: block; margin: 0 auto">
+                                            </a>
+                                        </td>
+                                        {% if pre_post == 'post' %}
+                                            <td>
+                                                <img id="page_image_post" src="{% url 'find_page' book_id pre_post_number volume%}"
+                                                     style="background-color: #27268c; padding:1px;
+                                                     border: 3px; border-style: dashed; display: block; margin: 0 auto">
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                </table>
+
+                            </div>
 
                             <ul class="pager">
                                 <li class="previous">
@@ -88,6 +144,30 @@
             $("#wrapper").toggleClass("toggled");
         });
         $("#sidebar-wrapper").height($(window).height() * 0.8);
+
+        $("#page_image").height($(window).height() * 0.8);
+        $("#page_image_pre").height($(window).height() * 0.8);
+        $("#page_image_post").height($(window).height() * 0.8);
+
+        $("#resize-height").click(function(e) {
+            {% if pre_post %}
+                $("#page_image_pre").height($(window).height() * 0.8).css({'width': 'auto'});
+                $("#page_image_post").height($(window).height() * 0.8).css({'width': 'auto'});
+                $("#page_image").height($(window).height() * 0.8).css({'width': 'auto'});
+            {% else %}
+                $("#page_image").height($(window).height() * 0.8).css({'width': 'auto'});
+            {% endif %}
+        });
+
+        $("#resize-width").click(function(e) {
+            {% if pre_post %}
+                $("#page_image_pre").css({'width': '100%', 'height': 'auto' });
+                $("#page_image_post").css({'width': '100%', 'height': 'auto' });
+                $("#page_image").css({'width': '100%', 'height': 'auto' });
+            {% else %}
+                $("#page_image").css({'width': '100%', 'height': 'auto' });
+            {% endif %}
+        });
 
         $(document).ready(function(){
             setTimeout(function(){

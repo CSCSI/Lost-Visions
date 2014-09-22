@@ -14,15 +14,11 @@
 
     <title>Lost Visions</title>
 
-    {#    {% dajaxice_js_import %}#}
-
-
     <!-- Bootstrap -->
 
     <!--[if lt IE 9]>
 <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
 <![endif]-->
-
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -49,8 +45,10 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.1.2/masonry.pkgd.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud-1.0.4.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{% static "//cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud.css" %}" />
-
     <script type="text/javascript" src="{% static "vakata-jstree-480a265/dist/jstree.js" %}"></script>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/intro.js/0.5.0/intro.js"></script>
+
     <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>
 
 
@@ -82,16 +80,18 @@
         function load_css() {
             var head = $('head');
             {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.slate.min.css" %}') );#}
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/intro.js/0.5.0/introjs.css'));
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "introjs-nassim.css" %}'));
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.0.6/bootstrap-social.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css') );
-            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "dice-theme1.css" %}') );#}
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "vakata-jstree-480a265/dist/themes/default/style.css" %}') );
-
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "lostvisions.css" %}') );
         }
 
     </script>
+
+
 
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -103,6 +103,8 @@
         ga('send', 'pageview');
 
     </script>
+
+
 
 
 </head>
@@ -171,6 +173,17 @@
 
         $("[data-toggle='tooltip']").tooltip({'placement': 'right'});
 
+        $('#teach_me').click(function(){
+            introJs().onbeforechange(function(targetElement) {
+                if (targetElement.id == 'collapse_cloud') {
+                    console.log(targetElement);
+                    $(targetElement).accordion({active: 0});
+                }
+                else if (targetElement.id == 'objects_and_ideas') {
+                    $(targetElement).collapse('show');
+                }
+            }).start();
+        });
     });
 
     if($.cookie("css")) {
@@ -254,7 +267,6 @@
             {% else %}
                 <li><a href="{% url 'account_login' %}">Login</a></li>
             {% endif %}
-
         </ul>
 
         <form id='search_form' action='{% url 'do_advanced_search' %}' method="get"
@@ -264,8 +276,8 @@
             </div>
             <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="left"
                     title="Perform Quick Search" data-original-title="Quick Search">Submit</button>
+            <a class="btn btn-info btn-xs" id="teach_me">Teach me</a>
         </form>
-
     </div><!-- /.navbar-collapse -->
 
 

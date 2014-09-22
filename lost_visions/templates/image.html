@@ -263,7 +263,7 @@
                 },
                 success: function(data) {
                     var question = data['question'];
-                    console.log(data);
+                    {#                    console.log(data);#}
                     $('#category-question').html(question);
 
                     var category_container = $('#category-container');
@@ -774,7 +774,7 @@
     <div class="container">
 
     <div class="col-xs-12 col-sm-7">
-        <div class="jumbotron">
+        <div class="jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
             <div id="photo_background" class="photo_background">
                 <canvas id='photo'></canvas>
                 {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
@@ -831,7 +831,8 @@
         <hr>
 
 
-        <div id="collapse_cloud" class="panel-group">
+        <div id="collapse_cloud" class="panel-group"
+             data-step="2" data-intro='This is the tag cloud for the image' data-position="right">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     Cloud of Tags
@@ -849,10 +850,10 @@
                 </div>
             </div>
         </div>
-
         <hr>
 
-        <div class="bs-example table-responsive">
+        <div class="bs-example table-responsive"
+             data-step="3" data-intro='This is the metadata for the image' data-position="right">
             <table class="table table-striped table-hover ">
                 <tbody>
                 <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
@@ -908,10 +909,11 @@
     <input type="hidden" id = 'tag_info' name="tag_info" value="" />
 
 
-    <div class="panel-group" id="accordion">
+    <div class="panel-group" id="accordion"
+         data-step="4" data-intro="These are the tagging options" data-position="left">
 
 
-    <div class="panel panel-default">
+    <div id="objects_and_ideas" class="panel panel-default">
         <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
             <div class="panel-heading">
                 <h4 class="panel-title">
