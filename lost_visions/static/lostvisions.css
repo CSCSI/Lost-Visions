@@ -1,15 +1,79 @@
+/*CSS for entire site*/
+
+/*globals*/
 * {
     font-size: 14px;
-    /*font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;*/
-        font-family: Helvetica, Arial, sans-serif;
-    /*font-family: Verdana, sans-serif;*/
-
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
     line-height: 1.8em;
-
     /*font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
 }
 
+a{
+    color: #2C3E50;
+}
 
+.nav li {
+    font-size: 13px;
+}
+
+.panel-body{
+    /*background-color: #7e98a8;*/
+}
+
+/*title bar*/
+
+.navbar-brand {
+    height: 40px;
+    padding: 10px;
+    padding-bottom: 5px;
+}
+
+.navbar {
+    height: 45px;
+    font-size: 10px;
+    /*margin-bottom: 10px;*/
+
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.navbar-collapse .in {
+    color: red;
+    background-color: green;
+}
+
+.logo1 {
+    background-size: 80px 40px;
+    background-position: -300px -500px;
+}
+
+.lv_logos {
+    background-image: url('media/images/lost-visions-station.png');
+    height: 25px;
+    margin-top: 5px;
+    width: auto;
+    /*margin: 3px*/
+}
+
+.quick-search-field {
+    height: 20px;
+    /*padding: 7px;*/
+    margin-top: 10px;
+}
+
+
+
+/*home page*/
+.home-width{
+    width: 100%;
+    margin: 0 auto;
+}
+
+
+
+/*tagging page*/
 
 .ui-autocomplete-loading {
     /*background: white url('media/images/ui-anim_basic_16x16.gif') right center no-repeat;*/
@@ -24,9 +88,7 @@
     max-height: 525px;
 }
 
-a{
-    color: #2C3E50;
-}
+
 
 .tag-button {
     margin: 5px;
@@ -42,19 +104,6 @@ a{
     /*lawngreen*/
 }
 
-.home-width{
-    width: 100%;
-    margin: 0 auto;
-}
-
-.nav li {
-    /*border-left: 1px solid black;*/
-    font-size: 13px;
-}
-
-.panel-body{
-    /*background-color: #7e98a8;*/
-}
 
 .jumbotron {
     background-color: rgba(183, 199, 215, 0.25);
@@ -63,25 +112,12 @@ a{
     padding-right: 15px;
 }
 
-/*.panel-default>.panel-heading{*/
 .panel-heading{
-
-    /*background-color: #e89362;*/
-    /*border-color: #e89362;*/
-    /*background-color: #2c3e50;*/
     background-color: rgba(183, 199, 215, 0.25);
-    /*border-color: #2c3e50;*/
-    /*color: #ffffff;*/
 }
 
 .panel-group .panel-footer{
     background-color: rgba(183, 199, 215, 0.25);
-
-    /*background-color: #e89362;*/
-    /*border-color: #e89362;*/
-    /*background-color: #3e444c;*/
-    /*border-color: #3e444c;*/
-    /*color: #ffffff;*/
 
     white-space: nowrap;
     width: 100%;                   /* IE6 needs any width */
@@ -120,34 +156,24 @@ body {
     margin: 0;
 }
 
-.pager>li>a {
-    background-color: #3a3f44;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
-    background-image: -webkit-linear-gradient(#484e55,#3a3f44 60%,#313539);
-    background-image: linear-gradient(#484e55,#3a3f44 60%,#313539);
-    background-repeat: no-repeat;
-    border: 1px solid rgba(0,0,0,0.6);
-}
+/*.pager>li>a {*/
+    /*background-color: #3a3f44;*/
+    /*text-shadow: 1px 1px 1px rgba(0,0,0,0.3);*/
+    /*background-image: -webkit-linear-gradient(#484e55,#3a3f44 60%,#313539);*/
+    /*background-image: linear-gradient(#484e55,#3a3f44 60%,#313539);*/
+    /*background-repeat: no-repeat;*/
+    /*border: 1px solid rgba(0,0,0,0.6);*/
+/*}*/
 
-.pager>li>a:hover {
-    background-color: #3a3f44;
-    background-image: linear-gradient(#020202,#101112 40%,#191b1d);
-    border: 1px solid rgba(0,0,0,0.6);
+/*.pager>li>a:hover {*/
+    /*background-color: #3a3f44;*/
+    /*background-image: linear-gradient(#020202,#101112 40%,#191b1d);*/
+    /*border: 1px solid rgba(0,0,0,0.6);*/
 
-}
+/*}*/
 
 a#save_image.btn.btn-default.save_image  {
     background: #910000;
-    /*background-image: url("media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png"); *//* fallback */
-    /*background-image: url("media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png"), -webkit-gradient(linear, left top, left bottom, from(#6cab26), to(#6ceb86)); *//* Saf4+, Chrome */
-    /*background-image: url("media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png"), -webkit-linear-gradient(top, #910000, #e20000); *//* Chrome 10+, Saf5.1+ */
-    /*background-image: url("media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png"),    -moz-linear-gradient(top, #910000, #e20000); *//* FF3.6+ */
-    /*background-image: url("media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png"),     -ms-linear-gradient(top, #910000, #e20000); *//* IE10 */
-    /*background-image: url("media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png"),      -o-linear-gradient(top, #910000, #e20000); *//* Opera 11.10+ */
-    /*background-image: url("media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png"),         linear-gradient(to bottom, #910000, #e20000); *//* W3C */
-
-
-    /*background: #3a3f44;*/
     background-image: linear-gradient(#910000, #ac0000 60%, #e20000);
 }
 
@@ -155,42 +181,7 @@ a:hover#save_image.btn.btn-default.save_image  {
     background-image: linear-gradient(#D92432, #e32537 40%, #ff263b);
 }
 
-.navbar-brand {
-    height: 40px;
-    padding: 10px;
-    padding-bottom: 5px;
 
-}
-
-.navbar {
-    height: 45px;
-    font-size: 10px;
-    /*margin-bottom: 10px;*/
-    
-    width: 100%;
-    margin: 0 auto;
-    padding-left: 10%;
-    padding-right: 10%;
-}
-
-.lv_logos {
-    background-image: url('media/images/lost-visions-station.png');
-    height: 25px;
-    margin-top: 5px;
-    width: auto;
-    /*margin: 3px*/
-}
-
-.quick-search-field {
-    height: 20px;
-    /*padding: 7px;*/
-    margin-top: 10px;
-}
-
-.logo1 {
-    background-size: 80px 40px;
-    background-position: -300px -500px;
-}
 
 .remove_button {
     position: absolute;
@@ -272,6 +263,8 @@ a:hover#save_image.btn.btn-default.save_image  {
     height: 50%;
 }
 
+
+/* Advanced search*/
 
 .advanced-search-form label {
     display: inline-block;

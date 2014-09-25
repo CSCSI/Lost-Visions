@@ -75,13 +75,14 @@
     {#      CSS Files     #}
 
     {#    page default theme    #}
-{#    <link href="{% static "bootstrap.flatly.min.css" %}" rel="stylesheet">#}
+    {#    <link href="{% static "bootstrap.flatly.min.css" %}" rel="stylesheet">#}
 
     <script>
         function load_css() {
             var head = $('head');
-                        <!--head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.slate.min.css" %}') );-->
-            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.flatly.min.css" %}'));
+{#            <!--head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.slate.min.css" %}') );-->#}
+{#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.flatly.min.css" %}'));#}
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.readable.css" %}'));
 
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/intro.js/0.5.0/introjs.css'));
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "introjs-nassim.css" %}'));
