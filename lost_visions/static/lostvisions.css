@@ -12,6 +12,14 @@ a{
     color: #2C3E50;
 }
 
+.metadata-cell {
+    white-space: normal;
+}
+
+body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > div.bs-example.table-responsive > table > tbody > tr > td {
+    white-space: normal;
+}
+
 .nav li {
     font-size: 13px;
 }
@@ -22,50 +30,69 @@ a{
 
 /*title bar*/
 
-.navbar-brand {
-    height: 40px;
-    padding: 10px;
-    padding-bottom: 5px;
-}
-
 .navbar {
-    height: 45px;
     font-size: 10px;
     /*margin-bottom: 10px;*/
 
     width: 100%;
     margin: 0 auto;
-    padding-left: 10%;
-    padding-right: 10%;
 }
 
-.navbar-collapse .in {
-    color: red;
-    background-color: green;
+.navbar-container {
+    background-color: #005b89;
+    /*width: 15%;*/
+    padding-left: 5%;
+    padding-right: 5%;
 }
 
-.logo1 {
-    background-size: 80px 40px;
-    background-position: -300px -500px;
+.navbar-header {
+    /*background-color: #ffff00;*/
 }
 
-.lv_logos {
-    background-image: url('media/images/lost-visions-station.png');
-    height: 25px;
-    margin-top: 5px;
-    width: auto;
+.navbar-brand, .navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand{
+    /*padding-left: 10%;*/
+    /*padding-right: 10%;*/
+    margin-left: 0px;
+    /*margin-right: 2%;*/
+    background-image: url('media/images/ill-arch-wide.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 150px;
+    /*background-color: red;*/
+}
+
+/*#navbar-main > ul > li > a {*/
+    /*padding-top: 3px;*/
+    /*padding-bottom: 3px;*/
+/*}*/
+
+/*.logo1 {*/
+    /*background-size: 80px 40px;*/
+    /*background-position: -300px -500px;*/
+/*}*/
+
+/*.lv_logos {*/
+    /*background-image: url('media/images/lost-visions-station.png');*/
+    /*height: auto;*/
+    /*margin-top: 5px;*/
+    /*width: 20%;*/
     /*margin: 3px*/
-}
+/*}*/
 
 .quick-search-field {
-    height: 20px;
+    height: 30px;
     /*padding: 7px;*/
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 
 
 /*home page*/
+.base-container {
+    padding-top: 70px
+}
+
 .home-width{
     width: 100%;
     margin: 0 auto;
@@ -183,11 +210,11 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 
 
-.remove_button {
-    position: absolute;
-    right:5px;
-    top:0px
-}
+/*.remove_button {*/
+    /*position: absolute;*/
+    /*right:5px;*/
+    /*top:0px*/
+/*}*/
 
 .collapse-init {
     position: absolute;
@@ -291,34 +318,34 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 
 
-.magnify {
+/*.magnify {*/
     /*$dimension: 300px;*/
 
-    width: 300px;
-    position: relative;
-    cursor: none;
+    /*width: 300px;*/
+    /*position: relative;*/
+    /*cursor: none;*/
 
-    border:2px solid black;
-    margin: 38px;
-    display:inline-block;
-}
+    /*border:2px solid black;*/
+    /*margin: 38px;*/
+    /*display:inline-block;*/
+/*}*/
 /* magnifying glass overlay */
-.glass {
-    z-index:9000; /* always on top? */
-    width: 268px; height: 268px;
-    position: absolute;
-    border-radius: 100%;
-    background-repeat:no-repeat;
-    background-color:white;
+/*.glass {*/
+    /*z-index:9000; *//* always on top? */
+    /*width: 268px; height: 268px;*/
+    /*position: absolute;*/
+    /*border-radius: 100%;*/
+    /*background-repeat:no-repeat;*/
+    /*background-color:white;*/
 
     /* Multiple box shadows to achieve the glass effect*/
-    box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.85),
-    0 0 7px 7px rgba(0, 0, 0, 0.25),
-    inset 0 0 40px 2px rgba(0, 0, 0, 0.25);
+    /*box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.85),*/
+    /*0 0 7px 7px rgba(0, 0, 0, 0.25),*/
+    /*inset 0 0 40px 2px rgba(0, 0, 0, 0.25);*/
 
     /*hide the glass by default*/
-    display: none;
-}
+    /*display: none;*/
+/*}*/
 
 /*To solve overlap bug at the edges during magnification*/
 .thumb {
