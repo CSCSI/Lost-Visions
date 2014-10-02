@@ -79,7 +79,8 @@
                 var link = '{% url 'dl_collection' %}?' +
                         'collection_id=' + collection_id;
                 $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
-                $('#edit_collection_dialog_form').dialog("open");
+{#                $('#edit_collection_dialog_form').dialog("open");#}
+                $('#share_all_dialogue').dialog("open");
 
 {#                window.open("{% url 'tweet_card' %}", '_blank');#}
             });
