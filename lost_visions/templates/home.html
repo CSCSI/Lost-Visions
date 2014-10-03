@@ -9,6 +9,9 @@
 
         $(document).ready(function () {
             $('#carousel-example-generic').carousel();
+{#                        $(".home-carousel").height($(window).height() * 0.4).css({'margin': '0 auto'});#}
+{#            var carousel = $(".home-carousel");#}
+{#            carousel.css({'max-height': carousel.height()});#}
         });
 
     </script>
@@ -27,36 +30,32 @@
         {% endif %}
     {% endif %}
 
-
-    <div class="panel panel-default home-width">
-        <div class="panel-heading">
-            <div class="lv-title" style="color: #2e4052">
-                <h2>&#10087;Lost Visions: Retrieving the Visual Element of Printed Books from the Nineteenth Century
-                    </h2></div>
+    <div class="home-content-main container">
+        <div class="row">
+            <div class="title-logo col-md-12">
+                <img src="{% static "media/images/logo.png" %}"/>
+            </div>
         </div>
-        <div class="panel-body">
-
-            <h4>
-                <p>
-                    <i>‘Lost Visions: Retrieving the Visual Element of Printed Books from the Nineteenth Century’</i> is one of 21 exciting and innovative new projects funded by the Arts and Humanities Research Council. Each project will exploit the potential of digital technologies to transform research in the arts and humanities and to ensure that it is at the forefront of tackling crucial issues such as intellectual property, cultural memory and identity, and communication and creativity in a digital age. Led by Professor Julia Thomas, from Cardiff University’s School of English, Communication and Philosophy, and in collaboration with Cardiff’s School of Computer Sciences & Informatics, Lost Visions will develop new methods to enable the general public to search online for over a million book illustrations taken from a dataset held by the British Library. The result of Thomas’s and her team’s work will be the world’s biggest searchable archive of book illustrations.
-
-                </p>
-            </h4>
-
-            <hr>
-
-            {#            <img id='home-image' src="{% static "media/images/hot_air.jpg" %}" style='max-width:100%; height:auto'>#}
-
-            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+        <div class="row">
+            <div id="carousel-example-generic" class="carousel slide home-carousel span12" data-ride="carousel">
                 <!-- Indicators -->
                 <ol class="carousel-indicators">
                     <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
                     <li data-target="#carousel-example-generic" data-slide-to="1"></li>
                     <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                    <li data-target="#carousel-example-generic" data-slide-to="4"></li>
+
                 </ol>
 
                 <!-- Wrapper for slides -->
                 <div class="carousel-inner">
+                    <div class="item active">
+                        <a href="{% url 'image.random' %}">
+                            <img src="{% static "media/images/LostVisions_TempMainFeature.png" %}" alt="carriage">
+                            <div class="carousel-caption"></div>
+                        </a>
+                    </div>
+
                     <div class="item">
                         <img src="{% static "media/images/2434490_orig.jpg" %}" alt="fire">
                         <div class="carousel-caption">
@@ -64,7 +63,7 @@
                         </div>
                     </div>
 
-                    <div class="item active">
+                    <div class="item">
                         <img src="{% static "media/images/11040257323.jpg" %}" alt="carriage">
                         <div class="carousel-caption">
                             BOURCARD, Francesco de.<br>
@@ -77,31 +76,41 @@
                         <img src="{% static "media/images/9878260_orig.jpg" %}" alt="boat">
                         <div class="carousel-caption">
                             From Richard Aldworth Oliver, Drawings and Sketches in New Zealand (London, 1853)<br>
-Caption: '(Drawing no.121) An officer and sailor with natives on board a ship'
+                            Caption: '(Drawing no.121) An officer and sailor with natives on board a ship'
                         </div>
                     </div>
                 </div>
 
                 <!-- Controls -->
                 <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    {#                    <span class="glyphicon glyphicon-chevron-left"></span>#}
                 </a>
                 <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-                    <span class="glyphicon glyphicon-chevron-right"></span>
+                    {#                    <span class="glyphicon glyphicon-chevron-right"></span>#}
                 </a>
             </div>
+        </div>
 
-            <hr>
-
-            <p>
-                The starting point for the Lost Visions project was the realisation that whilst books are being digitised on an unprecedented scale, illustrations and other important visual material are frequently omitted from this process.  In cases where the illustrations have been digitised, they are often of such a low quality and lacking the metadata required to make them searchable. In a very real sense these illustrations, which are a significant aspect of our cultural heritage and play a crucial role in how we understand visual culture today, are lost. The provision of metadata for over a million illustrations from the eighteenth to the twentieth century will allow these illustrations to be searched for and retrieved in a web-based interface that will be free and accessible to the public. Furthermore, the scale and scope of the project means that Illustration Studies, as an academic discipline, will have a resource which will enable researchers to identify how, for example, illustration changes over time, how certain images are re-used in different contexts, and how texts may shift from being illustrated initially, to losing their illustrations at a later date or vice-versa.
-            </p>
-            <p>
-                Lost Visions will revolutionise how illustration is understood and the importance accorded to it.
-            </p>
-
+        <div class="home-lower-imagebar row">
+            <div class="home-lower-imagebar-image-container col-md-4">
+                <a href="{% url 'about_us' %}">
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/LostVisions_About.png" %}"/>
+                </a>
+            </div>
+            <div class="home-lower-imagebar-image-container col-md-4">
+                <a target="_blank" href="http://lostvisions.weebly.com/">
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/LostVisions_Blog.png" %}"/>
+                </a>
+            </div>
+            <div class="home-lower-imagebar-image-container col-md-4">
+                <a target="_blank" href="http://lostvisions.weebly.com/events">
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/LostVisions_Events.png" %}"/>
+                </a>
+            </div>
         </div>
     </div>
+
+
 
 
 {% endblock %}

@@ -75,14 +75,14 @@
     {#      CSS Files     #}
 
     {#    page default theme    #}
-        <link href="{% static "bootstrap.readable.css" %}" rel="stylesheet">
+    <link href="{% static "bootstrap.readable.css" %}" rel="stylesheet">
 
     <script>
         function load_css() {
             var head = $('head');
             {#            <!--head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.slate.min.css" %}') );-->#}
             {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.flatly.min.css" %}'));#}
-{#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.readable.css" %}'));#}
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.readable.css" %}'));#}
 
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/intro.js/0.5.0/introjs.css'));
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "introjs-nassim.css" %}'));
@@ -195,7 +195,7 @@
     <div class="container navbar-container">
         <div class="navbar-header">
             <a href="{% url 'home' %}" class="navbar-brand">
-{#                <img class="lv_logos" src="{% static 'media/images/ill-arch-wide.png' %}">#}
+                {#                <img class="lv_logos" src="{% static 'media/images/ill-arch-wide.png' %}">#}
             </a>
             <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#navbar-main">
                 <span class="icon-bar"></span>
@@ -207,16 +207,20 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-main">
             <ul class="nav navbar-nav">
+                            <li><a href="{% url 'home' %}">Home</a></li>
+
+                <li><a href="{% url 'about_us' %}">About</a></li>
+
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About Us<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stuff<b class="caret"></b></a>
                     <ul class="dropdown-menu social-buttons">
                         <li>
                             <a class="btn btn-block btn-social" href="{% url 'stats' %}">Tagging Stats</a>
                         </li>
                         <li class="divider"></li>
-{#                        <li>#}
-                            <a class="btn btn-block btn-social" href="http://lostvisions.weebly.com/" target="_blank">Our Blog</a>
-{#                        </li>#}
+                        {#                        <li>#}
+                        <a class="btn btn-block btn-social" href="http://lostvisions.weebly.com/" target="_blank">Our Blog</a>
+                        {#                        </li>#}
                         <li class="divider"></li>
                         <a href="https://www.flickr.com/photos/britishlibrary" target="_blank" class="btn btn-block btn-social btn-flickr"><i class="fa fa-flickr"></i> British Library Images on Flickr </a>
                         <li class="divider"></li>
@@ -253,7 +257,7 @@
                 <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="left"
                         title="Perform Quick Search" data-original-title="Quick Search">Submit</button>
                 <a class="btn btn-info btn-xs" id="teach_me" data-toggle="tooltip" data-placement="left"
-                        title="Teach me about this page" data-original-title="Teach Me">[?]</a>
+                   title="Teach me about this page" data-original-title="Teach Me">[?]</a>
             </form>
         </div><!-- /.navbar-collapse -->
     </div>
@@ -329,15 +333,15 @@
 </div>
 
 <footer>
-                 <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Theme<b class="caret"></b></a>
-                                <ul class="dropdown-menu" id="change-theme">
-                                    <li><a href="#" rel="{% static "bootstrap.slate.min.css" %}">Grey</a></li>
-                                    <li><a href="#" rel="{% static "bootstrap.flatly.min.css" %}">Blue</a></li>
-                                    <li><a href="#" rel="{% static "bootstrap.lumin.min.css" %}">Lumin</a></li>
-                                    <li><a href="#" rel="http://www.dmvi.org.uk/css/dice-theme1.min.css">DMVI</a></li>
-                                </ul>
-                            </li>
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Theme<b class="caret"></b></a>
+        <ul class="dropdown-menu" id="change-theme">
+            <li><a href="#" rel="{% static "bootstrap.slate.min.css" %}">Grey</a></li>
+            <li><a href="#" rel="{% static "bootstrap.flatly.min.css" %}">Blue</a></li>
+            <li><a href="#" rel="{% static "bootstrap.lumin.min.css" %}">Lumin</a></li>
+            <li><a href="#" rel="http://www.dmvi.org.uk/css/dice-theme1.min.css">DMVI</a></li>
+        </ul>
+    </li>
 
     {#    <p>&copy; #}
     Cardiff University 2014
