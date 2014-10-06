@@ -13,6 +13,10 @@ a{
     font-weight: 200;
 }
 
+html, body {
+    height: 100%;
+}
+
 .metadata-cell {
     white-space: normal;
 }
@@ -29,6 +33,16 @@ body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > d
     /*background-color: #7e98a8;*/
 }
 
+.wrapper {
+    min-height: 100%;
+    /*height: auto !important;*/
+    /*height: 100%;*/
+    margin: 0 auto -10em;
+}
+
+.sticky-footer, .push {
+    height: 10em;
+}
 /*title bar*/
 
 .navbar {
@@ -100,6 +114,39 @@ body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > d
 
 #teach_me {
     margin: 2px;
+}
+
+.departments {
+    display: table-cell;
+    text-align: center;
+    /*border: 1px solid #DDD;*/
+    vertical-align: middle;
+    height: 100%;
+    padding-top: 3px;
+}
+
+.departments:hover {
+    background-color: #f5f5f5;
+}
+
+.footer-links > li > a > p {
+    margin: 0px;
+}
+
+.department_text {
+    text-align: center;
+}
+
+.footer-links {
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+    padding: 0px;
+}
+
+.footer-links > table > tbody > tr > td > a > img {
+    margin: 0 auto;
+    /*margin-left: 5px;*/
 }
 
 /*.logo1 {*/
@@ -177,7 +224,7 @@ body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > d
     width: auto;
     max-width: none;
     height: 100%;
-      vertical-align: middle;
+    vertical-align: middle;
 
     max-height: 100%;
     /*height: 525px;*/

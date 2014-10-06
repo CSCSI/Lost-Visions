@@ -15,6 +15,7 @@ urlpatterns = patterns('',
 
                        url(r'^$', 'lost_visions.views.home', name='home'),
                        url(r'^about_us', 'lost_visions.views.aboutus', name='about_us'),
+                       url(r'^software', 'lost_visions.views.software', name='software'),
                        url(r'^stats', 'lost_visions.views.stats', name='stats'),
 
                        url(r'^login', 'lost_visions.views.login', name='login'),

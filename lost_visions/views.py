@@ -1327,6 +1327,8 @@ def get_zip_path(root_folder, book_id, volume='0'):
     try:
         for a_file in os.listdir(root_folder):
             disk_folder = os.path.join(root_folder, a_file)
+            if 'disk5' in disk_folder:
+                disk_folder = os.path.join(disk_folder, 'JP2')
             for b_file in os.listdir(disk_folder):
                 if book_id in b_file:
                     # print b_file
@@ -1443,3 +1445,7 @@ def page_turner(request, book_id, page, volume):
         render_details['pre_post_number'] = extra_page_number
 
     return render(request, 'page_turner.html', render_details)
+
+
+def software(request):
+    return render_to_response('software.html')

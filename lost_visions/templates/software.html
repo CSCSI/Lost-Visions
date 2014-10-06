@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="panel panel-default">
+
+        <div class="panel">
+            <div class="panel-heading">
+                <h2>Lost Vision Project Software Outputs</h2>
+            </div>
+            <div class="panel-body">
+                <h4>
+                    <p>
+                        These are the software products produced during the time of the Lost Visions project
+                    </p>
+                </h4>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Open Source software development licences provided by</div>
+
+            <a class="list-group-item" href="http://www.jetbrains.com/pycharm/" target="_blank" style="text-align: center;">
+                <img src="{% static "media/images/pycharm_logo.gif" %}" style='width:auto; height:60px; padding: 10px; background-color: #ffffff'>
+            </a>
+            <a class="list-group-item" href="http://www.jetbrains.com/" target="_blank" style="text-align: center;">
+                <img src="{% static "media/images/jetbrains_logo.png" %}" style='width:auto; height:60px; padding: 10px; background-color: #ffffff'>
+            </a>
+            <a class="list-group-item" href="http://edina.ac.uk/unlock/places/queries.html" target="_blank" style="text-align: center;">
+                <img src="{% static "media/images/unlock_logo.jpg" %}" style='width:auto; height:60px; padding: 10px; background-color: #ffffff'><br>
+                This product uses the remote "Unlock Places" API from EDINA.ac.uk
+            </a>
+            <a class="list-group-item" href="http://www.maxmind.com" target="_blank" style="text-align: center;">
+                This product includes GeoLite data created by MaxMind, available from http://www.maxmind.com.
+            </a>
+    </div>
+{% endblock %}
