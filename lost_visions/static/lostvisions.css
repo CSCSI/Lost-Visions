@@ -134,7 +134,7 @@ body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > d
 .home-width{
     width: 100%;
     margin: 0 auto;
-    height: 100px
+    /*height: 100px*/
 }
 
 .home-carousel {
