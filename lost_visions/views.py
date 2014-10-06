@@ -1333,7 +1333,10 @@ def get_zip_path(root_folder, book_id, volume='0'):
                 if book_id in b_file:
                     # print b_file
                     if int(b_file.split('_')[1]) == int(volume):
-                        return os.path.join(root_folder, os.path.join(a_file, b_file))
+                        if 'disk5' in disk_folder:
+                            return os.path.join(root_folder, os.path.join(os.path.join(a_file, 'JP2'), b_file))
+                        else:
+                            return os.path.join(root_folder, os.path.join(a_file, b_file))
     except Exception as e:
         print e
 
