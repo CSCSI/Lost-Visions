@@ -783,6 +783,9 @@
 
         <div class="panel-footer">
             <ul class="pager">
+                <li class="previous">
+                    <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-2x fa-rotate-left"></div></a>
+                </li>
                 <li>
                     <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
                 </li>
@@ -790,18 +793,21 @@
                     <a class="btn btn-default" target="_blank"
                        href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page</a>
                 </li>
-            </ul>
-            <ul class="pager">
-                <li class="previous">
-                    <a class="rota btn btn-default" data-degs="-90">← Rotate left</a>
-                </li>
-                <li>
-                    <a class="rota btn btn-default" data-degs="reset">Reset</a>
-                </li>
-                <li class="next">
-                    <a class="rota btn btn-default" data-degs="90">Rotate right →</a>
+                  <li class="next">
+                    <a class="rota btn btn-default" data-degs="90"><div class="fa fa-2x fa-rotate-right"></div></a>
                 </li>
             </ul>
+{#            <ul class="pager">#}
+{#                <li class="previous">#}
+{#                    <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-2x fa-rotate-left"></div></a>#}
+{#                </li>#}
+{#                <li>#}
+{#                    <a class="rota btn btn-default" data-degs="reset">Reset</a>#}
+{#                </li>#}
+{#                <li class="next">#}
+{#                    <a class="rota btn btn-default" data-degs="90"><div class="fa fa-2x fa-rotate-right"></div></a>#}
+{#                </li>#}
+{#            </ul>#}
 
             {% if user.is_authenticated %}
                 <ul class="pager">
@@ -1152,7 +1158,7 @@
 
 
     </div>
-    <button type="submit" class="btn btn-primary btn-lg">Finish!</button>
+    <button type="submit" class="btn btn-primary btn-lg">Finish Tagging!</button>
     <div class="navbar-right">
         <div id="load_new_image" class="btn btn-primary">
             <a href="{% url 'image.random' %}">Skip</a>
