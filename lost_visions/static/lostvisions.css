@@ -130,7 +130,9 @@ body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > d
 }
 
 .footer-links > li > a > p {
-    margin: 0px;
+    margin-left: 10%;
+    margin-right: 10%;
+
 }
 
 .department_text {
