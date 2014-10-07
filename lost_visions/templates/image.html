@@ -158,20 +158,20 @@
                     .appendTo( ul );
         };
 
-        function image_clicked(){
-            if(hightlighted_x_percent == 0
-                    && hightlighted_y_percent == 0
-                    && highlighted_x_pixel == 0
-                    && highlighted_y_pixel == 0) {
-
-                var focus_message = '<div class="alert alert-dismissable alert-warning">\
-  <button type="button" class="close" data-dismiss="alert">×</button>\
-  Please try clicking part of the image before tagging objects.</div>'
-                $('#focus_alerts').html(focus_message).fadeIn(100);
-            } else {
-                $('#focus_alerts').fadeOut(1000);
-            }
-        }
+{#        function image_clicked(){#}
+{#            if(hightlighted_x_percent == 0#}
+{#                    && hightlighted_y_percent == 0#}
+{#                    && highlighted_x_pixel == 0#}
+{#                    && highlighted_y_pixel == 0) {#}
+{##}
+{#                var focus_message = '<div class="alert alert-dismissable alert-warning">\#}
+{#  <button type="button" class="close" data-dismiss="alert">×</button>\#}
+{#  Please try clicking part of the image before tagging objects.</div>'#}
+{#                $('#focus_alerts').html(focus_message).fadeIn(100);#}
+{#            } else {#}
+{#                $('#focus_alerts').fadeOut(1000);#}
+{#            }#}
+{#        }#}
 
         $('#load_new_image').click(function(){
             window.location.replace('{% url 'image.random' %}');
@@ -498,48 +498,48 @@
         var highlighted_x_pixel = 0;
         var highlighted_y_pixel = 0;
 
-        $('#photo').click(function(e) {
-            var posX = $(this).offset().left;
-            var posY = $(this).offset().top;
-
-            var x = (e.pageX - posX);
-            var y = (e.pageY - posY);
-
-            var canvas_object = $('#photo'),
-                    canvas = canvas_object.get(0),
-                    ctx = canvas.getContext('2d');
-            canvas.width = canvas.width;
-
-            ctx.strokeStyle = '#00FF00';
-
-            all_tags.forEach(function(entry) {
+{#        $('#photo').click(function(e) {#}
+{#            var posX = $(this).offset().left;#}
+{#            var posY = $(this).offset().top;#}
+{##}
+{#            var x = (e.pageX - posX);#}
+{#            var y = (e.pageY - posY);#}
+{##}
+{#            var canvas_object = $('#photo'),#}
+{#                    canvas = canvas_object.get(0),#}
+{#                    ctx = canvas.getContext('2d');#}
+{#            canvas.width = canvas.width;#}
+{##}
+{#            ctx.strokeStyle = '#00FF00';#}
+{##}
+{#            all_tags.forEach(function(entry) {#}
                 {#                ctx.beginPath();#}
-                ctx.fillStyle = "green";
-                ctx.moveTo(entry.x_pixel, entry.y_pixel);
-                ctx.arc(entry.x_pixel-10, entry.y_pixel-10, 10, 0, 2*Math.PI);
-                ctx.fill();
+{#                ctx.fillStyle = "green";#}
+{#                ctx.moveTo(entry.x_pixel, entry.y_pixel);#}
+{#                ctx.arc(entry.x_pixel-10, entry.y_pixel-10, 10, 0, 2*Math.PI);#}
+{#                ctx.fill();#}
                 {#                ctx.closePath();#}
                 {#                ctx.stroke();#}
-            });
-
-            ctx.strokeStyle = '#FF0000';
-
+{#            });#}
+{##}
+{#            ctx.strokeStyle = '#FF0000';#}
+{##}
             {#            ctx.beginPath();#}
-            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-
-            var coords = translateCoords(x, y, canvas, degs);
-
-            ctx.rect(coords.x-10, coords.y-10, 20, 20);
-            hightlighted_x_percent = coords.x_percent;
-            hightlighted_y_percent = coords.y_percent;
-            highlighted_x_pixel = coords.x;
-            highlighted_y_pixel = coords.y;
-            $('#focus_alerts').fadeOut(1000);
-
-            ctx.stroke();
-
-            $( "#dictionary").focus();
-        });
+{#            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);#}
+{##}
+{#            var coords = translateCoords(x, y, canvas, degs);#}
+{##}
+{#            ctx.rect(coords.x-10, coords.y-10, 20, 20);#}
+{#            hightlighted_x_percent = coords.x_percent;#}
+{#            hightlighted_y_percent = coords.y_percent;#}
+{#            highlighted_x_pixel = coords.x;#}
+{#            highlighted_y_pixel = coords.y;#}
+{#            $('#focus_alerts').fadeOut(1000);#}
+{##}
+{#            ctx.stroke();#}
+{##}
+{#            $( "#dictionary").focus();#}
+{#        });#}
 
         $('#category_tree').bind("ready.jstree", function(){
 
@@ -691,70 +691,70 @@
                 parent = canvas_object.parent(),
                 img = new Image;
 
-        function getMousePos(canvas, evt) {
-            var rect = canvas.getBoundingClientRect();
-            return {
-                x: evt.clientX - rect.left,
-                y: evt.clientY - rect.top
-            };
-        };
+{#        function getMousePos(canvas, evt) {#}
+{#            var rect = canvas.getBoundingClientRect();#}
+{#            return {#}
+{#                x: evt.clientX - rect.left,#}
+{#                y: evt.clientY - rect.top#}
+{#            };#}
+{#        };#}
+{##}
+{#        function translateCoords(mouseX, mouseY, component, degreesRotation) {#}
+{#            var centerpointX = (component.getBoundingClientRect().width /2);#}
+{#            var centerpointY = (component.getBoundingClientRect().height /2);#}
+{##}
+{#            var mouseOffsetX = mouseX - centerpointX;#}
+{#            var mouseOffsetY = mouseY - centerpointY;#}
+{##}
+{#            var radians = ((degreesRotation) * (Math.PI/180));#}
+{##}
+{#            var theta = Math.atan(mouseOffsetY / mouseOffsetX);#}
+{##}
+{#            var hyp = mouseOffsetX / Math.cos(theta);#}
+{##}
+{#            var scale = 1;#}
+{##}
+{#            if (Math.cos(radians) == 0) {#}
+{#                scale = img.naturalWidth / canvas.height;#}
+{#            } else {#}
+{#                scale = img.naturalWidth / canvas.width;#}
+{#            }#}
+{##}
+{#            var draw_x = (hyp * Math.cos(theta - radians)) + centerpointX;#}
+{##}
+{#            var draw_y = (hyp * Math.sin(theta - radians)) + centerpointY;#}
+{##}
+{#            return {#}
+{#                radians: radians,#}
+{#                theta: theta,#}
+{#                hyp: hyp,#}
+{#                x : draw_x,#}
+{#                y : draw_y,#}
+{#                offsetX : mouseOffsetX,#}
+{#                offsetY : mouseOffsetY,#}
+{#                centerpointX : centerpointX,#}
+{#                centerpointY :  centerpointY,#}
+{#                x_percent : (((draw_x/img.naturalWidth)*scale) *100),#}
+{#                y_percent : (((draw_y/img.naturalHeight)*scale) *100)#}
+{#            }#}
+{#        };#}
 
-        function translateCoords(mouseX, mouseY, component, degreesRotation) {
-            var centerpointX = (component.getBoundingClientRect().width /2);
-            var centerpointY = (component.getBoundingClientRect().height /2);
-
-            var mouseOffsetX = mouseX - centerpointX;
-            var mouseOffsetY = mouseY - centerpointY;
-
-            var radians = ((degreesRotation) * (Math.PI/180));
-
-            var theta = Math.atan(mouseOffsetY / mouseOffsetX);
-
-            var hyp = mouseOffsetX / Math.cos(theta);
-
-            var scale = 1;
-
-            if (Math.cos(radians) == 0) {
-                scale = img.naturalWidth / canvas.height;
-            } else {
-                scale = img.naturalWidth / canvas.width;
-            }
-
-            var draw_x = (hyp * Math.cos(theta - radians)) + centerpointX;
-
-            var draw_y = (hyp * Math.sin(theta - radians)) + centerpointY;
-
-            return {
-                radians: radians,
-                theta: theta,
-                hyp: hyp,
-                x : draw_x,
-                y : draw_y,
-                offsetX : mouseOffsetX,
-                offsetY : mouseOffsetY,
-                centerpointX : centerpointX,
-                centerpointY :  centerpointY,
-                x_percent : (((draw_x/img.naturalWidth)*scale) *100),
-                y_percent : (((draw_y/img.naturalHeight)*scale) *100)
-            }
-        };
-
-        canvas.addEventListener('mousemove', function(evt) {
-            var mousePos = getMousePos(canvas, evt);
-            var translated_variables = translateCoords(mousePos.x, mousePos.y, canvas, degs);
-
-            var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
-            message += ('<br>draw coords: ' + translated_variables.x + ' , ' + translated_variables.y);
-            message += ('<br>scale-x% : ' + translated_variables.x_percent + ', scale-y% ' + translated_variables.y_percent);
-
-            message += ('<br>offset : ' + translated_variables.offsetX + ' , ' + translated_variables.offsetY);
-            message += ('<br>centerpoint : ' + translated_variables.centerpointX + ' , ' + translated_variables.centerpointY);
-            message += ('<br>theta : ' + translated_variables.theta + ', hyp : ' + translated_variables.hyp);
-            message += ('<br>degs : ' + degs + ', rads : ' + translated_variables.radians);
-            message += ('<br>t-x : ' + (mousePos.x / translated_variables.x) + ', t-y : ' + (mousePos.y / translated_variables.y));
-
+{#        canvas.addEventListener('mousemove', function(evt) {#}
+{#            var mousePos = getMousePos(canvas, evt);#}
+{#            var translated_variables = translateCoords(mousePos.x, mousePos.y, canvas, degs);#}
+{##}
+{#            var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;#}
+{#            message += ('<br>draw coords: ' + translated_variables.x + ' , ' + translated_variables.y);#}
+{#            message += ('<br>scale-x% : ' + translated_variables.x_percent + ', scale-y% ' + translated_variables.y_percent);#}
+{##}
+{#            message += ('<br>offset : ' + translated_variables.offsetX + ' , ' + translated_variables.offsetY);#}
+{#            message += ('<br>centerpoint : ' + translated_variables.centerpointX + ' , ' + translated_variables.centerpointY);#}
+{#            message += ('<br>theta : ' + translated_variables.theta + ', hyp : ' + translated_variables.hyp);#}
+{#            message += ('<br>degs : ' + degs + ', rads : ' + translated_variables.radians);#}
+{#            message += ('<br>t-x : ' + (mousePos.x / translated_variables.x) + ', t-y : ' + (mousePos.y / translated_variables.y));#}
+{##}
             {#            $('#output').html(message);#}
-        }, false);
+{#        }, false);#}
 
         img.src = "{{ image.imageurl }}";
         img.onload = function(){
@@ -784,17 +784,19 @@
         <div class="panel-footer">
             <ul class="pager">
                 <li class="previous">
-                    <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-2x fa-rotate-left"></div></a>
+                    <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-rotate-left"></div></a>
                 </li>
                 <li>
-                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">Zoom</a>
+                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">
+                        <div class="fa fa-search-plus"></div
+                                ></a>
                 </li>
                 <li>
                     <a class="btn btn-default" target="_blank"
                        href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page</a>
                 </li>
                   <li class="next">
-                    <a class="rota btn btn-default" data-degs="90"><div class="fa fa-2x fa-rotate-right"></div></a>
+                    <a class="rota btn btn-default" data-degs="90"><div class="fa fa-rotate-right"></div></a>
                 </li>
             </ul>
 {#            <ul class="pager">#}

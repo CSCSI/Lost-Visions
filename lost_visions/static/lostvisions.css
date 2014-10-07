@@ -240,9 +240,9 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div {
     margin: 5px;
 }
 
-.photo_background {
-    cursor: crosshair;
-}
+/*.photo_background {*/
+    /*cursor: crosshair;*/
+/*}*/
 
 .ui-state-active, .click{
     background-color: #28b62c;
