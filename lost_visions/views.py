@@ -1078,6 +1078,7 @@ def get_image_data(request):
                     tag_result = dict()
                     tag_result['title'] = result.title
                     tag_result['img'] = result.flickr_small_source
+                    # tag_result['img'] = db_tools.get_image_info(result.flickr_id)['imageurl']
                     tag_result['date'] = result.date
                     tag_result['page'] = result.page.lstrip('0')
                     tag_result['book_id'] = result.book_identifier
@@ -1406,8 +1407,8 @@ def page_turner(request, book_id, page, volume):
     print page_short
     print volume
 
-    image_data = models.Image.objects.filter(book_identifier=book_id)[0]
-    title = image_data.title
+    image_data = models.Image.objects.filter(book_identifier=book_id)
+    title = image_data[0].title
 
     archive = find_zip(book_id, volume)
     pages = []
@@ -1415,7 +1416,20 @@ def page_turner(request, book_id, page, volume):
         for page_name in archive.namelist():
             page_number_found = page_name.split('_')[-1]
             page_number_found = page_number_found.split('.')[0]
-            pages.append(int(page_number_found))
+
+            found = False
+            for book_image in image_data:
+                if int(book_image.page) == int(page_number_found):
+                    found = True
+                    pages.append({
+                        'page_no': int(page_number_found),
+                        'has_image': True
+                    })
+            if not found:
+                pages.append({
+                    'page_no': int(page_number_found),
+                    'has_image': False
+                })
 
     prev = int(page_short) - 1
     next_page = int(page_short) + 1
@@ -1423,7 +1437,7 @@ def page_turner(request, book_id, page, volume):
     render_details = {
         'book_id': book_id,
         'volume': volume,
-        'pages': sorted(pages, key=int),
+        'pages': sorted(pages, key=lambda k: k['page_no']),
         'page': page_short,
         'title': title,
         'prev': str(prev).zfill(6),

@@ -30,7 +30,8 @@
                 </li>
                 {% for a_page in pages %}
                     <li>
-                        <a href="{% url 'page_turner' book_id a_page volume%}">Page {{ a_page }}</a>
+                        <a href="{% url 'page_turner' book_id a_page.page_no volume%}">
+                            Page {{ a_page.page_no }} {% if a_page.has_image %}<span style="color: #ffff00">*Image*</span>{% endif %} </a>
                     </li>
                 {% endfor %}
             </ul>

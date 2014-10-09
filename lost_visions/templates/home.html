@@ -158,7 +158,11 @@
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4">
-                <a target="_blank" href="{% url "user_profile_home" %}">
+                <a target="_blank" href="{% if user.is_authenticated %}
+                {% url "user_profile_home" %}
+                {% else %}
+                {% url 'account_login' %}
+                {% endif %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/LostVisions_MyArchive.png" %}"/>
                 </a>
             </div>
