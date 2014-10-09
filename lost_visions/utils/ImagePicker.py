@@ -1,14 +1,22 @@
 import os
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import connection
+import pprint
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import connection
+import operator
+from django.db.models import Q
 from random import randint
 from django.core import serializers
 from lost_visions import models
 
 __author__ = 'ubuntu'
+
+
+# can cause multiple db accesses on django models
+def pprint_object(obj):
+    print pprint.pformat(obj, indent=1, width=80, depth=None)
 
 
 class ImagePicker():
@@ -60,10 +68,55 @@ class ImagePicker():
         return tagged_images
 
     def get_tagged_images_for_tag(self, tag):
-        pass
+        tagged_images = models.Tag.objects.filter(tag=tag).order_by().values_list('image__flickr_id', flat=True).distinct()
+        return tagged_images
 
-    def get_tagged_images_for_tags(self, number, tag_array):
-        pass
+    def get_tagged_images_for_tags(self, tag_array, and_or='or', number=None):
+
+        # only interested in images where all tags are present
+        if and_or is 'and':
+
+            # For each tag find the Tag DB objects with that tag
+            tagged_images = dict()
+            for tag in tag_array:
+                tagged_images[tag] = (self.get_tagged_images_for_tag(tag))
+
+            # pprint_object(tagged_images)
+
+            # find largest list.
+            # If the tag isn't in this, there's no reason looking in the others
+            largest_list = []
+            most_used_tag = ''
+            for key_tag in tagged_images:
+                if len(tagged_images[key_tag]) > len(largest_list):
+                    largest_list = tagged_images[key_tag]
+                    most_used_tag = key_tag
+
+            # traverse the longest list, compare with others
+            images_with_all_tags = []
+            for image_in_largest_list in largest_list:
+                tags_lists_image_appears_in = 0
+                for key_tag in tagged_images:
+                    # If the inspected list B is not the longest list A (pointless comparing A and A)
+                    # and the image we're looking at from A is also in list B
+                    if key_tag is not most_used_tag and image_in_largest_list in tagged_images[key_tag]:
+                        # Increment the number of times we've seen it
+                        tags_lists_image_appears_in += 1
+
+                # If we say the image N-1 times, it was in every list
+                # N-1 as we didn't search the longest list
+                if tags_lists_image_appears_in == len(tag_array) - 1:
+                    # Add image to return list
+                    images_with_all_tags.append(image_in_largest_list)
+
+            return images_with_all_tags
+
+        # assume 'or', so any one of the given tags gives a hit
+        else:
+            # 'reduce' the input list to a long list of "OR"s and filter for all
+            tagged_images = models.Tag.objects.filter(reduce(operator.or_, (Q(tag=x) for x in tag_array))).order_by().values_list('image__flickr_id', flat=True).distinct()
+
+        return list(set(tagged_images))
 
     def get_tagged_images_for_similar_tag(self, tag):
         pass
@@ -76,12 +129,25 @@ class ImagePicker():
 
 image_picker = ImagePicker()
 
-for j in range(0, 1):
-    print image_picker.get_untagged_image(1)
-
-    print image_picker.get_untagged_images(3)
-
-    print '\n'
+# for j in range(0, 1):
+#     print image_picker.get_untagged_image(1)
+#
+#     print image_picker.get_untagged_images(3)
+#
+#     print '\n'
 
 print 'tagged images : '
-print image_picker.get_tagged_images()
+
+number_queries = len(connection.queries)
+
+print image_picker.get_tagged_images_for_tags(['man', 'woman'], and_or='or')
+
+
+
+print ('before {} after {} diff {}'.format(number_queries,
+                                           len(connection.queries),
+                                           str(len(connection.queries) - number_queries)))
+qus = len(connection.queries) - number_queries
+print connection.queries[:(qus * -1)]
+
+pprint_object(connection.queries)

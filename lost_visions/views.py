@@ -1423,8 +1423,12 @@ def page_turner(request, book_id, page, volume):
                     found = True
                     pages.append({
                         'page_no': int(page_number_found),
-                        'has_image': True
+                        'has_image': True,
+                        'idx': int(book_image.image_idx)
                     })
+                    # only interested in the page if theres > 0
+                    # unfortunately idx is useless
+                    break
             if not found:
                 pages.append({
                     'page_no': int(page_number_found),
