@@ -3,7 +3,7 @@
 {% block content %}
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-        var $button = $("<div id='source-button' " +
+        var $remove_button = $("<div id='source-button' " +
                 "class='btn btn-primary btn-xs remove_button' " +
                 {#                "style='position: absolute; right:5px; top:0px'" +#}
                 ">Remove</div>").click(function(){
@@ -33,14 +33,47 @@
 
         });
 
+        var $set_caption_button = $("<div id='source-button' " +
+                "class='btn btn-primary btn-xs set_caption_button' " +
+                {#                "style='position: absolute; right:5px; top:0px'" +#}
+                ">Edit Caption</div>").click(function(){
+
+            var id = $(this).parent().data().id;
+            var collection_id = $(this).parent().data().collection_id;
+
+            $.ajax({
+                type: "POST",
+                url: "",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    image_id: id,
+                    collection_id: collection_id,
+                    {#                    id.split('_')[2],#}
+                    delete_image: true
+                },
+                success: function(data) {
+                    alert("This will set a caption");
+                    $('.js-masonry').masonry();
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Problem removing Image: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+
+        });
+
         $(document).ready(function(){
             $('.js-masonry').masonry();
 
             $('.bl_item').hover(function(){
-                $(this).append($button);
-                $button.show();
+                $(this).append($remove_button);
+                $(this).append($set_caption_button);
+
+                $remove_button.show();
+                $set_caption_button.show();
             }, function(){
-                $button.hide();
+                $remove_button.hide();
+                $set_caption_button.hide();
             });
 
             $('#download_all').click(function(){
@@ -79,10 +112,10 @@
                 var link = '{% url 'dl_collection' %}?' +
                         'collection_id=' + collection_id;
                 $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
-{#                $('#edit_collection_dialog_form').dialog("open");#}
+                {#                $('#edit_collection_dialog_form').dialog("open");#}
                 $('#share_all_dialogue').dialog("open");
 
-{#                window.open("{% url 'tweet_card' %}", '_blank');#}
+                {#                window.open("{% url 'tweet_card' %}", '_blank');#}
             });
 
             $('.edit_collection').click(function(){
@@ -294,11 +327,11 @@
                         <a href="{% url 'image' d.flickr_id %}" target="_blank">
                             <img src="{{ d.url }}" style='width:100%; height:auto;'>
                         </a>
-{#                        <div class="panel-footer">#}
-{#                            Image ID : {{ d.flickr_id }}#}
-{#                            <br>#}
-{#                            Page : {{ d.page }}#}
-{#                        </div>#}
+                        {#                        <div class="panel-footer">#}
+                        {#                            Image ID : {{ d.flickr_id }}#}
+                        {#                            <br>#}
+                        {#                            Page : {{ d.page }}#}
+                        {#                        </div>#}
                     </div>
                 </div>
             {% endfor %}
