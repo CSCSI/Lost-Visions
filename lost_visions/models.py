@@ -247,6 +247,17 @@ class ImageMapping(models.Model):
                + ':' + self.collection.name + ':' + self.collection.user.username.username
 
 
+class SavedImageCaption(models.Model):
+    image_mapping = models.ForeignKey(ImageMapping, blank=False)
+    caption = models.TextField(blank=True)
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    def __unicode__(self):
+        user = self.image_mapping.collection.user.username.username
+
+        return str(self.id) + ':' + user + ':' \
+            + self.image_mapping.collection.name + ':' \
+            + self.image_mapping.image.flickr_id + ':' + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
 
 # watson.register(Image)

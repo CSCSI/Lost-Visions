@@ -807,6 +807,12 @@ def user_home(request):
                 image_dict['page'] = image.image.page.lstrip('0')
                 image_dict['url'] = image.image.flickr_small_source
 
+                try:
+                    image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
+                    image_dict['caption'] = image_mapping_caption.caption
+                except Exception as e:
+                    print e
+
                 mapped_images_array.append(image_dict)
 
             collection_data['images'] = mapped_images_array
@@ -1309,6 +1315,19 @@ def manage_collection(request):
             image_collection.name = name
             image_collection.save()
 
+        if action == 'set_image_caption':
+            image_id = request.POST.get('image_id', '')
+            new_caption = request.POST.get('new_caption', '')
+            image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
+
+            image_model = models.Image.objects.get(flickr_id=image_id)
+            image_mapping = models.ImageMapping.objects.get(collection=image_collection, image=image_model)
+
+            mapping_caption, created = models.SavedImageCaption.objects.get_or_create(image_mapping=image_mapping)
+
+            mapping_caption.caption = new_caption
+            mapping_caption.save()
+
     query_response = {
         'success': True,
         }
@@ -1480,6 +1499,12 @@ def exhibition(request, collection_id):
         image_dict['page'] = image.image.page.lstrip('0')
         # image_dict['url'] = image.image.flickr_small_source
         image_dict['url'] = db_tools.get_image_info(image.image.flickr_id)['imageurl']
+
+        try:
+            image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
+            image_dict['caption'] = image_mapping_caption.caption
+        except Exception as e:
+            print e
 
         mapped_images_array.append(image_dict)
 

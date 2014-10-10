@@ -3,198 +3,226 @@
 {% block content %}
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-        var $remove_button = $("<div id='source-button' " +
-                "class='btn btn-primary btn-xs remove_button' " +
-                {#                "style='position: absolute; right:5px; top:0px'" +#}
-                ">Remove</div>").click(function(){
+    var $remove_button = $("<div id='source-button' " +
+            "class='btn btn-primary btn-xs remove_button' " +
+            {#                "style='position: absolute; right:5px; top:0px'" +#}
+            ">Remove</div>").click(function(){
 
-            var id = $(this).parent().data().id;
-            var collection_id = $(this).parent().data().collection_id;
+        var id = $(this).parent().data().id;
+        var collection_id = $(this).parent().data().collection_id;
 
-            $.ajax({
-                type: "POST",
-                url: "{% url 'user_profile.save_image' %}",
-                data: {
-                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                    image_id: id,
-                    collection_id: collection_id,
-                    {#                    id.split('_')[2],#}
-                    delete_image: true
-                },
-                success: function(data) {
-                    alert("Removed Image");
-                    $('#bl_item_' + id).remove();
-                    $('.js-masonry').masonry();
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    alert("Problem removing Image: "+errorThrown+xhr.status+xhr.responseText);
-                }
-            });
+        $.ajax({
+            type: "POST",
+            url: "{% url 'user_profile.save_image' %}",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                image_id: id,
+                collection_id: collection_id,
+                {#                    id.split('_')[2],#}
+                delete_image: true
+            },
+            success: function(data) {
+                alert("Removed Image");
+                $('#bl_item_' + id).remove();
+                $('.js-masonry').masonry();
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert("Problem removing Image: "+errorThrown+xhr.status+xhr.responseText);
+            }
+        });
+
+    });
+
+    var $set_caption_button = $("<div id='source-button' " +
+            "class='btn btn-primary btn-xs set_caption_button' " +
+            {#                "style='position: absolute; right:5px; top:0px'" +#}
+            ">Edit Caption</div>").click(function(){
+
+        var id = $(this).parent().data().id;
+        var collection_id = $(this).parent().data().collection_id;
+
+
+        $('#image_caption_dialog_form').data('image_id', id).data('collection_id', collection_id).dialog("open");
+    });
+
+    $(document).ready(function(){
+        $('.js-masonry').masonry();
+
+        $('.bl_item').hover(function(){
+            $(this).append($remove_button);
+            $(this).append($set_caption_button);
+
+            $remove_button.show();
+            $set_caption_button.show();
+        }, function(){
+            $remove_button.hide();
+            $set_caption_button.hide();
+        });
+
+        $('#download_all').click(function(){
+            var dl_link = '{% url 'user_dl_all' %}' +
+                    '?csrfmiddlewaretoken=' +
+                    document.getElementsByName('csrfmiddlewaretoken')[0].value +
+                    '&collection_ids=' +
+                    '{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}';
+            window.open(dl_link, '_blank');
+        });
+
+        $('.dl_collection').click(function(){
+            var collection_id = $(this).data('collection_id');
+            var dl_link = '{% url 'dl_collection' %}' +
+                    '?csrfmiddlewaretoken=' +
+                    document.getElementsByName('csrfmiddlewaretoken')[0].value +
+                    '&collection_id=' + collection_id;
+            window.open(dl_link, '_blank');
+        });
+
+        $('#share_all_dialogue').dialog({
+            autoOpen: false,
+            width: $(window).width() * 0.7,
+            show: {
+                effect: "blind",
+                duration: 500
+            },
+            hide: {
+                effect: "blind",
+                duration: 500
+            }
+        });
+
+        $('.share_all').click(function(){
+            var collection_id = $(this).data('collection_id');
+            var link = '{% url 'dl_collection' %}?' +
+                    'collection_id=' + collection_id;
+            $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
+            {#                $('#edit_collection_dialog_form').dialog("open");#}
+            $('#share_all_dialogue').dialog("open");
+
+            {#                window.open("{% url 'tweet_card' %}", '_blank');#}
+        });
+
+        $('.edit_collection').click(function(){
+            var collection_id = $(this).data('collection_id');
+            var collection_name = $(this).data('collection_name');
+
+            $('#edit_collection_data').data('collection_id', collection_id).data('collection_name', collection_name);
+
+            $('#edit_collection_dialog_form').data('id', collection_id).data('name', collection_name).dialog("open");
+
 
         });
 
-        var $set_caption_button = $("<div id='source-button' " +
-                "class='btn btn-primary btn-xs set_caption_button' " +
-                {#                "style='position: absolute; right:5px; top:0px'" +#}
-                ">Edit Caption</div>").click(function(){
-
-            var id = $(this).parent().data().id;
-            var collection_id = $(this).parent().data().collection_id;
-
-            $.ajax({
-                type: "POST",
-                url: "",
-                data: {
-                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                    image_id: id,
-                    collection_id: collection_id,
-                    {#                    id.split('_')[2],#}
-                    delete_image: true
-                },
-                success: function(data) {
-                    alert("This will set a caption");
-                    $('.js-masonry').masonry();
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    alert("Problem removing Image: "+errorThrown+xhr.status+xhr.responseText);
-                }
-            });
-
-        });
-
-        $(document).ready(function(){
-            $('.js-masonry').masonry();
-
-            $('.bl_item').hover(function(){
-                $(this).append($remove_button);
-                $(this).append($set_caption_button);
-
-                $remove_button.show();
-                $set_caption_button.show();
-            }, function(){
-                $remove_button.hide();
-                $set_caption_button.hide();
-            });
-
-            $('#download_all').click(function(){
-                var dl_link = '{% url 'user_dl_all' %}' +
-                        '?csrfmiddlewaretoken=' +
-                        document.getElementsByName('csrfmiddlewaretoken')[0].value +
-                        '&collection_ids=' +
-                        '{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}';
-                window.open(dl_link, '_blank');
-            });
-
-            $('.dl_collection').click(function(){
-                var collection_id = $(this).data('collection_id');
-                var dl_link = '{% url 'dl_collection' %}' +
-                        '?csrfmiddlewaretoken=' +
-                        document.getElementsByName('csrfmiddlewaretoken')[0].value +
-                        '&collection_id=' + collection_id;
-                window.open(dl_link, '_blank');
-            });
-
-            $('#share_all_dialogue').dialog({
-                autoOpen: false,
-                width: $(window).width() * 0.7,
-                show: {
-                    effect: "blind",
-                    duration: 500
-                },
-                hide: {
-                    effect: "blind",
-                    duration: 500
-                }
-            });
-
-            $('.share_all').click(function(){
-                var collection_id = $(this).data('collection_id');
-                var link = '{% url 'dl_collection' %}?' +
-                        'collection_id=' + collection_id;
-                $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
-                {#                $('#edit_collection_dialog_form').dialog("open");#}
-                $('#share_all_dialogue').dialog("open");
-
-                {#                window.open("{% url 'tweet_card' %}", '_blank');#}
-            });
-
-            $('.edit_collection').click(function(){
-                var collection_id = $(this).data('collection_id');
-                var collection_name = $(this).data('collection_name');
-
-                $('#edit_collection_data').data('collection_id', collection_id).data('collection_name', collection_name);
-
-                $('#edit_collection_dialog_form').data('id', collection_id).data('name', collection_name).dialog("open");
-
-
-            });
-
-            var dialog = $( "#edit_collection_dialog_form" ).dialog({
-                autoOpen: false,
-                height: 300,
-                width: 350,
-                modal: true,
-                buttons: {
-                    "Rename collection": function() {
-                        var id = $(this).data('id');
-                        var new_collection_name = $('#rename_collection_field').val();
-                        var name = $(this).data('name');
-
-                        $.ajax({
-                            type: "POST",
-                            url: "{% url 'manage_collection' %}",
-                            data: {
-                                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                                collection_id: id,
-                                collection_name: new_collection_name,
-                                action: 'rename'
-                            },
-                            success: function(data) {
-                                dialog.dialog( "close" );
-                                alert('Renamed collection ' + name + ' to ' + new_collection_name);
-                                location.reload();
-                            },
-                            error: function(xhr, textStatus, errorThrown) {}
-                        });
-                    },
-                    "Delete collection": function() {
-                        var id = $(this).data('id');
-                        var name = $(this).data('name');
-
-                        $.ajax({
-                            type: "POST",
-                            url: "{% url 'manage_collection' %}",
-                            data: {
-                                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                                collection_id: id,
-                                action: 'delete'
-                            },
-                            success: function(data) {
-                                dialog.dialog( "close" );
-                                alert('Deleted collection ' + name);
-                                location.reload();
-                            },
-                            error: function(xhr, textStatus, errorThrown) {}
-                        });                    },
-                    Cancel: function() {
-                        dialog.dialog( "close" );
-                    }
-                },
-                open : function() {
-                    var name = $(this).data('name');
+        var edit_collection_dialog = $( "#edit_collection_dialog_form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Rename collection": function() {
                     var id = $(this).data('id');
-                    $('#rename_collection_field').val(name);
-                },
-                close: function() {
-                    {#                form[ 0 ].reset();#}
-                    {#                allFields.removeClass( "ui-state-error" );#}
-                }
-            });
+                    var new_collection_name = $('#rename_collection_field').val();
+                    var name = $(this).data('name');
 
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'manage_collection' %}",
+                        data: {
+                            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                            collection_id: id,
+                            collection_name: new_collection_name,
+                            action: 'rename'
+                        },
+                        success: function(data) {
+                            edit_collection_dialog.dialog( "close" );
+                            alert('Renamed collection ' + name + ' to ' + new_collection_name);
+                            location.reload();
+                        },
+                        error: function(xhr, textStatus, errorThrown) {}
+                    });
+                },
+                "Delete collection": function() {
+                    var id = $(this).data('id');
+                    var name = $(this).data('name');
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'manage_collection' %}",
+                        data: {
+                            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                            collection_id: id,
+                            action: 'delete'
+                        },
+                        success: function(data) {
+                            edit_collection_dialog.dialog( "close" );
+                            alert('Deleted collection ' + name);
+                            location.reload();
+                        },
+                        error: function(xhr, textStatus, errorThrown) {}
+                    });                    },
+                Cancel: function() {
+                    edit_collection_dialog.dialog( "close" );
+                }
+            },
+            open : function() {
+                var name = $(this).data('name');
+                var id = $(this).data('id');
+                $('#rename_collection_field').val(name);
+            },
+            close: function() {
+                {#                form[ 0 ].reset();#}
+                {#                allFields.removeClass( "ui-state-error" );#}
+            }
         });
-        $(window).load(function(){
-            $('.js-masonry').masonry();
+
+        var image_caption_dialog_form = $( "#image_caption_dialog_form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Set Caption": function() {
+                    var collection_id = $(this).data('collection_id');
+                    var image_id = $(this).data('image_id');
+                    var new_caption = $('#edit_image_caption_field').val();
+{#                    var name = $(this).data('collection_id');#}
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'manage_collection' %}",
+                        data: {
+                            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                            collection_id: collection_id,
+                            image_id: image_id,
+                            new_caption: new_caption,
+                            action: 'set_image_caption'
+                        },
+                        success: function(data) {
+                            image_caption_dialog_form.dialog( "close" );
+                            alert('Added caption ' + new_caption + ' to image ' + image_id);
+                            location.reload();
+                        },
+                        error: function(xhr, textStatus, errorThrown) {}
+                    });
+                },
+                Cancel: function() {
+                    image_caption_dialog_form.dialog( "close" );
+                }
+            },
+            open : function() {
+                var name = $(this).data('name');
+                var id = $(this).data('id');
+                $('#edit_image_caption_field').val(name);
+            },
+            close: function() {
+                {#                form[ 0 ].reset();#}
+                {#                allFields.removeClass( "ui-state-error" );#}
+            }
         });
+
+    });
+    $(window).load(function(){
+        $('.js-masonry').masonry();
+    });
 
 
     </script>
@@ -327,11 +355,12 @@
                         <a href="{% url 'image' d.flickr_id %}" target="_blank">
                             <img src="{{ d.url }}" style='width:100%; height:auto;'>
                         </a>
-                        {#                        <div class="panel-footer">#}
-                        {#                            Image ID : {{ d.flickr_id }}#}
-                        {#                            <br>#}
-                        {#                            Page : {{ d.page }}#}
-                        {#                        </div>#}
+                                                <div class="panel-footer">
+                                                    {{ d.caption }}
+{#                                                    Image ID : {{ d.flickr_id }}#}
+{#                                                    <br>#}
+{#                                                    Page : {{ d.page }}#}
+                                                </div>
                     </div>
                 </div>
             {% endfor %}
@@ -352,6 +381,20 @@
             <fieldset>
                 <label for="rename_collection_field">New Name</label>
                 <input type="text" name="rename_collection_field" id="rename_collection_field" value="" class="text ui-widget-content ui-corner-all">
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
+
+    <div id="image_caption_dialog_form" title="Edit this collection">
+        <p class="validateTips">Edit Image Caption</p>
+        <div id="edit_image_caption_data" data-collection_id="" data-collection_name=""></div>
+        <form>
+            <fieldset>
+                <label for="edit_image_caption_field">New Name</label>
+                <input type="text" name="edit_image_caption_field" id="edit_image_caption_field" value="" class="text ui-widget-content ui-corner-all">
 
                 <!-- Allow form submission with keyboard without duplicating the dialog button -->
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
