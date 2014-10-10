@@ -367,11 +367,17 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 
 
-/*.remove_button {*/
-/*position: absolute;*/
-/*right:5px;*/
-/*top:0px*/
-/*}*/
+.remove_button {
+position: absolute;
+right:5px;
+top:0px
+}
+
+.set_caption_button {
+position: absolute;
+right:5px;
+top:2em;
+}
 
 .collapse-init {
     position: absolute;

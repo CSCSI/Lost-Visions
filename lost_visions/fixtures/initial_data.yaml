@@ -124,3 +124,13 @@
 #    tags : glue;people;humour;advert
 #    imageurl : http://farm6.staticflickr.com/5542/11307158676_46fbc8549d.jpg
 #    book : 1
+
+
+
+#- model : lost_visions.Image
+#  pk : 1
+#  fields :
+#    identifier : 79864239
+#    tags : glue;people;humour;advert
+#    imageurl : http://farm6.staticflickr.com/5542/11307158676_46fbc8549d.jpg
+#    book : 1
