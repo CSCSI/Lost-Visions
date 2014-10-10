@@ -408,7 +408,7 @@ def list_wordnet_links(tag_synset_id):
 # we stop looking upwards for parent words once we reach these pretty useless tags
 useless_words = ['artifact', 'being', 'abstraction', 'state',
                  'part', 'thing', 'entity', 'event', 'device', 'stuff',
-                 'representational process', 'percept']
+                 'representational process', 'percept', 'organism']
 
 
 def get_hypernyms(synset, synset_list, loop=0):

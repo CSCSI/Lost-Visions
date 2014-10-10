@@ -53,7 +53,6 @@ def image_tags(request):
         print request.POST
         print request.user
 
-        # try:
         image = models.Image.objects.get(flickr_id=request.POST['image_id'])
         request_user = get_request_user(request)
 
@@ -73,50 +72,45 @@ def image_tags(request):
             tags_xy = ast.literal_eval(tag_info)
 
             for user_tag in tags_xy:
-                # try:
+                try:
+                    alternative_words = db_tools.list_wordnet_links(user_tag['synset'])[::-1]
+                    alternative_words.append([user_tag['tag'], [0, 0]])
 
-                alternative_words = db_tools.list_wordnet_links(user_tag['synset'])[::-1]
-                alternative_words.append([user_tag['tag'], [0, 0]])
-
-                for index, weighted_word in enumerate(alternative_words):
-                    tag = models.Tag()
-                    word = weighted_word[0]
-                    print word
-                    tag.tag = clean(word, strip=True)
-                    tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
-                    tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
-                    # try:
-                    # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
-                    date_object = parser.parse(str(user_tag['datetime']))
-                    tag.timestamp = date_object
-                    # except Exception as e3:
-                    #     print e3
-                    #     pass
-
-                    tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
-
-                    print tag_order
-
-                    tag_hyp_dist = int(weighted_word[1][0]) + 1
-                    tag_syn_val = int(weighted_word[1][1]) + 1
-                    tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
-
-                    print tag_order
-                    tag.tag_order = tag_order
-
-                    if image and request_user:
-                        tag.image = image
-                        tag.user = request_user
-                        tag.save()
-
-                        # except Exception as e2:
-                        #     print 'error 2' + str(e2)
+                    for index, weighted_word in enumerate(alternative_words):
+                        tag = models.Tag()
+                        word = weighted_word[0]
+                        print word
+                        tag.tag = clean(word, strip=True)
+                        tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
+                        tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
+                        # try:
+                        # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
+                        date_object = parser.parse(str(user_tag['datetime']))
+                        tag.timestamp = date_object
+                        # except Exception as e3:
+                        #     print e3
                         #     pass
+
+                        tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
+
+                        print tag_order
+
+                        tag_hyp_dist = int(weighted_word[1][0]) + 1
+                        tag_syn_val = int(weighted_word[1][1]) + 1
+                        tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+
+                        print tag_order
+                        tag.tag_order = tag_order
+
+                        if image and request_user:
+                            tag.image = image
+                            tag.user = request_user
+                        tag.save()
+                except:
+                    pass
 
         image.views_completed += 1
         image.save()
-        # except:
-        #     pass
 
     return random_image(request)
 
@@ -1470,3 +1464,29 @@ def page_turner(request, book_id, page, volume):
 
 def software(request):
     return render_to_response('software.html')
+
+
+def exhibition(request, collection_id):
+
+    collection_model = models.ImageCollection.objects.all().get(id=collection_id)
+    collection_data = dict()
+
+    mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
+    mapped_images_array = []
+    for image in mapped_images:
+        image_dict = dict()
+        image_dict['flickr_id'] = image.image.flickr_id
+        image_dict['title'] = image.image.title
+        image_dict['page'] = image.image.page.lstrip('0')
+        image_dict['url'] = image.image.flickr_small_source
+
+        mapped_images_array.append(image_dict)
+
+    collection_data['images'] = mapped_images_array
+    collection_data['collection_name'] = collection_model.name
+
+    return_object = {'collection_id': collection_id, 'collection_data': collection_data}
+
+    print return_object
+
+    return render(request, 'exhibition.html', return_object)

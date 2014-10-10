@@ -273,6 +273,9 @@
                     <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
                 </td>
                 <td>
+                    <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
+                </td>
+                <td>
                     <div style="padding: 10px; margin-top: 10px">
                         <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
                         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>

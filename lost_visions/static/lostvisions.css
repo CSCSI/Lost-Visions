@@ -231,6 +231,20 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     /*max-width: 30%;*/
 }
 
+.carousel-exhibition {
+    height: 500px
+}
+
+.carousel-exhibition-item {
+    height: inherit;
+}
+
+.carousel-exhibition-caption {
+    margin-top: 60px;
+background-color: #A0A2A6;
+    opacity: 0.7;
+}
+
 .home-lower-imagebar-image {
     padding: 5px;
     padding-top: 30px;

@@ -27,6 +27,7 @@ urlpatterns = patterns('',
                        url(r'^manage_collection', 'lost_visions.views.manage_collection', name='manage_collection'),
 
                        url(r'^user_profile', 'lost_visions.views.user_home', name='user_profile_home'),
+                       url(r'^exhibition/(?P<collection_id>\d+)', 'lost_visions.views.exhibition', name='exhibition'),
                        url(r'^tweet_card', 'lost_visions.views.tweet_card', name='tweet_card'),
 
                        url(r'^save_image', 'lost_visions.views.save_image', name='user_profile.save_image'),

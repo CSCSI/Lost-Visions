@@ -1,5 +1,6 @@
 import os
 import pprint
+from lost_visions.utils import db_tools
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
@@ -68,7 +69,7 @@ class ImagePicker():
         return tagged_images
 
     def get_tagged_images_for_tag(self, tag):
-        tagged_images = models.Tag.objects.filter(tag=tag).order_by().values_list('image__flickr_id', flat=True).distinct()
+        tagged_images = models.Tag.objects.filter(tag_iexact=tag).order_by().values_list('image__flickr_id', flat=True).distinct()
         return tagged_images
 
     def get_tagged_images_for_tags(self, tag_array, and_or='or', number=None):
@@ -114,12 +115,27 @@ class ImagePicker():
         # assume 'or', so any one of the given tags gives a hit
         else:
             # 'reduce' the input list to a long list of "OR"s and filter for all
-            tagged_images = models.Tag.objects.filter(reduce(operator.or_, (Q(tag=x) for x in tag_array))).order_by().values_list('image__flickr_id', flat=True).distinct()
+            tagged_images = models.Tag.objects.filter(reduce(operator.or_, (Q(tag__iexact=x) for x in tag_array))).order_by().values_list('image__flickr_id', flat=True).distinct()
 
         return list(set(tagged_images))
 
     def get_tagged_images_for_similar_tag(self, tag):
-        pass
+        formatted_word = db_tools.wordnet_formatted(tag)
+
+        # pprint_object(formatted_word)
+
+        alternative_words = db_tools.list_wordnet_links(formatted_word[1]['synset'])
+
+        # pprint_object(alternative_words)
+
+        word_list = []
+        for word in alternative_words:
+            word_list.append(word[0])
+
+        pprint_object(word_list)
+
+        find_tags = self.get_tagged_images_for_tags(word_list, and_or='or')
+        return find_tags
 
     def get_image_from_untagged_cluster(self):
         pass
@@ -136,18 +152,18 @@ image_picker = ImagePicker()
 #
 #     print '\n'
 
-print 'tagged images : '
 
 number_queries = len(connection.queries)
 
-print image_picker.get_tagged_images_for_tags(['man', 'woman'], and_or='or')
+# print image_picker.get_tagged_images_for_tags(['man', 'woman'], and_or='or')
+
+print image_picker.get_tagged_images_for_similar_tag('boy')
 
 
-
-print ('before {} after {} diff {}'.format(number_queries,
+print ('\n\nbefore {} after {} diff {}'.format(number_queries,
                                            len(connection.queries),
                                            str(len(connection.queries) - number_queries)))
-qus = len(connection.queries) - number_queries
-print connection.queries[:(qus * -1)]
+# qus = len(connection.queries) - number_queries
+# print connection.queries[:(qus * -1)]
 
-pprint_object(connection.queries)
+# pprint_object(connection.queries)

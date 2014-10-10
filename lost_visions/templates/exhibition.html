@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+        $(document).ready(function () {
+            $('#carousel-exhibition').carousel();
+            $(".carousel-exhibition-item").height($(window).height() * 0.8).css({'margin': '0 auto'});
+            {#            var carousel = $(".home-carousel");#}
+            {#            carousel.css({'max-height': carousel.height()});#}
+        });
+
+    </script>
+
+    <div class="home-content-main container">
+        <h3>{{ collection_data.collection_name }}</h3>
+
+        <div class="row">
+
+            <div id="carousel-exhibition" class="carousel slide carousel-exhibition" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#carousel-exhibition" data-slide-to="0" class="active"></li>
+                    <li data-target="#carousel-exhibition" data-slide-to="1"></li>
+                    <li data-target="#carousel-exhibition" data-slide-to="2"></li>
+                </ol>
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner carousel-exhibition-inner">
+
+                    {% for image in collection_data.images %}
+
+                        <div class="item{% if forloop.first %} active{% endif %} carousel-exhibition-item">
+                            <img src="{{ image.url }}" alt="fire">
+                            <div class="carousel-caption carousel-exhibition-caption">
+                                {{ image.title }}
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <!-- Controls -->
+                <a class="left carousel-control" href="#carousel-exhibition" data-slide="prev">
+                    {#                    <span class="glyphicon glyphicon-chevron-left"></span>#}
+                </a>
+                <a class="right carousel-control" href="#carousel-exhibition" data-slide="next">
+                    {#                    <span class="glyphicon glyphicon-chevron-right"></span>#}
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
