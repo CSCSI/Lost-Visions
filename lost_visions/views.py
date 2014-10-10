@@ -1478,14 +1478,17 @@ def exhibition(request, collection_id):
         image_dict['flickr_id'] = image.image.flickr_id
         image_dict['title'] = image.image.title
         image_dict['page'] = image.image.page.lstrip('0')
-        image_dict['url'] = image.image.flickr_small_source
+        # image_dict['url'] = image.image.flickr_small_source
+        image_dict['url'] = db_tools.get_image_info(image.image.flickr_id)['imageurl']
 
         mapped_images_array.append(image_dict)
 
     collection_data['images'] = mapped_images_array
     collection_data['collection_name'] = collection_model.name
 
-    return_object = {'collection_id': collection_id, 'collection_data': collection_data}
+    return_object = {'collection_id': collection_id,
+                     'collection_data': collection_data,
+                     'collection_creator': collection_model.user.username}
 
     print return_object
 
