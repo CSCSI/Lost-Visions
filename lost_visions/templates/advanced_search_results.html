@@ -23,6 +23,26 @@
                 start_id_index = end_id_index;
                 end_id_index += {{ number_to_show }};
             }
+
+            set_sizes();
+        }
+
+        function set_sizes(){
+
+            $('#result-container').find('div').each(function(i,elem){
+                $this_jq = $(this);
+                $this_jq.addClass('added');
+
+                var width = $this_jq.width();
+                var height = $this_jq.height();
+
+                var ratio = width / height;
+                console.log($this_jq);
+                console.log(this);
+                console.log(width + '--' + height + '--' + ratio);
+
+                $this_jq.addClass(ratio > 1 ? 'landscape' : 'portrait');
+            });
         }
 
         function load_more(ids){
@@ -184,16 +204,7 @@
 {#                }#}
 {#            });#}
 
-            $('#result-container').find('div').each(function(i,elem){
-                $this_jq = $(this);
-                var width = $this_jq.width();
-                var height = $this_jq.height();
 
-                var ratio = width / height;
-                console.log(width + '--' + height + '--' + ratio);
-
-                $(this).addClass($this_jq.width() > $this_jq.height() ? 'landscape' : 'portrait');
-            });
 
         });
         $(window).load(function(){
