@@ -6,216 +6,219 @@
 {% block content %}
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
 
-        var all_image_ids = "{{ all_image_ids }}";
-        var all_image_ids_list = all_image_ids.split(',');
-        var start_id_index = 0;
-        var end_id_index = {{ number_to_show }};
-        var images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
+    var all_image_ids = "{{ all_image_ids }}";
+    var all_image_ids_list = all_image_ids.split(',');
+    var start_id_index = 0;
+    var end_id_index = {{ number_to_show }};
+    var images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
 
-        function read_next_batch(){
+    function read_next_batch(){
 
-            if (end_id_index > (all_image_ids_list.length + {{ number_to_show }})){
-                alert('All images from the search have now been loaded.');
+        if (end_id_index > (all_image_ids_list.length + {{ number_to_show }})){
+            alert('All images from the search have now been loaded.');
+        } else {
+            images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
+            load_more(images_to_load.join(','));
+
+            start_id_index = end_id_index;
+            end_id_index += {{ number_to_show }};
+        }
+
+    }
+
+    function set_sizes(){
+
+        $('#grid-result-container').find('.adv_item').each(function(i,elem){
+            $this_jq = $(this);
+
+            var adv_item_img = $this_jq.find('img').get(0);
+            console.log(adv_item_img);
+
+            {#            var width = $this_jq.width();#}
+            {#            var height = $this_jq.height();#}
+
+            var width = adv_item_img.naturalWidth;
+            var height = adv_item_img.naturalHeight;
+
+            var ratio = width / height;
+            console.log($this_jq);
+            console.log(this);
+            console.log(width + '--' + height + '--' + ratio);
+
+            {#            if (ratio > 2) {#}
+            {#                $this_jq.addClass('adv_landscape_2');#}
+            {#            } else if (ratio < 0.5) {#}
+            {#                $this_jq.addClass('adv_portrait_2');#}
+            {#            } else {#}
+            {#                $this_jq.addClass('adv_square');#}
+            {#            }#}
+
+            if (ratio > 2 && ratio < 3) {
+                $this_jq.addClass('adv_landscape_2');
+            }  else if (ratio >= 3) {
+                $this_jq.addClass('adv_landscape_3');
+            }else if (ratio < 1 && ratio > 0.5) {
+                $this_jq.addClass('adv_portrait_2');
+            }  else if (ratio <= 0.5 && ratio > 0.25) {
+                $this_jq.addClass('adv_portrait_3');
+            }    else if (ratio <= 0.25) {
+                $this_jq.addClass('adv_portrait_4');
             } else {
-                images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
-                load_more(images_to_load.join(','));
-
-                start_id_index = end_id_index;
-                end_id_index += {{ number_to_show }};
+                $this_jq.addClass('adv_square');
             }
+        });
+    }
 
-            set_sizes();
-        }
+    function load_more(ids){
+        $.ajax({
+            type: "POST",
+            url: "{% url 'get_image_data' %}",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                image_ids: ids
+            },
+            success: function(data) {
+                {#                    console.log(data);#}
 
-        function set_sizes(){
+                var view_toggle_btn = $('#view_toggle');
+                if (view_toggle_btn.data("view") == "list") {
 
-            $('#result-container').find('div').each(function(i,elem){
-                $this_jq = $(this);
-                $this_jq.addClass('added');
+                    var table = $('#results_table');
 
-                var width = $this_jq.width();
-                var height = $this_jq.height();
+                    for (var image_id in data) {
+                        {#                            console.log(image_id);#}
 
-                var ratio = width / height;
-                console.log($this_jq);
-                console.log(this);
-                console.log(width + '--' + height + '--' + ratio);
+                        var image_data = data[image_id];
 
-                $this_jq.addClass(ratio > 1 ? 'landscape' : 'portrait');
-            });
-        }
+                        var row = '<tr>'
+                                + '<td>' +
+                                '<a href="' + image_data['link'] + '" target="_blank">' +
+                                '<img src="' + image_data['img']  + '"' +
+                                'style="max-height: 80px; width:auto; display: block; margin: 0 auto">' +
+                                '</a>'
+                                + '</td>'
+                                + '<td>' + image_data['author'] + '</td>'
+                                + '<td>' + image_data['date'] + '</td>'
+                                + '<td>' + image_data['page'] + '</td>'
 
-        function load_more(ids){
-            $.ajax({
-                type: "POST",
-                url: "{% url 'get_image_data' %}",
-                data: {
-                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                    image_ids: ids
-                },
-                success: function(data) {
-                    console.log(data);
+                                + '<td><a href="{% url 'do_advanced_search' %}'
+                                + '?book_id=' + image_data['book_id']
+                                + '&csrfmiddlewaretoken={{ csrf_token }}"'
+                                +  ' target="_blank">'
+                                + image_data['title']  +
+                                '</a></td>'
+                                + '</tr>';
 
-                    var view_toggle_btn = $('#view_toggle');
-                    if (view_toggle_btn.data("view") == "list") {
+                        table.append($(row));
+                    }
 
-                        var table = $('#results_table');
+                } else if (view_toggle_btn.data("view") == "grid") {
+                    $('#results_table_div').remove();
 
-                        for (var image_id in data) {
-                            console.log(image_id);
+                    var result_container = $('#grid-result-container').masonry({
+                        columnWidth: 30,
+                        itemSelector: '.adv_item'
+                    });
 
-                            var image_data = data[image_id];
+                    var elems = [];
+                    for (var image_id in data) {
+                        var image_data = data[image_id];
 
-                            var row = '<tr>'
-                                    + '<td>' +
-                                    '<a href="' + image_data['link'] + '" target="_blank">' +
-                                    '<img src="' + image_data['img']  + '"' +
-                                    'style="max-height: 80px; width:auto; display: block; margin: 0 auto">' +
-                                    '</a>'
-                                    + '</td>'
-                                    + '<td>' + image_data['author'] + '</td>'
-                                    + '<td>' + image_data['date'] + '</td>'
-                                    + '<td>' + image_data['page'] + '</td>'
+                        var item_css = 'adv_item';
 
-                                    + '<td><a href="{% url 'do_advanced_search' %}'
-                                    + '?book_id=' + image_data['book_id']
-                                    + '&csrfmiddlewaretoken={{ csrf_token }}"'
-                                    +  ' target="_blank">'
-                                    + image_data['title']  +
-                                    '</a></td>'
-                                    + '</tr>';
+                        var elem_text = '<div class="' +
+                                item_css +
+                                '" id="adv_item_' + image_id + '" ' +
+                                'data-id="' + image_id + '">' +
+                                '<div class="panel adv_item_panel" style="margin:auto 0">' +
+                                '<a href="' + image_data['link'] + '" target="_blank">' +
+                                '<img class="adv_img"' +
+                                ' src="' + image_data['img']  + '" style="width:100%; height:auto;">' +
+                                '</a>' +
+                                '</div>' +
+                                '</div>';
+                        {#                            console.log(elem_text);#}
+                        var jq_elem = $($.parseHTML(elem_text));
 
-                            table.append($(row));
-                        }
-
-                    } else if (view_toggle_btn.data("view") == "grid") {
-                        $('#results_table_div').remove();
-
-                        var result_container = $('#result-container').masonry({
-                            columnWidth: 60,
-                            itemSelector: '.adv_item'
+                        var $remove_button = $("<div id='source-button' " +
+                                "class='btn btn-primary btn-xs remove_button' " +
+                                ">Hide</div>").click(function(){
+                            $(this).parent().remove();
+                            $('#grid-result-container').masonry();
                         });
 
-                        var elems = [];
-                        var fragment = document.createDocumentFragment();
-                        for (var image_id in data) {
-                            var image_data = data[image_id];
-
-                            {#                            var image = new Image();#}
-                            {#                            image.src = image_data['img'];#}
-                            {##}
-                            {#                            var width = this.naturalWidth;#}
-                            {#                            var height = this.naturalHeight;#}
-                            {##}
-                            {#                            var ratio = width / height;#}
-                            {#                            console.log(width + ' ' + height + ' ' + ratio)#}
-
-                            var item_css = 'adv_item';
-                            {#                            if (ratio > 2) {#}
-                            {#                                item_css = 'adv_item adv_item_wide'#}
-                            {#                            } else if (ratio < 0.5) {#}
-                            {#                                item_css = 'adv_item adv_item_heigh'#}
-                            {#                            }#}
-
-                            var elem_text = '<div class="' +
-                                    item_css +
-                                    '" id="adv_item_' + image_id + '" ' +
-                                    'data-id="' + image_id + '">' +
-                                    '<div class="panel">' +
-                                    '<a href="' + image_data['link'] + '" target="_blank">' +
-                                    '<img class="adv_img"' +
-                                    ' src="' + image_data['img']  + '" style="width:100%; height:auto;">' +
-                                    '</a>' +
-                                    '</div>' +
-                                    '</div>';
-                            console.log(elem_text);
-                            {#                            var elem = document.createElement('div');#}
-                            var elem = $($.parseHTML(elem_text)).get(0);
-                            fragment.appendChild( elem );
-                            elems.push( elem );
-
-
-                        }
-                        // append elements to container
-                        result_container.append( elems).masonry('appended', elems );
-
-                        result_container.masonry();
-                        setTimeout("$('#result-container').masonry()", 1500);
+                        var elem = jq_elem.append($remove_button).get(0);
+                        elems.push( elem );
 
                     }
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    alert("Problem requesting Image: "+errorThrown+xhr.status+xhr.responseText);
+                    // append elements to container
+                    result_container.append( elems).masonry('appended', elems );
+
+                    result_container.masonry();
+                    setTimeout("$('#grid-result-container').masonry()", 1500);
+                    set_sizes();
                 }
-            });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert("Problem requesting Image: "+errorThrown+xhr.status+xhr.responseText);
+            }
+        });
+    }
+
+    $(document).ready(function(){
+
+        var view_toggle_btn = $('#view_toggle');
+
+        if($.cookie("lv_results_view_layout")) {
+            var view = $.cookie("lv_results_view_layout");
+            if (view == "grid") {
+                view_toggle_btn.data("view", "grid");
+                view_toggle_btn.text("List view");
+            } else if (view == "list") {
+                view_toggle_btn.data("view", "list");
+                view_toggle_btn.text("Grid view");
+            }
         }
 
-        $(document).ready(function(){
+        view_toggle_btn.click(function(){
+            if (view_toggle_btn.data("view") == "list") {
+                view_toggle_btn.data("view", "grid");
+                view_toggle_btn.text("Grid view");
+                $.cookie("lv_results_view_layout","grid", {expires: 365, path: '/'});
+                location.reload();
 
-            var view_toggle_btn = $('#view_toggle');
+                {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
+            } else if (view_toggle_btn.data("view") == "grid") {
+                view_toggle_btn.data("view", "list");
+                view_toggle_btn.text("List view");
+                {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
+                $.cookie("lv_results_view_layout", "list", {expires: 365, path: '/'});
+                location.reload();
 
-            if($.cookie("lv_results_view_layout")) {
-                var view = $.cookie("lv_results_view_layout");
-                if (view == "grid") {
-                    view_toggle_btn.data("view", "grid");
-                    view_toggle_btn.text("Grid view");
-                } else if (view == "list") {
-                    view_toggle_btn.data("view", "list");
-                    view_toggle_btn.text("List view");
-                }
             }
-
-            view_toggle_btn.click(function(){
-                if (view_toggle_btn.data("view") == "list") {
-                    view_toggle_btn.data("view", "grid");
-                    view_toggle_btn.text("Grid view");
-                    $.cookie("lv_results_view_layout","grid", {expires: 365, path: '/'});
-                    location.reload();
-
-                    {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
-                } else if (view_toggle_btn.data("view") == "grid") {
-                    view_toggle_btn.data("view", "list");
-                    view_toggle_btn.text("List view");
-                    {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
-                    $.cookie("lv_results_view_layout", "list", {expires: 365, path: '/'});
-                    location.reload();
-
-                }
-            });
-
-            $('#load_more').click(function(){
-                read_next_batch()
-            });
-            read_next_batch();
-
-{#            $('.adv_img').load(function(){#}
-{##}
-{#                var width = this.naturalWidth;#}
-{#                var height = this.naturalHeight;#}
-{##}
-{#                var ratio = width / height;#}
-{#                console.log(width + ' ' + height + ' ' + ratio);#}
-{##}
-                {#                var item_css = 'adv_item';#}
-{#                if (ratio > 2) {#}
-{#                    $( this).parent().parent().addClass( "adv_item_wide" );#}
-{#                } else if (ratio < 0.5) {#}
-{#                    $( this).parent().parent().addClass( "adv_item_tall" );#}
-{#                }#}
-{#            });#}
-
-
-
         });
-        $(window).load(function(){
 
-
+        $('#load_more').click(function(){
+            read_next_batch()
         });
+        read_next_batch();
+
+        $('#grid-result-container').ready(function(){
+            console.log('grid resutls loaded');
+            set_sizes();
+        });
+
+    });
+    $(window).load(function(){
+
+
+    });
     </script>
 
     <div id="view_toggle" class="btn btn-default" data-view="list">Toggle view</div>
 
     <h3>{{ query }}</h3>
+    <div id="grid-result-container"></div>
     <div id="result-container">
 
         <div id="results_table_div" class="bs-example table-responsive">

@@ -241,7 +241,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 
 .carousel-exhibition-caption {
     margin-top: 60px;
-background-color: #A0A2A6;
+    background-color: #A0A2A6;
     opacity: 0.7;
 }
 
@@ -368,15 +368,15 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 
 .remove_button {
-position: absolute;
-right:5px;
-top:0px
+    position: absolute;
+    right:5px;
+    top:0px
 }
 
 .set_caption_button {
-position: absolute;
-right:5px;
-top:2em;
+    position: absolute;
+    right:5px;
+    top:2em;
 }
 
 .collapse-init {
@@ -468,24 +468,63 @@ top:2em;
 
 .login label {
     display: inline-block;
-    width: 150px;
+    width: 120px;
 }
 
 
-
+.grid-result-container {
+    width: 100%;
+}
 
 .adv_item {
     /*width: 10%;*/
-    background-color: green;
+    /*background-color: green;*/
+    /*width: 180px;*/
+    /*height: 180px;*/
+    padding: 5px;
+    /*border: 1px;*/
+    /*border-style: dotted;*/
+    display: table;
+
+}
+
+.adv_item_panel {
+    margin: 5px;
+    background-color: rgba(160, 162, 166, 0.3);
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.adv_square {
     width: 180px;
+    height: 180px;
 }
 
-.adv_item_2 {
-    width: 80px;
+.adv_landscape_2 {
+    width: 360px;
+    height: 180px;
+}
+
+.adv_landscape_3 {
+    width: 540px;
+    height: 180px;
 }
 
 
+.adv_portrait_2 {
+    width: 180px;
+    height: 360px;
+}
 
+.adv_portrait_3 {
+    width: 180px;
+    height: 540px;
+}
+
+.adv_portrait_4 {
+    width: 180px;
+    height: 720px;
+}
 
 
 /*.magnify {*/
