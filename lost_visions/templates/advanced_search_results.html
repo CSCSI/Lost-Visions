@@ -29,7 +29,7 @@
     function set_sizes(){
 
         $('#grid-result-container').find('.adv_item').each(function(i,elem){
-            $this_jq = $(this);
+            var $this_jq = $(this);
 
             var adv_item_img = $this_jq.find('img').get(0);
             console.log(adv_item_img);
@@ -37,35 +37,51 @@
             {#            var width = $this_jq.width();#}
             {#            var height = $this_jq.height();#}
 
-            var width = adv_item_img.naturalWidth;
-            var height = adv_item_img.naturalHeight;
+            $(adv_item_img).load(function(){
+                var width = adv_item_img.naturalWidth;
+                var height = adv_item_img.naturalHeight;
 
-            var ratio = width / height;
-            console.log($this_jq);
-            console.log(this);
-            console.log(width + '--' + height + '--' + ratio);
+                var ratio = width / height;
+                console.log($this_jq);
+                console.log(this);
+                console.log(width + '--' + height + '--' + ratio);
 
-            {#            if (ratio > 2) {#}
-            {#                $this_jq.addClass('adv_landscape_2');#}
-            {#            } else if (ratio < 0.5) {#}
-            {#                $this_jq.addClass('adv_portrait_2');#}
-            {#            } else {#}
-            {#                $this_jq.addClass('adv_square');#}
-            {#            }#}
+                if (ratio > 2 && ratio < 3) {
+                    $this_jq.addClass('adv_landscape_2');
+                }  else if (ratio >= 3) {
+                    $this_jq.addClass('adv_landscape_3');
+                }else if (ratio < 1 && ratio > 0.5) {
+                    $this_jq.addClass('adv_portrait_2');
+                }  else if (ratio <= 0.5 && ratio > 0.25) {
+                    $this_jq.addClass('adv_portrait_3');
+                }    else if (ratio <= 0.25) {
+                    $this_jq.addClass('adv_portrait_4');
+                } else {
+                    $this_jq.addClass('adv_square');
+                }
+            });
 
-            if (ratio > 2 && ratio < 3) {
-                $this_jq.addClass('adv_landscape_2');
-            }  else if (ratio >= 3) {
-                $this_jq.addClass('adv_landscape_3');
-            }else if (ratio < 1 && ratio > 0.5) {
-                $this_jq.addClass('adv_portrait_2');
-            }  else if (ratio <= 0.5 && ratio > 0.25) {
-                $this_jq.addClass('adv_portrait_3');
-            }    else if (ratio <= 0.25) {
-                $this_jq.addClass('adv_portrait_4');
-            } else {
-                $this_jq.addClass('adv_square');
-            }
+{#            var width = adv_item_img.naturalWidth;#}
+{#            var height = adv_item_img.naturalHeight;#}
+{##}
+{#            var ratio = width / height;#}
+{#            console.log($this_jq);#}
+{#            console.log(this);#}
+{#            console.log(width + '--' + height + '--' + ratio);#}
+{##}
+{#            if (ratio > 2 && ratio < 3) {#}
+{#                $this_jq.addClass('adv_landscape_2');#}
+{#            }  else if (ratio >= 3) {#}
+{#                $this_jq.addClass('adv_landscape_3');#}
+{#            }else if (ratio < 1 && ratio > 0.5) {#}
+{#                $this_jq.addClass('adv_portrait_2');#}
+{#            }  else if (ratio <= 0.5 && ratio > 0.25) {#}
+{#                $this_jq.addClass('adv_portrait_3');#}
+{#            }    else if (ratio <= 0.25) {#}
+{#                $this_jq.addClass('adv_portrait_4');#}
+{#            } else {#}
+{#                $this_jq.addClass('adv_square');#}
+{#            }#}
         });
     }
 
