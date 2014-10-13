@@ -1077,8 +1077,15 @@ def get_image_data(request):
                 try:
                     tag_result = dict()
                     tag_result['title'] = result.title
-                    tag_result['img'] = result.flickr_small_source
-                    # tag_result['img'] = db_tools.get_image_info(result.flickr_id)['imageurl']
+
+                    try:
+                        tag_result['img'] = db_tools.get_image_info(result.flickr_id)['imageurl']
+                    except:
+                        tag_result['img'] = result.flickr_small_source
+
+                    if tag_result['img'] is None:
+                        tag_result['img'] = result.flickr_small_source
+
                     tag_result['date'] = result.date
                     tag_result['page'] = result.page.lstrip('0')
                     tag_result['book_id'] = result.book_identifier
