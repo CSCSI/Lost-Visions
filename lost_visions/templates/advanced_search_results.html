@@ -36,33 +36,92 @@
                 success: function(data) {
                     console.log(data);
 
-                    var table = $('#results_table');
+                    var view_toggle_btn = $('#view_toggle');
+                    if (view_toggle_btn.data("view") == "list") {
 
-                    for (var image_id in data) {
-                        console.log(image_id);
+                        var table = $('#results_table');
 
-                        var image_data = data[image_id];
+                        for (var image_id in data) {
+                            console.log(image_id);
 
-                        var row = '<tr>'
-                                + '<td>' +
-                                '<a href="' + image_data['link'] + '" target="_blank">' +
-                                '<img src="' + image_data['img']  + '"' +
-                                'style="max-height: 80px; width:auto; display: block; margin: 0 auto">' +
-                                '</a>'
-                                + '</td>'
-                                + '<td>' + image_data['author'] + '</td>'
-                                + '<td>' + image_data['date'] + '</td>'
-                                + '<td>' + image_data['page'] + '</td>'
+                            var image_data = data[image_id];
 
-                                + '<td><a href="{% url 'do_advanced_search' %}'
-                                + '?book_id=' + image_data['book_id']
-                                + '&csrfmiddlewaretoken={{ csrf_token }}"'
-                                +  ' target="_blank">'
-                                + image_data['title']  +
-                                '</a></td>'
-                                + '</tr>';
+                            var row = '<tr>'
+                                    + '<td>' +
+                                    '<a href="' + image_data['link'] + '" target="_blank">' +
+                                    '<img src="' + image_data['img']  + '"' +
+                                    'style="max-height: 80px; width:auto; display: block; margin: 0 auto">' +
+                                    '</a>'
+                                    + '</td>'
+                                    + '<td>' + image_data['author'] + '</td>'
+                                    + '<td>' + image_data['date'] + '</td>'
+                                    + '<td>' + image_data['page'] + '</td>'
 
-                        table.append($(row));
+                                    + '<td><a href="{% url 'do_advanced_search' %}'
+                                    + '?book_id=' + image_data['book_id']
+                                    + '&csrfmiddlewaretoken={{ csrf_token }}"'
+                                    +  ' target="_blank">'
+                                    + image_data['title']  +
+                                    '</a></td>'
+                                    + '</tr>';
+
+                            table.append($(row));
+                        }
+
+                    } else if (view_toggle_btn.data("view") == "grid") {
+                        $('#results_table_div').remove();
+
+                        var result_container = $('#result-container').masonry({
+                            columnWidth: 60,
+                            itemSelector: '.adv_item'
+                        });
+
+                        var elems = [];
+                        var fragment = document.createDocumentFragment();
+                        for (var image_id in data) {
+                            var image_data = data[image_id];
+
+                            {#                            var image = new Image();#}
+                            {#                            image.src = image_data['img'];#}
+                            {##}
+                            {#                            var width = this.naturalWidth;#}
+                            {#                            var height = this.naturalHeight;#}
+                            {##}
+                            {#                            var ratio = width / height;#}
+                            {#                            console.log(width + ' ' + height + ' ' + ratio)#}
+
+                            var item_css = 'adv_item';
+                            {#                            if (ratio > 2) {#}
+                            {#                                item_css = 'adv_item adv_item_wide'#}
+                            {#                            } else if (ratio < 0.5) {#}
+                            {#                                item_css = 'adv_item adv_item_heigh'#}
+                            {#                            }#}
+
+                            var elem_text = '<div class="' +
+                                    item_css +
+                                    '" id="adv_item_' + image_id + '" ' +
+                                    'data-id="' + image_id + '">' +
+                                    '<div class="panel">' +
+                                    '<a href="' + image_data['link'] + '" target="_blank">' +
+                                    '<img class="adv_img"' +
+                                    ' src="' + image_data['img']  + '" style="width:100%; height:auto;">' +
+                                    '</a>' +
+                                    '</div>' +
+                                    '</div>';
+                            console.log(elem_text);
+                            {#                            var elem = document.createElement('div');#}
+                            var elem = $($.parseHTML(elem_text)).get(0);
+                            fragment.appendChild( elem );
+                            elems.push( elem );
+
+
+                        }
+                        // append elements to container
+                        result_container.append( elems).masonry('appended', elems );
+
+                        result_container.masonry();
+                        setTimeout("$('#result-container').masonry()", 1500);
+
                     }
                 },
                 error: function(xhr, textStatus, errorThrown) {
@@ -73,21 +132,82 @@
 
         $(document).ready(function(){
 
+            var view_toggle_btn = $('#view_toggle');
+
+            if($.cookie("lv_results_view_layout")) {
+                var view = $.cookie("lv_results_view_layout");
+                if (view == "grid") {
+                    view_toggle_btn.data("view", "grid");
+                    view_toggle_btn.text("Grid view");
+                } else if (view == "list") {
+                    view_toggle_btn.data("view", "list");
+                    view_toggle_btn.text("List view");
+                }
+            }
+
+            view_toggle_btn.click(function(){
+                if (view_toggle_btn.data("view") == "list") {
+                    view_toggle_btn.data("view", "grid");
+                    view_toggle_btn.text("Grid view");
+                    $.cookie("lv_results_view_layout","grid", {expires: 365, path: '/'});
+                    location.reload();
+
+                    {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
+                } else if (view_toggle_btn.data("view") == "grid") {
+                    view_toggle_btn.data("view", "list");
+                    view_toggle_btn.text("List view");
+                    {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
+                    $.cookie("lv_results_view_layout", "list", {expires: 365, path: '/'});
+                    location.reload();
+
+                }
+            });
+
             $('#load_more').click(function(){
                 read_next_batch()
             });
-
             read_next_batch();
+
+{#            $('.adv_img').load(function(){#}
+{##}
+{#                var width = this.naturalWidth;#}
+{#                var height = this.naturalHeight;#}
+{##}
+{#                var ratio = width / height;#}
+{#                console.log(width + ' ' + height + ' ' + ratio);#}
+{##}
+                {#                var item_css = 'adv_item';#}
+{#                if (ratio > 2) {#}
+{#                    $( this).parent().parent().addClass( "adv_item_wide" );#}
+{#                } else if (ratio < 0.5) {#}
+{#                    $( this).parent().parent().addClass( "adv_item_tall" );#}
+{#                }#}
+{#            });#}
+
+            $('#result-container').find('div').each(function(i,elem){
+                $this_jq = $(this);
+                var width = $this_jq.width();
+                var height = $this_jq.height();
+
+                var ratio = width / height;
+                console.log(width + '--' + height + '--' + ratio);
+
+                $(this).addClass($this_jq.width() > $this_jq.height() ? 'landscape' : 'portrait');
+            });
 
         });
         $(window).load(function(){
+
+
         });
     </script>
+
+    <div id="view_toggle" class="btn btn-default" data-view="list">Toggle view</div>
 
     <h3>{{ query }}</h3>
     <div id="result-container">
 
-        <div class="bs-example table-responsive">
+        <div id="results_table_div" class="bs-example table-responsive">
             <table class="table table-striped table-hover" id="results_table">
                 <tbody>
                 <tr>
@@ -107,32 +227,6 @@
                         Title
                     </th>
                 </tr>
-{#                {% for image_key, image_data in results.results.advanced.items %}#}
-{#                    <tr>#}
-{#                        <th>#}
-{#                            <a href="{{ image_data.link }}" target="_blank">#}
-{#                                <img src="{{ image_data.img }}"#}
-{#                                     style='max-height: 80px; width:auto; display: block; margin: 0 auto'>#}
-{#                            </a>#}
-{#                        </th>#}
-{##}
-{#                        <td>#}
-{#                            {{ image_data.author }}#}
-{#                        </td>#}
-{#                        <td>#}
-{#                            {{ image_data.date }}#}
-{#                        </td>#}
-{#                        <td>#}
-{#                            {{ image_data.title }}#}
-{#                        </td>#}
-{#                    </tr>#}
-{##}
-{#                {% empty %}#}
-{#                    <div class="bl_item">#}
-{#                        <p>(No matches for your search)</p>#}
-{#                    </div>#}
-{#                {% endfor %}#}
-
                 </tbody>
             </table>
         </div>

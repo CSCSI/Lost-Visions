@@ -184,7 +184,7 @@
                     var collection_id = $(this).data('collection_id');
                     var image_id = $(this).data('image_id');
                     var new_caption = $('#edit_image_caption_field').val();
-{#                    var name = $(this).data('collection_id');#}
+                    {#                    var name = $(this).data('collection_id');#}
 
                     $.ajax({
                         type: "POST",
@@ -355,12 +355,12 @@
                         <a href="{% url 'image' d.flickr_id %}" target="_blank">
                             <img src="{{ d.url }}" style='width:100%; height:auto;'>
                         </a>
-                                                <div class="panel-footer">
-                                                    {{ d.caption }}
-{#                                                    Image ID : {{ d.flickr_id }}#}
-{#                                                    <br>#}
-{#                                                    Page : {{ d.page }}#}
-                                                </div>
+                        <div class="panel-footer">
+                            {{ d.caption }}
+{#                            Image ID : {{ d.flickr_id }}#}
+{#                            <br>#}
+{#                            Page : {{ d.page }}#}
+                        </div>
                     </div>
                 </div>
             {% endfor %}

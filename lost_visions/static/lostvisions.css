@@ -474,8 +474,15 @@ top:2em;
 
 
 
+.adv_item {
+    /*width: 10%;*/
+    background-color: green;
+    width: 180px;
+}
 
-
+.adv_item_2 {
+    width: 80px;
+}
 
 
 
