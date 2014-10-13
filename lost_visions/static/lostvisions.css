@@ -500,6 +500,11 @@ a:hover#save_image.btn.btn-default.save_image  {
     height: 180px;
 }
 
+.adv_square_large {
+    width: 360px;
+    height: 360px;
+}
+
 .adv_landscape_2 {
     width: 360px;
     height: 180px;
