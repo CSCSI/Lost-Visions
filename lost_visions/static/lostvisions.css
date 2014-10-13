@@ -37,11 +37,11 @@ body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > d
     min-height: 100%;
     /*height: auto !important;*/
     /*height: 100%;*/
-    margin: 0 auto -10em;
+    margin: 0 auto -8em;
 }
 
 .sticky-footer, .push {
-    height: 10em;
+    height: 8em;
 }
 /*title bar*/
 
@@ -113,6 +113,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 
 #search_form {
     margin: 0px;
+    padding: 0px
 }
 
 .quick-search-field {
@@ -131,7 +132,9 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     width: 100%;
     display: table;
     table-layout: fixed;
-    padding: 0px;
+    padding-left: 10%;
+    padding-right: 10%;
+    margin: 0px;
 }
 
 .footer-links > table > tbody > tr > td > a > img {
@@ -145,7 +148,6 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     /*border: 1px solid #DDD;*/
     vertical-align: middle;
     height: 100%;
-    padding-top: 3px;
 }
 
 .footer-links > li > a > p {
@@ -195,13 +197,15 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 }
 
 .title-logo {
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 /*home page*/
 .base-container {
-    padding-top: 50px
+    padding-top: 50px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 .home-width{
@@ -220,6 +224,8 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 .home-content-main {
     width: 80%;
     margin: 0 auto;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 .home-lower-imagebar {
