@@ -41,6 +41,7 @@ body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > d
 }
 
 .sticky-footer, .push {
+    padding-top: 30px;
     height: 8em;
 }
 /*title bar*/
@@ -371,18 +372,38 @@ a:hover#save_image.btn.btn-default.save_image  {
     background-image: linear-gradient(#D92432, #e32537 40%, #ff263b);
 }
 
-
-
 .remove_button {
     position: absolute;
-    right:5px;
+    right:7px;
     top:0px
 }
 
 .set_caption_button {
     position: absolute;
-    right:5px;
+    right:7px;
     top:2em;
+}
+
+.save_image_float_button {
+    position: absolute;
+    right:7px;
+    top:2em;
+    background: #910000;
+    background-image: linear-gradient(#D92432, #e32537 40%, #ff263b);
+}
+
+.save_image_float_button:hover  {
+        background-image: linear-gradient(#910000, #ac0000 60%, #e20000);
+}
+
+.save_image_float_button:hover .save_menu {
+    width: 100px;
+    /*height: 100px;*/
+    display: block;
+}
+
+.save_menu {
+    display: none;
 }
 
 .collapse-init {

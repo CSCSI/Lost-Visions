@@ -989,11 +989,20 @@ def do_advanced_search(request):
 
     response_data = {'results': results, 'size': total_results, 'search_string': keywords}
 
+    user_collections = []
+    if request.user.is_authenticated():
+
+        collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
+        for model in collection_models:
+            user_collections.append({'name': model.name,
+                                     'id': str(model.id)})
+
     return render(request, 'advanced_search_results.html',
                   {'results': response_data,
                    'query': readable_query,
                    'all_image_ids': all_image_ids,
-                   'number_to_show': number_of_results_int},
+                   'number_to_show': number_of_results_int,
+                   'user_collections': user_collections},
                   context_instance=RequestContext(request))
 
 

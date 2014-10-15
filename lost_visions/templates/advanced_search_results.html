@@ -32,7 +32,7 @@
             var $this_jq = $(this);
 
             var adv_item_img = $this_jq.find('img').get(0);
-            console.log(adv_item_img);
+            {#            console.log(adv_item_img);#}
 
             {#            var width = $this_jq.width();#}
             {#            var height = $this_jq.height();#}
@@ -42,9 +42,9 @@
                 var height = adv_item_img.naturalHeight;
 
                 var ratio = width / height;
-                console.log($this_jq);
-                console.log(this);
-                console.log(width + '--' + height + '--' + ratio);
+                {#                console.log($this_jq);#}
+                {#                console.log(this);#}
+                {#                console.log(width + '--' + height + '--' + ratio);#}
 
                 if (ratio > 2 && ratio < 3) {
                     $this_jq.addClass('adv_landscape_2');
@@ -64,14 +64,33 @@
                     }
                 }
 
-{#                $('#grid-result-container').append([$this_jq]).masonry('appended', [$this_jq] );#}
-
             });
 
         });
     }
 
+    function saveImageToCollection(collection_name, image_id) {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'user_profile.new_collection' %}",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                collection_name: collection_name,
+                image_id: image_id
+            },
+            success: function(data) {
+                var ok = data['success'];
+                alert("Added Image to Favourites : " + collection_name);
+
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+            }
+        });
+    }
+
     function load_more(ids){
+
         $.ajax({
             type: "POST",
             url: "{% url 'get_image_data' %}",
@@ -142,14 +161,38 @@
                         {#                            console.log(elem_text);#}
                         var jq_elem = $($.parseHTML(elem_text));
 
-                        var $remove_button = $("<div id='source-button' " +
+                        var $save_button = $('<div id="hide-button-' + image_id + '" ' +
+                                'class="btn btn-default btn-xs save_image_float_button" ' +
+                                ">" +
+                                "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}' style='max-height: 27px'>" +
+                                "</div>").click(function(){
+
+                            var btn_parent_image_id = $(this).parent().data('id');
+
+                            $('#save_image_dialog_form').data('image_id', btn_parent_image_id).dialog("open");
+
+                        });
+
+                        var $remove_button = $("<div id='hide-button-" + image_id + "' " +
                                 "class='btn btn-primary btn-xs remove_button' " +
                                 ">Hide</div>").click(function(){
                             $(this).parent().remove();
                             $('#grid-result-container').masonry();
                         });
 
-                        var elem = jq_elem.append($remove_button).get(0);
+                        jq_elem.append($remove_button).append($save_button);
+
+                        $remove_button.hide();
+                        $save_button.hide();
+
+                        jq_elem.hover(function(){
+                            $(this).find('[id^=hide-button]').show();
+                        }, function(){
+                            $(this).find('[id^=hide-button]').hide();
+                        });
+                        {#                        var elem = jq_elem.append($remove_button).get(0);#}
+                        var elem = jq_elem.get(0);
+
                         elems.push( elem );
 
                     }
@@ -210,6 +253,39 @@
             set_sizes();
         });
 
+        var save_image_dialog_form = $( "#save_image_dialog_form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Save Image": function() {
+                    var image_id = $(this).data('image_id');
+
+                    var e = document.getElementById("user_collection_select");
+                    var collection_id = e.options[e.selectedIndex].value;
+
+                    console.log(image_id + ' ' + collection_id);
+
+                    saveImageToCollection(collection_id, image_id);
+
+                    save_image_dialog_form.dialog( "close" );
+                },
+                Cancel: function() {
+                    save_image_dialog_form.dialog( "close" );
+                }
+            },
+            open : function() {
+                var name = $(this).data('name');
+                var id = $(this).data('id');
+                $('#edit_image_caption_field').val(name);
+            },
+            close: function() {
+                {#                form[ 0 ].reset();#}
+                {#                allFields.removeClass( "ui-state-error" );#}
+            }
+        });
+
     });
     $(window).load(function(){
 
@@ -250,5 +326,24 @@
     <hr>
     <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>
 
+    <div id="save_image_dialog_form" title="Save Image to Collecton">
+        <p class="validateTips">Save Image to Collecton</p>
+        <div id="save_image_data" data-collection_id="" data-collection_name=""></div>
+        <form>
+            <fieldset>
+                <select id="user_collection_select">
+                    {% for option in user_collections %}
+                        <option id="{{ option.id }}" value="{{ option.name }}">
+                            {{ option.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {#                <input type="text" name="edit_image_caption_field" id="edit_image_caption_field" value="" class="text ui-widget-content ui-corner-all">#}
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
 
 {% endblock %}

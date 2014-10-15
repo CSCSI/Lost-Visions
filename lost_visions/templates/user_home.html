@@ -3,61 +3,76 @@
 {% block content %}
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-    var $remove_button = $("<div id='source-button' " +
-            "class='btn btn-primary btn-xs remove_button' " +
-            {#                "style='position: absolute; right:5px; top:0px'" +#}
-            ">Remove</div>").click(function(){
 
-        var id = $(this).parent().data().id;
-        var collection_id = $(this).parent().data().collection_id;
-
-        $.ajax({
-            type: "POST",
-            url: "{% url 'user_profile.save_image' %}",
-            data: {
-                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                image_id: id,
-                collection_id: collection_id,
-                {#                    id.split('_')[2],#}
-                delete_image: true
-            },
-            success: function(data) {
-                alert("Removed Image");
-                $('#bl_item_' + id).remove();
-                $('.js-masonry').masonry();
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                alert("Problem removing Image: "+errorThrown+xhr.status+xhr.responseText);
-            }
-        });
-
-    });
-
-    var $set_caption_button = $("<div id='source-button' " +
-            "class='btn btn-primary btn-xs set_caption_button' " +
-            {#                "style='position: absolute; right:5px; top:0px'" +#}
-            ">Edit Caption</div>").click(function(){
-
-        var id = $(this).parent().data().id;
-        var collection_id = $(this).parent().data().collection_id;
-
-
-        $('#image_caption_dialog_form').data('image_id', id).data('collection_id', collection_id).dialog("open");
-    });
 
     $(document).ready(function(){
         $('.js-masonry').masonry();
 
-        $('.bl_item').hover(function(){
-            $(this).append($remove_button);
-            $(this).append($set_caption_button);
+        $('.bl_item').each( function( index, element ){
 
-            $remove_button.show();
-            $set_caption_button.show();
-        }, function(){
+            var $remove_button = $("<div id='remove-button' " +
+                    "class='btn btn-primary btn-xs remove_button' " +
+                    {#                "style='position: absolute; right:5px; top:0px'" +#}
+                    ">Remove</div>").click(function(){
+
+                var id = $(this).parent().data().id;
+                var collection_id = $(this).parent().data().collection_id;
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'user_profile.save_image' %}",
+                    data: {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        image_id: id,
+                        collection_id: collection_id,
+                        {#                    id.split('_')[2],#}
+                        delete_image: true
+                    },
+                    success: function(data) {
+{#                        alert("Removed Image");#}
+                        $('#bl_item_' + id).remove();
+                        $('.js-masonry').masonry();
+
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+{#                        alert("Problem removing Image: "+errorThrown+xhr.status+xhr.responseText);#}
+                    }
+                });
+
+            });
+
+            var $set_caption_button = $("<div id='caption-button' " +
+                    "class='btn btn-primary btn-xs set_caption_button' " +
+                    {#                "style='position: absolute; right:5px; top:0px'" +#}
+                    ">Edit Caption</div>").click(function(){
+
+                var id = $(this).parent().data().id;
+                var collection_id = $(this).parent().data().collection_id;
+
+
+                $('#image_caption_dialog_form').data('image_id', id).data('collection_id', collection_id).dialog("open");
+            });
+
+            $(element).append($remove_button).append($set_caption_button).hover(function(){
+                {#            $(this).append($remove_button);#}
+                {#            $(this).append($set_caption_button);#}
+                $(this).find('[id^=remove-button]').show();
+                $(this).find('[id^=caption-button]').show();
+
+                {#            $remove_button.show();#}
+                {#            $set_caption_button.show();#}
+            }, function(){
+                $(this).find('[id^=remove-button]').hide();
+                $(this).find('[id^=caption-button]').hide();
+
+                {#            $remove_button.hide();#}
+                {#            $set_caption_button.hide();#}
+            });
+
             $remove_button.hide();
             $set_caption_button.hide();
         });
+
 
         $('#download_all').click(function(){
             var dl_link = '{% url 'user_dl_all' %}' +
@@ -134,7 +149,7 @@
                         },
                         success: function(data) {
                             edit_collection_dialog.dialog( "close" );
-                            alert('Renamed collection ' + name + ' to ' + new_collection_name);
+{#                            alert('Renamed collection ' + name + ' to ' + new_collection_name);#}
                             location.reload();
                         },
                         error: function(xhr, textStatus, errorThrown) {}
@@ -198,7 +213,7 @@
                         },
                         success: function(data) {
                             image_caption_dialog_form.dialog( "close" );
-                            alert('Added caption ' + new_caption + ' to image ' + image_id);
+{#                            alert('Added caption ' + new_caption + ' to image ' + image_id);#}
                             location.reload();
                         },
                         error: function(xhr, textStatus, errorThrown) {}
@@ -357,9 +372,9 @@
                         </a>
                         <div class="panel-footer">
                             {{ d.caption }}
-{#                            Image ID : {{ d.flickr_id }}#}
-{#                            <br>#}
-{#                            Page : {{ d.page }}#}
+                            {#                            Image ID : {{ d.flickr_id }}#}
+                            {#                            <br>#}
+                            {#                            Page : {{ d.page }}#}
                         </div>
                     </div>
                 </div>
