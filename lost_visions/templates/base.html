@@ -178,7 +178,11 @@
         $('#teach_me').click(function(){
             introJs().setOption('scrollToElement', true).onbeforechange(function(targetElement) {
                 if (targetElement.id == 'collapse_cloud') {
-                    console.log(targetElement);
+{#                    console.log(targetElement);#}
+                    $(targetElement).accordion({active: 0});
+                }
+                 if (targetElement.id == 'collapse_metadata') {
+{#                    console.log(targetElement);#}
                     $(targetElement).accordion({active: 0});
                 }
                 else if (targetElement.id == 'objects_and_ideas') {
