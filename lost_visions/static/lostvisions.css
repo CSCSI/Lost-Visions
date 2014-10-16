@@ -13,6 +13,11 @@ a{
     font-weight: 200;
 }
 
+h2 {
+    font-weight: bold;
+    color: #A0A2A6;
+}
+
 html, body {
     height: 100%;
 }
@@ -283,6 +288,52 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     margin: 5px;
 }
 
+
+.side-menu {
+    /*height: 200px;*/
+    position: absolute;
+    float: left;
+    /*left: 0px;*/
+    margin-left: -57px;
+    /*background-color: #d17f04;*/
+}
+.side-menu-btn {
+    /*float: right;*/
+    /*text-align: right;*/
+    /*right: 0px;*/
+}
+
+.side-menu-close {
+    /*float:right;*/
+}
+
+.side-menu-content-thin {
+    /*height: inherit;*/
+    position: relative;
+    height: 200px;
+    /*width:30px;*/
+    background-color: #d17f04;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    /*border-style: dashed;*/
+}
+
+.side-menu-content-wide {
+    /*height: inherit;*/
+    position: relative;
+    width:150px;
+    background-color: #d17f04;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    /*border-style: dashed;*/
+}
+
+.side-menu-list {
+    list-style: none;
+    padding: 0px;
+    margin: 2px;
+}
+
 .photo_background {
     /*height:90%*/
     display: table-cell;
@@ -303,18 +354,23 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     margin: 0 auto;
 }
 
+.question-frame {
+    border: 20px solid #d3d3d3;
+    min-height: 300px;
+}
+
 /*.panel-heading{*/
-    /*background-color: rgba(183, 199, 215, 0.25);*/
+/*background-color: rgba(183, 199, 215, 0.25);*/
 /*}*/
 
 /*.panel-group .panel-footer{*/
-    /*background-color: rgba(183, 199, 215, 0.25);*/
+/*background-color: rgba(183, 199, 215, 0.25);*/
 
-    /*white-space: nowrap;*/
-    /*width: 100%;                   *//* IE6 needs any width */
-    /*overflow: hidden;              *//* "overflow" value must be different from  visible"*/
-    /*-o-text-overflow: ellipsis;    *//* Opera < 11*/
-    /*text-overflow:    ellipsis;    *//* IE, Safari (WebKit), Opera >= 11, FF > 6 */
+/*white-space: nowrap;*/
+/*width: 100%;                   *//* IE6 needs any width */
+/*overflow: hidden;              *//* "overflow" value must be different from  visible"*/
+/*-o-text-overflow: ellipsis;    *//* Opera < 11*/
+/*text-overflow:    ellipsis;    *//* IE, Safari (WebKit), Opera >= 11, FF > 6 */
 
 /*}*/
 
@@ -400,7 +456,7 @@ a:hover#save_image.btn.btn-default.save_image  {
 }
 
 .save_image_float_button:hover  {
-        background-image: linear-gradient(#910000, #ac0000 60%, #e20000);
+    background-image: linear-gradient(#910000, #ac0000 60%, #e20000);
 }
 
 .save_image_float_button:hover .save_menu {
@@ -492,6 +548,13 @@ a:hover#save_image.btn.btn-default.save_image  {
     height: 50%;
 }
 
+#ui-accordion-collapse_cloud-header-0 {
+    background-color: #d17f04;
+}
+
+#ui-accordion-collapse_metadata-header-0 {
+    background-color: #d17f04;
+}
 
 /* Advanced search*/
 

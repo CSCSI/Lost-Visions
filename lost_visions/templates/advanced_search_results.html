@@ -176,9 +176,15 @@
                         var $remove_button = $("<div id='hide-button-" + image_id + "' " +
                                 "class='btn btn-primary btn-xs remove_button' " +
                                 ">Hide</div>").click(function(){
-                            $(this).parent().remove();
-                            $('#grid-result-container').masonry();
+
+                            var image_cell = $(this).parent();
+                            image_cell.hide('scale',{ percent: 0 }, 1000, removeImageCell(image_cell));
                         });
+
+                        function removeImageCell(image_cell){
+                            image_cell.remove();
+                            $('#grid-result-container').masonry();
+                        }
 
                         jq_elem.append($remove_button).append($save_button);
 
@@ -338,9 +344,6 @@
                         </option>
                     {% endfor %}
                 </select>
-                {#                <input type="text" name="edit_image_caption_field" id="edit_image_caption_field" value="" class="text ui-widget-content ui-corner-all">#}
-
-                <!-- Allow form submission with keyboard without duplicating the dialog button -->
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
             </fieldset>
         </form>

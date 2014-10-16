@@ -54,7 +54,48 @@
     {#        return font_size + ((value -1) * (10 / {{ most_used_tag_count }}) * font_size);#}
     {#    }#}
 
+    function tidy_masonry() {
+
+        setTimeout("$('#category-container').masonry()", 1500);
+        $('#category-container').masonry();
+    }
+
+    var current_question_pane = 1;
     $(document).ready(function () {
+
+        $('#question-accordion-prev').click(function(){
+
+            if (current_question_pane - 1 > 0){
+                var current_div = '#question_number_' + current_question_pane;
+                $(current_div).hide('slide', 500, function(){
+
+                    current_question_pane -= 1;
+                    $('#question_number_' + current_question_pane).show('blind', 500, tidy_masonry());
+                });
+            }
+
+        });
+
+        $('#question-accordion-next').click(function(){
+            if (current_question_pane + 1 < 5){
+                var div_name = '#question_number_' + current_question_pane;
+
+                $(div_name).hide('slide', 500, function(){
+
+                    current_question_pane += 1;
+                    $('#question_number_' + current_question_pane).show('blind', 500, tidy_masonry());
+                });
+            }
+        });
+
+        {#        $('#question_number_1').hide();#}
+        $('#question_number_2').hide();
+        $('#question_number_3').hide();
+        $('#question_number_4').hide();
+        $('#question_number_5').hide();
+
+
+
         $('.js-masonry').masonry();
 
         $('#collapse_cloud').accordion({
@@ -184,7 +225,43 @@
             window.location.replace('{% url 'image.random' %}');
         });
 
-        var dialog;
+        var save_image_dialog_form = $( "#save_image_dialog_form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Save Image": function() {
+
+                    var e = document.getElementById("user_collection_select");
+                    var collection_id = e.options[e.selectedIndex].value;
+
+                    console.log({{ image_id }} + ' ' + collection_id);
+
+                    if (collection_id == "NEW COLLECTION"){
+                        save_image_dialog_form.dialog("close");
+                        dialog.dialog("open");
+
+                    } else {
+                        saveImageToCollection(collection_id, {{ image_id }});
+                    }
+
+                    save_image_dialog_form.dialog( "close" );
+                },
+                Cancel: function() {
+                    save_image_dialog_form.dialog( "close" );
+                }
+            },
+            open : function() {
+                var name = $(this).data('name');
+                var id = $(this).data('id');
+                $('#edit_image_caption_field').val(name);
+            },
+            close: function() {
+                {#                form[ 0 ].reset();#}
+                {#                allFields.removeClass( "ui-state-error" );#}
+            }
+        });
 
         function saveImageToCollection(collection_name) {
             $.ajax({
@@ -212,7 +289,7 @@
             dialog.dialog( "close" );
         }
 
-        dialog = $( "#dialog-form" ).dialog({
+        var dialog = $( "#dialog-form" ).dialog({
             autoOpen: false,
             height: 300,
             width: 350,
@@ -229,34 +306,10 @@
             }
         });
 
-        $('#save_image').click(function() {
-
-            var e = document.getElementById("user_collection_select");
-            var strUser = e.options[e.selectedIndex].text;
-
-            if (strUser == "NEW COLLECTION"){
-                dialog.dialog("open");
-
-                {#            } #}
-                {#            #}
-                {#            else if (strUser == 'default'){#}
-                {#                $.ajax({#}
-                {#                    type: "POST",#}
-                {#                    url: "{% url 'user_profile.save_image' %}",#}
-                {#                    data: {#}
-                {#                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,#}
-                {#                        image_id: {{ image_id }}#}
-                {#                    },#}
-                {#                    success: function(data) {#}
-                {#                        alert("Added Image to Favourites");#}
-                {#                    },#}
-                {#                    error: function(xhr, textStatus, errorThrown) {#}
-                {#                        alert("Problem saving Image: "+errorThrown+xhr.status+xhr.responseText);#}
-                {#                    }#}
-                {#                });#}
-            } else {
-                saveImageToCollection(strUser);
-            }
+        $('.save_image_btn').each(function(){
+            $(this).click(function() {
+                $('#save_image_dialog_form').dialog("open");
+            })
         });
 
         function populate_categories(cat_id, callback) {
@@ -618,46 +671,6 @@
 
         {#        <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">#}
 
-
-        {#        resize_box = function(){#}
-        {##}
-        {#            var photo = $("#photo");#}
-        {#            var photo_width = photo.width();#}
-        {#            var photo_height = photo.height();#}
-        {##}
-        {#            var p_b = $("#photo_background");#}
-        {##}
-        {#            console.log("x,y : " + photo_width + " " + photo_height)#}
-        {##}
-        {#            var max_length = (photo_height > photo_width) ? photo_height : photo_width;#}
-        {##}
-        {#            if (photo_width > photo_height) {#}
-        {#                p_b.height(photo_width);#}
-        {#                p_b.width(photo_width);#}
-        {##}
-        {#                photo.css("height: auto");#}
-        {#                photo.css("width: auto");#}
-        {#            } else {#}
-        {##}
-        {#                console.log("1 " + photo.width());#}
-        {#                photo.css("height: " + photo_width + "px; width: auto; display: block;");#}
-        {#                console.log("2 " + photo.width());#}
-        {##}
-        {##}
-        {#                photo_width = photo.width();#}
-        {#                p_b.height(photo_width);#}
-        {#                p_b.width(photo_width);#}
-        {#            }#}
-        {##}
-        {#            var top_margin = (p_b.height()/2) - (photo.height() /2);#}
-        {##}
-        {#            photo.css("margin-top:", top_margin);#}
-        {##}
-        {#            console.log("square : " + max_length);#}
-        {#            console.log("margin : " + top_margin);#}
-        {##}
-        {#        };#}
-
         var canvas_object = $('#photo'),
                 canvas = canvas_object.get(0),
                 ctx = canvas.getContext('2d'),
@@ -732,34 +745,34 @@
         img.src = "{{ image.imageurl }}";
         img.onload = function(){
 
-                        var windowHeight = $(window).height() * 0.8;
-                        var maxWindowWidth = $(window).width() * (8/12);
+            var windowHeight = $(window).height() * 0.8;
+            var maxWindowWidth = $(window).width() * (8/12);
 
-                        var scale = img.naturalHeight / windowHeight;
-                        canvas.width = img.naturalWidth / scale;
-                        canvas.height = windowHeight;
+            var scale = img.naturalHeight / windowHeight;
+            canvas.width = img.naturalWidth / scale;
+            canvas.height = windowHeight;
 
-                        var jumbotronWidth = canvas.width + 180;
-                        if (jumbotronWidth > maxWindowWidth){
-                            var widthScale = maxWindowWidth/ jumbotronWidth;
-                            canvas.width = canvas.width * scale;
-                            canvas.height = canvas.height * scale;
-                        }
-                        console.log(maxWindowWidth + ' ' + jumbotronWidth + ' ' + widthScale);
+            var jumbotronWidth = canvas.width + 180;
+            if (jumbotronWidth > maxWindowWidth){
+                var widthScale = maxWindowWidth/ jumbotronWidth;
+                canvas.width = canvas.width * scale;
+                canvas.height = canvas.height * scale;
+            }
+            console.log(maxWindowWidth + ' ' + jumbotronWidth + ' ' + widthScale);
 
-                        ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 
-                        $(".photo_background").height(windowHeight).css({'width': canvas.width, 'margin': '0 auto'});
+            $(".photo_background").height(windowHeight).css({'width': canvas.width, 'margin': '0 auto'});
 
-                        $(".photo-jumbotron").css({'margin': '0 auto', 'width': canvas.width + 80});
+            $(".photo-jumbotron").css({'margin': '0 auto', 'width': canvas.width + 80});
 
 
-{#            var divSizes = getPhotoDivSizes(img.naturalWidth, img.naturalHeight);#}
-{##}
-{#            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, divSizes['width'], divSizes['height']);#}
-{##}
-{#            $(".photo-jumbotron").css({'margin': '0 auto', 'width': divSizes['width'] + 80});#}
-{#            $(".photo_background").height(divSizes['height']).css({'width': divSizes['width'], 'margin': '0 auto'});#}
+            {#            var divSizes = getPhotoDivSizes(img.naturalWidth, img.naturalHeight);#}
+            {##}
+            {#            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, divSizes['width'], divSizes['height']);#}
+            {##}
+            {#            $(".photo-jumbotron").css({'margin': '0 auto', 'width': divSizes['width'] + 80});#}
+            {#            $(".photo_background").height(divSizes['height']).css({'width': divSizes['width'], 'margin': '0 auto'});#}
 
 
         };
@@ -832,9 +845,6 @@
 
             }
 
-            {#            $("#rotval").html(degs + " degrees rotation" + "<br>" +#}
-            {#                    offset_top + "<br>" + offset_l + "<br>" + r.top+ "<br>" + r.left);#}
-
             load_css();
         });
 
@@ -854,6 +864,20 @@
         var hightlighted_y_percent = 0;
         var highlighted_x_pixel = 0;
         var highlighted_y_pixel = 0;
+
+        $('#side-menu-open').click(function(){
+            $('.side-menu-content-wide').show('slide', 100);
+            $('.side-menu-content-thin').hide();
+
+        });
+        $('#side-menu-close').click(function(){
+            $('.side-menu-content-wide').hide('slide', 100, function(){
+                $('.side-menu-content-thin').show();
+            });
+
+        });
+
+        $('.side-menu-content-wide').hide();
     });
 
 
@@ -863,316 +887,385 @@
 
     <div class="container">
 
-    <div class="col-xs-12 col-sm-8">
-        <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
-            <div id="photo_background" class="photo_background">
-                <canvas id='photo'></canvas>
-                {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
-            </div>
-        </div>
+    <div class="col-xs-12 col-sm-7">
+    <div class="side-menu">
+        <div class="side-menu-content-thin">
 
-        <div class="panel-footer">
-            <ul class="pager">
-                <li class="previous">
-                    <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-rotate-left"></div></a>
+            <ul class="side-menu-list">
+                <li>
+                    <div class="side-menu-content-wide-header">
+                        <ul class="side-menu-list">
+                            <li>
+                                <div id="side-menu-open" class="btn btn-success side-menu-btn"><div class="fa fa-wrench"></div></div>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
                 <li>
-                    <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">
-                        <div class="fa fa-search-plus"></div
-                                ></a>
-                </li>
-                <li>
-                    <a class="btn btn-default" target="_blank"
-                       href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page</a>
-                </li>
-                <li class="next">
-                    <a class="rota btn btn-default" data-degs="90"><div class="fa fa-rotate-right"></div></a>
+                    <div class="side-menu-content-wide-body">
+                        <ul class="side-menu-list">
+                            {% if user.is_authenticated %}
+                                <li>
+                                    <div class="btn btn-success side-menu-btn save_image_btn save_image"><div class="fa fa-heart"></div></div>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </li>
             </ul>
-            {% if user.is_authenticated %}
-                <ul class="pager">
-                    <li>
-                        <select id="user_collection_select">
-                            {% for option in user_collections %}
-                                <option id="{{ option }}" value="{{ option }}">
-                                    {{ option }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </li>
-                    <li>
-                        <a class="btn btn-default save_image" id="save_image">
-                            <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">
-                        </a>
-                    </li>
+        </div>
 
-                </ul>
-            {% endif %}
-
-            <ul  class="pager">
+        <div class="side-menu-content-wide">
+            <ul class="side-menu-list">
                 <li>
-                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>
-                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                    <div class="side-menu-content-wide-header">
+                        <ul class="side-menu-list">
+                            <li>
+                                <div id="side-menu-close" class="btn btn-success"><div class="fa fa-2x fa-wrench"></div></div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <div class="side-menu-content-wide-body">
+                        <ul class="side-menu-list">
+                            <li class="previous">
+                                <a class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-rotate-left"></div></a>
+                                <a class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-rotate-right"></div></a>
+                            </li>
+                            <li>
+                                <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">
+                                    <div class="fa fa-search-plus"></div></a>
+                            </li>
+                            <li>
+                                <a class="btn btn-success side-menu-btn" target="_blank"
+                                   href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page View</a>
+                            </li>
+                            <li>
+                                <div style="margin-top: 5px">
+                                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>
+                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                                </div>
+                            </li>
+                            {% if user.is_authenticated %}
+                                <li>
+                                    <a class="btn btn-default save_image_btn save_image">
+                                        <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">
+                                    </a>
+                                </li>
+
+                            {% endif %}
+                        </ul>
+                    </div>
                 </li>
             </ul>
-            <div id="output"></div>
+        </div>
+    </div>
+
+    <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
+        <div id="photo_background" class="photo_background">
+            <canvas id='photo'></canvas>
+            {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
+        </div>
+    </div>
+
+    {#    <div class="panel-footer">#}
+    {#        <ul class="pager">#}
+    {#            <li class="previous">#}
+    {#                <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-rotate-left"></div></a>#}
+    {#            </li>#}
+    {#            <li>#}
+    {#                <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">#}
+    {#                    <div class="fa fa-search-plus"></div></a>#}
+    {#            </li>#}
+    {#            <li>#}
+    {#                <a class="btn btn-default" target="_blank"#}
+    {#                   href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page</a>#}
+    {#            </li>#}
+    {#            <li class="next">#}
+    {#                <a class="rota btn btn-default" data-degs="90"><div class="fa fa-rotate-right"></div></a>#}
+    {#            </li>#}
+    {#        </ul>#}
+    {#                {% if user.is_authenticated %}#}
+    {#                    <ul class="pager">#}
+    {#                        <li>#}
+    {#                            <select id="user_collection_select">#}
+    {#                                {% for option in user_collections %}#}
+    {#                                    <option id="{{ option }}" value="{{ option }}">#}
+    {#                                        {{ option }}#}
+    {#                                    </option>#}
+    {#                                {% endfor %}#}
+    {#                            </select>#}
+    {#                        </li>#}
+    {#                        <li>#}
+    {#                            <a class="btn btn-default save_image" id="save_image">#}
+    {#                                <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">#}
+    {#                            </a>#}
+    {#                        </li>#}
+    {#        #}
+    {#                    </ul>#}
+    {#                {% endif %}#}
+    {##}
+    {#        <ul  class="pager">#}
+    {#            <li>#}
+    {#                <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>#}
+    {#                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
+    {#            </li>#}
+    {#        </ul>#}
+    {#        <div id="output"></div>#}
+    {#    </div>#}
+
+    <hr>
+
+    <div id="collapse_cloud" class="panel-group"
+         data-step="2" data-intro='This is the tag cloud for the image' data-position="right">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Cloud of Tags
+            </h4>
         </div>
 
-        <hr>
-
-
-        <div id="collapse_cloud" class="panel-group"
-             data-step="2" data-intro='This is the tag cloud for the image' data-position="right">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    Cloud of Tags
-                </h4>
-            </div>
-
-            <div class="panel-body">
-                <div id="tag_cloud" class="container-fluid" style="height: 200px; width:auto">
-                </div>
+        <div class="panel-body">
+            <div id="tag_cloud" class="container-fluid" style="height: 200px; width:auto">
             </div>
         </div>
-        <hr>
+    </div>
+    <hr>
 
-        <div id="collapse_metadata" class="panel-group"
-             data-step="3" data-intro='This is the metadata for the image' data-position="right">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    Metadata
-                </h4>
-            </div>
-            <div class="panel-body">
-                <div class="bs-example table-responsive">
-                    <table class="table table-striped table-hover ">
-                        <tbody>
-                        <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
-                        <tr><th>Download Image</th><td>
-                            {% if image.arcca == True %}
-                                <a href="{% static image.imageurl %}" target="_blank" download>Download</a><br>
-                                <a href="{% static image.imageurl %}" target="_blank">New Tab</a>
-                            {% else %}
-                                <a href="{{ image.flickr_url }}" target="_blank">From Flickr</a><br>
-                            {% endif %}
-
-                        </td></tr>
-                        {#                <tr>#}
-                        {#                    <th>Full page</th>#}
-                        {#                    <td><a target="_blank" href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Click here</a></td>#}
-                        {#                </tr>#}
-                        {% for mykey,value in formatted_info.items %}
-                            {% if mykey == 'Title' %}
-                                <tr><th>{{ mykey }}</th>
-                                    <td class="metadata-cell">
-                                        <a href="{% url 'do_advanced_search' %}?book_id={{ book_id }}&csrfmiddlewaretoken={{ csrf_token }}" target="_blank">{{ value }}</a>
-                                    </td>
-                                </tr>
-                            {% elif mykey != 'tags' and mykey != 'Book ID' and mykey != 'Identifier' and value != '' %}
-                                <tr><th>{{ mykey }}</th><td class="metadata-cell">{{ value }}</td></tr>
-                            {% endif %}
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
+    <div id="collapse_metadata" class="panel-group"
+         data-step="3" data-intro='This is the metadata for the image' data-position="right">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Metadata
+            </h4>
         </div>
-
-
-        <hr>
-
-
-        {% for linked in linked_images %}
+        <div class="panel-body">
             <div class="bs-example table-responsive">
                 <table class="table table-striped table-hover ">
                     <tbody>
-                    {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
-                    <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
-                    <tr><th>Info</th><td>{{ linked.info }}</td></tr>
+                    <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
+                    <tr><th>Download Image</th><td>
+                        {% if image.arcca == True %}
+                            <a href="{% static image.imageurl %}" target="_blank" download>Download</a><br>
+                            <a href="{% static image.imageurl %}" target="_blank">New Tab</a>
+                        {% else %}
+                            <a href="{{ image.flickr_url }}" target="_blank">From Flickr</a><br>
+                        {% endif %}
+
+                    </td></tr>
+                    {#                <tr>#}
+                    {#                    <th>Full page</th>#}
+                    {#                    <td><a target="_blank" href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Click here</a></td>#}
+                    {#                </tr>#}
+                    {% for mykey,value in formatted_info.items %}
+                        {% if mykey == 'Title' %}
+                            <tr><th>{{ mykey }}</th>
+                                <td class="metadata-cell">
+                                    <a href="{% url 'do_advanced_search' %}?book_id={{ book_id }}&csrfmiddlewaretoken={{ csrf_token }}" target="_blank">{{ value }}</a>
+                                </td>
+                            </tr>
+                        {% elif mykey != 'tags' and mykey != 'Book ID' and mykey != 'Identifier' and value != '' %}
+                            <tr><th>{{ mykey }}</th><td class="metadata-cell">{{ value }}</td></tr>
+                        {% endif %}
+                    {% endfor %}
                     </tbody>
                 </table>
+                {% for linked in linked_images %}
+                    <div class="bs-example table-responsive">
+                        <table class="table table-striped table-hover ">
+                            <tbody>
+                            {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
+                            <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
+                            <tr><th>Info</th><td>{{ linked.info }}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+
+        </div>
+    </div>
+
+
+    <hr>
+
+
+
 
 
     </div><!--/span-->
 
-    <div class="col-xs-12 col-sm-4">
-
-    <div class="container-fluid">
-
-    <div id="right-main">
-
-    <div>
-
-    </div>
-
-    <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
-    {{ tag_form.non_field_errors }}
-    <input type="hidden" name="image_id" value="{{ image_id }}" />
-    <input type="hidden" id = 'tag_info' name="tag_info" value="" />
-
-
-    <div class="panel-group" id="accordion"
-         data-step="4" data-intro="These are the tagging options" data-position="left">
-
-
-    <div id="objects_and_ideas" class="panel panel-default">
-        {#        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">#}
-        {#            <div class="panel-heading">#}
-        {#                    <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">#}
-        {#                        +#}
-        {#            </div>#}
-        {#        </a>#}
-
-        <div id="collapseOne" class="panel-collapse collapse in">
-            <div class="panel-body question-panel">
-                <h2>1/5</h2>
-                <h3>Objects and Ideas</h3>
-
-                <p>What things or ideas can you see in this image?</p>
-                <p>For example:  "bird", "table", "winter", "love"</p>
-                <div id="focus_alerts"></div>
-                <div id="add_tags_body"></div>
-
-                <div class="ui-widget">
-                    <label class="'control-label" for="dictionary">Tags: </label>
-                    <input class="'form-control" id="dictionary">
-                </div>
-
-            </div>
-            <div class="panel-footer">
-                <ul class="pager">
-                    <li class="next">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                           class="btn btn-default">Next →</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-
-
-
-
-
-    <div class="panel panel-default">
-        {#        <div class="panel-heading">#}
-        {#            <h4 class="panel-title">#}
-        {#                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">#}
-        {#                    Types of image#}
-        {#                </a>#}
-        {#            </h4>#}
-        {#        </div>#}
-
-        <div id="collapseTwo" class="panel-collapse collapse">
-            <div class="panel-body question-panel">
-
-                <h3>Types of image</h3>
-
-                <p>Please select the type of image, if any, from the options below</p>
-                <div id="category-extra"></div>
-
-                <div class="grid-sizer"></div>
-                <div id="add_category_body"></div>
-
-                <div id="category-question">{{ category_data.question }}</div>
-
-                <div id="category-container" class="js-masonry"
-                     data-masonry-options='{"itemSelector": ".category-answer" }'>
-                </div>
-            </div>
-            <div class="panel-footer">
-                <ul class="pager">
-                    <li class="previous">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                           class="btn btn-default">← Previous</a>
-                    </li>
-                    <li class="next">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
-                           class="btn btn-default">Next →</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-
-
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                    Caption
-                </a>
-            </h4>
-        </div>
-        <div id="collapseThree" class="panel-collapse collapse">
-            <div class="panel-body">
-                <h4>Please transcribe the Caption in this image, if present.</h4>
-                <div id="free_text_caption" >
-                    <label class="control-label" for="input_caption">Caption</label>
-                    <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
-                </div>
-
-            </div>
-            <div class="panel-footer">
-                <ul class="pager">
-                    <li class="previous">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
-                           class="btn btn-default">← Previous</a>
-                    </li>
-                    <li class="next">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
-                           class="btn btn-default">Next →</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-
-
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
-                    Description
-                </a>
-            </h4>
-        </div>
-        <div id="collapseFive" class="panel-collapse collapse">
-            <div class="panel-body">
-                <h4>Please enter a description of the image</h4>
-
-                <div id="free_text_description" class="row-fluid">
-                    <label class="'control-label" for="free-text-area">Description</label>
-                    <textarea name="image_description" class="form-control"
-                              rows="3" id="free-text-area"></textarea>
-                </div>
-
-                <h4><a href="#">Or Discuss this Image on the Forum</a></h4>
-            </div>
-
-            <div class="panel-footer">
-                <ul class="pager">
-                    <li class="previous">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
-                           class="btn btn-default">← Previous</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-
-
-
+    {#    <div class="col-xs-12 col-sm-4">#}
+    {##}
+    {#    <div class="container-fluid">#}
+    {##}
+    {#    <div id="right-main">#}
+    {##}
+    {##}
+    {#    <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}#}
+    {#    {{ tag_form.non_field_errors }}#}
+    {#    <input type="hidden" name="image_id" value="{{ image_id }}" />#}
+    {#    <input type="hidden" id = 'tag_info' name="tag_info" value="" />#}
+    {##}
+    {#    <div class="question-frame">#}
+    {#    <div class="panel-group" id="accordion" data-step="4" data-intro="These are the tagging options" data-position="left">#}
+    {##}
+    {##}
+    {#    <div id="objects_and_ideas" class="panel panel-default">#}
+    {#        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">#}
+    {#            <div class="panel-heading">#}
+    {#                    <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">#}
+    {#                        +#}
+    {#            </div>#}
+    {#        </a>#}
+    {##}
+    {#        <div id="collapseOne" class="panel-collapse collapse in">#}
+    {#            <div class="panel-body question-panel">#}
+    {#                <h2>1/5</h2>#}
+    {#                <h3>Objects and Ideas</h3>#}
+    {##}
+    {#                <p>What things or ideas can you see in this image?</p>#}
+    {#                <p>For example:  "bird", "table", "winter", "love"</p>#}
+    {#                <div id="focus_alerts"></div>#}
+    {#                <div id="add_tags_body"></div>#}
+    {##}
+    {#                <div class="ui-widget">#}
+    {#                    <label class="'control-label" for="dictionary">Tags: </label>#}
+    {#                    <input class="'form-control" id="dictionary">#}
+    {#                </div>#}
+    {##}
+    {#            </div>#}
+    {#            <div class="panel-footer">#}
+    {#                <ul class="pager">#}
+    {#                    <li class="next">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"#}
+    {#                           class="btn btn-default">Next →</a>#}
+    {#                    </li>#}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+    {##}
+    {##}
+    {##}
+    {##}
+    {##}
+    {##}
+    {#    <div class="panel panel-default">#}
+    {#        <div class="panel-heading">#}
+    {#            <h4 class="panel-title">#}
+    {#                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">#}
+    {#                    Types of image#}
+    {#                </a>#}
+    {#            </h4>#}
+    {#        </div>#}
+    {##}
+    {#        <div id="collapseTwo" class="panel-collapse collapse">#}
+    {#            <div class="panel-body question-panel">#}
+    {##}
+    {#                <h3>Types of image</h3>#}
+    {##}
+    {#                <p>Please select the type of image, if any, from the options below</p>#}
+    {#                <div id="category-extra"></div>#}
+    {##}
+    {#                <div class="grid-sizer"></div>#}
+    {#                <div id="add_category_body"></div>#}
+    {##}
+    {#                <div id="category-question">{{ category_data.question }}</div>#}
+    {##}
+    {#                <div id="category-container" class="js-masonry"#}
+    {#                     data-masonry-options='{"itemSelector": ".category-answer" }'>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#            <div class="panel-footer">#}
+    {#                <ul class="pager">#}
+    {#                    <li class="previous">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"#}
+    {#                           class="btn btn-default">← Previous</a>#}
+    {#                    </li>#}
+    {#                    <li class="next">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"#}
+    {#                           class="btn btn-default">Next →</a>#}
+    {#                    </li>#}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+    {##}
+    {##}
+    {##}
+    {##}
+    {##}
+    {#    <div class="panel panel-default">#}
+    {#        <div class="panel-heading">#}
+    {#            <h4 class="panel-title">#}
+    {#                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">#}
+    {#                    Caption#}
+    {#                </a>#}
+    {#            </h4>#}
+    {#        </div>#}
+    {#        <div id="collapseThree" class="panel-collapse collapse">#}
+    {#            <div class="panel-body">#}
+    {#                <h4>Please transcribe the Caption in this image, if present.</h4>#}
+    {#                <div id="free_text_caption" >#}
+    {#                    <label class="control-label" for="input_caption">Caption</label>#}
+    {#                    <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>#}
+    {#                </div>#}
+    {##}
+    {#            </div>#}
+    {#            <div class="panel-footer">#}
+    {#                <ul class="pager">#}
+    {#                    <li class="previous">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"#}
+    {#                           class="btn btn-default">← Previous</a>#}
+    {#                    </li>#}
+    {#                    <li class="next">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"#}
+    {#                           class="btn btn-default">Next →</a>#}
+    {#                    </li>#}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+    {##}
+    {##}
+    {##}
+    {##}
+    {#    <div class="panel panel-default">#}
+    {#        <div class="panel-heading">#}
+    {#            <h4 class="panel-title">#}
+    {#                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">#}
+    {#                    Description#}
+    {#                </a>#}
+    {#            </h4>#}
+    {#        </div>#}
+    {#        <div id="collapseFive" class="panel-collapse collapse">#}
+    {#            <div class="panel-body">#}
+    {#                <h4>Please enter a description of the image</h4>#}
+    {##}
+    {#                <div id="free_text_description" class="row-fluid">#}
+    {#                    <label class="'control-label" for="free-text-area">Description</label>#}
+    {#                    <textarea name="image_description" class="form-control"#}
+    {#                              rows="3" id="free-text-area"></textarea>#}
+    {#                </div>#}
+    {##}
+    {#                <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
+    {#            </div>#}
+    {##}
+    {#            <div class="panel-footer">#}
+    {#                <ul class="pager">#}
+    {#                    <li class="previous">#}
+    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"#}
+    {#                           class="btn btn-default">← Previous</a>#}
+    {#                    </li>#}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+    {##}
+    {##}
+    {##}
+    {##}
     {#    <div class="panel panel-default">#}
     {#        <div class="panel-heading">#}
     {#            <h4 class="panel-title">#}
@@ -1224,94 +1317,201 @@
     {#        </div>#}
     {##}
     {#    </div>#}
-
-
-
-
-
-    {% if user.is_authenticated %}
-
-    {% else %}
-        <hr>
-        <div class="bs-component">
-            <div class="alert alert-dismissable alert-info">
-                <button type="button" class="close" data-dismiss="alert">×</button>
-                <strong>Heads up!</strong>   You are not logged in. You can do more if you sign up!
-
-            </div>
-            <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
-        </div>
-    {% endif %}
-
-
-
-
-    </div>
-    <button type="submit" class="btn btn-primary btn-lg">Finish Tagging!</button>
-    <div class="navbar-right">
-        <div id="load_new_image" class="btn btn-primary">
-            <a href="{% url 'image.random' %}">Skip</a>
-        </div>
-    </div>
-    </form>
-
-    </div>
-    </div>
-
-    </div>
-
-    </div>
-
-    {#    <div>#}
-    {#        <table style="margin-top: 1em;">#}
-    {#            <thead>#}
-    {#            <tr>#}
-    {#                <th colspan="2" style="font-size: 110%; font-weight: bold; text-align: left; padding-left: 0.1em;">#}
-    {#                    Coordinates#}
-    {#                </th>#}
-    {#                <th colspan="2" style="font-size: 110%; font-weight: bold; text-align: left; padding-left: 0.1em;">#}
-    {#                    Dimensions#}
-    {#                </th>#}
-    {#            </tr>#}
-    {#            </thead>#}
-    {#            <tbody>#}
-    {#            <tr>#}
-    {#                <td style="width: 10%;"><b>X<sub>1</sub>:</b></td>#}
-    {#                <td style="width: 30%;"><input type="text" id="x1" value="-" /></td>#}
-    {#                <td style="width: 20%;"><b>Width:</b></td>#}
-    {#                <td><input type="text" value="-" id="w" /></td>#}
-    {#            </tr>#}
-    {#            <tr>#}
-    {#                <td><b>Y<sub>1</sub>:</b></td>#}
-    {#                <td><input type="text" id="y1" value="-" /></td>#}
-    {#                <td><b>Height:</b></td>#}
-    {#                <td><input type="text" id="h" value="-" /></td>#}
-    {#            </tr>#}
-    {#            <tr>#}
-    {#                <td><b>X<sub>2</sub>:</b></td>#}
-    {#                <td><input type="text" id="x2" value="-" /></td>#}
-    {#                <td></td>#}
-    {#                <td></td>#}
-    {#            </tr>#}
-    {#            <tr>#}
-    {#                <td><b>Y<sub>2</sub>:</b></td>#}
-    {#                <td><input type="text" id="y2" value="-" /></td>#}
-    {#                <td></td>#}
-    {#                <td></td>#}
-    {#            </tr>#}
-    {#            </tbody>#}
-    {#        </table>#}
+    {##}
+    {##}
+    {##}
+    {##}
+    {##}
+    {#    {% if user.is_authenticated %}#}
+    {##}
+    {#    {% else %}#}
+    {#        <hr>#}
+    {#        <div class="bs-component">#}
+    {#            <div class="alert alert-dismissable alert-info">#}
+    {#                <button type="button" class="close" data-dismiss="alert">×</button>#}
+    {#                <strong>Heads up!</strong>   You are not logged in. You can do more if you sign up!#}
+    {##}
+    {#            </div>#}
+    {#            <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>#}
+    {#        </div>#}
+    {#    {% endif %}#}
+    {##}
+    {##}
+    {##}
+    {##}
     {#    </div>#}
-    {#    <div class="container">#}
-    {#        <div id="preview" style="width: 100px; height: 100px; overflow: hidden;">#}
-    {#            <img src="{{ image.imageurl }}"/>#}
+    {#    </div>#}
+    {##}
+    {#    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
+    {#    <div class="navbar-right">#}
+    {#        <div id="load_new_image" class="btn btn-primary">#}
+    {#            <a href="{% url 'image.random' %}">Skip</a>#}
     {#        </div>#}
     {#    </div>#}
+    {#    </form>#}
+    {#    </div>#}
+    {#    </div>#}
+    {##}
+    {#    </div>#}
+
+
+
+
+
+
+
+    <div class="col-xs-12 col-sm-5">
+
+        <div class="container-fluid">
+
+            <div id="right-main">
+                {% if user.is_authenticated %}
+
+                {% else %}
+                    <div class="bs-component">
+                        <div class="alert alert-dismissable alert-info">
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                            <strong>Heads up!</strong>   You are not logged in. You can do more if you sign up!
+
+                        </div>
+                        <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
+                    </div>
+                {% endif %}
+
+                <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
+                    {{ tag_form.non_field_errors }}
+                    <input type="hidden" name="image_id" value="{{ image_id }}" />
+                    <input type="hidden" id = 'tag_info' name="tag_info" value="" />
+
+                    <div class="question-frame">
+                        <div data-step="4" data-intro="These are the tagging options" data-position="left">
+
+
+                            <div id="question_number_1" class="panel panel-default">
+                                <div id="collapseOne">
+                                    <div class="panel-body question-panel">
+                                        <h2>1/4</h2>
+                                        <h3>Objects and Ideas</h3>
+
+                                        <p>What things or ideas can you see in this image?</p>
+                                        <p>For example:  "bird", "table", "winter", "love"</p>
+                                        <div id="focus_alerts"></div>
+                                        <div id="add_tags_body"></div>
+
+                                        <div class="ui-widget">
+                                            <label class="'control-label" for="dictionary">Tags: </label>
+                                            <input class="'form-control" id="dictionary">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                            <div id="question_number_2" class="panel panel-default">
+
+                                <div id="collapseTwo">
+                                    <div class="panel-body question-panel">
+                                        <h2>2/4</h2>
+                                        <h3>Types of image</h3>
+                                        <p>Please select the type of image, if any, from the options below</p>
+                                        <div id="category-extra"></div>
+
+                                        <div class="grid-sizer"></div>
+                                        <div id="add_category_body"></div>
+
+                                        <div id="category-question">{{ category_data.question }}</div>
+
+                                        <div id="category-container" class="js-masonry"
+                                             data-masonry-options='{"itemSelector": ".category-answer" }'>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <div id="question_number_3" class="panel panel-default">
+                                <div>
+                                    <div class="panel-body question-panel">
+                                        <h2>3/4</h2>
+                                        <h3>Caption</h3>
+                                        <h4>Please transcribe the Caption in this image, if present.</h4>
+                                        <div id="free_text_caption" >
+                                            <label class="control-label" for="input_caption">Caption</label>
+                                            <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div id="question_number_4" class="panel panel-default">
+                                <div id="collapseFive">
+                                    <div class="panel-body question-panel">
+                                        <h2>4/4</h2>
+                                        <h3>Description</h3>
+                                        <h4>Please enter a description of the image</h4>
+
+                                        <div id="free_text_description" class="row-fluid">
+                                            <label class="'control-label" for="free-text-area">Description</label>
+                                            <textarea name="image_description" class="form-control"
+                                                      rows="3" id="free-text-area"></textarea>
+                                        </div>
+
+                                        {#                                        <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="pager">
+                        <li style="float: left">
+                            <div id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div></div>
+                        </li>
+                        <li style="float: left">
+                            <div id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
+                        </li>
+                        <li style="float: right">
+                            <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
+                        </li>
+                    </ul>
+                    {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
+                    <div class="navbar-right">
+                        <div id="load_new_image" class="btn btn-primary">
+                            <a href="{% url 'image.random' %}">Skip</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+    </div>
+    {#end of main bootsrap container#}
+
 
     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <img id='zoom-photo' src="{{ image.flickr_original_source }}" style='width: auto; height:75%; '>
+                <img id='zoom-photo' src="{{ image.flickr_original_source }}" style='width: auto; height:75%; margin: 0 auto'>
             </div>
         </div>
     </div>
@@ -1325,6 +1525,23 @@
                 <input type="text" name="collection_name" id="collection_name" value="" class="text ui-widget-content ui-corner-all">
 
                 <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
+
+    <div id="save_image_dialog_form" title="Save Image to Collecton">
+        <p class="validateTips">Save Image to Collecton</p>
+        <div id="save_image_data" data-collection_id="" data-collection_name=""></div>
+        <form>
+            <fieldset>
+                <select id="user_collection_select">
+                    {% for option in user_collections %}
+                        <option id="{{ option }}" value="{{ option }}">
+                            {{ option }}
+                        </option>
+                    {% endfor %}
+                </select>
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
             </fieldset>
         </form>
