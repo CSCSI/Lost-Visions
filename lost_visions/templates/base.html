@@ -79,7 +79,8 @@
     {#      CSS Files     #}
 
     {#    page default theme    #}
-    <link href="{% static "bootstrap.readable.css" %}" rel="stylesheet">
+{#    <link href="{% static "bootstrap.readable.css" %}" rel="stylesheet">#}
+    <link href="{% static "bootstrap-sass-master/assets/stylesheets/_bootstrap.css" %}" rel="stylesheet">
 
     <script>
         function load_css() {
@@ -93,7 +94,7 @@
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.0.6/bootstrap-social.min.css') );
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css') );
-            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "vakata-jstree-480a265/dist/themes/default/style.css" %}') );
+{#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "vakata-jstree-480a265/dist/themes/default/style.css" %}') );#}
             head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "lostvisions.css" %}') );
         }
 

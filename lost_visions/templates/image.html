@@ -469,41 +469,7 @@
             input_field.val("");
         });
 
-        var degs = 0;
-        var r = $("#photo").get(0).getBoundingClientRect();
 
-        $(".rota").click(function() {
-            var photo = $("#photo");
-            var turn_degs = $(this).data('degs');
-
-            if (turn_degs == 'reset') {
-                degs = 0;
-            } else {
-                degs += turn_degs;
-                if (degs < 0) {
-                    degs += 360;
-                }
-            }
-
-            photo.rotate( {animateTo: degs}, 'abs' );
-
-            degs = degs%360;
-
-            var offset_top = photo.offset().top;
-
-            var offset_l = photo.offset().left;
-
-            $("#rotval").html(degs + " degrees rotation" + "<br>" +
-                    offset_top + "<br>" + offset_l + "<br>" + r.top+ "<br>" + r.left);
-
-            load_css();
-        });
-
-
-        var hightlighted_x_percent = 0;
-        var hightlighted_y_percent = 0;
-        var highlighted_x_pixel = 0;
-        var highlighted_y_pixel = 0;
 
         {#        $('#photo').click(function(e) {#}
         {#            var posX = $(this).offset().left;#}
@@ -765,12 +731,129 @@
 
         img.src = "{{ image.imageurl }}";
         img.onload = function(){
-            var scale = img.naturalWidth / parent.width();
-            canvas.width = parent.width();
-            canvas.height = img.naturalHeight / scale;
-            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+
+                        var windowHeight = $(window).height() * 0.8;
+                        var maxWindowWidth = $(window).width() * (8/12);
+
+                        var scale = img.naturalHeight / windowHeight;
+                        canvas.width = img.naturalWidth / scale;
+                        canvas.height = windowHeight;
+
+                        var jumbotronWidth = canvas.width + 180;
+                        if (jumbotronWidth > maxWindowWidth){
+                            var widthScale = maxWindowWidth/ jumbotronWidth;
+                            canvas.width = canvas.width * scale;
+                            canvas.height = canvas.height * scale;
+                        }
+                        console.log(maxWindowWidth + ' ' + jumbotronWidth + ' ' + widthScale);
+
+                        ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+
+                        $(".photo_background").height(windowHeight).css({'width': canvas.width, 'margin': '0 auto'});
+
+                        $(".photo-jumbotron").css({'margin': '0 auto', 'width': canvas.width + 80});
+
+
+{#            var divSizes = getPhotoDivSizes(img.naturalWidth, img.naturalHeight);#}
+{##}
+{#            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, divSizes['width'], divSizes['height']);#}
+{##}
+{#            $(".photo-jumbotron").css({'margin': '0 auto', 'width': divSizes['width'] + 80});#}
+{#            $(".photo_background").height(divSizes['height']).css({'width': divSizes['width'], 'margin': '0 auto'});#}
+
 
         };
+
+        function getPhotoDivSizes(apparentWidth, apparentHeight) {
+            var windowHeight = $(window).height() * 0.8;
+            var maxWindowWidth = $(window).width() * (8/12);
+
+            var scale = apparentHeight / windowHeight;
+            var fitWidth = apparentWidth / scale;
+            var fitHeight = windowHeight;
+
+            var jumbotronWidth = fitWidth + 180;
+            if (jumbotronWidth > maxWindowWidth){
+                var widthScale = maxWindowWidth/ jumbotronWidth;
+                fitWidth = fitWidth * scale;
+                fitHeight = fitHeight * scale;
+            }
+            console.log(maxWindowWidth + ' ' + jumbotronWidth + ' ' + widthScale);
+
+
+            return {
+                'width': fitWidth,
+                'height': fitHeight
+            };
+
+        }
+
+        var degs = 0;
+        var r = $("#photo").get(0).getBoundingClientRect();
+
+        $(".rota").click(function() {
+            var photo = $("#photo");
+            var turn_degs = $(this).data('degs');
+
+            if (turn_degs == 'reset') {
+                degs = 0;
+            } else {
+                degs += turn_degs;
+                if (degs < 0) {
+                    degs += 360;
+                }
+            }
+
+            console.log(photo.width());
+
+            photo.rotate( {animateTo: degs}, 'abs' );
+
+            degs = degs%360;
+
+            console.log(getRotatedSize(degs, photo.width(), photo.height()));
+
+            var offset_top = photo.offset().top;
+
+            var offset_l = photo.offset().left;
+
+            var apparentDimentions = getRotatedSize(degs, photo.width(), photo.height());
+
+            var divSizes = getPhotoDivSizes(apparentDimentions['width'], apparentDimentions['height']);
+
+            $(".photo-jumbotron").height($(window).height() * 0.8).css({'margin': '0 auto', 'width': divSizes['width'] + 80});
+            $(".photo_background").height(divSizes['height']).css({'width': divSizes['width'], 'margin': '0 auto'});
+
+            if (photo.width() < apparentDimentions['width']) {
+                var horizontalOffset = (apparentDimentions['width'] - photo.width()) / 2;
+
+                photo.css({'margin-left': horizontalOffset});
+            } else {
+                photo.css({'margin-left': 0});
+
+            }
+
+            {#            $("#rotval").html(degs + " degrees rotation" + "<br>" +#}
+            {#                    offset_top + "<br>" + offset_l + "<br>" + r.top+ "<br>" + r.left);#}
+
+            load_css();
+        });
+
+        function getRotatedSize(angle, originalWidth, originalHeight) {
+            var rads = angle * Math.PI / 180;
+            var cosA = Math.cos(rads);
+            var sinA = Math.sin(rads);
+
+            var rotatedWidth = Math.round(originalWidth * Math.abs(cosA) + originalHeight * Math.abs(sinA));
+            var rotatedHeight = Math.round(originalWidth * Math.abs(sinA) + originalHeight * Math.abs(cosA));
+
+            return { 'width': rotatedWidth, 'height': rotatedHeight };
+        }
+
+
+        var hightlighted_x_percent = 0;
+        var hightlighted_y_percent = 0;
+        var highlighted_x_pixel = 0;
+        var highlighted_y_pixel = 0;
     });
 
 
@@ -781,7 +864,7 @@
     <div class="container">
 
     <div class="col-xs-12 col-sm-8">
-        <div class="jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
+        <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
             <div id="photo_background" class="photo_background">
                 <canvas id='photo'></canvas>
                 {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
@@ -851,7 +934,7 @@
                 </div>
             </div>
         </div>
-<hr>
+        <hr>
 
         <div id="collapse_metadata" class="panel-group"
              data-step="3" data-intro='This is the metadata for the image' data-position="right">
@@ -936,20 +1019,20 @@
 
 
     <div id="objects_and_ideas" class="panel panel-default">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    Objects and Ideas
-                    <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">
-                        +
-                    </div>
-                </h4>
-            </div>
-        </a>
+        {#        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">#}
+        {#            <div class="panel-heading">#}
+        {#                    <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">#}
+        {#                        +#}
+        {#            </div>#}
+        {#        </a>#}
 
         <div id="collapseOne" class="panel-collapse collapse in">
-            <div class="panel-body">
-                What things or ideas can you see in this image?<br>For example:  "bird", "table", "winter", "love"
+            <div class="panel-body question-panel">
+                <h2>1/5</h2>
+                <h3>Objects and Ideas</h3>
+
+                <p>What things or ideas can you see in this image?</p>
+                <p>For example:  "bird", "table", "winter", "love"</p>
                 <div id="focus_alerts"></div>
                 <div id="add_tags_body"></div>
 
@@ -976,17 +1059,20 @@
 
 
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                    Types of image
-                </a>
-            </h4>
-        </div>
+        {#        <div class="panel-heading">#}
+        {#            <h4 class="panel-title">#}
+        {#                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">#}
+        {#                    Types of image#}
+        {#                </a>#}
+        {#            </h4>#}
+        {#        </div>#}
 
         <div id="collapseTwo" class="panel-collapse collapse">
-            <div class="panel-body">
-                Please select the type of image, if any, from the options below
+            <div class="panel-body question-panel">
+
+                <h3>Types of image</h3>
+
+                <p>Please select the type of image, if any, from the options below</p>
                 <div id="category-extra"></div>
 
                 <div class="grid-sizer"></div>
