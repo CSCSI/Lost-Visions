@@ -112,6 +112,16 @@
 
         });
 
+        $('#collapse_descriptions').accordion({
+            {% if image_descriptions|length > 0 %}
+                active: 0,
+            {% else %}
+                active: false,
+            {% endif %}
+            collapsible: true,
+            heightStyle: "content"
+        });
+
         var tags = '';
         var the_tags = {{ image_tags|safe }};
 
@@ -889,29 +899,54 @@
     </script>
 
 
-
-    <div class="container">
-
-    <div class="col-xs-12 col-sm-7">
     <div class="side-menu">
         <div class="side-menu-content-thin">
 
             <ul class="side-menu-list">
+                {#                <li>#}
+                {#                    <div class="side-menu-content-thin-header">#}
+                {#                        <ul class="side-menu-list">#}
+                {#                            <li>#}
+                {#                                <div id="side-menu-open" class="btn btn-success side-menu-btn"><div class="fa fa-wrench"></div></div>#}
+                {#                            </li>#}
+                {#                        </ul>#}
+                {#                    </div>#}
+                {#                </li>#}
                 <li>
-                    <div class="side-menu-content-wide-header">
+                    <div class="side-menu-content-thin-body">
                         <ul class="side-menu-list">
                             <li>
-                                <div id="side-menu-open" class="btn btn-success side-menu-btn"><div class="fa fa-wrench"></div></div>
+                                <a data-toggle="tooltip" data-placement="top"
+                                   title="Rotate Image Left" data-original-title="Rotate Left"
+                                        class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-rotate-left"></div></a>
                             </li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <div class="side-menu-content-wide-body">
-                        <ul class="side-menu-list">
+                            <li>
+                                <a data-toggle="tooltip" data-placement="top"
+                                   title="Rotate image Right" data-original-title="Rotate Right"
+                                        class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-rotate-right"></div></a>
+                            </li>
+                            <li data-toggle="tooltip" data-placement="top"
+                                   title="Zoom Image" data-original-title="Zoom">
+                                <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">
+                                    <div class="fa fa-search-plus"></div></a>
+                            </li>
+                            <li>
+                                <a data-toggle="tooltip" data-placement="top"
+                                   title="View The Page This Image Came From" data-original-title="Full Page"
+                                        class="btn btn-success side-menu-btn" target="_blank"
+                                   href="{% url 'page_turner' book_id=book_id page=page volume=volume%}"><div class="fa fa-book"></div></a>
+                            </li>
+                              <li>
+                                <a data-toggle="tooltip" data-placement="top"
+                                   title="Download Image" data-original-title="Download"
+                                        class="btn btn-success side-menu-btn" target="_blank"
+                                   href="{{ image.imageurl }}"><div class="fa fa-cloud-download"></div></a>
+                            </li>
                             {% if user.is_authenticated %}
                                 <li>
-                                    <div class="btn btn-success side-menu-btn save_image_btn save_image"><div class="fa fa-heart"></div></div>
+                                    <div data-toggle="tooltip" data-placement="top"
+                                   title="Add Image To Favourites" data-original-title="Save"
+                                            class="btn btn-success side-menu-btn save_image_btn save_image"><div class="fa fa-heart"></div></div>
                                 </li>
                             {% endif %}
                         </ul>
@@ -935,16 +970,16 @@
                     <div class="side-menu-content-wide-body">
                         <ul class="side-menu-list">
                             <li class="previous">
-                                <a class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-rotate-left"></div></a>
-                                <a class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-rotate-right"></div></a>
+                                <a class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-2x fa-rotate-left"></div></a>
+                                <a class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-2x fa-rotate-right"></div></a>
                             </li>
                             <li>
                                 <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">
-                                    <div class="fa fa-search-plus"></div></a>
+                                    <div class="fa fa-2x fa-search-plus"></div></a>
                             </li>
                             <li>
                                 <a class="btn btn-success side-menu-btn" target="_blank"
-                                   href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page View</a>
+                                   href="{% url 'page_turner' book_id=book_id page=page volume=volume%}"><div class="fa fa-2x fa-book"></div></a>
                             </li>
                             <li>
                                 <div style="margin-top: 5px">
@@ -967,133 +1002,201 @@
         </div>
     </div>
 
-    <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
-        <div id="photo_background" class="photo_background">
-            <canvas id='photo'></canvas>
-            {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
+    <div class="container">
+    <div class="row title-header">
+        <div class="title-logo col-md-12">
+            <img src="{% static "media/images/logo.png" %}" style="max-height: 53px"/>
+            <ul class="social-panel">
+                <li class="social-item">
+                    <a href="">
+                        <img src="{% static "media/images/icon/LV_SocialIcon_Facebook.png" %}" style="height: 100%"/>
+                    </a>
+                </li>
+                <li class="social-item">
+                    <a href="">
+                        <img src="{% static "media/images/icon/LV_SocialIcon_GooglePlus.png" %}" style="height: 100%"/>
+                    </a>
+                </li>
+                <li class="social-item">
+                    <a href="">
+                        <img src="{% static "media/images/icon/LV_SocialIcon_Instagram.png" %}" style="height: 100%"/>
+                    </a>
+                </li>
+                <li class="social-item">
+                    <a href="">
+                        <img src="{% static "media/images/icon/LV_SocialIcon_Pinterest.png" %}" style="height: 100%"/>
+                    </a>
+                </li>
+                <li class="social-item">
+                    <a href="https://twitter.com/Lost_Visions" target="_blank">
+                        <img src="{% static "media/images/icon/LV_SocialIcon_Twitter.png" %}" style="height: 100%"/>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 
-    {#    <div class="panel-footer">#}
-    {#        <ul class="pager">#}
-    {#            <li class="previous">#}
-    {#                <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-rotate-left"></div></a>#}
-    {#            </li>#}
-    {#            <li>#}
-    {#                <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">#}
-    {#                    <div class="fa fa-search-plus"></div></a>#}
-    {#            </li>#}
-    {#            <li>#}
-    {#                <a class="btn btn-default" target="_blank"#}
-    {#                   href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page</a>#}
-    {#            </li>#}
-    {#            <li class="next">#}
-    {#                <a class="rota btn btn-default" data-degs="90"><div class="fa fa-rotate-right"></div></a>#}
-    {#            </li>#}
-    {#        </ul>#}
-    {#                {% if user.is_authenticated %}#}
-    {#                    <ul class="pager">#}
-    {#                        <li>#}
-    {#                            <select id="user_collection_select">#}
-    {#                                {% for option in user_collections %}#}
-    {#                                    <option id="{{ option }}" value="{{ option }}">#}
-    {#                                        {{ option }}#}
-    {#                                    </option>#}
-    {#                                {% endfor %}#}
-    {#                            </select>#}
-    {#                        </li>#}
-    {#                        <li>#}
-    {#                            <a class="btn btn-default save_image" id="save_image">#}
-    {#                                <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">#}
-    {#                            </a>#}
-    {#                        </li>#}
-    {#        #}
-    {#                    </ul>#}
-    {#                {% endif %}#}
-    {##}
-    {#        <ul  class="pager">#}
-    {#            <li>#}
-    {#                <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>#}
-    {#                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
-    {#            </li>#}
-    {#        </ul>#}
-    {#        <div id="output"></div>#}
-    {#    </div>#}
+    <div class="col-xs-12 col-sm-7">
 
-    <hr>
-
-    <div id="collapse_cloud" class="panel-group"
-         data-step="2" data-intro='This is the tag cloud for the image' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Cloud of Tags
-            </h4>
-        </div>
-
-        <div class="panel-body">
-            <div id="tag_cloud" class="container-fluid" style="height: 200px; width:auto">
+        <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
+            <div id="photo_background" class="photo_background">
+                <canvas id='photo'></canvas>
+                {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
             </div>
         </div>
-    </div>
-    <hr>
 
-    <div id="collapse_metadata" class="panel-group"
-         data-step="3" data-intro='This is the metadata for the image' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Metadata
-            </h4>
+        {#    <div class="panel-footer">#}
+        {#        <ul class="pager">#}
+        {#            <li class="previous">#}
+        {#                <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-rotate-left"></div></a>#}
+        {#            </li>#}
+        {#            <li>#}
+        {#                <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">#}
+        {#                    <div class="fa fa-search-plus"></div></a>#}
+        {#            </li>#}
+        {#            <li>#}
+        {#                <a class="btn btn-default" target="_blank"#}
+        {#                   href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page</a>#}
+        {#            </li>#}
+        {#            <li class="next">#}
+        {#                <a class="rota btn btn-default" data-degs="90"><div class="fa fa-rotate-right"></div></a>#}
+        {#            </li>#}
+        {#        </ul>#}
+        {#                {% if user.is_authenticated %}#}
+        {#                    <ul class="pager">#}
+        {#                        <li>#}
+        {#                            <select id="user_collection_select">#}
+        {#                                {% for option in user_collections %}#}
+        {#                                    <option id="{{ option }}" value="{{ option }}">#}
+        {#                                        {{ option }}#}
+        {#                                    </option>#}
+        {#                                {% endfor %}#}
+        {#                            </select>#}
+        {#                        </li>#}
+        {#                        <li>#}
+        {#                            <a class="btn btn-default save_image" id="save_image">#}
+        {#                                <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">#}
+        {#                            </a>#}
+        {#                        </li>#}
+        {#        #}
+        {#                    </ul>#}
+        {#                {% endif %}#}
+        {##}
+        {#        <ul  class="pager">#}
+        {#            <li>#}
+        {#                <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>#}
+        {#                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
+        {#            </li>#}
+        {#        </ul>#}
+        {#        <div id="output"></div>#}
+        {#    </div>#}
+
+        <hr>
+
+        <div data-toggle="tooltip" data-placement="top"
+                                   title="Tags previously added for this Image" data-original-title="Image Tags"
+                id="collapse_cloud" class="panel-group"
+             data-step="2" data-intro='This is the tag cloud for the image' data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Cloud of Tags
+                </h4>
+            </div>
+
+            <div class="panel-body">
+                <div id="tag_cloud" class="container-fluid" style="height: 200px; width:auto">
+                </div>
+            </div>
         </div>
-        <div class="panel-body">
-            <div class="bs-example table-responsive">
-                <table class="table table-striped table-hover ">
-                    <tbody>
-                    <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
-                    <tr><th>Download Image</th><td>
-                        {% if image.arcca == True %}
-                            <a href="{% static image.imageurl %}" target="_blank" download>Download</a><br>
-                            <a href="{% static image.imageurl %}" target="_blank">New Tab</a>
-                        {% else %}
-                            <a href="{{ image.flickr_url }}" target="_blank">From Flickr</a><br>
-                        {% endif %}
+        <hr>
 
-                    </td></tr>
-                    {#                <tr>#}
-                    {#                    <th>Full page</th>#}
-                    {#                    <td><a target="_blank" href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Click here</a></td>#}
-                    {#                </tr>#}
-                    {% for mykey,value in formatted_info.items %}
-                        {% if mykey == 'Title' %}
-                            <tr><th>{{ mykey }}</th>
-                                <td class="metadata-cell">
-                                    <a href="{% url 'do_advanced_search' %}?book_id={{ book_id }}&csrfmiddlewaretoken={{ csrf_token }}" target="_blank">{{ value }}</a>
-                                </td>
-                            </tr>
-                        {% elif mykey != 'tags' and mykey != 'Book ID' and mykey != 'Identifier' and value != '' %}
-                            <tr><th>{{ mykey }}</th><td class="metadata-cell">{{ value }}</td></tr>
-                        {% endif %}
+        <div data-toggle="tooltip" data-placement="top"
+                                   title="Information and Metadata for this Image" data-original-title="Image Metadata"
+                                   id="collapse_metadata" class="panel-group"
+             data-step="3" data-intro='This is the metadata for the image' data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Image Information and Metadata
+                </h4>
+            </div>
+            <div class="panel-body">
+                <div class="bs-example table-responsive">
+                    <table class="table table-striped table-hover ">
+                        <tbody>
+                        <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
+                        <tr><th>Download Image</th><td>
+                            {% if image.arcca == True %}
+                                <a href="{% static image.imageurl %}" target="_blank" download>Download</a><br>
+                                <a href="{% static image.imageurl %}" target="_blank">New Tab</a>
+                            {% else %}
+                                <a href="{{ image.flickr_url }}" target="_blank">From Flickr</a><br>
+                            {% endif %}
+
+                        </td></tr>
+                        {#                <tr>#}
+                        {#                    <th>Full page</th>#}
+                        {#                    <td><a target="_blank" href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Click here</a></td>#}
+                        {#                </tr>#}
+                        {% for mykey,value in formatted_info.items %}
+                            {% if mykey == 'Title' %}
+                                <tr><th>{{ mykey }}</th>
+                                    <td class="metadata-cell">
+                                        <a href="{% url 'do_advanced_search' %}?book_id={{ book_id }}&csrfmiddlewaretoken={{ csrf_token }}" target="_blank">{{ value }}</a>
+                                    </td>
+                                </tr>
+                            {% elif mykey != 'tags' and mykey != 'Book ID' and mykey != 'Identifier'%}
+                                <tr><th>{{ mykey }}</th><td class="metadata-cell">
+                                    {% if value == '' %}UNKNOWN{% else %}{{ value }}{% endif %}
+                                </td></tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% for linked in linked_images %}
+                        <div class="bs-example table-responsive">
+                            <table class="table table-striped table-hover ">
+                                <tbody>
+                                {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
+                                <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
+                                <tr><th>Info</th><td>{{ linked.info }}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     {% endfor %}
-                    </tbody>
-                </table>
-                {% for linked in linked_images %}
-                    <div class="bs-example table-responsive">
-                        <table class="table table-striped table-hover ">
-                            <tbody>
-                            {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
-                            <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
-                            <tr><th>Info</th><td>{{ linked.info }}</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                {% endfor %}
+                </div>
+
+            </div>
+        </div>
+
+
+        <hr>
+        <div data-toggle="tooltip" data-placement="top"
+                                   title="User Generated Descriptions" data-original-title="Descriptions"
+                id="collapse_descriptions" class="panel-group"
+             data-step="2" data-intro='This is the tag cloud for the image' data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    User Descriptions ({{ image_descriptions|length }})
+                </h4>
             </div>
 
+            <div class="panel-body">
+                <div class="bs-example table-responsive">
+                    <table class="table table-striped table-hover ">
+                        <div>
+                            {% for desc in image_descriptions %}
+                                <tr><td>
+                                    <div class="fa fa-quote-left" style="float: left"></div>
+                                    {{ desc }}
+                                    <div class="fa fa-quote-right" style="float: right"></div>
+                                </td></tr>
+                            {% endfor %}
+                        </div>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-
-
-    <hr>
-
+        <hr>
 
 
 
@@ -1405,7 +1508,9 @@
 
                                         <div class="ui-widget">
                                             <label class="'control-label" for="dictionary">Tags: </label>
-                                            <input class="'form-control" id="dictionary">
+                                            <input data-toggle="tooltip" data-placement="top"
+                                   title="Type a word which describes this image" data-original-title="Tag Box"
+                                                    class="'form-control" id="dictionary">
                                         </div>
                                     </div>
                                 </div>
@@ -1478,15 +1583,21 @@
                         </div>
                     </div>
 
-                    <ul class="pager">
+                    <ul class="pager prev_next_pager">
                         <li style="float: left">
-                            <div id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div></div>
+                            <div data-toggle="tooltip" data-placement="top"
+                                   title="Previous Question" data-original-title="Previous"
+                                    id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div></div>
                         </li>
                         <li style="float: left">
-                            <div id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
+                            <div data-toggle="tooltip" data-placement="top"
+                                   title="Next Question" data-original-title="Next"
+                                    id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
                         </li>
                         <li style="float: right">
-                            <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
+                            <button data-toggle="tooltip" data-placement="top"
+                                   title="Finish Tagging" data-original-title="Finish"
+                                    type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
                         </li>
                     </ul>
                     {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
@@ -1500,7 +1611,6 @@
         </div>
 
     </div>
-
 
 
 

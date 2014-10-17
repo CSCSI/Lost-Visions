@@ -154,7 +154,6 @@ def is_user_tag(tag):
         return True
 
 
-
 @requires_csrf_token
 def image(request, image_id):
     print image_id
@@ -244,6 +243,12 @@ def image(request, image_id):
 
     print image_info
 
+
+    image_descriptions = models.ImageText.objects.filter(image__flickr_id=image_id)
+    image_descs = []
+    for desc in image_descriptions:
+       image_descs.append(desc.description)
+
     tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag') \
         .annotate(uses=Count('tag'))
 
@@ -265,6 +270,7 @@ def image(request, image_id):
                    # 'category_data': category_data,
                    'user_collections': list(users_collections),
                    'linked_images': linked_image_data,
+                   'image_descriptions': image_descs,
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
 

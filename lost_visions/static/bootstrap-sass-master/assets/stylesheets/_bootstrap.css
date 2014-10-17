@@ -4275,7 +4275,7 @@ a.list-group-item-danger {
   line-height: 1.3; }
 
 .panel {
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   background-color: #fff;
   border: 1px solid transparent;
   border-radius: 1px;

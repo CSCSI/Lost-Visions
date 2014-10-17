@@ -114,7 +114,6 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     padding-bottom: 3px;
 }
 
-#navbar-main
 
 #search_form {
     margin: 0px;
@@ -208,9 +207,14 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 
 /*home page*/
 .base-container {
-    padding-top: 50px;
+    padding-top: 38px;
     padding-left: 0px;
     padding-right: 0px;
+}
+
+.title-header {
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .home-width{
@@ -292,8 +296,10 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 .side-menu {
     /*height: 200px;*/
     position: absolute;
-    float: left;
-    margin-left: -57px;
+    left: 0px;
+    margin-top: 113px;
+    /*float: left;*/
+    /*margin-left: -57px;*/
     /*margin-left: calc(-10% - 22px);*/
 
 }
@@ -310,7 +316,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 .side-menu-content-thin {
     /*height: inherit;*/
     position: relative;
-    height: 200px;
+    /*height: 200px;*/
     /*width:30px;*/
     background-color: #d17f04;
     padding-bottom: 5px;
@@ -334,6 +340,16 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     margin: 2px;
 }
 
+.ui-front {
+    z-index: 1001 !important;
+}
+.ui-widget-overlay {
+    background: none repeat scroll 0 0 #000000 !important;
+    opacity: .6 !important;
+    filter: Alpha(Opacity = 60) !important;
+}
+
+
 .photo_background {
     /*height:90%*/
     display: table-cell;
@@ -356,7 +372,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 
 .question-frame {
     border: 20px solid #d3d3d3;
-    min-height: 300px;
+    /*min-height: 300px;*/
 }
 
 /*.panel-heading{*/
@@ -490,6 +506,11 @@ a:hover#save_image.btn.btn-default.save_image  {
 .question-panel {
     text-align: center;
     height: 80%;
+    padding-bottom: 40px;
+}
+
+.prev_next_pager {
+    padding-top: 15px;
 }
 
 .category-answer {
