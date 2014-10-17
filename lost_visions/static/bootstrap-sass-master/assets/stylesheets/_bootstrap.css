@@ -3813,7 +3813,8 @@ tbody.collapse.in {
       padding: 5px 14px;
       background-color: #fff;
       border: 1px solid #ddd;
-      border-radius: 15px; }
+      border-radius: 15px;
+      color: #000000; }
     .pager li > a:hover,
     .pager li > a:focus {
       text-decoration: none;

@@ -746,19 +746,22 @@
         img.onload = function(){
 
             var windowHeight = $(window).height() * 0.8;
-            var maxWindowWidth = $(window).width() * (8/12);
+            var maxWindowWidth = $(window).width() * (6/12);
 
             var scale = img.naturalHeight / windowHeight;
             canvas.width = img.naturalWidth / scale;
             canvas.height = windowHeight;
 
-            var jumbotronWidth = canvas.width + 180;
+            console.log('nat:' + img.naturalHeight + ' window:' + windowHeight + ' scale:' + scale);
+
+
+            var jumbotronWidth = canvas.width + 200;
             if (jumbotronWidth > maxWindowWidth){
-                var widthScale = maxWindowWidth/ jumbotronWidth;
-                canvas.width = canvas.width * scale;
-                canvas.height = canvas.height * scale;
+                var widthScale = jumbotronWidth / maxWindowWidth ;
+                canvas.width = canvas.width / widthScale;
+                canvas.height = canvas.height / widthScale;
             }
-            console.log(maxWindowWidth + ' ' + jumbotronWidth + ' ' + widthScale);
+            console.log('jmbo:' + jumbotronWidth + ' window:' + maxWindowWidth + ' scale:' + widthScale);
 
             ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 
@@ -779,17 +782,19 @@
 
         function getPhotoDivSizes(apparentWidth, apparentHeight) {
             var windowHeight = $(window).height() * 0.8;
-            var maxWindowWidth = $(window).width() * (8/12);
+            var maxWindowWidth = $(window).width() * (6/12);
 
             var scale = apparentHeight / windowHeight;
             var fitWidth = apparentWidth / scale;
             var fitHeight = windowHeight;
 
-            var jumbotronWidth = fitWidth + 180;
+            console.log('nat:' + apparentHeight + ' window:' + windowHeight + ' scale:' + scale);
+
+            var jumbotronWidth = fitWidth + 200;
             if (jumbotronWidth > maxWindowWidth){
-                var widthScale = maxWindowWidth/ jumbotronWidth;
-                fitWidth = fitWidth * scale;
-                fitHeight = fitHeight * scale;
+                var widthScale = jumbotronWidth / maxWindowWidth ;
+                fitWidth = fitWidth / widthScale;
+                fitHeight = fitHeight / widthScale;
             }
             console.log(maxWindowWidth + ' ' + jumbotronWidth + ' ' + widthScale);
 

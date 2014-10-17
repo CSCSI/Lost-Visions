@@ -293,9 +293,9 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     /*height: 200px;*/
     position: absolute;
     float: left;
-    /*left: 0px;*/
     margin-left: -57px;
-    /*background-color: #d17f04;*/
+    /*margin-left: calc(-10% - 22px);*/
+
 }
 .side-menu-btn {
     /*float: right;*/
