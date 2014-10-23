@@ -1,3 +1,4 @@
+import logging
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 import pprint
@@ -12,6 +13,8 @@ from django.db.models import Q
 from random import randint
 from django.core import serializers
 from lost_visions import models
+
+logger = logging.getLogger('lost_visions')
 
 __author__ = 'ubuntu'
 
@@ -206,7 +209,8 @@ class ImagePicker():
 
         # regex_string = r"\b{0}\b"
 
-        regex_string = r"\b{0}\b".replace(u"\y", db_regex_char)
+        # db_regex_char = "\y"
+        regex_string = r"\b{0}\b".replace("\\b", db_regex_char)
 
         print regex_string
 
@@ -234,19 +238,19 @@ class ImagePicker():
             # readable_query += ' for the ' + year + "'s"
 
         if len(author):
-            all_results = all_results.filter(Q(first_author__iregex=r"\b{0}\b".format(author)))
+            all_results = all_results.filter(Q(first_author__iregex=regex_string.format(author)))
             # filtered = True
             # readable_query += ' with author ' + author
 
         if len(title):
-            all_results = all_results.filter(Q(title__iregex=r"\b{0}\b".format(title)))
+            all_results = all_results.filter(Q(title__iregex=regex_string.format(title)))
             # filtered = True
             # readable_query += ' with title ' + title
 
         if len(illustrator):
             q_or_objects = []
             for illustrator_book_id in models.BookIllustrator.objects \
-                    .filter(name__iregex=r"\b{0}\b".format(illustrator)).values_list('book_id', flat=True).distinct():
+                    .filter(name__iregex=regex_string.format(illustrator)).values_list('book_id', flat=True).distinct():
                 if illustrator_book_id:
                     q_or_objects.append(Q(book_identifier=str(illustrator_book_id)))
 
@@ -263,12 +267,12 @@ class ImagePicker():
             # readable_query += ' for book title ' + title
 
         if len(publisher):
-            all_results = all_results.filter(Q(publisher__iregex=r"\b{0}\b".format(publisher)))
+            all_results = all_results.filter(Q(publisher__iregex=regex_string.format(publisher)))
             filtered = True
             # readable_query += ' from publisher ' + publisher
 
         if len(publishing_place):
-            all_results = all_results.filter(Q(pubplace__iregex=r"\b{0}\b".format(publishing_place)))
+            all_results = all_results.filter(Q(pubplace__iregex=regex_string.format(publishing_place)))
             filtered = True
             # readable_query += ' published in ' + publishing_place
 
@@ -303,7 +307,8 @@ class ImagePicker():
 
         all_results = all_results.values_list('flickr_id', flat=True).distinct()
 
-        print all_results.query
+        # logger.debug('write this???')
+        logger.debug(all_results.query)
 
         return all_results
 
