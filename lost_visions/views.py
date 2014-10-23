@@ -33,6 +33,7 @@ from bleach import clean
 from lost_visions.categories import CategoryManager
 
 from lost_visions.utils import db_tools
+from lost_visions.utils.ImagePicker import ImagePicker
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
 
@@ -869,101 +870,101 @@ def search_advanced(request):
 
 
 def do_advanced_search(request):
-    print request.GET
-
+    # print request.GET
+    #
     keywords = request.GET.get('keyword', '')
-    keywords = keywords.replace(' ', '+')
-
-    year = request.GET.get('year', '')
-    author = request.GET.get('author', '')
-    illustrator = request.GET.get('illustrator', '')
+    # keywords = keywords.replace(' ', '+')
+    #
+    # year = request.GET.get('year', '')
+    # author = request.GET.get('author', '')
+    # illustrator = request.GET.get('illustrator', '')
     number_of_results = request.GET.get('num_results', '')
-    book_id = request.GET.get('book_id', '')
-    publisher = request.GET.get('publisher', '')
-    publishing_place = request.GET.get('publishing_place', '')
-    title = request.GET.get('title', '')
-
+    # book_id = request.GET.get('book_id', '')
+    # publisher = request.GET.get('publisher', '')
+    # publishing_place = request.GET.get('publishing_place', '')
+    # title = request.GET.get('title', '')
+    #
     results = dict()
     results['advanced'] = dict()
     total_results = 0
-
-    all_results = models.Image.objects.all()
-
+    #
+    # all_results = models.Image.objects.all()
+    #
     readable_query = 'Images '
     all_image_ids = ''
     filtered = False
-
-    if len(keywords):
-        q_or_objects = []
-
-        for subword in keywords.split('+'):
-
-            for keyword_image_flickr_id in models.Tag.objects \
-                    .filter(tag__icontains=subword).values_list('image__flickr_id', flat=True).distinct():
-                if keyword_image_flickr_id:
-                    q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
-
-            for keyword_image_flickr_id in models.ImageText.objects \
-                    .filter( Q(caption__icontains=subword ) | Q( description__icontains=subword)) \
-                    .values_list('image__flickr_id', flat=True).distinct():
-                if keyword_image_flickr_id:
-                    q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
-
-                    # q_or_objects.append(Q(title__icontains=keywords))
-
-
-        if len(q_or_objects) > 0:
-            all_results = all_results.filter(reduce(operator.or_, q_or_objects))
-            filtered = True
-
-        readable_query += ' with keyword(s) ' + keywords
-
-    if len(year):
-        decade = year[0:3]
-        all_results = all_results.filter((Q(date__startswith=decade)))
-        filtered = True
-        readable_query += ' for the ' + year + "'s"
-
-    if len(author):
-        # print author
-        all_results = all_results.filter(Q(first_author__icontains=author))
-        filtered = True
-        readable_query += ' with author ' + author
-
-    if len(title):
-        all_results = all_results.filter(Q(title__icontains=title))
-        filtered = True
-        readable_query += ' with title ' + title
-
-    if len(illustrator):
-        q_or_objects = []
-        for illustrator_book_id in models.BookIllustrator.objects \
-                .filter(name__icontains=illustrator).values_list('book_id', flat=True).distinct():
-            if illustrator_book_id:
-                q_or_objects.append(Q(book_identifier=str(illustrator_book_id)))
-
-        if len(q_or_objects) > 0:
-            all_results = all_results.filter(reduce(operator.or_, q_or_objects))
-            filtered = True
-            readable_query += ' with illustrator ' + illustrator
-
-    if len(book_id):
-        all_results = all_results.filter(book_identifier=book_id)
-        filtered = True
-        title = models.Image.objects.values_list('title', flat=True).filter(book_identifier=book_id)[:1].get()
-        readable_query += ' for book title ' + title
-
-    if len(publisher):
-        all_results = all_results.filter(Q(publisher__icontains=publisher))
-        filtered = True
-        readable_query += ' from publisher ' + publisher
-
-    if len(publishing_place):
-        all_results = all_results.filter(Q(pubplace__icontains=publishing_place))
-        filtered = True
-        readable_query += ' published in ' + publishing_place
-
-
+    #
+    # if len(keywords):
+    #     q_or_objects = []
+    #
+    #     for subword in keywords.split('+'):
+    #
+    #         for keyword_image_flickr_id in models.Tag.objects \
+    #                 .filter(tag__icontains=subword).values_list('image__flickr_id', flat=True).distinct():
+    #             if keyword_image_flickr_id:
+    #                 q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
+    #
+    #         for keyword_image_flickr_id in models.ImageText.objects \
+    #                 .filter( Q(caption__icontains=subword ) | Q( description__icontains=subword)) \
+    #                 .values_list('image__flickr_id', flat=True).distinct():
+    #             if keyword_image_flickr_id:
+    #                 q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
+    #
+    #                 # q_or_objects.append(Q(title__icontains=keywords))
+    #
+    #
+    #     if len(q_or_objects) > 0:
+    #         all_results = all_results.filter(reduce(operator.or_, q_or_objects))
+    #         filtered = True
+    #
+    #     readable_query += ' with keyword(s) ' + keywords
+    #
+    # if len(year):
+    #     decade = year[0:3]
+    #     all_results = all_results.filter((Q(date__startswith=decade)))
+    #     filtered = True
+    #     readable_query += ' for the ' + year + "'s"
+    #
+    # if len(author):
+    #     # print author
+    #     all_results = all_results.filter(Q(first_author__icontains=author))
+    #     filtered = True
+    #     readable_query += ' with author ' + author
+    #
+    # if len(title):
+    #     all_results = all_results.filter(Q(title__icontains=title))
+    #     filtered = True
+    #     readable_query += ' with title ' + title
+    #
+    # if len(illustrator):
+    #     q_or_objects = []
+    #     for illustrator_book_id in models.BookIllustrator.objects \
+    #             .filter(name__icontains=illustrator).values_list('book_id', flat=True).distinct():
+    #         if illustrator_book_id:
+    #             q_or_objects.append(Q(book_identifier=str(illustrator_book_id)))
+    #
+    #     if len(q_or_objects) > 0:
+    #         all_results = all_results.filter(reduce(operator.or_, q_or_objects))
+    #         filtered = True
+    #         readable_query += ' with illustrator ' + illustrator
+    #
+    # if len(book_id):
+    #     all_results = all_results.filter(book_identifier=book_id)
+    #     filtered = True
+    #     title = models.Image.objects.values_list('title', flat=True).filter(book_identifier=book_id)[:1].get()
+    #     readable_query += ' for book title ' + title
+    #
+    # if len(publisher):
+    #     all_results = all_results.filter(Q(publisher__icontains=publisher))
+    #     filtered = True
+    #     readable_query += ' from publisher ' + publisher
+    #
+    # if len(publishing_place):
+    #     all_results = all_results.filter(Q(pubplace__icontains=publishing_place))
+    #     filtered = True
+    #     readable_query += ' published in ' + publishing_place
+    #
+    #
     number_of_results_int = 50
     if number_of_results is not '':
         try:
@@ -971,9 +972,12 @@ def do_advanced_search(request):
         except:
             pass
     readable_query += '. Showing first ' + str(number_of_results_int) + ' results. '
+    #
+    # all_results = all_results.values_list('flickr_id', flat=True).distinct()
+    # # print all_results.query
 
-    all_results = all_results.values_list('flickr_id', flat=True).distinct()
-    # print all_results.query
+    im = ImagePicker()
+    all_results = im.advanced_search(request)
 
     if all_results.count() < 5000:
         for result in all_results:

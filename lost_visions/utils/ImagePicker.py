@@ -1,5 +1,6 @@
 import os
 import pprint
+from crowdsource.settings import db_regex_char
 from lost_visions.utils import db_tools
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
@@ -119,7 +120,64 @@ class ImagePicker():
 
         return list(set(tagged_images))
 
+    def search_keyword(self, keyword):
+        keywords = keyword.split(' ')
+
+        ors = []
+        for word in keywords:
+            ors.append(Q(first_author__iregex=r"\b{0}\b".format(word)))
+            ors.append(Q(date__iregex=r"\b{0}\b".format(word)))
+            ors.append(Q(title__iregex=r"\b{0}\b".format(word)))
+            ors.append(Q(publisher__iregex=r"\b{0}\b".format(word)))
+            ors.append(Q(pubplace__iregex=r"\b{0}\b".format(word)))
+
+        found = models.Image.objects.filter(reduce(operator.or_, ors)).values_list('book_identifier', flat=True).distinct()
+
+        found = list(found)
+
+        ors_tag = []
+        for word in keywords:
+            ors_tag.append(Q(tag__iregex=r"\b{0}\b".format(word)))
+
+        tag_ids = models.Tag.objects.filter(reduce(operator.or_, ors_tag)) \
+            .values_list('image__flickr_id', flat=True).distinct()
+
+        found.extend(tag_ids)
+
+        ors_usr_txt = []
+        for word in keywords:
+
+            ors_usr_txt.append(Q(caption__iregex=r"\b{0}\b".format(word)))
+            ors_usr_txt.append(Q(description__iregex=r"\b{0}\b".format(word)))
+
+        usr_txt_ids = models.ImageText.objects.filter(reduce(operator.or_, ors_usr_txt)) \
+            .values_list('image__flickr_id', flat=True).distinct()
+
+        found.extend(usr_txt_ids)
+
+        return found
+
     def get_tagged_images_for_similar_tag(self, tag):
+        # formatted_word = db_tools.wordnet_formatted(tag)
+        #
+        # # pprint_object(formatted_word)
+        #
+        # alternative_words = db_tools.list_wordnet_links(formatted_word[1]['synset'])
+        #
+        # # pprint_object(alternative_words)
+        #
+        # word_list = []
+        # for word in alternative_words:
+        #     word_list.append(word[0])
+        #
+        # pprint_object(word_list)
+
+        word_list = self.get_similar_word_array(tag)
+
+        find_tags = self.get_tagged_images_for_tags(word_list, and_or='or')
+        return find_tags
+
+    def get_similar_word_array(self, tag):
         formatted_word = db_tools.wordnet_formatted(tag)
 
         # pprint_object(formatted_word)
@@ -134,14 +192,130 @@ class ImagePicker():
 
         pprint_object(word_list)
 
-        find_tags = self.get_tagged_images_for_tags(word_list, and_or='or')
-        return find_tags
+        return word_list
+
 
     def get_image_from_untagged_cluster(self):
         pass
 
     def predict_tags_for_image_by_cluster(self):
         pass
+
+
+    def advanced_search(self, request, similar_tags=False):
+
+        # regex_string = r"\b{0}\b"
+
+        regex_string = r"\b{0}\b".replace(u"\y", db_regex_char)
+
+        print regex_string
+
+        print request.GET
+
+        keywords = request.GET.get('keyword', '')
+        print keywords
+        keywords = keywords.split(' ')
+
+        year = request.GET.get('year', '')
+        author = request.GET.get('author', '')
+        illustrator = request.GET.get('illustrator', '')
+        number_of_results = request.GET.get('num_results', '')
+        book_id = request.GET.get('book_id', '')
+        publisher = request.GET.get('publisher', '')
+        publishing_place = request.GET.get('publishing_place', '')
+        title = request.GET.get('title', '')
+
+        all_results = models.Image.objects.all()
+
+        if len(year):
+            decade = year[0:3]
+            all_results = all_results.filter((Q(date__startswith=decade)))
+            # filtered = True
+            # readable_query += ' for the ' + year + "'s"
+
+        if len(author):
+            all_results = all_results.filter(Q(first_author__iregex=r"\b{0}\b".format(author)))
+            # filtered = True
+            # readable_query += ' with author ' + author
+
+        if len(title):
+            all_results = all_results.filter(Q(title__iregex=r"\b{0}\b".format(title)))
+            # filtered = True
+            # readable_query += ' with title ' + title
+
+        if len(illustrator):
+            q_or_objects = []
+            for illustrator_book_id in models.BookIllustrator.objects \
+                    .filter(name__iregex=r"\b{0}\b".format(illustrator)).values_list('book_id', flat=True).distinct():
+                if illustrator_book_id:
+                    q_or_objects.append(Q(book_identifier=str(illustrator_book_id)))
+
+            if len(q_or_objects) > 0:
+                all_results = all_results.filter(reduce(operator.or_, q_or_objects))
+
+                # filtered = True
+                # readable_query += ' with illustrator ' + illustrator
+
+        if len(book_id):
+            all_results = all_results.filter(book_identifier=book_id)
+            # filtered = True
+            # title = models.Image.objects.values_list('title', flat=True).filter(book_identifier=book_id)[:1].get()
+            # readable_query += ' for book title ' + title
+
+        if len(publisher):
+            all_results = all_results.filter(Q(publisher__iregex=r"\b{0}\b".format(publisher)))
+            filtered = True
+            # readable_query += ' from publisher ' + publisher
+
+        if len(publishing_place):
+            all_results = all_results.filter(Q(pubplace__iregex=r"\b{0}\b".format(publishing_place)))
+            filtered = True
+            # readable_query += ' published in ' + publishing_place
+
+        if similar_tags:
+            similar_words = []
+            for word in keywords:
+                similar_words.extend(self.get_similar_word_array(word))
+            keywords = similar_words
+
+        for word in keywords:
+            # all_results = self.filter_all_on_tag(all_results, word)
+
+            regex_format = regex_string.format(word)
+            ors = [
+                Q(first_author__iregex=regex_format),
+                Q(date__iregex=regex_format),
+                Q(title__iregex=regex_format),
+                Q(publisher__iregex=regex_format),
+                Q(pubplace__iregex=regex_format),
+                Q(tag__tag__iregex=regex_format),
+                Q(imagetext__caption__iregex=regex_format),
+                Q(imagetext__description__iregex=regex_format),
+
+            ]
+
+            all_results = all_results.filter(reduce(operator.or_, ors))
+
+        # for res in all_results:
+        #     for tag in res.tag_set.all():
+        #         print tag
+        #     print '\n'
+
+        all_results = all_results.values_list('flickr_id', flat=True).distinct()
+
+        print all_results.query
+
+        return all_results
+
+
+class Request():
+    def __init__(self):
+        self.GET = {
+            # 'author': 'BETTANY',
+            'keyword': 'tree water'
+        }
+
+
 
 image_picker = ImagePicker()
 
@@ -157,13 +331,16 @@ number_queries = len(connection.queries)
 
 # print image_picker.get_tagged_images_for_tags(['man', 'woman'], and_or='or')
 
-print image_picker.get_tagged_images_for_similar_tag('boy')
+# print image_picker.get_tagged_images_for_similar_tag('boy')
 
+adv_res = image_picker.advanced_search(request=Request())
+
+pprint_object(adv_res)
 
 print ('\n\nbefore {} after {} diff {}'.format(number_queries,
-                                           len(connection.queries),
-                                           str(len(connection.queries) - number_queries)))
-# qus = len(connection.queries) - number_queries
+                                               len(connection.queries),
+                                               str(len(connection.queries) - number_queries)))
+qus = len(connection.queries) - number_queries
 # print connection.queries[:(qus * -1)]
 
 # pprint_object(connection.queries)
