@@ -1,9 +1,9 @@
 import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 import pprint
 from crowdsource.settings import db_regex_char
 from lost_visions.utils import db_tools
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
