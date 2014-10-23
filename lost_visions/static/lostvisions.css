@@ -577,6 +577,10 @@ a:hover#save_image.btn.btn-default.save_image  {
     background-color: #d17f04;
 }
 
+#ui-accordion-collapse_descriptions-header-0 {
+    background-color: #d17f04;
+}
+
 /* Advanced search*/
 
 .advanced-search-form label {
