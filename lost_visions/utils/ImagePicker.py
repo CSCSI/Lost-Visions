@@ -25,7 +25,7 @@ class ImagePicker():
     def __init__(self):
         # saves continually calculating this
         self.image_db_size = models.Image.objects.count()
-        print('db size {}'.format(self.image_db_size))
+        # print('db size {}'.format(self.image_db_size))
 
     def get_untagged_image(self, retries=0, allowed_retries=100):
         rand_image_pk = randint(1, self.image_db_size)
@@ -317,30 +317,30 @@ class Request():
 
 
 
-image_picker = ImagePicker()
-
-# for j in range(0, 1):
-#     print image_picker.get_untagged_image(1)
+# image_picker = ImagePicker()
 #
-#     print image_picker.get_untagged_images(3)
+# # for j in range(0, 1):
+# #     print image_picker.get_untagged_image(1)
+# #
+# #     print image_picker.get_untagged_images(3)
+# #
+# #     print '\n'
 #
-#     print '\n'
-
-
-number_queries = len(connection.queries)
-
-# print image_picker.get_tagged_images_for_tags(['man', 'woman'], and_or='or')
-
-# print image_picker.get_tagged_images_for_similar_tag('boy')
-
-adv_res = image_picker.advanced_search(request=Request())
-
-pprint_object(adv_res)
-
-print ('\n\nbefore {} after {} diff {}'.format(number_queries,
-                                               len(connection.queries),
-                                               str(len(connection.queries) - number_queries)))
-qus = len(connection.queries) - number_queries
-# print connection.queries[:(qus * -1)]
-
-# pprint_object(connection.queries)
+#
+# number_queries = len(connection.queries)
+#
+# # print image_picker.get_tagged_images_for_tags(['man', 'woman'], and_or='or')
+#
+# # print image_picker.get_tagged_images_for_similar_tag('boy')
+#
+# adv_res = image_picker.advanced_search(request=Request())
+#
+# pprint_object(adv_res)
+#
+# print ('\n\nbefore {} after {} diff {}'.format(number_queries,
+#                                                len(connection.queries),
+#                                                str(len(connection.queries) - number_queries)))
+# qus = len(connection.queries) - number_queries
+# # print connection.queries[:(qus * -1)]
+#
+# # pprint_object(connection.queries)
