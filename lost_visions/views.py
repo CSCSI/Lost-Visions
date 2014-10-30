@@ -981,15 +981,16 @@ def do_advanced_search(request):
             all_image_ids += result + ','
         readable_query += '(' + str(len(all_results)) + ' found)'
     else:
-        if not filtered:
-            readable_query = 'No search filters applied, please add more detail to the query'
-        else:
-            readable_query += 'Please add more detail to the query. '
+        # if not filtered:
+        #     readable_query = 'No search filters applied, please add more detail to the query'
+        # else:
+        
+        readable_query += 'Please add more detail to the query. '
 
-            for result in all_results[:5000]:
-                total_results += 1
-                all_image_ids += result + ','
-            readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
+        for result in all_results[:5000]:
+            total_results += 1
+            all_image_ids += result + ','
+        readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
 
     results['advanced'] = []
 
