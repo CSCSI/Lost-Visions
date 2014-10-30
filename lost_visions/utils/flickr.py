@@ -235,4 +235,3 @@ def read_and_clean(file):
     whole_file_words = readFile(file)
 
     clean_ocr_text(whole_file_words)
-

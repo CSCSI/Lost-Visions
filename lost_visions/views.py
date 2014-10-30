@@ -24,6 +24,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
 import operator
+import itertools
 from pygeoip import GeoIP
 from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL
 from lost_visions import forms, models
@@ -149,7 +150,7 @@ def is_user_tag(tag):
     lowered = tag.lower()
     bl_tags = ["small", "medium", "large", "public_domain", "mechanical_curator", "bldigital"]
 
-    if lowered in bl_tags:
+    if lowered in bl_tags or 'publisher' in lowered:
         return False
     else:
         return True
@@ -157,7 +158,6 @@ def is_user_tag(tag):
 
 @requires_csrf_token
 def image(request, image_id):
-    print image_id
 
     image_id = clean(image_id, strip=True)
 
@@ -171,48 +171,6 @@ def image(request, image_id):
         image_url_part = (image_info['imageurl'].rsplit('/', 1)[1]).split('_')[0]
 
     formatted_info = dict()
-
-    # try:
-    #     #cut image ID from image URL
-    #     #get Flickr tags for this image
-    #     flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_url_part, size='z')
-    #     author = ""
-    #     if 'Author' in flickr_tags:
-    #         print "found author : " + flickr_tags['Author']
-    #         author = flickr_tags['Author']
-    #
-    #     if not 'imageurl' in image_info and 'image_location' in flickr_tags:
-    #         image_info['imageurl'] = flickr_tags['image_location']
-    #
-    #     tags = {}
-    #     for tag in flickr_tags:
-    #         if is_number(tag) and is_user_tag(flickr_tags[tag]):
-    #             if flickr_tags[tag].lower() != author.lower():
-    #                 try:
-    #                     # TODO utf fix
-    #                     print "*" + str(flickr_tags[tag]).lower() + "* *" + str(author).lower() + "*"
-    #                 except:
-    #                     pass
-    #
-    #                 tags[tag] = flickr_tags[tag]
-    #         else:
-    #             image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
-    #
-    #
-    #     formatted_info['Issuance'] = image_info.get('Issuance', "")
-    #     formatted_info['Date of Publishing'] = image_info.get('Date of Publishing', "")
-    #     formatted_info['Title'] = image_info.get('Title', "")
-    #     formatted_info['Volume'] = image_info.get('vol', "")
-    #     formatted_info['Author'] = image_info.get('Author', "")
-    #     formatted_info['Book ID'] = image_info.get('imagesfrombook', "")
-    #     formatted_info['Place of Publishing'] = image_info.get('Place of Publishing', "")
-    #     formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
-    #     formatted_info['Page'] = image_info.get('Page', "")
-    #     formatted_info['Identifier'] = image_id
-    #
-    # except Exception as e:
-    #     print 'flickr access error : ' + str(e)
-
     formatted_info['Issuance'] = image_info.get('Issuance', "")
     formatted_info['Date of Publishing'] = image_info.get('date', "")
     formatted_info['Title'] = image_info.get('title', "")
@@ -242,8 +200,7 @@ def image(request, image_id):
         linked['name'] = link_image.name
         linked_image_data.append(linked)
 
-    print image_info
-
+    # print image_info
 
     image_descriptions = models.ImageText.objects.filter(image__flickr_id=image_id)
     image_descs = []
@@ -252,6 +209,11 @@ def image(request, image_id):
 
     tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag') \
         .annotate(uses=Count('tag'))
+    tags_for_image = list(tags_for_image)
+
+    flickr_tags = get_flickr_tags(image_id)
+    for tag in flickr_tags:
+        tags_for_image.append({'tag': flickr_tags[tag], 'uses': 1, 'from_flickr': True})
 
     collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
     users_collections = set()
@@ -275,6 +237,40 @@ def image(request, image_id):
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
 
+
+def get_flickr_tags(image_id):
+    try:
+        #cut image ID from image URL
+        #get Flickr tags for this image
+        flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_id, size='z')
+        author = ""
+        if 'Author' in flickr_tags:
+            # print "found author : " + flickr_tags['Author']
+            author = flickr_tags['Author']
+
+        # if not 'imageurl' in image_info and 'image_location' in flickr_tags:
+        #     image_info['imageurl'] = flickr_tags['image_location']
+
+        tags = {}
+        for tag in flickr_tags:
+            if is_number(tag) and is_user_tag(flickr_tags[tag]):
+                if flickr_tags[tag].lower() != author.lower():
+                    # try:
+                    #     # TODO utf fix
+                    #     print "*" + str(flickr_tags[tag]).lower() + "* *" + str(author).lower() + "*"
+                    # except:
+                    #     pass
+
+                    tags[tag] = flickr_tags[tag]
+            else:
+                # image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
+                pass
+
+        return tags
+
+    except Exception as e:
+        print 'flickr access error : ' + str(e)
+    return {}
 
 def get_creation_techniques_html(request):
     CreationTech = forms.creation_technique_form_factory()
@@ -1070,9 +1066,44 @@ def data_autocomplete(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-def get_image_data(request):
+def get_image_data_from_array(id_list):
+    tag_results_dict = dict()
 
-    # print request.POST
+    q_or_objects = []
+    for image_id in id_list:
+        if image_id:
+            q_or_objects.append(Q(flickr_id=image_id))
+
+    if len(q_or_objects) > 0:
+        image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
+
+        for result in image_data:
+            try:
+                tag_result = dict()
+                tag_result['title'] = result.title
+
+                try:
+                    tag_result['img'] = db_tools.get_image_info(result.flickr_id)['imageurl']
+                except:
+                    tag_result['img'] = result.flickr_small_source
+
+                if tag_result['img'] is None:
+                    tag_result['img'] = result.flickr_small_source
+
+                tag_result['date'] = result.date
+                tag_result['page'] = result.page.lstrip('0')
+                tag_result['book_id'] = result.book_identifier
+                tag_result['author'] = result.first_author
+                tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
+
+                tag_results_dict[result.flickr_id] = tag_result
+            except Exception as e:
+                pass
+
+    return tag_results_dict
+
+
+def get_image_data(request):
 
     ids = request.POST.get('image_ids', '')
     tag_results_dict = dict()
@@ -1080,43 +1111,7 @@ def get_image_data(request):
     if ids:
         id_list = ids.split(',')
 
-        # print id_list
-
-        q_or_objects = []
-        for image_id in id_list:
-            if image_id:
-                q_or_objects.append(Q(flickr_id=image_id))
-
-        if len(q_or_objects) > 0:
-            image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
-
-            # print image_data
-
-            for result in image_data:
-                try:
-                    tag_result = dict()
-                    tag_result['title'] = result.title
-
-                    try:
-                        tag_result['img'] = db_tools.get_image_info(result.flickr_id)['imageurl']
-                    except:
-                        tag_result['img'] = result.flickr_small_source
-
-                    if tag_result['img'] is None:
-                        tag_result['img'] = result.flickr_small_source
-
-                    tag_result['date'] = result.date
-                    tag_result['page'] = result.page.lstrip('0')
-                    tag_result['book_id'] = result.book_identifier
-                    tag_result['author'] = result.first_author
-                    tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
-
-                    tag_results_dict[result.flickr_id] = tag_result
-                except Exception as e:
-                    # print 'err'
-                    # print result
-                    pass
-                    # print tag_results_dict
+        tag_results_dict = get_image_data_from_array(id_list)
 
     return HttpResponse(json.dumps(tag_results_dict), content_type="application/json")
 
@@ -1544,3 +1539,79 @@ def exhibition(request, collection_id):
     print return_object
 
     return render(request, 'exhibition.html', return_object)
+
+
+def similar_images(request, image_id):
+    img_pick = ImagePicker()
+
+    tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id)
+        # .values_list(['tag', 'tag_order'])
+
+    first_order_tags = []
+    for t in tags_for_image:
+        try:
+            tag_order = str(t.tag_order)[3:6]
+            if tag_order == '100':
+                first_order_tags.append(str(t.tag))
+        except:
+            pass
+
+    print first_order_tags
+
+    powerset_image_data = []
+
+    tags_power_set = []
+
+    largest_set = {}
+    largest_tag_set = []
+
+    for a_set in powerset_generator(list(set(first_order_tags))):
+        print a_set
+        if len(a_set) > 0:
+            tags_power_set.append(a_set)
+
+            image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set))
+            powerset_image_data.append({
+                'image_tags': a_set,
+                'image_data': image_data,
+                'tag_powerset_size': len(a_set)
+            })
+
+            if len(a_set) > len(largest_set):
+                largest_set = image_data
+                largest_tag_set = a_set
+
+    # print tags_power_set
+    #
+    # all_images = []
+    # for a_set in tags_power_set:
+    #     images = img_pick.get_tagged_images_for_tags(a_set)
+    #     print images
+    #     image_data = get_image_data_from_array(images)
+    #     print '\n'
+    #     print image_data
+    #     print '\n'
+    #     all_images.append(image_data)
+
+    for img_dat in powerset_image_data:
+        print '\n'
+        # img_pick.pprint_object(img_dat)
+        print img_dat['tag_powerset_size']
+        print img_dat['image_tags']
+        print len(img_dat['image_data'])
+        print '\n'
+
+    return_data = {
+        'image_sets': powerset_image_data,
+        'largest_set': largest_set,
+        'largest_set_size': len(largest_set),
+        'largest_tag_set': largest_tag_set
+    }
+
+    return HttpResponse(json.dumps(return_data),
+                        content_type="application/json")
+
+
+def powerset_generator(i):
+    for subset in itertools.chain.from_iterable(itertools.combinations(i, r) for r in range(len(i)+1)):
+        yield subset

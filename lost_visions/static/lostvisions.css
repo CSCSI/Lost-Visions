@@ -570,14 +570,22 @@ a:hover#save_image.btn.btn-default.save_image  {
 }
 
 #ui-accordion-collapse_cloud-header-0 {
+    margin-top: 30px;
     background-color: #d17f04;
 }
 
 #ui-accordion-collapse_metadata-header-0 {
+    margin-top: 30px;
     background-color: #d17f04;
 }
 
 #ui-accordion-collapse_descriptions-header-0 {
+    margin-top: 30px;
+    background-color: #d17f04;
+}
+
+#ui-accordion-collapse_similars-header-0 {
+    margin-top: 30px;
     background-color: #d17f04;
 }
 
@@ -658,6 +666,66 @@ a:hover#save_image.btn.btn-default.save_image  {
     height: 720px;
 }
 
+#similars {
+    padding: 0
+}
+
+.similar-images {
+    /*height: 201px;*/
+    /*padding-top: 5px;*/
+    /*padding: 0px;*/
+    overflow-y: hidden;
+    /*padding-top: 40px;*/
+    /*padding-bottom: 20px;*/
+    background-color: #ffffff;
+
+}
+
+.similar-image {
+    /*display: inline-block;*/
+    /*text-align: center;*/
+    /*border: 1px solid #DDD;*/
+    /*vertical-align: middle;*/
+    /*height: 100%;*/
+}
+
+#similars_list {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0;
+    margin-top: 5px;
+    margin-left: 2px;
+    margin-right: 2px;
+
+    display: block;
+    white-space: nowrap;
+    overflow: auto;
+    height: 200px;
+    overflow-y: hidden;
+}
+
+#similars_list li {
+    display: inline;
+    list-style-type: none;
+    height: inherit;
+}
+
+#similars_list li a {
+    height: inherit;
+}
+
+#similars_list li a img {
+    height: inherit;
+    max-height: 180px;
+    padding: 10px 10px;
+
+    border: 2px double transparent;
+}
+
+#similars_list li a img:hover{
+    border: 2px ridge #d17f04;
+
+}
 
 
 /*##################################################*/

@@ -19,16 +19,15 @@ logger = logging.getLogger('lost_visions')
 __author__ = 'ubuntu'
 
 
-# can cause multiple db accesses on django models
-def pprint_object(obj):
-    print pprint.pformat(obj, indent=1, width=80, depth=None)
-
-
 class ImagePicker():
     def __init__(self):
         # saves continually calculating this
         self.image_db_size = models.Image.objects.count()
         # print('db size {}'.format(self.image_db_size))
+
+    # can cause multiple db accesses on django models
+    def pprint_object(self, obj):
+        print pprint.pformat(obj, indent=1, width=80, depth=None)
 
     def get_untagged_image(self, retries=0, allowed_retries=100):
         rand_image_pk = randint(1, self.image_db_size)
@@ -193,7 +192,7 @@ class ImagePicker():
         for word in alternative_words:
             word_list.append(word[0])
 
-        pprint_object(word_list)
+        self.pprint_object(word_list)
 
         return word_list
 

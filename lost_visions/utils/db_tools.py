@@ -79,8 +79,7 @@ def find_image(image_info):
         web_server_start = '/static/media/images/scans/'
         return image_path.replace(scratch_start, web_server_start)
     except Exception as e:
-        print e
-
+        pass
 
     try:
         # print image_info
