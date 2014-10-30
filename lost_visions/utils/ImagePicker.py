@@ -71,8 +71,8 @@ class ImagePicker():
         tagged_images = models.Tag.objects.order_by().values_list('image__flickr_id', flat=True).distinct()
         return tagged_images
 
-    def get_tagged_images_for_tag(self, tag):
-        tagged_images = models.Tag.objects.filter(tag_iexact=tag).order_by().values_list('image__flickr_id', flat=True).distinct()
+    def get_tagged_images_for_tag(self, tag, number=None):
+        tagged_images = models.Tag.objects.filter(tag__iexact=tag).order_by().values_list('image__flickr_id', flat=True).distinct()
         return tagged_images
 
     def get_tagged_images_for_tags(self, tag_array, and_or='or', number=None):
@@ -112,6 +112,9 @@ class ImagePicker():
                 if tags_lists_image_appears_in == len(tag_array) - 1:
                     # Add image to return list
                     images_with_all_tags.append(image_in_largest_list)
+
+            if number is not None:
+                images_with_all_tags = images_with_all_tags[:number]
 
             return images_with_all_tags
 
