@@ -77,6 +77,13 @@ def getImageTags(url, size='o'):
             # for key in allTags:
             #     print key + '       :       ' + allTags[key]
 
+            for t in allTags:
+                print type(t)
+                print t
+                print type(allTags[t])
+                print allTags[t]
+                print '\n'
+
             return allTags
         else:
             print 'error with url : ' + url

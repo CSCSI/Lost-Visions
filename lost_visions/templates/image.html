@@ -39,6 +39,15 @@
         $('#category-container').masonry();
     }
 
+    function sleep(milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
+    }
+
     function get_similar_images(image_id) {
         $.ajax({
             type: "POST",
@@ -1233,9 +1242,11 @@
                     Similar Images
                 </h4>
             </div>
-{#            <div class="panel-body">#}
-                <div id="similars" class="similar-images"></div>
-{#            </div>#}
+            <div id="similars" class="similar-images">
+                <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                    <div class="fa fa-3x fa-spinner fa-spin"></div>
+                </div>
+            </div>
         </div>
 
     </div><!--/span-->

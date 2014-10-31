@@ -40,7 +40,10 @@ urlpatterns = patterns('',
                        url(r'^image/map/(?P<image_id>\d+)', 'lost_visions.views.map', name='image.map'),
 
                        url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),
-                       url(r'^similar_images/(?P<image_id>\d+)', 'lost_visions.views.similar_images', name='image.similar_images'),
+                       url(r'^similar_images/(?P<image_id>\d+)',
+                           'lost_visions.views.similar_images', name='image.similar_images'),
+                       url(r'^smaller_image/(?P<book_identifier>\d+)/(?P<volume>\d+)/(?P<page>\d+)/(?P<image_idx>\d+)',
+                           'lost_visions.views.get_resized_image', name='image.smaller_image'),
 
 
                        url(r'^search/(?P<word>[\w\+]+)', 'lost_visions.views.search', name='do_search'),

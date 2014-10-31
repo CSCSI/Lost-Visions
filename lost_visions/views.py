@@ -205,7 +205,8 @@ def image(request, image_id):
     image_descriptions = models.ImageText.objects.filter(image__flickr_id=image_id)
     image_descs = []
     for desc in image_descriptions:
-       image_descs.append(desc.description)
+        if desc.description.strip() is not '':
+            image_descs.append(desc.description)
 
     tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag') \
         .annotate(uses=Count('tag'))
@@ -239,38 +240,56 @@ def image(request, image_id):
 
 
 def get_flickr_tags(image_id):
-    try:
-        #cut image ID from image URL
-        #get Flickr tags for this image
-        flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_id, size='z')
-        author = ""
-        if 'Author' in flickr_tags:
-            # print "found author : " + flickr_tags['Author']
-            author = flickr_tags['Author']
 
-        # if not 'imageurl' in image_info and 'image_location' in flickr_tags:
-        #     image_info['imageurl'] = flickr_tags['image_location']
+    # try:
 
-        tags = {}
-        for tag in flickr_tags:
-            if is_number(tag) and is_user_tag(flickr_tags[tag]):
-                if flickr_tags[tag].lower() != author.lower():
-                    # try:
+    #cut image ID from image URL
+    #get Flickr tags for this image
+    flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_id, size='z')
+    author = u''
+    if u'Author' in flickr_tags:
+        # print "found author : " + flickr_tags['Author']
+        author = flickr_tags['Author']
+
+    # if not 'imageurl' in image_info and 'image_location' in flickr_tags:
+    #     image_info['imageurl'] = flickr_tags['image_location']
+
+    tags = {}
+    for tag in flickr_tags:
+
+        print '\n'
+        print tag
+        print type(flickr_tags[tag])
+        print flickr_tags[tag]
+
+        print type(author)
+        print author
+
+        if is_number(tag) and is_user_tag(flickr_tags[tag]):
+
+            # print "*" + str(flickr_tags[tag]).lower() + "* *" + str(author).lower() + "*"
+
+            if flickr_tags[tag].lower().strip() != author.lower().strip():
+
+
+
+                try:
                     #     # TODO utf fix
-                    #     print "*" + str(flickr_tags[tag]).lower() + "* *" + str(author).lower() + "*"
-                    # except:
-                    #     pass
+                    print "*" + flickr_tags[tag].lower() + "* *" + author.lower() + "*"
+                except Exception as e:
+                    print e
 
-                    tags[tag] = flickr_tags[tag]
-            else:
-                # image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
-                pass
 
-        return tags
+                tags[tag] = flickr_tags[tag]
+        else:
+            # image_info[tag] = flickr_tags[tag].replace('&quot;', '"')
+            pass
 
-    except Exception as e:
-        print 'flickr access error : ' + str(e)
-    return {}
+    return tags
+
+    # except Exception as e:
+    #     print 'flickr access error : ' + str(e)
+    # return {}
 
 def get_creation_techniques_html(request):
     CreationTech = forms.creation_technique_form_factory()
@@ -984,7 +1003,7 @@ def do_advanced_search(request):
         # if not filtered:
         #     readable_query = 'No search filters applied, please add more detail to the query'
         # else:
-        
+
         readable_query += 'Please add more detail to the query. '
 
         for result in all_results[:5000]:
@@ -1091,6 +1110,13 @@ def get_image_data_from_array(id_list):
                 if tag_result['img'] is None:
                     tag_result['img'] = result.flickr_small_source
 
+                tag_result['img_small'] = reverse('image.smaller_image', kwargs={
+                    'book_identifier': result.book_identifier,
+                    'volume': result.volume,
+                    'page': result.page.lstrip('0'),
+                    'image_idx': result.image_idx
+                })
+
                 tag_result['date'] = result.date
                 tag_result['page'] = result.page.lstrip('0')
                 tag_result['book_id'] = result.book_identifier
@@ -1102,6 +1128,33 @@ def get_image_data_from_array(id_list):
                 pass
 
     return tag_results_dict
+
+
+def get_resized_image(request, book_identifier, volume, page, image_idx):
+
+    response = HttpResponse(content_type="image/jpeg")
+    filename = str(book_identifier + '.' + volume + '.' + page + '.' + image_idx)
+    try:
+
+        image_location = models.ImageLocation.objects.filter(book_id=book_identifier,
+                                                             volume=volume,
+                                                             page=page,
+                                                             idx=image_idx)
+        image_path = image_location[0].location
+        im = Image.open(image_path)
+
+        s = im.size()
+        MAXWIDTH = 100
+        ratio = MAXWIDTH / s[0]
+        newimg = im.resize((s[0]*ratio, s[1]*ratio), Image.ANTIALIAS)
+
+        im.save(newimg, "JPEG")
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+        im.save(response, "JPEG", quality=80, optimize=True, progressive=True)
+
+    except IOError:
+        print "cannot create thumbnail for '%s'" % filename
+    return response
 
 
 def get_image_data(request):
@@ -1546,7 +1599,7 @@ def similar_images(request, image_id):
     img_pick = ImagePicker()
 
     tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id)
-        # .values_list(['tag', 'tag_order'])
+    # .values_list(['tag', 'tag_order'])
 
     first_order_tags = []
     for t in tags_for_image:
@@ -1568,10 +1621,15 @@ def similar_images(request, image_id):
 
     for a_set in powerset_generator(list(set(first_order_tags))):
         print a_set
+
         if len(a_set) > 0:
             tags_power_set.append(a_set)
 
-            image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set))
+            image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set, and_or='and', number=10))
+
+            if image_id in image_data:
+                image_data.pop(image_id)
+
             powerset_image_data.append({
                 'image_tags': a_set,
                 'image_data': image_data,
@@ -1597,9 +1655,9 @@ def similar_images(request, image_id):
     for img_dat in powerset_image_data:
         print '\n'
         # img_pick.pprint_object(img_dat)
-        print img_dat['tag_powerset_size']
+        print 'number of tags used ' + str(img_dat['tag_powerset_size'])
         print img_dat['image_tags']
-        print len(img_dat['image_data'])
+        print 'number of similar images ' + str(len(img_dat['image_data']))
         print '\n'
 
     return_data = {
