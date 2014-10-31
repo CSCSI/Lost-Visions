@@ -26,7 +26,7 @@ from django.views.decorators.csrf import requires_csrf_token
 import operator
 import itertools
 from pygeoip import GeoIP
-from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL
+from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size
 from lost_visions import forms, models
 # from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
 from ipware.ip import get_ip
@@ -1113,7 +1113,7 @@ def get_image_data_from_array(id_list):
                 tag_result['img_small'] = reverse('image.smaller_image', kwargs={
                     'book_identifier': result.book_identifier,
                     'volume': result.volume,
-                    'page': result.page.lstrip('0'),
+                    'page': result.page,
                     'image_idx': result.image_idx
                 })
 
@@ -1135,23 +1135,18 @@ def get_resized_image(request, book_identifier, volume, page, image_idx):
     response = HttpResponse(content_type="image/jpeg")
     filename = str(book_identifier + '.' + volume + '.' + page + '.' + image_idx)
     try:
-
         image_location = models.ImageLocation.objects.filter(book_id=book_identifier,
                                                              volume=volume,
                                                              page=page,
                                                              idx=image_idx)
-        image_path = image_location[0].location
-        im = Image.open(image_path)
+        img = Image.open(image_location[0].location)
+        basewidth = thumbnail_size
+        wpercent = (basewidth/float(img.size[0]))
+        hsize = int((float(img.size[1])*float(wpercent)))
 
-        s = im.size()
-        MAXWIDTH = 100
-        ratio = MAXWIDTH / s[0]
-        newimg = im.resize((s[0]*ratio, s[1]*ratio), Image.ANTIALIAS)
-
-        im.save(newimg, "JPEG")
-        response['Content-Disposition'] = 'attachment; filename=%s' % filename
-        im.save(response, "JPEG", quality=80, optimize=True, progressive=True)
-
+        img.thumbnail((basewidth, hsize), Image.ANTIALIAS)
+        # response['Content-Disposition'] = 'attachment; filename=%s' % filename
+        img.save(response, "JPEG", quality=80, optimize=True, progressive=True)
     except IOError:
         print "cannot create thumbnail for '%s'" % filename
     return response

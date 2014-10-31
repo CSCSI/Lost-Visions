@@ -198,6 +198,8 @@ db_cleaned_json_location = ''
 
 db_regex_char = "\b"
 
+thumbnail_size = 300
+
 try:
     from crowdsource.settings_local import *
 except ImportError:
