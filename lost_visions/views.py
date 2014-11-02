@@ -26,6 +26,7 @@ from django.views.decorators.csrf import requires_csrf_token
 import operator
 import itertools
 from pygeoip import GeoIP
+from crowdsource import settings
 from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size
 from lost_visions import forms, models
 # from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
@@ -212,9 +213,10 @@ def image(request, image_id):
         .annotate(uses=Count('tag'))
     tags_for_image = list(tags_for_image)
 
-    flickr_tags = get_flickr_tags(image_id)
-    for tag in flickr_tags:
-        tags_for_image.append({'tag': flickr_tags[tag], 'uses': 1, 'from_flickr': True})
+    if settings.use_flickr:
+        flickr_tags = get_flickr_tags(image_id)
+        for tag in flickr_tags:
+            tags_for_image.append({'tag': flickr_tags[tag], 'uses': 1, 'from_flickr': True})
 
     collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
     users_collections = set()
@@ -1140,6 +1142,9 @@ def get_resized_image(request, book_identifier, volume, page, image_idx):
                                                              page=page,
                                                              idx=image_idx)
         img = Image.open(image_location[0].location)
+        print image_location[0].location
+        # img.verify()
+
         basewidth = thumbnail_size
         wpercent = (basewidth/float(img.size[0]))
         hsize = int((float(img.size[1])*float(wpercent)))
@@ -1605,7 +1610,7 @@ def similar_images(request, image_id):
         except:
             pass
 
-    print first_order_tags
+    # print first_order_tags
 
     powerset_image_data = []
 
@@ -1615,15 +1620,15 @@ def similar_images(request, image_id):
     largest_tag_set = []
 
     for a_set in powerset_generator(list(set(first_order_tags))):
-        print a_set
+        # print a_set
 
         if len(a_set) > 0:
             tags_power_set.append(a_set)
 
             image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set, and_or='and', number=10))
 
-            if image_id in image_data:
-                image_data.pop(image_id)
+            # if image_id in image_data:
+            #     image_data.pop(image_id)
 
             powerset_image_data.append({
                 'image_tags': a_set,
@@ -1635,27 +1640,23 @@ def similar_images(request, image_id):
                 largest_set = image_data
                 largest_tag_set = a_set
 
-    # print tags_power_set
-    #
-    # all_images = []
-    # for a_set in tags_power_set:
-    #     images = img_pick.get_tagged_images_for_tags(a_set)
-    #     print images
-    #     image_data = get_image_data_from_array(images)
+    # for img_dat in powerset_image_data:
     #     print '\n'
-    #     print image_data
+    #     # img_pick.pprint_object(img_dat)
+    #     print 'number of tags used ' + str(img_dat['tag_powerset_size'])
+    #     print img_dat['image_tags']
+    #     print 'number of similar images ' + str(len(img_dat['image_data']))
     #     print '\n'
-    #     all_images.append(image_data)
 
-    for img_dat in powerset_image_data:
-        print '\n'
-        # img_pick.pprint_object(img_dat)
-        print 'number of tags used ' + str(img_dat['tag_powerset_size'])
-        print img_dat['image_tags']
-        print 'number of similar images ' + str(len(img_dat['image_data']))
-        print '\n'
+    book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
+    # print book_id
+    flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id)\
+        .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)[:20]
+    # print flickr_ids_from_book
+    book_images = get_image_data_from_array(flickr_ids_from_book)
 
     return_data = {
+        'book_images': book_images,
         'image_sets': powerset_image_data,
         'largest_set': largest_set,
         'largest_set_size': len(largest_set),

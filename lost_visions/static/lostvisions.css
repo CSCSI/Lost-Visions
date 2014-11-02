@@ -589,6 +589,10 @@ a:hover#save_image.btn.btn-default.save_image  {
     background-color: #d17f04;
 }
 
+#ui-accordion-collapse_book_images-header-0 {
+    margin-top: 30px;
+    background-color: #d17f04;
+}
 /* Advanced search*/
 
 .advanced-search-form label {
@@ -666,10 +670,6 @@ a:hover#save_image.btn.btn-default.save_image  {
     height: 720px;
 }
 
-#similars {
-    padding: 0
-}
-
 .similar-images {
     /*height: 201px;*/
     /*padding-top: 5px;*/
@@ -681,22 +681,14 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 }
 
-.similar-image {
-    /*display: inline-block;*/
-    /*text-align: center;*/
-    /*border: 1px solid #DDD;*/
-    /*vertical-align: middle;*/
-    /*height: 100%;*/
+#similars {
+    padding: 0
 }
 
 #similars_list {
     list-style-type: none;
     padding: 0px;
-    margin: 0;
-    margin-top: 5px;
-    margin-left: 2px;
-    margin-right: 2px;
-
+    margin: 5px 2px 0;
     display: block;
     white-space: nowrap;
     overflow: auto;
@@ -718,13 +710,52 @@ a:hover#save_image.btn.btn-default.save_image  {
     height: inherit;
     max-height: 180px;
     padding: 10px 10px;
-
     border: 2px double transparent;
 }
 
 #similars_list li a img:hover{
     border: 2px ridge #d17f04;
+}
 
+
+
+/* Book Images*/
+
+
+#book_images {
+    padding: 0
+}
+
+#book_images_list {
+    list-style-type: none;
+    padding: 0px;
+    margin: 5px 2px 0;
+    display: block;
+    white-space: nowrap;
+    overflow: auto;
+    height: 200px;
+    overflow-y: hidden;
+}
+
+#book_images_list li {
+    display: inline;
+    list-style-type: none;
+    height: inherit;
+}
+
+#book_images_list li a {
+    height: inherit;
+}
+
+#book_images_list li a img {
+    height: inherit;
+    max-height: 180px;
+    padding: 10px 10px;
+    border: 2px double transparent;
+}
+
+#book_images_list li a img:hover{
+    border: 2px ridge #d17f04;
 }
 
 

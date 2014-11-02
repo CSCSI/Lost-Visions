@@ -64,7 +64,7 @@
                 for (var img_data in data['largest_set']) {
                     similars += '<li>';
                     similars += '<a href="' + data['largest_set'][img_data]['link']  + '" target="_blank">';
-                    similars += '<img src="' + data['largest_set'][img_data]['img'] +
+                    similars += '<img src="' + data['largest_set'][img_data]['img_small'] +
                             '" class="similar-image"></img>';
                     similars += '</a>';
                     similars += '</li>';
@@ -72,6 +72,18 @@
                 similars += '</ul>';
                 $('#similars').html(similars);
 
+
+                var book_images = '<ul id="book_images_list">';
+                for (var img_data in data['book_images']) {
+                    book_images += '<li>';
+                    book_images += '<a href="' + data['book_images'][img_data]['link']  + '" target="_blank">';
+                    book_images += '<img src="' + data['book_images'][img_data]['img_small'] +
+                            '" class="similar-image"></img>';
+                    book_images += '</a>';
+                    book_images += '</li>';
+                }
+                similars += '</ul>';
+                $('#book_images').html(book_images);
 
             },
             error: function(xhr, textStatus, errorThrown) {
@@ -145,6 +157,13 @@
         });
 
         $('#collapse_similars').accordion({
+            active: 0,
+            collapsible: true,
+            heightStyle: "content"
+
+        });
+
+        $('#collapse_book_images').accordion({
             active: 0,
             collapsible: true,
             heightStyle: "content"
@@ -1248,6 +1267,23 @@
                 </div>
             </div>
         </div>
+
+    <div data-toggle="tooltip" data-placement="top"
+             title="Book Images" data-original-title="Book Images"
+             id="collapse_book_images" class="panel-group"
+             data-step="6" data-intro='These are images from this book' data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Book Images
+                </h4>
+            </div>
+            <div id="book_images" class="similar-images">
+                <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                    <div class="fa fa-3x fa-spinner fa-spin"></div>
+                </div>
+            </div>
+        </div>
+
 
     </div><!--/span-->
 

@@ -199,6 +199,7 @@ db_cleaned_json_location = ''
 db_regex_char = "\b"
 
 thumbnail_size = 300
+use_flickr = False
 
 try:
     from crowdsource.settings_local import *
