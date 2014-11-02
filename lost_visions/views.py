@@ -1027,6 +1027,7 @@ def do_advanced_search(request):
 
     return render(request, 'advanced_search_results.html',
                   {'results': response_data,
+                   'query_array': request.GET,
                    'query': readable_query,
                    'all_image_ids': all_image_ids,
                    'number_to_show': number_of_results_int,

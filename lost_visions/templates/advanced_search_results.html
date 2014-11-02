@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "search_advanced.html" %}
 {% load staticfiles %}
 
 
 
-{% block content %}
+{% block results %}
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
 
     var all_image_ids = "{{ all_image_ids }}";
@@ -32,11 +32,6 @@
             var $this_jq = $(this);
 
             var adv_item_img = $this_jq.find('img').get(0);
-            {#            console.log(adv_item_img);#}
-
-            {#            var width = $this_jq.width();#}
-            {#            var height = $this_jq.height();#}
-
             $(adv_item_img).load(function(){
                 var width = adv_item_img.naturalWidth;
                 var height = adv_item_img.naturalHeight;
@@ -298,7 +293,6 @@
 
     });
     </script>
-
     <div id="view_toggle" class="btn btn-default" data-view="list">Toggle view</div>
 
     <h3>{{ query }}</h3>

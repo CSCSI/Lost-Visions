@@ -593,6 +593,11 @@ a:hover#save_image.btn.btn-default.save_image  {
     margin-top: 30px;
     background-color: #d17f04;
 }
+
+#ui-accordion-collapse_search_filter-header-0 {
+    margin-top: 10px;
+    background-color: #d17f04;
+}
 /* Advanced search*/
 
 .advanced-search-form label {

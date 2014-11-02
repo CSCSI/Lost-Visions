@@ -11,6 +11,13 @@
 
         $(document).ready(function () {
 
+            $('#collapse_search_filter').accordion({
+                active: 0,
+                collapsible: true,
+                heightStyle: "content"
+
+            });
+
             var date_from_selector = $('#date_from');
             for (var i = date_to; i > date_from; i--)
             {
@@ -22,7 +29,15 @@
             year_selector.append($('<option selected="selected"/>').val('').html('--'));
             for (var j = 1950; j > date_from; j-=10)
             {
-                year_selector.append($('<option />').val(j).html(j));
+                var year_item = $('<option />').val(j).html(j);
+
+                {% if query_array.year %}
+                    if (j == {{ query_array.year }}) {
+                        year_item.attr('selected', 'selected');
+                    }
+                {% endif %}
+                year_selector.append(year_item);
+
             }
 
             date_from_selector.change(function(){
@@ -168,20 +183,53 @@
           method="get" class="advanced-search-form">{% csrf_token %}
         {{ tag_form.non_field_errors }}
 
-        <div class="panel panel-default">
+        <div
+                {#                data-toggle="tooltip" data-placement="top"#}
+                {#             title="Search Filters" data-original-title="Search Filters"#}
+                id="collapse_search_filter" class="panel-group"
+                data-step="1" data-intro='Search Filters' data-position="right">
+
             <div class="panel-heading">
                 <h4 class="panel-title">
                     Advanced Search
                 </h4>
             </div>
 
-            <table>
-                <tbody>
-                <tr>
+            <div class="container">
+                <div class="col-md-6">
 
                     <div class="ui-widget">
                         <label class="'control-label" for="keyword">Keyword: </label>
-                        <input class="'form-control" id="keyword" name="keyword">
+                        <input class="'form-control" id="keyword" name="keyword" value="{{ query_array.keyword }}">
+                    </div>
+
+                    <div class="ui-widget">
+                        <label class="'control-label" for="author">Author: </label>
+                        <input class="'form-control" id="author" name="author" value="{{ query_array.author }}">
+                    </div>
+
+                    <div class="ui-widget">
+                        <label class="'control-label" for="illustrator">Illustrator: </label>
+                        <input class="'form-control" id="illustrator" name="illustrator"
+                               value="{{ query_array.illustrator }}">
+                    </div>
+
+                    <div class="ui-widget">
+                        <label class="'control-label" for="publisher">Publisher: </label>
+                        <input class="'form-control" id="publisher" name="publisher" value="{{ query_array.publisher }}">
+                    </div>
+
+                    <div class="ui-widget">
+                        <label class="'control-label" for="publishing_place">Publishing Place: </label>
+                        <input class="'form-control" id="publishing_place" name="publishing_place"
+                               value="{{ query_array.publishing_place }}">
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="ui-widget">
+                        <label class="'control-label" for="title">Title: </label>
+                        <input class="'form-control" id="title" name="title" value="{{ query_array.title }}">
                     </div>
 
                     <div class="ui-widget">
@@ -196,34 +244,7 @@
 
                     <div class="ui-widget">
                         <label class="'control-label" for="year">Decade: </label>
-                        <select class="'form-control" id="year" name="year"></select>
-                    </div>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="author">Author: </label>
-                        <input class="'form-control" id="author" name="author">
-                    </div>
-                </tr>
-                <tr>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="illustrator">Illustrator: </label>
-                        <input class="'form-control" id="illustrator" name="illustrator">
-                    </div>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="title">Title: </label>
-                        <input class="'form-control" id="title" name="title">
-                    </div>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="publisher">Publisher: </label>
-                        <input class="'form-control" id="publisher" name="publisher">
-                    </div>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="publishing_place">Publishing Place: </label>
-                        <input class="'form-control" id="publishing_place" name="publishing_place">
+                        <select class="'form-control" id="year" name="year" ></select>
                     </div>
 
                     <div class="ui-widget">
@@ -231,16 +252,17 @@
                         <input class="'form-control" id="num_results" name="num_results" value="50">
                     </div>
 
-                </tr>
-                </tbody>
-            </table>
-
-            <div class="panel-footer">
-                <button type="submit" class="btn btn-primary">Search!</button>
+                </div>
+                <ul class="pager prev_next_pager" style="padding: 0">
+                    <li style="float: right">
+                        <button type="submit" class="btn btn-primary btn-sm">Search!</button>
+                    </li>
+                </ul>
             </div>
-
         </div>
     </form>
 
+    {% block results %}
+    {% endblock %}
 
 {% endblock %}
