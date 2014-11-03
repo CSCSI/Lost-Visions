@@ -72,6 +72,9 @@
                 similars += '</ul>';
                 $('#similars').html(similars);
 
+                if (data['largest_set_size'] == "0") {
+                    $('#collapse_similars').accordion({active: false});
+                }
 
                 var book_images = '<ul id="book_images_list">';
                 for (var img_data in data['book_images']) {
@@ -94,6 +97,25 @@
 
     var current_question_pane = 1;
     $(document).ready(function () {
+
+{#        $('#tagging-submit-btn').click(function(event){#}
+{#            $('#image-taggin-form').submit(event);#}
+{#        });#}
+{##}
+{#        $( "#image-taggin-form" ).submit(function( event ) {#}
+{#            alert( "Handler for .submit() called." );#}
+{#            console.log(event);#}
+{#            console.log(event.target.id);#}
+{#            event.preventDefault();#}
+{#        });#}
+
+        $('#image-taggin-form').bind("keyup keypress", function(e) {
+            var code = e.keyCode || e.which;
+            if (code  == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
 
         get_similar_images({{ image_id }});
 
@@ -143,7 +165,6 @@
             active: false,
             collapsible: true,
             heightStyle: "content"
-
         });
 
         $('#collapse_descriptions').accordion({
@@ -253,15 +274,15 @@
                 ui.item.value = "";
             }
         }).keypress(function(e) {
-            if (image_clicked()) {
-                if(e.which == 13) {
-                    alert('You pressed enter!');
-                    return false;
-                }
-            }
+            {#            if (image_clicked()) {#}
+            {#                if(e.which == 13) {#}
+            {#                    alert('You pressed enter!');#}
+            {#                    return false;#}
+            {#                }#}
+            {#            }#}
             return true;
         }).focus(function(e){
-            image_clicked()
+            {#            image_clicked()#}
         }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
             return $( "<li>" )
                     .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
@@ -1268,7 +1289,7 @@
             </div>
         </div>
 
-    <div data-toggle="tooltip" data-placement="top"
+        <div data-toggle="tooltip" data-placement="top"
              title="Book Images" data-original-title="Book Images"
              id="collapse_book_images" class="panel-group"
              data-step="6" data-intro='These are images from this book' data-position="right">
@@ -1679,9 +1700,9 @@
                                  id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
                         </li>
                         <li style="float: right">
-                            <button data-toggle="tooltip" data-placement="top"
-                                    title="Finish Tagging" data-original-title="Finish"
-                                    type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
+                            <button id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
+                                 title="Finish Tagging" data-original-title="Finish"
+                                 type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
                         </li>
                     </ul>
                     {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}

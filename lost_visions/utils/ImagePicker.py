@@ -214,12 +214,15 @@ class ImagePicker():
         # db_regex_char = "\y"
         regex_string = r"\b{0}\b".replace("\\b", db_regex_char)
 
-        print regex_string
+        # print regex_string
 
-        print request.GET
+        # print request.GET
 
         keywords = request.GET.get('keyword', '')
-        print keywords
+        # print keywords
+
+
+
         keywords = keywords.split(' ')
 
         year = request.GET.get('year', '')
