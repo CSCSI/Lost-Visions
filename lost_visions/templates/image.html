@@ -98,16 +98,16 @@
     var current_question_pane = 1;
     $(document).ready(function () {
 
-{#        $('#tagging-submit-btn').click(function(event){#}
-{#            $('#image-taggin-form').submit(event);#}
-{#        });#}
-{##}
-{#        $( "#image-taggin-form" ).submit(function( event ) {#}
-{#            alert( "Handler for .submit() called." );#}
-{#            console.log(event);#}
-{#            console.log(event.target.id);#}
-{#            event.preventDefault();#}
-{#        });#}
+        {#        $('#tagging-submit-btn').click(function(event){#}
+        {#            $('#image-taggin-form').submit(event);#}
+        {#        });#}
+        {##}
+        {#        $( "#image-taggin-form" ).submit(function( event ) {#}
+        {#            alert( "Handler for .submit() called." );#}
+        {#            console.log(event);#}
+        {#            console.log(event.target.id);#}
+        {#            event.preventDefault();#}
+        {#        });#}
 
         $('#image-taggin-form').bind("keyup keypress", function(e) {
             var code = e.keyCode || e.which;
@@ -966,6 +966,8 @@
         });
 
         $('.side-menu-content-wide').hide();
+        $( "#dictionary").focus();
+
     });
 
 
@@ -1601,119 +1603,120 @@
 
 
                             <div id="question_number_1" class="panel panel-default">
-                                <div id="collapseOne">
-                                    <div class="panel-body question-panel">
-                                        <h2>1/4</h2>
-                                        <h3>Objects and Ideas</h3>
+                                <div id="collapseOne"
+                                {#                                     data-toggle="tooltip" data-placement="top"#}
+                                {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
+                                <div class="panel-body question-panel">
+                                    <h2>1/4</h2>
+                                    <h3>Objects and Ideas</h3>
 
-                                        <p>What things or ideas can you see in this image?</p>
-                                        <p>For example:  "bird", "table", "winter", "love"</p>
-                                        <div id="focus_alerts"></div>
-                                        <div id="add_tags_body"></div>
+                                    <p>What things or ideas can you see in this image?</p>
+                                    <p>For example:  "bird", "table", "winter", "love"</p>
+                                    <div id="focus_alerts"></div>
+                                    <div id="add_tags_body"></div>
 
-                                        <div class="ui-widget">
-                                            <label class="'control-label" for="dictionary">Tags: </label>
-                                            <input data-toggle="tooltip" data-placement="top"
-                                                   title="Type a word which describes this image" data-original-title="Tag Box"
-                                                   class="'form-control" id="dictionary">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-
-
-
-                            <div id="question_number_2" class="panel panel-default">
-
-                                <div id="collapseTwo">
-                                    <div class="panel-body question-panel">
-                                        <h2>2/4</h2>
-                                        <h3>Types of image</h3>
-                                        <p>Please select the type of image, if any, from the options below</p>
-                                        <div id="category-extra"></div>
-
-                                        <div class="grid-sizer"></div>
-                                        <div id="add_category_body"></div>
-
-                                        <div id="category-question">{{ category_data.question }}</div>
-
-                                        <div id="category-container" class="js-masonry"
-                                             data-masonry-options='{"itemSelector": ".category-answer" }'>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-
-
-                            <div id="question_number_3" class="panel panel-default">
-                                <div>
-                                    <div class="panel-body question-panel">
-                                        <h2>3/4</h2>
-                                        <h3>Caption</h3>
-                                        <h4>Please transcribe the Caption in this image, if present.</h4>
-                                        <div id="free_text_caption" >
-                                            <label class="control-label" for="input_caption">Caption</label>
-                                            <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-
-                            <div id="question_number_4" class="panel panel-default">
-                                <div id="collapseFive">
-                                    <div class="panel-body question-panel">
-                                        <h2>4/4</h2>
-                                        <h3>Description</h3>
-                                        <h4>Please enter a description of the image</h4>
-
-                                        <div id="free_text_description" class="row-fluid">
-                                            <label class="'control-label" for="free-text-area">Description</label>
-                                            <textarea name="image_description" class="form-control"
-                                                      rows="3" id="free-text-area"></textarea>
-                                        </div>
-
-                                        {#                                        <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
+                                    <div class="ui-widget">
+                                        <label class="'control-label" for="dictionary">Tags: </label>
+                                        <input
+                                                class="'form-control" id="dictionary">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <ul class="pager prev_next_pager">
-                        <li style="float: left">
-                            <div data-toggle="tooltip" data-placement="top"
-                                 title="Previous Question" data-original-title="Previous"
-                                 id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div></div>
-                        </li>
-                        <li style="float: left">
-                            <div data-toggle="tooltip" data-placement="top"
-                                 title="Next Question" data-original-title="Next"
-                                 id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
-                        </li>
-                        <li style="float: right">
-                            <button id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
-                                 title="Finish Tagging" data-original-title="Finish"
-                                 type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
-                        </li>
-                    </ul>
-                    {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
-                    <div class="navbar-right">
-                        <div id="load_new_image" class="btn btn-primary">
-                            <a href="{% url 'image.random' %}">Skip</a>
+
+
+
+
+
+                        <div id="question_number_2" class="panel panel-default">
+
+                            <div id="collapseTwo">
+                                <div class="panel-body question-panel">
+                                    <h2>2/4</h2>
+                                    <h3>Types of image</h3>
+                                    <p>Please select the type of image, if any, from the options below</p>
+                                    <div id="category-extra"></div>
+
+                                    <div class="grid-sizer"></div>
+                                    <div id="add_category_body"></div>
+
+                                    <div id="category-question">{{ category_data.question }}</div>
+
+                                    <div id="category-container" class="js-masonry"
+                                         data-masonry-options='{"itemSelector": ".category-answer" }'>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div id="question_number_3" class="panel panel-default">
+                            <div>
+                                <div class="panel-body question-panel">
+                                    <h2>3/4</h2>
+                                    <h3>Caption</h3>
+                                    <h4>Please transcribe the Caption in this image, if present.</h4>
+                                    <div id="free_text_caption" >
+                                        <label class="control-label" for="input_caption">Caption</label>
+                                        <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div id="question_number_4" class="panel panel-default">
+                            <div id="collapseFive">
+                                <div class="panel-body question-panel">
+                                    <h2>4/4</h2>
+                                    <h3>Description</h3>
+                                    <h4>Please enter a description of the image</h4>
+
+                                    <div id="free_text_description" class="row-fluid">
+                                        <label class="'control-label" for="free-text-area">Description</label>
+                                        <textarea name="image_description" class="form-control"
+                                                  rows="3" id="free-text-area"></textarea>
+                                    </div>
+
+                                    {#                                        <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </form>
             </div>
+
+            <ul class="pager prev_next_pager">
+                <li style="float: left">
+                    <div data-toggle="tooltip" data-placement="top"
+                         title="Previous Question" data-original-title="Previous"
+                         id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div></div>
+                </li>
+                <li style="float: left">
+                    <div data-toggle="tooltip" data-placement="top"
+                         title="Next Question" data-original-title="Next"
+                         id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
+                </li>
+                <li style="float: right">
+                    <button id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
+                            title="Finish Tagging" data-original-title="Finish"
+                            type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
+                </li>
+            </ul>
+            {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
+            <div class="navbar-right">
+                <div id="load_new_image" class="btn btn-primary">
+                    <a href="{% url 'image.random' %}">Skip</a>
+                </div>
+            </div>
+            </form>
         </div>
+    </div>
 
     </div>
 
