@@ -764,6 +764,11 @@ a:hover#save_image.btn.btn-default.save_image  {
 }
 
 
+#sidebar-wrapper {
+    background-color: #d17f04;
+}
+
+
 /*##################################################*/
 
 .man {
