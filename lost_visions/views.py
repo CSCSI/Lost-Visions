@@ -207,7 +207,7 @@ def image(request, image_id):
     image_descriptions = models.ImageText.objects.filter(image__flickr_id=image_id)
     image_descs = []
     for desc in image_descriptions:
-        if desc.description.strip() is not '':
+        if len(desc.description.strip()) > 0:
             image_descs.append(desc.description)
 
     tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag') \
