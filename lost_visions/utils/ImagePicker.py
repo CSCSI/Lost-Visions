@@ -216,7 +216,7 @@ class ImagePicker():
 
         # print regex_string
 
-        # print request.GET
+        print request.GET
 
         keywords = request.GET.get('keyword', '')
         # print keywords
@@ -233,6 +233,8 @@ class ImagePicker():
         publisher = request.GET.get('publisher', '')
         publishing_place = request.GET.get('publishing_place', '')
         title = request.GET.get('title', '')
+
+        tag_keywords_only = request.GET.get('tag_keywords_only', False)
 
         all_results = models.Image.objects.all()
 
@@ -292,16 +294,20 @@ class ImagePicker():
 
             regex_format = regex_string.format(word)
             ors = [
-                Q(first_author__iregex=regex_format),
-                Q(date__iregex=regex_format),
-                Q(title__iregex=regex_format),
-                Q(publisher__iregex=regex_format),
-                Q(pubplace__iregex=regex_format),
-                Q(tag__tag__iregex=regex_format),
+                 Q(tag__tag__iregex=regex_format),
                 Q(imagetext__caption__iregex=regex_format),
                 Q(imagetext__description__iregex=regex_format),
-
             ]
+
+            if not tag_keywords_only:
+                ors += [
+                    Q(first_author__iregex=regex_format),
+                    Q(date__iregex=regex_format),
+                    Q(title__iregex=regex_format),
+                    Q(publisher__iregex=regex_format),
+                    Q(pubplace__iregex=regex_format),
+
+                ]
 
             all_results = all_results.filter(reduce(operator.or_, ors))
 
@@ -310,7 +316,7 @@ class ImagePicker():
         #         print tag
         #     print '\n'
 
-        all_results = all_results.values_list('flickr_id', flat=True).distinct()
+        all_results = all_results.values_list('flickr_id', flat=True).distinct()[:5000]
 
         # logger.debug('write this???')
         logger.debug(all_results.query)

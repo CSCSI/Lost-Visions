@@ -1114,12 +1114,15 @@ def get_image_data_from_array(id_list):
                 if tag_result['img'] is None:
                     tag_result['img'] = result.flickr_small_source
 
-                tag_result['img_small'] = reverse('image.smaller_image', kwargs={
-                    'book_identifier': result.book_identifier,
-                    'volume': result.volume,
-                    'page': result.page,
-                    'image_idx': result.image_idx
-                })
+                if settings.use_flickr:
+                    tag_result['img_small'] = result.flickr_small_source
+                else:
+                    tag_result['img_small'] = reverse('image.smaller_image', kwargs={
+                        'book_identifier': result.book_identifier,
+                        'volume': result.volume,
+                        'page': result.page,
+                        'image_idx': result.image_idx
+                    })
 
                 tag_result['date'] = result.date
                 tag_result['page'] = result.page.lstrip('0')
@@ -1603,11 +1606,14 @@ def similar_images(request, image_id):
     tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id)
     # .values_list(['tag', 'tag_order'])
 
+    # print tags_for_image
+
     first_order_tags = []
     for t in tags_for_image:
+        # print t.tag_order
         try:
             tag_order = str(t.tag_order)[3:6]
-            if tag_order == '100':
+            if tag_order == '100' or t.tag_order < 100:
                 first_order_tags.append(str(t.tag))
         except:
             pass
@@ -1622,15 +1628,15 @@ def similar_images(request, image_id):
     largest_tag_set = []
 
     for a_set in powerset_generator(list(set(first_order_tags))):
-        # print a_set
+        print a_set
 
         if len(a_set) > 0:
             tags_power_set.append(a_set)
 
             image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set, and_or='and', number=10))
 
-            # if image_id in image_data:
-            #     image_data.pop(image_id)
+            if image_id in image_data:
+                image_data.pop(image_id)
 
             powerset_image_data.append({
                 'image_tags': a_set,
