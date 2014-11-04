@@ -1610,7 +1610,6 @@ def similar_images(request, image_id):
 
     first_order_tags = []
     for t in tags_for_image:
-        # print t.tag_order
         try:
             tag_order = str(t.tag_order)[3:6]
             if tag_order == '100' or t.tag_order < 100:
@@ -1627,7 +1626,8 @@ def similar_images(request, image_id):
     largest_set = {}
     largest_tag_set = []
 
-    for a_set in powerset_generator(list(set(first_order_tags))):
+    # TODO get top 4 most used tags and only powerset those
+    for a_set in powerset_generator(list(set(first_order_tags[:4]))):
         print a_set
 
         if len(a_set) > 0:
