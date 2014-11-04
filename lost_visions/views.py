@@ -1644,7 +1644,7 @@ def similar_images(request, image_id):
                 'tag_powerset_size': len(a_set)
             })
 
-            if len(a_set) > len(largest_set):
+            if len(image_data) > len(largest_set):
                 largest_set = image_data
                 largest_tag_set = a_set
 
