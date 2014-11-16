@@ -53,6 +53,20 @@ class ImageLocation(models.Model):
     idx = models.TextField(blank=True)
 
 
+class DescriptorLocation(models.Model):
+    location = models.TextField(blank=True)
+    image = models.ForeignKey('Image', null=True, blank=True, related_name='image')
+
+    book_id = models.TextField(blank=True)
+    volume = models.TextField(blank=True)
+    page = models.TextField(blank=True)
+    idx = models.TextField(blank=True)
+
+    descriptor_type = models.TextField()
+    descriptor_settings = models.TextField()
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+
 class Image(models.Model):
     # id = models.IntegerField(primary_key=True)
     # id = models.AutoField(primary_key=True)
@@ -258,6 +272,18 @@ class SavedImageCaption(models.Model):
         return str(self.id) + ':' + user + ':' \
             + self.image_mapping.collection.name + ':' \
             + self.image_mapping.image.flickr_id + ':' + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+
+
+class MachineMatching(models.Model):
+    image_a = models.ForeignKey(Image, blank=False, related_name='machinematching_image_a')
+    image_a_flickr_id = models.TextField()
+    image_b = models.ForeignKey(Image, blank=False, related_name='machinematching_image_b')
+    image_b_flickr_id = models.TextField()
+    metric_value = models.FloatField()
+    metric = models.TextField()
+    metric_data = models.TextField()
+    execution_run = models.IntegerField()
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
 # watson.register(Image)
