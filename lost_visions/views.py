@@ -516,7 +516,7 @@ def findword(request):
 
     response_data = db_tools.wordnet_formatted(word)
 
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    return HttpResponse(json.dumps(response_data, indent=4), content_type="application/json")
 
 
 def record_search(request, word):

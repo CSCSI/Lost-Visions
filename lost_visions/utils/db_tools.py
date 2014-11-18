@@ -1,4 +1,5 @@
 import os
+import pprint
 import re
 from raven import Client
 
@@ -14,6 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 import nltk
 from nltk.corpus import wordnet as wn
+from nltk.stem.wordnet import WordNetLemmatizer
 
 __author__ = 'ubuntu'
 
@@ -365,9 +367,19 @@ def backup_db():
 def search_wordnet(searchword, limit=30):
     query = "SELECT wordid, lemma, definition, synsetid, pos, sensenum FROM words LEFT JOIN senses s USING (wordid) " \
             "LEFT JOIN synsets USING (synsetid) where lemma like %s " \
-            "order by length(lemma) COLLATE NOCASE ASC limit %s"
+            "order by length(lemma), sensenum COLLATE NOCASE ASC limit %s"
 
     results = wordnet.Words.objects.db_manager('wordnet').raw(query, [searchword + '%', limit])
+
+    # for word in results:
+    #
+    #     print type(word)
+    #     word_dict = word.__dict__
+    #
+    #     for key in word_dict:
+    #         print key
+    #         print word.__dict__.get(key)
+
     return results
 
 
@@ -378,10 +390,25 @@ def wordnet_formatted(word):
         word_data = dict()
         word_data['label'] = found_word.lemma
         word_data['desc'] = str(found_word.definition)
+        word_data['sensenum'] = found_word.sensenum
         response_data.append(word_data)
 
         synsetid = found_word.lemma + '.' + str(found_word.pos) + '.' + str(found_word.sensenum)
         word_data['synset'] = synsetid
+
+    stem = wn.morphy(word)
+    if stem is not word:
+        word_stem_words = search_wordnet(stem)
+        for found_word in word_stem_words:
+            word_data = dict()
+            word_data['label'] = found_word.lemma
+            word_data['desc'] = str(found_word.definition)
+            word_data['sensenum'] = found_word.sensenum
+            response_data.append(word_data)
+
+            synsetid = found_word.lemma + '.' + str(found_word.pos) + '.' + str(found_word.sensenum)
+            word_data['synset'] = synsetid
+
     return response_data
 
 
