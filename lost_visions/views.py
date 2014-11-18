@@ -1,6 +1,7 @@
 import ast
 import json
 import os
+import pprint
 from random import randint
 import re
 import urllib
@@ -13,6 +14,7 @@ from PIL import Image
 from dateutil import parser
 from dateutil.tz import tzlocal
 from django.contrib import auth
+from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
 from django.http import HttpResponse, Http404
@@ -1656,6 +1658,8 @@ def similar_images(request, image_id):
     #     print 'number of similar images ' + str(len(img_dat['image_data']))
     #     print '\n'
 
+
+
     book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
     # print book_id
     flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id)\
@@ -1663,12 +1667,26 @@ def similar_images(request, image_id):
     # print flickr_ids_from_book
     book_images = get_image_data_from_array(flickr_ids_from_book)
 
+    #TODO optimise
+    image_object = models.Image.objects.get(flickr_id=image_id)
+    image_matches = models.MachineMatching.objects.filter(Q(metric='CV_COMP_CORREL'))\
+        .filter(Q(image_a=image_object) | Q(image_b=image_object)).order_by('-metric_value')[:20]
+
+    machine_matched_ids = []
+
+    for machine_matched in image_matches:
+        if machine_matched.image_a.flickr_id == image_object.flickr_id:
+            machine_matched_ids.append(machine_matched.image_b_flickr_id)
+        else:
+            machine_matched_ids.append(machine_matched.image_a_flickr_id)
+
     return_data = {
         'book_images': book_images,
         'image_sets': powerset_image_data,
         'largest_set': largest_set,
         'largest_set_size': len(largest_set),
-        'largest_tag_set': largest_tag_set
+        'largest_tag_set': largest_tag_set,
+        'machine_matches': get_image_data_from_array(machine_matched_ids)
     }
 
     return HttpResponse(json.dumps(return_data),
@@ -1678,3 +1696,27 @@ def similar_images(request, image_id):
 def powerset_generator(i):
     for subset in itertools.chain.from_iterable(itertools.combinations(i, r) for r in range(len(i)+1)):
         yield subset
+
+
+def image_data(request, image_id):
+    image_data_model = models.Image.objects.get(flickr_id=image_id)
+    serialized_image_model = serializers.serialize('json', [image_data_model])
+
+    image_location = models.ImageLocation.objects.filter(book_id=image_data_model.book_identifier)
+    serialized_location_model = serializers.serialize('json', image_location)
+
+    descriptor_locations = models.DescriptorLocation.objects.filter(image_id=image_data_model)
+    serialized_descriptors_model = serializers.serialize('json', descriptor_locations)
+
+    image_matches = models.MachineMatching.objects.filter(Q(image_a=image_data_model) |
+                                                          Q(image_b=image_data_model))\
+        .filter(Q(metric='CV_COMP_CORREL')).order_by('-metric_value')
+    serialized_matches_model = serializers.serialize('json', image_matches)
+
+    return_data = {
+        'bl_flickr_data': json.loads(serialized_image_model),
+        'descriptors': json.loads(serialized_descriptors_model),
+        'image_location': json.loads(serialized_location_model),
+        'matches': json.loads(serialized_matches_model)
+    }
+    return HttpResponse(json.dumps(return_data, indent=4), content_type="application/json")

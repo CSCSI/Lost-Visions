@@ -82,7 +82,7 @@ def bl_filename(metadata):
     return u"" \
            u"{0[book_identifier]}_{0[volume]}_{0[page]}_{0[image_idx]}_{0[date]}_embellishments.jpg".format(metadata)
 
-def import_folder( folder ):
+def import_folder( folder , database='default'):
 
     count = 0
 
@@ -132,7 +132,7 @@ def import_folder( folder ):
                             image.flickr_original_width = words[24]
 
                             try:
-                                image.save()
+                                image.save(using=database)
                             except IntegrityError as i:
                                 already_saved += 1
                                 print 'Already saved image : ' + image.flickr_id
@@ -140,6 +140,6 @@ def import_folder( folder ):
                             if already_saved > 10:
                                 break
 
-# import_folder(settings.bl_folder)
+import_folder(settings.bl_folder, 'postgres')
 
 # find_small(settings.bl_folder, os.path.join(settings.BASE_DIR, 'bl_images'))

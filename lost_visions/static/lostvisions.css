@@ -598,6 +598,11 @@ a:hover#save_image.btn.btn-default.save_image  {
     margin-top: 10px;
     background-color: #d17f04;
 }
+
+#ui-accordion-collapse_machine_matched-header-0 {
+    margin-top: 10px;
+    background-color: #d17f04;
+}
 /* Advanced search*/
 
 .advanced-search-form label {
@@ -763,6 +768,47 @@ a:hover#save_image.btn.btn-default.save_image  {
     border: 2px ridge #d17f04;
 }
 
+
+
+
+/* Machine Matches Images*/
+
+
+#machine_matched_images {
+    padding: 0
+}
+
+#machine_matched_list {
+    list-style-type: none;
+    padding: 0px;
+    margin: 5px 2px 0;
+    display: block;
+    white-space: nowrap;
+    overflow: auto;
+    height: 200px;
+    overflow-y: hidden;
+}
+
+#machine_matched_list li {
+    display: inline;
+    list-style-type: none;
+    height: inherit;
+}
+
+#machine_matched_list li a {
+    height: inherit;
+}
+
+#machine_matched_list li a img {
+    height: inherit;
+    max-height: 180px;
+    padding: 10px 10px;
+    border: 2px double transparent;
+}
+
+#machine_matched_list li a img:hover{
+    border: 2px ridge #d17f04;
+}
 
 /*##################################################*/
 

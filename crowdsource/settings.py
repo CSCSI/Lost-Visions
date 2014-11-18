@@ -130,14 +130,14 @@ DATABASES = {
     'wordnet': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'sqlite-31.db'),
-        }
-    # 'postgres': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'x',
-    #     'USER': 'x',
-    #     'PASSWORD': 'x',
-    #     'HOST': 'x'
-    # }
+        },
+    'postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'local_db',
+        'USER': 'local_user',
+        'PASSWORD': 'l0c4l111',
+        'HOST': 'localhost'
+    }
 }
 
 RAVEN_CONFIG = {

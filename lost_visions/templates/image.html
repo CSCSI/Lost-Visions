@@ -85,8 +85,21 @@
                     book_images += '</a>';
                     book_images += '</li>';
                 }
-                similars += '</ul>';
+                book_images += '</ul>';
                 $('#book_images').html(book_images);
+
+
+                var machine_matched = '<ul id="machine_matched_list">';
+                for (var img_data in data['machine_matches']) {
+                    machine_matched += '<li>';
+                    machine_matched += '<a href="' + data['machine_matches'][img_data]['link']  + '" target="_blank">';
+                    machine_matched += '<img src="' + data['machine_matches'][img_data]['img_small'] +
+                            '" class="similar-image"></img>';
+                    machine_matched += '</a>';
+                    machine_matched += '</li>';
+                }
+                machine_matched += '</ul>';
+                $('#machine_matched_images').html(machine_matched);
 
             },
             error: function(xhr, textStatus, errorThrown) {
@@ -178,6 +191,13 @@
         });
 
         $('#collapse_similars').accordion({
+            active: 0,
+            collapsible: true,
+            heightStyle: "content"
+
+        });
+
+     $('#collapse_machine_matched').accordion({
             active: 0,
             collapsible: true,
             heightStyle: "content"
@@ -1291,6 +1311,23 @@
             </div>
         </div>
 
+
+        <div data-toggle="tooltip" data-placement="top"
+             title="Machine Matched Images" data-original-title="Similar Images"
+             id="collapse_machine_matched" class="panel-group"
+             data-step="6" data-intro='These are potentially similar images' data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Machine Matched Images
+                </h4>
+            </div>
+            <div id="machine_matched_images" class="similar-images">
+                <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                    <div class="fa fa-3x fa-spinner fa-spin"></div>
+                </div>
+            </div>
+        </div>
+
         <div data-toggle="tooltip" data-placement="top"
              title="Book Images" data-original-title="Book Images"
              id="collapse_book_images" class="panel-group"
@@ -1603,7 +1640,7 @@
 
 
                             <div id="question_number_1" class="panel panel-default">
-                                <div id="collapseOne"
+                                <div id="collapseOne">
                                 {#                                     data-toggle="tooltip" data-placement="top"#}
                                 {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
                                 <div class="panel-body question-panel">
