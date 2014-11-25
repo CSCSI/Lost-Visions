@@ -180,7 +180,7 @@ def image(request, image_id):
     formatted_info['Volume'] = image_info.get('volume', "")
     formatted_info['Author'] = image_info.get('first_author', "")
     formatted_info['Book ID'] = image_info.get('book_identifier', "")
-    formatted_info['Place of Publishing'] = image_info.get('pubplace', "")
+    formatted_info['Place of Publication'] = image_info.get('pubplace', "")
     formatted_info['Publisher'] = image_info.get('publisher', "")
     formatted_info['Shelfmark'] = image_info.get('BL_DLS_ID', "")
     formatted_info['Page'] = image_info.get('page', "").lstrip('0')
