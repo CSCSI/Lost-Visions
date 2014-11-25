@@ -7,7 +7,7 @@ __author__ = 'ubuntu'
 
 class ImageIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-    author = indexes.CharField(model_attr='first_author')
+    first_author = indexes.CharField(model_attr='first_author')
     pubplace = indexes.CharField(model_attr='pubplace')
     title = indexes.CharField(model_attr='title')
     publisher = indexes.CharField(model_attr='publisher')
@@ -23,7 +23,7 @@ class ImageIndex(indexes.SearchIndex, indexes.Indexable):
 
 class TagIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-    tag = indexes.CharField(model_attr='first_author')
+    tag = indexes.CharField(model_attr='tag')
 
     def get_model(self):
         return Tag

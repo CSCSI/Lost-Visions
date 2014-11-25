@@ -182,10 +182,11 @@
             return false;
         });
 
-        $('#search_box').change(function () {
-            $('#search_form').attr('action',
-                    '{% url 'do_search' 'abcde'%}'.replace('abcde', $('#search_box').val().replace(' ', '+')));
-        });
+{#        old search features, now advanced search used #}
+{#        $('#search_box').change(function () {#}
+{#            $('#search_form').attr('action',#}
+{#                    '{% url 'do_search' 'abcde'%}'.replace('abcde', $('#search_box').val().replace(' ', '+')));#}
+{#        });#}
 
         $("[data-toggle='tooltip']").tooltip({'placement': 'right'});
 

@@ -420,7 +420,7 @@ def list_wordnet_links(tag_synset_id):
         word_synset = wn.synset(tag_synset_id)
         for index, lemma in enumerate(word_synset.lemmas):
             if lemma.name != tag_synset_id.split('.')[0]:
-                print lemma.name + ':' + tag_synset_id.split('.')[0]
+                # print lemma.name + ':' + tag_synset_id.split('.')[0]
                 initial_list.append([lemma.name, [loop, index]])
 
         loop += 1
@@ -434,7 +434,7 @@ def list_wordnet_links(tag_synset_id):
 # we stop looking upwards for parent words once we reach these pretty useless tags
 useless_words = ['artifact', 'being', 'abstraction', 'state',
                  'part', 'thing', 'entity', 'event', 'device', 'stuff',
-                 'representational process', 'percept', 'organism']
+                 'representational process', 'percept', 'organism', 'representation']
 
 
 def get_hypernyms(synset, synset_list, loop=0):

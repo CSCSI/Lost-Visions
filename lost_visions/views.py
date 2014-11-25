@@ -1264,8 +1264,8 @@ def stats(request):
                   context_instance=RequestContext(request))
 
 
-def haystack_search(request):
-    query_response = {'hello': 'world', 'test': ['a', 'b', 3]}
+def haystack_search(request, word):
+    query_response = {'hello': 'world', 'test': ['a', 'b', 3], 'the_word': word}
 
     return HttpResponse(json.dumps(query_response), content_type="application/json")
 
