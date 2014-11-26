@@ -310,22 +310,11 @@ class ImagePicker():
                         Q(pubplace__iregex=regex_format),
 
                     ]
-    
+
                 all_results = all_results.filter(reduce(operator.or_, ors))
 
-        # for res in all_results:
-        #     for tag in res.tag_set.all():
-        #         print tag
-        #     print '\n'
-
         all_results = all_results.values_list('flickr_id', flat=True).distinct()[:5000]
-
-        for r in all_results:
-            print r
-        print all_results.query
-        # logger.debug('write this???')
         logger.debug(all_results.query)
-
         return all_results
 
 
