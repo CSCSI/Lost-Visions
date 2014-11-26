@@ -289,27 +289,29 @@ class ImagePicker():
                 similar_words.extend(self.get_similar_word_array(word))
             keywords = similar_words
 
+        print '*' + str(keywords) + '*'
         for word in keywords:
-            # all_results = self.filter_all_on_tag(all_results, word)
+            if len(word):
+                # all_results = self.filter_all_on_tag(all_results, word)
 
-            regex_format = regex_string.format(word)
-            ors = [
-                 Q(tag__tag__iregex=regex_format),
-                Q(imagetext__caption__iregex=regex_format),
-                Q(imagetext__description__iregex=regex_format),
-            ]
-
-            if not tag_keywords_only:
-                ors += [
-                    Q(first_author__iregex=regex_format),
-                    Q(date__iregex=regex_format),
-                    Q(title__iregex=regex_format),
-                    Q(publisher__iregex=regex_format),
-                    Q(pubplace__iregex=regex_format),
-
+                regex_format = regex_string.format(word)
+                ors = [
+                     Q(tag__tag__iregex=regex_format),
+                    Q(imagetext__caption__iregex=regex_format),
+                    Q(imagetext__description__iregex=regex_format),
                 ]
 
-            all_results = all_results.filter(reduce(operator.or_, ors))
+                if not tag_keywords_only:
+                    ors += [
+                        Q(first_author__iregex=regex_format),
+                        Q(date__iregex=regex_format),
+                        Q(title__iregex=regex_format),
+                        Q(publisher__iregex=regex_format),
+                        Q(pubplace__iregex=regex_format),
+
+                    ]
+    
+                all_results = all_results.filter(reduce(operator.or_, ors))
 
         # for res in all_results:
         #     for tag in res.tag_set.all():
@@ -318,6 +320,9 @@ class ImagePicker():
 
         all_results = all_results.values_list('flickr_id', flat=True).distinct()[:5000]
 
+        for r in all_results:
+            print r
+        print all_results.query
         # logger.debug('write this???')
         logger.debug(all_results.query)
 

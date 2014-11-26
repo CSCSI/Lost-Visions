@@ -124,7 +124,7 @@ SOCIALACCOUNT_PROVIDERS = {
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
-    'sqlite': {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         },
@@ -133,21 +133,21 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'sqlite-31.db'),
         },
     #postgres
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'local_db',
-        'USER': 'local_user',
-        'PASSWORD': 'l0c4l111',
-        'HOST': 'localhost'
-    },
-    'geodjango': {
-         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-         'NAME': 'geodjango',
-         'USER': 'geo',
-     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'local_db',
+    #     'USER': 'local_user',
+    #     'PASSWORD': 'l0c4l111',
+    #     'HOST': 'localhost'
+    # },
+    # 'geodjango': {
+    #      'ENGINE': 'django.contrib.gis.db.backends.postgis',
+    #      'NAME': 'geodjango',
+    #      'USER': 'geo',
+    #  }
 }
 
-POSTGIS_VERSION = ( 1.5, )
+# POSTGIS_VERSION = ( 1.5, )
 
 RAVEN_CONFIG = {
     'dsn': 'http://8eedfb9d1deb48a39af1f63b825e4ccc:e0f83797e67a462c9c65f270296e672c@lost-visions.cf.ac.uk/sentry/2',
@@ -205,6 +205,8 @@ bl_folder = ''
 db_json_location = ''
 db_cleaned_json_location = ''
 
+
+#\b for sqlite \y for postgres
 db_regex_char = "\b"
 
 thumbnail_size = 300
