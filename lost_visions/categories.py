@@ -70,19 +70,19 @@ class CategoryManager():
         self.categories[1] = Category('1', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[0] = Category('-1', 'root', 'Root', '') \
-            .set_question('Is the image a ...') \
-            .set_answers([100, 300, 400, 500, 600, 800, 1000]) \
+            .set_question('Is the image ...') \
+            .set_answers([100, 400, 500, 600, 800, 1000]) \
             .set_save(False)
 
-        self.categories[100] = Category('100', 'advert', 'Advertisements?', ICON_URL + 'advert.jpg') \
+        self.categories[100] = Category('100', 'advert', 'an Advertisement?', ICON_URL + 'advert.jpg') \
             .set_question('Is there a product/brand name?') \
             .set_answers([101, 102])
         self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False)
         self.categories[102] = Category('102', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
 
-        # self.categories[200] = Category('200', 'building', 'Building?', ICON_URL + 'building.jpg', ) \
-        #     .set_question('Is this the buildings ...') \
-        #     .set_answers([201, 202])
+        self.categories[200] = Category('200', 'building', 'Building?', ICON_URL + 'building.jpg', ) \
+            .set_question('Is this the buildings ...') \
+            .set_answers([201, 202])
         # self.categories[201] = Category('201', 'interior', 'Interior?', ICON_URL + 'interior.jpg')
         # self.categories[202] = Category('202', 'exterior', 'Exterior?', ICON_URL + 'exterior.jpg')
 
@@ -104,16 +104,17 @@ class CategoryManager():
             .set_save(False).set_question('Is the person in a named location?').set_answers([1000, 1])
 
         self.categories[400] = Category('400', 'motif', 'Decoration?', ICON_URL + 'motif.jpg') \
-            .set_question('Is the decoration a ...').set_answers([401, 402, 403, 404, 405])
+            .set_question('Is the decoration a ...').set_answers([401, 403, 404, 405])
         self.categories[401] = Category('401', 'border', 'Decorative Border?', ICON_URL + 'border.jpg')
-        self.categories[402] = Category('402', 'emblem', 'Emblem?', ICON_URL + 'lv-rect-station.png')
+        # self.categories[402] = Category('402', 'emblem', 'Emblem?', ICON_URL + 'lv-rect-station.png')
         self.categories[403] = Category('403', 'motif', 'Motif?', ICON_URL + 'motif.jpg')
         self.categories[404] = Category('404', 'coat_of_arms', 'Coat of Arms?', ICON_URL + 'coat_of_arms.jpg')
         self.categories[405] = Category('405', 'decorative letter', 'Decorative Letter?', ICON_URL + 'letter.jpg')
+        self.categories[406] = Category('406', 'no', 'None of These', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[500] = Category('500', 'title_page', 'Title Page?', ICON_URL + 'title_page.jpg')
 
-        self.categories[600] = Category('600', 'map', 'Map?', ICON_URL + 'map.jpg') \
+        self.categories[600] = Category('600', 'map', 'a Map?', ICON_URL + 'map.jpg') \
             .set_question('Can you describe the mapped location..').set_answers([1001, 1002, 1])
 
 
@@ -124,9 +125,9 @@ class CategoryManager():
         # self.categories[702] = Category('702', 'vegetable', 'Vegetable?', ICON_URL + 'lv-rect-station.png')
         # self.categories[703] = Category('703', 'mineral', 'Mineral?', ICON_URL + 'lv-rect-station.png')
 
-        self.categories[800] = Category('800', 'scientific_drawing', 'Scientific Drawing?', ICON_URL + 'science.jpg') \
+        self.categories[800] = Category('800', 'scientific_drawing', 'Scientific?', ICON_URL + 'science.jpg') \
             .set_question('Is the Diagram ...') \
-            .set_answers([801, 802, 803, 804, 805, 806, 807])
+            .set_answers([801, 802, 803, 804, 805, 806, 807, 808])
         self.categories[801] = Category('801', 'Geological', 'Geological?', ICON_URL + 'lv-rect-station.png') \
             .set_question('Does the Diagram describe a named location?').set_answers([810, 1])
         self.categories[810] = Category('810', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False).set_answers([1000])
@@ -142,9 +143,11 @@ class CategoryManager():
         self.categories[807] = Category('807', 'architectural', 'Architectural Drawing?', ICON_URL + 'schematic.jpg') \
             .set_question('Is the architectural drawing of a named location?').set_answers([817, 1])
         self.categories[817] = Category('810', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False).set_answers([1000])
+        self.categories[808] = Category('808', 'no', 'None of These', ICON_URL + 'cross.png').set_save(False)
+
         # self.categories[900] = Category('900', 'music', 'Musical Score?', ICON_URL + 'music.jpg')
 
-        self.categories[1000] = Category('1000', 'location', 'Location?', ICON_URL + 'landscape.jpg') \
+        self.categories[1000] = Category('1000', 'location', 'Location', ICON_URL + 'landscape.jpg') \
             .set_save(False).set_question('Can you describe the location?').set_answers([1001, 1002, 1])
 
         # self.categories[1200] = Category('1200', 'ethnographic', 'Travel/ Ethnography?', ICON_URL + 'travel.jpg')

@@ -397,7 +397,9 @@ def wordnet_formatted(word):
         word_data['synset'] = synsetid
 
     stem = wn.morphy(word)
-    if stem is not word:
+    if stem is not None and stem is not word:
+        print '*' + str(stem) + '*'
+
         word_stem_words = search_wordnet(stem)
         for found_word in word_stem_words:
             word_data = dict()

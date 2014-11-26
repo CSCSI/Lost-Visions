@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.sites',
+    # 'django.contrib.gis',
     # 'social.apps.django_app.default',
     # 'dajaxice',
     # 'dajax',
@@ -123,7 +124,7 @@ SOCIALACCOUNT_PROVIDERS = {
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         },
@@ -131,14 +132,22 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'sqlite-31.db'),
         },
-    'postgres': {
+    #postgres
+    'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'local_db',
         'USER': 'local_user',
         'PASSWORD': 'l0c4l111',
         'HOST': 'localhost'
-    }
+    },
+    'geodjango': {
+         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+         'NAME': 'geodjango',
+         'USER': 'geo',
+     }
 }
+
+POSTGIS_VERSION = ( 1.5, )
 
 RAVEN_CONFIG = {
     'dsn': 'http://8eedfb9d1deb48a39af1f63b825e4ccc:e0f83797e67a462c9c65f270296e672c@lost-visions.cf.ac.uk/sentry/2',

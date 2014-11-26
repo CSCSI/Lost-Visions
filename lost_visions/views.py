@@ -27,11 +27,12 @@ from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
 import operator
 import itertools
+from haystack.query import SearchQuerySet
 from pygeoip import GeoIP
 from crowdsource import settings
 from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size
 from lost_visions import forms, models
-# from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
+from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
 from ipware.ip import get_ip
 from bleach import clean
 from lost_visions.categories import CategoryManager
@@ -228,6 +229,13 @@ def image(request, image_id):
         users_collections.add(str(c.name))
     users_collections.add('NEW COLLECTION')
 
+    y = 51.49006473014369
+    x = -3.1805146484375
+    swy = 50.49006473014369
+    swx = -4.1805146484375
+    ney = 52.49006473014369
+    nex = -2.1805146484375
+
     return render(request, 'image.html',
                   {'image': image_info,
                    'book_id': image_info.get('book_identifier', ""),
@@ -240,6 +248,14 @@ def image(request, image_id):
                    'user_collections': list(users_collections),
                    'linked_images': linked_image_data,
                    'image_descriptions': image_descs,
+
+                   'x': x,
+                   'y': y,
+                   'ne_x': nex,
+                   'ne_y': ney,
+                   'sw_x': swx,
+                   'sw_y': swy,
+
                    'this_url': reverse('image', kwargs={'image_id': image_id})},
                   context_instance=RequestContext(request))
 
@@ -709,9 +725,7 @@ def map(request, image_id):
                   context_instance=RequestContext(request))
 
 
-@requires_csrf_token
-def coords(request, image_id):
-
+def coords_save(request):
     # print image_id
     print request.POST
 
@@ -737,12 +751,18 @@ def coords(request, image_id):
     except Exception as e:
         print e
 
-    # return render(request,
-    #               'image_map.html',
-    #               {'image_id': image_id,
-    #                'image_coords_msg': 'Thank you. You may save another region, or close this window'},
-    #               context_instance=RequestContext(request))
+    result = {'success': True}
+    return HttpResponse(json.dumps(result), content_type="application/json")
+
+
+
+@requires_csrf_token
+def coords(request, image_id):
+
+    coords_save(request)
+
     return map(request, image_id)
+
 
 @requires_csrf_token
 def save_image(request):
@@ -1148,17 +1168,18 @@ def get_resized_image(request, book_identifier, volume, page, image_idx):
                                                              volume=volume,
                                                              page=page,
                                                              idx=image_idx)
-        img = Image.open(image_location[0].location)
-        print image_location[0].location
-        # img.verify()
+        if len(image_location):
+            img = Image.open(image_location[0].location)
+            print image_location[0].location
+            # img.verify()
 
-        basewidth = thumbnail_size
-        wpercent = (basewidth/float(img.size[0]))
-        hsize = int((float(img.size[1])*float(wpercent)))
+            basewidth = thumbnail_size
+            wpercent = (basewidth/float(img.size[0]))
+            hsize = int((float(img.size[1])*float(wpercent)))
 
-        img.thumbnail((basewidth, hsize), Image.ANTIALIAS)
-        # response['Content-Disposition'] = 'attachment; filename=%s' % filename
-        img.save(response, "JPEG", quality=80, optimize=True, progressive=True)
+            img.thumbnail((basewidth, hsize), Image.ANTIALIAS)
+            # response['Content-Disposition'] = 'attachment; filename=%s' % filename
+            img.save(response, "JPEG", quality=80, optimize=True, progressive=True)
     except IOError:
         print "cannot create thumbnail for '%s'" % filename
     return response
@@ -1267,7 +1288,17 @@ def stats(request):
 def haystack_search(request, word):
     query_response = {'hello': 'world', 'test': ['a', 'b', 3], 'the_word': word}
 
-    return HttpResponse(json.dumps(query_response), content_type="application/json")
+    # found = SearchQuerySet().filter(content='London')[:10]
+
+    found = SearchQuerySet().filter(pubplace__contains='London')[:10]
+
+    rl = [x.object for x in found]
+
+    results_list_ser = serializers.serialize('json', rl)
+
+    query_response['haystack'] = json.loads(results_list_ser)
+
+    return HttpResponse(json.dumps(query_response, indent=4), content_type="application/json")
 
 
 def download_collection(request):

@@ -37,6 +37,8 @@ urlpatterns = patterns('',
                        url(r'^do_signup', 'lost_visions.views.do_signup', name='signup.do_signup'),
 
                        url(r'^image/coords/(?P<image_id>\d+)', 'lost_visions.views.coords', name='image.coords'),
+                       url(r'^image/coords_save', 'lost_visions.views.coords_save', name='image.coords_save'),
+
                        url(r'^image/map/(?P<image_id>\d+)', 'lost_visions.views.map', name='image.map'),
 
                        url(r'^image/(?P<image_id>\d+)', 'lost_visions.views.image', name='image'),

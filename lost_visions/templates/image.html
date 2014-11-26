@@ -3,6 +3,7 @@
 {% load url from future %}
 
 {% block content %}
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
 
@@ -366,6 +367,206 @@
             }
         });
 
+
+
+
+
+
+
+        function saveMapPoints(ney, nex, swy, swx) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'image.coords_save' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    image_id: {{ image_id }},
+                    north_east_y: ney,
+                    north_east_x: nex,
+                    south_west_y: swy,
+                    south_west_x: swx
+                },
+                success: function(data) {
+                    var ok = data['success'];
+                    alert("Saved success : " + ok);
+
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        $('#map-canvas').height($(window).height());
+
+        var window_height = $(window).height();
+        var window_width = $(window).width();
+
+        var mapping_dialog_form = $( "#mapping_dialog_form" ).dialog({
+            autoOpen: false,
+            height: window_height - 100,
+            width: window_width - 60,
+            modal: true,
+            buttons: {
+                "Save Map": function() {
+
+                    var ney =  document.getElementById("north_east_y").value;
+                    var nex = document.getElementById("north_east_x").value;
+                    var swy = document.getElementById("south_west_y").value;
+                    var swx = document.getElementById("south_west_x").value;
+
+                    saveMapPoints(ney, nex, swy, swx);
+
+                    mapping_dialog_form.dialog( "close" );
+                },
+                Cancel: function() {
+                    mapping_dialog_form.dialog( "close" );
+                }
+            },
+            open : function() {
+                {#                        $('#mapping_dialog_form').height($(window).height());#}
+
+                var name = $(this).data('name');
+                var id = $(this).data('id');
+
+
+                // Note: This example requires that you consent to location sharing when
+                // prompted by your browser. If you see a blank space instead of the map, this
+                // is probably because you have denied permission for location sharing.
+
+                var map;
+
+                function initialize() {
+
+                    var mapOptions = {
+                        center: new google.maps.LatLng({{ y }},{{ x }}),
+                        zoom: 6
+                    };
+                    map = new google.maps.Map(document.getElementById('map-canvas'),
+                            mapOptions);
+
+                    var bounds = new google.maps.LatLngBounds(
+                            new google.maps.LatLng({{ sw_y }}, {{ sw_x }}),
+                            new google.maps.LatLng({{ ne_y }}, {{ ne_x }})
+                    );
+
+                    // Define the rectangle and set its editable property to true.
+                    rectangle = new google.maps.Rectangle({
+                        bounds: bounds,
+                        editable: true,
+                        draggable: true
+                    });
+
+                    rectangle.setMap(map);
+
+                    map.fitBounds(bounds);
+
+                    // Add an event listener on the rectangle.
+                    google.maps.event.addListener(rectangle, 'bounds_changed', showNewRect);
+
+                    // Define an info window on the map.
+                    infoWindow = new google.maps.InfoWindow();
+
+                    // Try HTML5 geolocation
+                    if(navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            var pos = new google.maps.LatLng(position.coords.latitude,
+                                    position.coords.longitude);
+
+                            console.log(pos);
+                            var infowindow = new google.maps.InfoWindow({
+                                map: map,
+                                position: pos,
+                                content: 'Location found using HTML5.'
+                            });
+
+                            map.setCenter(pos);
+                        }, function() {
+                            handleNoGeolocation(true);
+                        });
+                    } else {
+                        // Browser doesn't support Geolocation
+                        handleNoGeolocation(false);
+                    }
+                }
+
+                // Show the new coordinates for the rectangle in an info window.
+
+                /** @this {google.maps.Rectangle} */
+                function showNewRect(event) {
+                    var ne = rectangle.getBounds().getNorthEast();
+                    var sw = rectangle.getBounds().getSouthWest();
+
+                    var contentString = '<b>Rectangle moved.</b><br>' +
+                            'New north-east corner: ' + ne.lat() + ', ' + ne.lng() + '<br>' +
+                            'New south-west corner: ' + sw.lat() + ', ' + sw.lng();
+
+                    // Set the info window's content and position.
+                    infoWindow.setContent(contentString);
+                    infoWindow.setPosition(ne);
+
+
+                    document.getElementById("north_east_y").value = ne.lat();
+                    document.getElementById("north_east_x").value = ne.lng();
+                    document.getElementById("south_west_y").value = sw.lat();
+                    document.getElementById("south_west_x").value = sw.lng();
+
+                }
+
+                function handleNoGeolocation(errorFlag) {
+                    if (errorFlag) {
+                        var content = 'Error: Your browser denied Geolocation.';
+                    } else {
+                        var content = 'Error: Your browser doesn\'t support geolocation.';
+                    }
+
+                    var options = {
+                        map: map,
+                        position: new google.maps.LatLng({{ y }}, {{ x }}),
+                        content: content
+                    };
+
+                    map.setCenter(options.position);
+                }
+
+                {#                google.maps.event.addDomListener(window, 'load', initialize);#}
+                initialize();
+
+
+            },
+            close: function() {
+                {#                form[ 0 ].reset();#}
+                {#                allFields.removeClass( "ui-state-error" );#}
+            }
+        });
+
+
         function saveImageToCollection(collection_name) {
             $.ajax({
                 type: "POST",
@@ -413,6 +614,10 @@
             $(this).click(function() {
                 $('#save_image_dialog_form').dialog("open");
             })
+        });
+
+        $('#map_btn').click(function() {
+            $('#mapping_dialog_form').dialog("open");
         });
 
         function populate_categories(cat_id, callback) {
@@ -1190,6 +1395,7 @@
     {#        <div id="output"></div>#}
     {#    </div>#}
 
+    <div id="map_btn" class="btn btn-default">MAP STUFF</div>
 
     <div data-toggle="tooltip" data-placement="top"
          title="Tags previously added for this Image" data-original-title="Image Tags"
@@ -1623,8 +1829,7 @@
                     <div class="bs-component">
                         <div class="alert alert-dismissable alert-info">
                             <button type="button" class="close" data-dismiss="alert">×</button>
-                            <strong>Heads up!</strong>   You are not logged in. You can do more if you sign up!
-
+                            You are not logged in. You can do more if you sign up!
                         </div>
                         <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
                     </div>
@@ -1639,44 +1844,12 @@
                         <div data-step="4" data-intro="These are the tagging options" data-position="left">
 
 
-
-
-
-
-
                             <div id="question_number_1" class="panel panel-default">
                                 <div id="collapseOne">
-                                    <div class="panel-body question-panel">
-                                        <h2>1/4</h2>
-                                        <h3>Types of image</h3>
-                                        <p>Please select the type of image, if any, from the options below</p>
-                                        <div id="category-extra"></div>
-
-                                        <div class="grid-sizer"></div>
-                                        <div id="add_category_body"></div>
-
-                                        <div id="category-question">{{ category_data.question }}</div>
-
-                                        <div id="category-container" class="js-masonry"
-                                             data-masonry-options='{"itemSelector": ".category-answer" }'>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-
-
-
-
-
-                            <div id="question_number_2" class="panel panel-default">
-                                <div id="collapseTwo">
                                     {#                                     data-toggle="tooltip" data-placement="top"#}
                                     {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
                                     <div class="panel-body question-panel">
-                                        <h2>2/4</h2>
+                                        <h2>1/4</h2>
                                         <h3>Objects and Ideas</h3>
 
                                         <p>What things or ideas can you see in this image?</p>
@@ -1692,80 +1865,102 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
 
 
 
 
 
+                        <div id="question_number_2" class="panel panel-default">
 
+                            <div id="collapseTwo">
+                                <div class="panel-body question-panel">
+                                    <h2>2/4</h2>
+                                    <h3>Types of image</h3>
+                                    <p>Please select the type of image, if any, from the options below</p>
+                                    <div id="category-extra"></div>
 
-                            <div id="question_number_3" class="panel panel-default">
-                                <div>
-                                    <div class="panel-body question-panel">
-                                        <h2>3/4</h2>
-                                        <h3>Caption</h3>
-                                        <h4>Please transcribe the Caption in this image, if present.</h4>
-                                        <div id="free_text_caption" >
-                                            <label class="control-label" for="input_caption">Caption</label>
-                                            <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    <div class="grid-sizer"></div>
+                                    <div id="add_category_body"></div>
 
+                                    <div id="category-question">{{ category_data.question }}</div>
 
-
-
-                            <div id="question_number_4" class="panel panel-default">
-                                <div id="collapseFive">
-                                    <div class="panel-body question-panel">
-                                        <h2>4/4</h2>
-                                        <h3>Description</h3>
-                                        <h4>Please enter a description of the image</h4>
-
-                                        <div id="free_text_description" class="row-fluid">
-                                            <label class="'control-label" for="free-text-area">Description</label>
-                                            <textarea name="image_description" class="form-control"
-                                                      rows="3" id="free-text-area"></textarea>
-                                        </div>
-
-                                        {#                                        <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
+                                    <div id="category-container" class="js-masonry"
+                                         data-masonry-options='{"itemSelector": ".category-answer" }'>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
 
 
 
-                    <ul class="pager prev_next_pager">
-                        <li style="float: left">
-                            <div data-toggle="tooltip" data-placement="top"
-                                 title="Previous Question" data-original-title="Previous"
-                                 id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div></div>
-                        </li>
-                        <li style="float: left">
-                            <div data-toggle="tooltip" data-placement="top"
-                                 title="Next Question" data-original-title="Next"
-                                 id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
-                        </li>
-                        <li style="float: right">
-                            <button id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
-                                    title="Finish Tagging" data-original-title="Finish"
-                                    type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
-                        </li>
-                    </ul>
-                    {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
-                    <div class="navbar-right">
-                        <div id="load_new_image" class="btn btn-primary">
-                            <a href="{% url 'image.random' %}">Skip</a>
+
+                        <div id="question_number_3" class="panel panel-default">
+                            <div>
+                                <div class="panel-body question-panel">
+                                    <h2>3/4</h2>
+                                    <h3>Caption</h3>
+                                    <h4>Please transcribe the Caption in this image, if present.</h4>
+                                    <div id="free_text_caption" >
+                                        <label class="control-label" for="input_caption">Caption</label>
+                                        <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div id="question_number_4" class="panel panel-default">
+                            <div id="collapseFive">
+                                <div class="panel-body question-panel">
+                                    <h2>4/4</h2>
+                                    <h3>Description</h3>
+                                    <h4>Please enter a description of the image</h4>
+
+                                    <div id="free_text_description" class="row-fluid">
+                                        <label class="'control-label" for="free-text-area">Description</label>
+                                        <textarea name="image_description" class="form-control"
+                                                  rows="3" id="free-text-area"></textarea>
+                                    </div>
+
+                                    {#                                        <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </form>
             </div>
         </div>
+
+        <ul class="pager prev_next_pager">
+            <li style="float: left">
+                <div data-toggle="tooltip" data-placement="top"
+                     title="Previous Question" data-original-title="Previous"
+                     id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div></div>
+            </li>
+            <li style="float: left">
+                <div data-toggle="tooltip" data-placement="top"
+                     title="Next Question" data-original-title="Next"
+                     id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
+            </li>
+            <li style="float: right">
+                <button id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
+                        title="Finish Tagging" data-original-title="Finish"
+                        type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
+            </li>
+        </ul>
+        {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
+        <div class="navbar-right">
+            <div id="load_new_image" class="btn btn-primary">
+                <a href="{% url 'image.random' %}">Skip</a>
+            </div>
+        </div>
+        </form>
+    </div>
+    </div>
 
     </div>
 
@@ -1818,4 +2013,47 @@
             </fieldset>
         </form>
     </div>
+
+
+    <div id="mapping_dialog_form" title="Map Image">
+        {#        <p class="validateTips">Map Image</p>#}
+        {#        <div id="save_image_data" data-collection_id="" data-collection_name=""></div>#}
+
+        {#        <form action="{% url 'image.coords' image_id=image_id %}" id="image-map-form" method="post">{% csrf_token %}#}
+
+
+        <input type="hidden" name="image_id" value="{{ image_id }}" />
+        <input type="hidden" id = 'north_east_x' name="north_east_x" value="{{ ne_x }}" />
+        <input type="hidden" id = 'north_east_y' name="north_east_y" value="{{ ne_y }}" />
+        <input type="hidden" id = 'south_west_x' name="south_west_x" value="{{ sw_x }}" />
+        <input type="hidden" id = 'south_west_y' name="south_west_y" value="{{ sw_y }}" />
+        <div>
+            {##}
+            {#            <div class="jumbotron" style="height: auto; width: 100%">#}
+            {#                <div class="panel-footer">#}
+            {#                    <ul class="pager">#}
+            {#                        <li>#}
+            {#                            <button type="submit" class="rota btn btn-default">Save</button>#}
+            {#                        </li>#}
+            {#                    </ul>#}
+            {#                </div>#}
+            <div id="map-canvas" style="height: 100%; width: 100%"></div>
+            {##}
+            {#                <div class="panel-footer">#}
+            {#                    <ul class="pager">#}
+            {#                        <li>#}
+            {#                            <button type="submit" class="rota btn btn-default">Save</button>#}
+            {#                        </li>#}
+            {#                    </ul>#}
+            {#                </div>#}
+            {#            </div>#}
+            {#        </form>#}
+        </div>
+        <form>
+            <fieldset>
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
+
 {% endblock %}
