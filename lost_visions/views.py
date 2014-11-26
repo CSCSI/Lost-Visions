@@ -1290,7 +1290,7 @@ def haystack_search(request, word):
 
     # found = SearchQuerySet().filter(content='London')[:10]
 
-    found = SearchQuerySet().filter(pubplace__contains='London')[:10]
+    found = SearchQuerySet().filter(content__contains=word)[:10]
 
     rl = [x.object for x in found]
 

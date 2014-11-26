@@ -1843,24 +1843,22 @@
                     <div class="question-frame">
                         <div data-step="4" data-intro="These are the tagging options" data-position="left">
 
-
                             <div id="question_number_1" class="panel panel-default">
+
                                 <div id="collapseOne">
-                                    {#                                     data-toggle="tooltip" data-placement="top"#}
-                                    {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
                                     <div class="panel-body question-panel">
                                         <h2>1/4</h2>
-                                        <h3>Objects and Ideas</h3>
+                                        <h3>Types of image</h3>
+                                        <p>Please select the type of image, if any, from the options below</p>
+                                        <div id="category-extra"></div>
 
-                                        <p>What things or ideas can you see in this image?</p>
-                                        <p>For example:  "bird", "table", "winter", "love"</p>
-                                        <div id="focus_alerts"></div>
-                                        <div id="add_tags_body"></div>
+                                        <div class="grid-sizer"></div>
+                                        <div id="add_category_body"></div>
 
-                                        <div class="ui-widget">
-                                            <label class="'control-label" for="dictionary">Tags: </label>
-                                            <input
-                                                    class="'form-control" id="dictionary">
+                                        <div id="category-question">{{ category_data.question }}</div>
+
+                                        <div id="category-container" class="js-masonry"
+                                             data-masonry-options='{"itemSelector": ".category-answer" }'>
                                         </div>
                                     </div>
                                 </div>
@@ -1869,29 +1867,29 @@
 
 
 
-
-
-
                         <div id="question_number_2" class="panel panel-default">
-
                             <div id="collapseTwo">
+                                {#                                     data-toggle="tooltip" data-placement="top"#}
+                                {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
                                 <div class="panel-body question-panel">
                                     <h2>2/4</h2>
-                                    <h3>Types of image</h3>
-                                    <p>Please select the type of image, if any, from the options below</p>
-                                    <div id="category-extra"></div>
+                                    <h3>Objects and Ideas</h3>
 
-                                    <div class="grid-sizer"></div>
-                                    <div id="add_category_body"></div>
+                                    <p>What things or ideas can you see in this image?</p>
+                                    <p>For example:  "bird", "table", "winter", "love"</p>
+                                    <div id="focus_alerts"></div>
+                                    <div id="add_tags_body"></div>
 
-                                    <div id="category-question">{{ category_data.question }}</div>
-
-                                    <div id="category-container" class="js-masonry"
-                                         data-masonry-options='{"itemSelector": ".category-answer" }'>
+                                    <div class="ui-widget">
+                                        <label class="'control-label" for="dictionary">Tags: </label>
+                                        <input
+                                                class="'form-control" id="dictionary">
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+
 
 
 

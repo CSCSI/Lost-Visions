@@ -1,5 +1,8 @@
 import logging
 import os
+from haystack.backends import SQ
+from haystack.query import SearchQuerySet
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 import pprint
 from crowdsource.settings import db_regex_char
@@ -206,7 +209,6 @@ class ImagePicker():
     def predict_tags_for_image_by_cluster(self):
         pass
 
-
     def advanced_search(self, request, similar_tags=False):
 
         # regex_string = r"\b{0}\b"
@@ -214,15 +216,9 @@ class ImagePicker():
         # db_regex_char = "\y"
         regex_string = r"\b{0}\b".replace("\\b", db_regex_char)
 
-        # print regex_string
-
         print request.GET
 
         keywords = request.GET.get('keyword', '')
-        # print keywords
-
-
-
         keywords = keywords.split(' ')
 
         year = request.GET.get('year', '')
@@ -308,6 +304,91 @@ class ImagePicker():
                         Q(title__iregex=regex_format),
                         Q(publisher__iregex=regex_format),
                         Q(pubplace__iregex=regex_format),
+
+                    ]
+
+                all_results = all_results.filter(reduce(operator.or_, ors))
+
+        all_results = all_results.values_list('flickr_id', flat=True).distinct()[:5000]
+        logger.debug(all_results.query)
+        return all_results
+
+    def advanced_haystack_search(self, request, similar_tags=False):
+
+        regex_string = r"\b{0}\b".replace("\\b", db_regex_char)
+
+        print request.GET
+
+        keywords = request.GET.get('keyword', '')
+        keywords = keywords.split(' ')
+
+        year = request.GET.get('year', '')
+        author = request.GET.get('author', '')
+        illustrator = request.GET.get('illustrator', '')
+        number_of_results = request.GET.get('num_results', '')
+        book_id = request.GET.get('book_id', '')
+        publisher = request.GET.get('publisher', '')
+        publishing_place = request.GET.get('publishing_place', '')
+        title = request.GET.get('title', '')
+
+        tag_keywords_only = request.GET.get('tag_keywords_only', False)
+
+        all_results = SearchQuerySet()
+
+        if len(year):
+            decade = year[0:3]
+            all_results = all_results.filter((SQ(date__startswith=decade)))
+
+        if len(author):
+            all_results = all_results.filter(SQ(first_author__iregex=regex_string.format(author)))
+
+        if len(title):
+            all_results = all_results.filter(SQ(title__iregex=regex_string.format(title)))
+
+        if len(illustrator):
+            q_or_objects = []
+            for illustrator_book_id in models.BookIllustrator.objects \
+                    .filter(name__iregex=regex_string.format(illustrator)).values_list('book_id', flat=True).distinct():
+                if illustrator_book_id:
+                    q_or_objects.append(SQ(book_identifier=str(illustrator_book_id)))
+
+            if len(q_or_objects) > 0:
+                all_results = all_results.filter(reduce(operator.or_, q_or_objects))
+
+        if len(book_id):
+            all_results = all_results.filter(book_identifier=book_id)
+
+        if len(publisher):
+            all_results = all_results.filter(SQ(publisher__iregex=regex_string.format(publisher)))
+            filtered = True
+
+        if len(publishing_place):
+            all_results = all_results.filter(SQ(pubplace__iregex=regex_string.format(publishing_place)))
+            filtered = True
+
+        if similar_tags:
+            similar_words = []
+            for word in keywords:
+                similar_words.extend(self.get_similar_word_array(word))
+            keywords = similar_words
+
+        print '*' + str(keywords) + '*'
+        for word in keywords:
+            if len(word):
+                regex_format = regex_string.format(word)
+                ors = [
+                     SQ(tag__tag__iregex=regex_format),
+                    SQ(imagetext__caption__iregex=regex_format),
+                    SQ(imagetext__description__iregex=regex_format),
+                ]
+
+                if not tag_keywords_only:
+                    ors += [
+                        SQ(first_author__iregex=regex_format),
+                        SQ(date__iregex=regex_format),
+                        SQ(title__iregex=regex_format),
+                        SQ(publisher__iregex=regex_format),
+                        SQ(pubplace__iregex=regex_format),
 
                     ]
 
