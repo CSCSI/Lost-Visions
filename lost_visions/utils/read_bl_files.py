@@ -2,6 +2,7 @@ import os
 from time import sleep
 import urllib
 from django.db.utils import IntegrityError
+import requests
 from crowdsource import settings
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")

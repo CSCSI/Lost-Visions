@@ -10,7 +10,6 @@ import zipfile
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime
 import StringIO
-from PIL import Image
 from dateutil import parser
 from dateutil.tz import tzlocal
 from django.contrib import auth
@@ -19,16 +18,14 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
-
-
-# Create your views here.
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.templatetags.static import static
 from django.views.decorators.csrf import requires_csrf_token
 import operator
 import itertools
-from haystack.query import SearchQuerySet
 from pygeoip import GeoIP
+import requests
 from crowdsource import settings
 from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size
 from lost_visions import forms, models
@@ -39,7 +36,7 @@ from lost_visions.categories import CategoryManager
 
 from lost_visions.utils import db_tools
 from lost_visions.utils.ImagePicker import ImagePicker
-from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
+from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file, get_tested_azure_url
 from lost_visions.utils.flickr import getImageTags
 
 @requires_csrf_token
@@ -166,13 +163,22 @@ def image(request, image_id):
     image_id = clean(image_id, strip=True)
 
     image_info = db_tools.get_image_info(image_id)
-
     if image_info is None:
-        image_url_part = image_id
         image_info = dict()
+
+    image_info['image_area'] = int(image_info['flickr_original_height']) * int(image_info['flickr_original_width'])
+
+    image_info['azure'] = get_tested_azure_url(image_info)
+
+    r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True)
+    print r
+    if r.status_code is not requests.codes.ok:
+        if image_info['azure']:
+            image_info['imageurl'] = image_info['azure']
+        else:
+            image_info['imageurl'] = image_info['flickr_url']
     else:
-        print image_info['imageurl']
-        image_url_part = (image_info['imageurl'].rsplit('/', 1)[1]).split('_')[0]
+        image_info['imageurl'] = image_info['arcca_url']
 
     formatted_info = dict()
     formatted_info['Issuance'] = image_info.get('Issuance', "")
@@ -205,7 +211,7 @@ def image(request, image_id):
         linked['name'] = link_image.name
         linked_image_data.append(linked)
 
-    # print image_info
+    print pprint.pformat(image_info)
 
     image_descriptions = models.ImageText.objects.filter(image__flickr_id=image_id)
     image_descs = []

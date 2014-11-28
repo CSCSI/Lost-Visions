@@ -18,7 +18,7 @@ def save_location(book_id, volume, page, index, year, full_path):
 
 
 def make_file_list(sizes):
-    root_folder = '/scratch/lost-visions/images-found/'
+    root_folder = '/media/New Volume/scratch/lost-visions/images-found/'
 
     for size in sizes:
         size_path = os.path.join(root_folder, size)

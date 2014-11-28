@@ -1,13 +1,16 @@
 import os
 import pprint
 import re
-from raven import Client
+from django.contrib.sites.models import Site
+from django.templatetags.static import static
+# from raven import Client
+import requests
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
 import json
 from django.db.models import Q
-from crowdsource.settings import BASE_DIR, STATIC_URL
+from crowdsource.settings import BASE_DIR, STATIC_URL, bl_image_root
 from random import randint
 from django.core import serializers
 from lost_visions import models, wordnet
@@ -15,7 +18,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 import nltk
 from nltk.corpus import wordnet as wn
-from nltk.stem.wordnet import WordNetLemmatizer
 
 __author__ = 'ubuntu'
 
@@ -50,11 +52,11 @@ def get_info_from_image_model(image_model):
     image_object = json.loads(image_json)
     image_info = image_object[0]['fields']
 
-    image_info['imageurl'] = image_model.flickr_medium_source
-    image_info['imageurl_original'] = image_model.flickr_original_source
+    image_info['flickr_url'] = image_model.flickr_medium_source
+    image_info['flickr_original'] = image_model.flickr_original_source
 
-    if image_info['imageurl'] == '':
-        image_info['imageurl'] = image_model.flickr_original_source
+    if image_info['flickr_url'] == '':
+        image_info['flickr_url'] = image_model.flickr_original_source
 
     return image_info
 
@@ -77,9 +79,11 @@ def find_image(image_info):
 
         image_path = image_location[0].location
 
-        scratch_start = '/scratch/lost-visions/images-found/'
+        # scratch_start = '/scratch/lost-visions/images-found/'
         web_server_start = '/static/media/images/scans/'
-        return image_path.replace(scratch_start, web_server_start)
+
+        return image_path.replace(bl_image_root, web_server_start)
+
     except Exception as e:
         pass
 
@@ -215,25 +219,38 @@ def get_image_info(image_id):
         image_info = get_info_from_image_model(image_for_id)
 
         arcca_image = find_image(image_info)
-
+        image_info['arcca_url'] = ''
         if arcca_image:
-            image_info['imageurl'] = arcca_image
-            image_info['arcca'] = True
-        else:
-            image_info['arcca'] = False
+            image_info['arcca_url'] = arcca_image
 
-        if image_info['imageurl'] == '':
-            print 'ERROR with IMAGE_ID = ' + image_id
-            return None
-        else:
-            image_for_id.views_begun += 1
-            image_for_id.save()
-
-            return image_info
+        image_for_id.views_begun += 1
+        image_for_id.save()
+        return image_info
 
     except ObjectDoesNotExist:
         print 'no object in db for ' + image_id
         return None
+
+
+def get_tested_azure_url(image_info):
+    azure_url_part = u"http://blmc.blob.core.windows.net/{0[date]}/{0[book_identifier]}_{0[volume]}_{0[page]}_{0[image_idx]}_{0[date]}_imagesize.jpg".format(image_info)
+
+    azure_url_part = azure_url_part.replace('imagesize', 'embellishments')
+    r = requests.head(azure_url_part, stream=True)
+    if r.status_code is requests.codes.ok:
+        return azure_url_part
+    else:
+        azure_url_part = azure_url_part.replace('embellishments', 'medium')
+        r = requests.head(azure_url_part, stream=True)
+        if r.status_code is requests.codes.ok:
+            return azure_url_part
+        else:
+            azure_url_part = azure_url_part.replace('medium', 'plates')
+            r = requests.head(azure_url_part, stream=True)
+            if r.status_code is requests.codes.ok:
+                return azure_url_part
+            else:
+                return ''
 
 
 def read_tsv_file(filename, line_number):
@@ -429,8 +446,8 @@ def list_wordnet_links(tag_synset_id):
         synset, synset_list = get_hypernyms(word_synset, initial_list, loop)
         return synset_list
     except Exception as e:
-        client = Client('http://8eedfb9d1deb48a39af1f63b825e4ccc:e0f83797e67a462c9c65f270296e672c@lost-visions.cf.ac.uk/sentry/2')
-        client.captureException()
+        # client = Client('http://8eedfb9d1deb48a39af1f63b825e4ccc:e0f83797e67a462c9c65f270296e672c@lost-visions.cf.ac.uk/sentry/2')
+        # client.captureException()
         return initial_list
 
 # we stop looking upwards for parent words once we reach these pretty useless tags

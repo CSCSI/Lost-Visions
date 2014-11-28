@@ -1,7 +1,7 @@
 import json
 from django.core.urlresolvers import reverse
 from raven import Client
-from crowdsource.settings import STATIC_URL, RAVEN_CONFIG
+from crowdsource.settings import STATIC_URL #RAVEN_CONFIG
 
 __author__ = 'ubuntu'
 
@@ -167,9 +167,9 @@ class CategoryManager():
             else:
                 return None
         except:
-            client = Client(RAVEN_CONFIG['dsn'])
-            client.tags = {'category id': category_id}
-            client.captureException()
+            # client = Client(RAVEN_CONFIG['dsn'])
+            # client.tags = {'category id': category_id}
+            # client.captureException()
             pass
 
     def get_category_data(self, cat_id):
@@ -198,8 +198,8 @@ class CategoryManager():
                                     })
 
             except:
-                client = Client(RAVEN_CONFIG['dsn'])
-                client.tags = {'child id': child_id}
-                client.captureException()
+                # client = Client(RAVEN_CONFIG['dsn'])
+                # client.tags = {'child id': child_id}
+                # client.captureException()
                 pass
         return {'question': parent_category.question, 'answers': answer_categories, 'actions': actions}
