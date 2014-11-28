@@ -1017,10 +1017,7 @@ def do_advanced_search(request):
             number_of_results_int = int(number_of_results)
         except:
             pass
-    readable_query += '. Showing first ' + str(number_of_results_int) + ' results. '
-    #
-    # all_results = all_results.values_list('flickr_id', flat=True).distinct()
-    # # print all_results.query
+    readable_query += 'Showing first ' + str(number_of_results_int) + ' results. '
 
     im = ImagePicker()
     all_results = im.advanced_search(request)

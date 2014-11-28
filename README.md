@@ -38,5 +38,4 @@ sudo pip install -e .
 ### add libopenjp2 libs to LD_LIBRARY_PATH
 LD_LIBRARY_PATH=/usr/local/lib python /var/www/lost_visions/Lost-Visions/manage.py runfcgi host=127.0.0.1 port=8080
 
-
 python-boost

@@ -209,7 +209,7 @@ bl_image_root = '/scratch/lost-visions/images-found/'
 
 
 #\b for sqlite \y for postgres
-db_regex_char = "\b"
+db_regex_char = "\\b"
 
 thumbnail_size = 300
 use_flickr = False
