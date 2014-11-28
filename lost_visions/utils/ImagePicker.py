@@ -1,6 +1,7 @@
 import logging
 import os
 from haystack.backends import SQ
+from haystack.inputs import Raw
 from haystack.query import SearchQuerySet
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
@@ -292,10 +293,10 @@ class ImagePicker():
 
                 regex_format = regex_string.format(word)
                 ors = [
-                     Q(tag__tag__iregex=regex_format),
+                    Q(tag__tag__iregex=regex_format),
                     Q(imagetext__caption__iregex=regex_format),
                     Q(imagetext__description__iregex=regex_format),
-                ]
+                    ]
 
                 if not tag_keywords_only:
                     ors += [
@@ -305,7 +306,7 @@ class ImagePicker():
                         Q(publisher__iregex=regex_format),
                         Q(pubplace__iregex=regex_format),
 
-                    ]
+                        ]
 
                 all_results = all_results.filter(reduce(operator.or_, ors))
 
@@ -313,25 +314,25 @@ class ImagePicker():
         logger.debug(all_results.query)
         return all_results
 
-    def advanced_haystack_search(self, request, similar_tags=False):
+    def advanced_haystack_search(self, query_items, similar_tags=False):
 
-        regex_string = r"\b{0}\b".replace("\\b", db_regex_char)
+        regex_string = r"{0}"
 
-        print request.GET
+        print query_items
 
-        keywords = request.GET.get('keyword', '')
+        keywords = query_items.get('keyword', '')
         keywords = keywords.split(' ')
 
-        year = request.GET.get('year', '')
-        author = request.GET.get('author', '')
-        illustrator = request.GET.get('illustrator', '')
-        number_of_results = request.GET.get('num_results', '')
-        book_id = request.GET.get('book_id', '')
-        publisher = request.GET.get('publisher', '')
-        publishing_place = request.GET.get('publishing_place', '')
-        title = request.GET.get('title', '')
+        year = query_items.get('year', '')
+        author = query_items.get('author', '')
+        illustrator = query_items.get('illustrator', '')
+        number_of_results = query_items.get('num_results', '')
+        book_id = query_items.get('book_id', '')
+        publisher = query_items.get('publisher', '')
+        publishing_place = query_items.get('publishing_place', '')
+        title = query_items.get('title', '')
 
-        tag_keywords_only = request.GET.get('tag_keywords_only', False)
+        tag_keywords_only = query_items.get('tag_keywords_only', False)
 
         all_results = SearchQuerySet()
 
@@ -340,15 +341,15 @@ class ImagePicker():
             all_results = all_results.filter((SQ(date__startswith=decade)))
 
         if len(author):
-            all_results = all_results.filter(SQ(first_author__iregex=regex_string.format(author)))
+            all_results = all_results.filter(SQ(first_author=Raw(author + '*')))
 
         if len(title):
-            all_results = all_results.filter(SQ(title__iregex=regex_string.format(title)))
+            all_results = all_results.filter(SQ(title=Raw(title + '*')))
 
         if len(illustrator):
             q_or_objects = []
             for illustrator_book_id in models.BookIllustrator.objects \
-                    .filter(name__iregex=regex_string.format(illustrator)).values_list('book_id', flat=True).distinct():
+                    .filter(name__contains=regex_string.format(illustrator)).values_list('book_id', flat=True).distinct():
                 if illustrator_book_id:
                     q_or_objects.append(SQ(book_identifier=str(illustrator_book_id)))
 
@@ -359,11 +360,11 @@ class ImagePicker():
             all_results = all_results.filter(book_identifier=book_id)
 
         if len(publisher):
-            all_results = all_results.filter(SQ(publisher__iregex=regex_string.format(publisher)))
+            all_results = all_results.filter(SQ(publisher=Raw(publisher + '*')))
             filtered = True
 
         if len(publishing_place):
-            all_results = all_results.filter(SQ(pubplace__iregex=regex_string.format(publishing_place)))
+            all_results = all_results.filter(SQ(pubplace=Raw(publishing_place + '*')))
             filtered = True
 
         if similar_tags:
@@ -372,30 +373,33 @@ class ImagePicker():
                 similar_words.extend(self.get_similar_word_array(word))
             keywords = similar_words
 
-        print '*' + str(keywords) + '*'
         for word in keywords:
             if len(word):
                 regex_format = regex_string.format(word)
                 ors = [
-                     SQ(tag__tag__iregex=regex_format),
-                    SQ(imagetext__caption__iregex=regex_format),
-                    SQ(imagetext__description__iregex=regex_format),
-                ]
+                    SQ(tag=Raw(regex_format + '*')),
+                    SQ(caption=Raw(regex_format + '*')),
+                    SQ(description=Raw(regex_format + '*')),
+                    ]
 
                 if not tag_keywords_only:
                     ors += [
-                        SQ(first_author__iregex=regex_format),
-                        SQ(date__iregex=regex_format),
-                        SQ(title__iregex=regex_format),
-                        SQ(publisher__iregex=regex_format),
-                        SQ(pubplace__iregex=regex_format),
+                        SQ(first_author=Raw(regex_format + '*')),
+                        SQ(date__contains=regex_format),
+                        # SQ(title__contains=regex_format),
+                        SQ(title=Raw(regex_format + '*')),
 
-                    ]
+                        SQ(publisher=Raw(regex_format + '*')),
+                        SQ(pubplace=Raw(regex_format + '*')),
+
+                        ]
 
                 all_results = all_results.filter(reduce(operator.or_, ors))
 
-        all_results = all_results.values_list('flickr_id', flat=True).distinct()[:5000]
+        # all_results_list = all_results.values_list('fields__flickr_id', flat=True)
+
         logger.debug(all_results.query)
+        print all_results.query
         return all_results
 
 

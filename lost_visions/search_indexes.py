@@ -11,6 +11,7 @@ class ImageIndex(indexes.SearchIndex, indexes.Indexable):
     pubplace = indexes.CharField(model_attr='pubplace')
     title = indexes.CharField(model_attr='title')
     publisher = indexes.CharField(model_attr='publisher')
+    date = indexes.CharField(model_attr='date')
 
     def get_model(self):
         return Image

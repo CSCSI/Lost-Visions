@@ -1019,6 +1019,9 @@ def do_advanced_search(request):
     im = ImagePicker()
     all_results = im.advanced_search(request)
 
+    # all_results_haystack = im.advanced_haystack_search(request.GET)
+    # all_results = [x.object.flickr_id for x in all_results_haystack]
+
     if all_results.count() < 5000:
         for result in all_results:
             total_results += 1
@@ -1285,18 +1288,37 @@ def stats(request):
                   context_instance=RequestContext(request))
 
 
-def haystack_search(request, word):
-    query_response = {'hello': 'world', 'test': ['a', 'b', 3], 'the_word': word}
+def haystack_search(request):
+    query_response = {'hello': 'world', 'test': ['a', 'b', 3], 'the_request': request.GET}
 
-    # found = SearchQuerySet().filter(content='London')[:10]
+    im = ImagePicker()
 
-    found = SearchQuerySet().filter(content__contains=word)[:10]
+    to_filter = request.GET
 
-    rl = [x.object for x in found]
+    found_imagepicker = im.advanced_haystack_search(to_filter)
+
+    rl = [x.object for x in found_imagepicker]
 
     results_list_ser = serializers.serialize('json', rl)
 
-    query_response['haystack'] = json.loads(results_list_ser)
+    query_response['image_picker'] = json.loads(results_list_ser)
+
+    # keys = [x.object.__dict__.get('flickr_id') for x in found_imagepicker]
+    keys = [x.object.flickr_id for x in found_imagepicker]
+
+
+    print keys
+
+    query_response['list'] = keys
+
+    # mlt = SearchQuerySet().more_like_this(Image.objects.get(flickr_id=keys[0]))
+    #
+    # mlt_objects = [x.object for x in mlt]
+    #
+    # mlt_objects_ser = serializers.serialize('json', mlt_objects)
+    #
+    # query_response['mlt'] = json.loads(mlt_objects_ser)
+    # query_response['mlt_count'] = mlt.count()
 
     return HttpResponse(json.dumps(query_response, indent=4), content_type="application/json")
 
@@ -1693,15 +1715,15 @@ def similar_images(request, image_id):
 
     book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
     # print book_id
-    flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id)\
-        .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)[:20]
+    flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
+                               .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)[:20]
     # print flickr_ids_from_book
     book_images = get_image_data_from_array(flickr_ids_from_book)
 
     #TODO optimise
     image_object = models.Image.objects.get(flickr_id=image_id)
-    image_matches = models.MachineMatching.objects.filter(Q(metric='CV_COMP_CORREL'))\
-        .filter(Q(image_a=image_object) | Q(image_b=image_object)).order_by('-metric_value')[:20]
+    image_matches = models.MachineMatching.objects.filter(Q(metric='CV_COMP_CORREL')) \
+                        .filter(Q(image_a=image_object) | Q(image_b=image_object)).order_by('-metric_value')[:20]
 
     machine_matched_ids = []
 
@@ -1740,7 +1762,7 @@ def image_data(request, image_id):
     serialized_descriptors_model = serializers.serialize('json', descriptor_locations)
 
     image_matches = models.MachineMatching.objects.filter(Q(image_a=image_data_model) |
-                                                          Q(image_b=image_data_model))\
+                                                          Q(image_b=image_data_model)) \
         .filter(Q(metric='CV_COMP_CORREL')).order_by('-metric_value')
     serialized_matches_model = serializers.serialize('json', image_matches)
 

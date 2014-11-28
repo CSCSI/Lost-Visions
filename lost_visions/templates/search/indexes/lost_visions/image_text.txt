@@ -4,3 +4,4 @@
 {{ object.pubplace }}
 {{ object.flickr_id }}
 {{ object.book_identifier }}
+{{ object.date }}
