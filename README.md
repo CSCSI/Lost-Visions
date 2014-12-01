@@ -5,6 +5,13 @@ pip install BeautifulSoup
 
 pip install nltk
 
+pip install pysolr
+
+###On CentOS, for haystack
+yum install libxslt-devel
+pip install lxml --update
+
+
 #in python
 import nltk
 nltk.download('stopwords')
