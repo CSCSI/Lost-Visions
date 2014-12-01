@@ -1020,12 +1020,12 @@ def do_advanced_search(request):
     readable_query += 'Showing first ' + str(number_of_results_int) + ' results. '
 
     im = ImagePicker()
-    # all_results = im.advanced_search(request)
+    all_results = im.advanced_search(request)
 
-    all_results_haystack = im.advanced_haystack_search(request.GET)
-    all_results = [x.object.flickr_id for x in all_results_haystack]
+    # all_results_haystack = im.advanced_haystack_search(request.GET)
+    # all_results = [x.object.flickr_id for x in all_results_haystack]
 
-    if len(all_results) < 5000:
+    if all_results.count() < 5000:
         for result in all_results:
             total_results += 1
             all_image_ids += result + ','
