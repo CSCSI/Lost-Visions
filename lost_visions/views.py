@@ -916,101 +916,17 @@ def search_advanced(request):
 
 
 def do_advanced_search(request):
-    # print request.GET
-    #
+
     keywords = request.GET.get('keyword', '')
-    # keywords = keywords.replace(' ', '+')
-    #
-    # year = request.GET.get('year', '')
-    # author = request.GET.get('author', '')
-    # illustrator = request.GET.get('illustrator', '')
     number_of_results = request.GET.get('num_results', '')
-    # book_id = request.GET.get('book_id', '')
-    # publisher = request.GET.get('publisher', '')
-    # publishing_place = request.GET.get('publishing_place', '')
-    # title = request.GET.get('title', '')
-    #
+
     results = dict()
     results['advanced'] = dict()
     total_results = 0
-    #
-    # all_results = models.Image.objects.all()
-    #
+
     readable_query = 'Images '
     all_image_ids = ''
-    filtered = False
-    #
-    # if len(keywords):
-    #     q_or_objects = []
-    #
-    #     for subword in keywords.split('+'):
-    #
-    #         for keyword_image_flickr_id in models.Tag.objects \
-    #                 .filter(tag__icontains=subword).values_list('image__flickr_id', flat=True).distinct():
-    #             if keyword_image_flickr_id:
-    #                 q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
-    #
-    #         for keyword_image_flickr_id in models.ImageText.objects \
-    #                 .filter( Q(caption__icontains=subword ) | Q( description__icontains=subword)) \
-    #                 .values_list('image__flickr_id', flat=True).distinct():
-    #             if keyword_image_flickr_id:
-    #                 q_or_objects.append(Q(flickr_id=keyword_image_flickr_id))
-    #
-    #                 # q_or_objects.append(Q(title__icontains=keywords))
-    #
-    #
-    #     if len(q_or_objects) > 0:
-    #         all_results = all_results.filter(reduce(operator.or_, q_or_objects))
-    #         filtered = True
-    #
-    #     readable_query += ' with keyword(s) ' + keywords
-    #
-    # if len(year):
-    #     decade = year[0:3]
-    #     all_results = all_results.filter((Q(date__startswith=decade)))
-    #     filtered = True
-    #     readable_query += ' for the ' + year + "'s"
-    #
-    # if len(author):
-    #     # print author
-    #     all_results = all_results.filter(Q(first_author__icontains=author))
-    #     filtered = True
-    #     readable_query += ' with author ' + author
-    #
-    # if len(title):
-    #     all_results = all_results.filter(Q(title__icontains=title))
-    #     filtered = True
-    #     readable_query += ' with title ' + title
-    #
-    # if len(illustrator):
-    #     q_or_objects = []
-    #     for illustrator_book_id in models.BookIllustrator.objects \
-    #             .filter(name__icontains=illustrator).values_list('book_id', flat=True).distinct():
-    #         if illustrator_book_id:
-    #             q_or_objects.append(Q(book_identifier=str(illustrator_book_id)))
-    #
-    #     if len(q_or_objects) > 0:
-    #         all_results = all_results.filter(reduce(operator.or_, q_or_objects))
-    #         filtered = True
-    #         readable_query += ' with illustrator ' + illustrator
-    #
-    # if len(book_id):
-    #     all_results = all_results.filter(book_identifier=book_id)
-    #     filtered = True
-    #     title = models.Image.objects.values_list('title', flat=True).filter(book_identifier=book_id)[:1].get()
-    #     readable_query += ' for book title ' + title
-    #
-    # if len(publisher):
-    #     all_results = all_results.filter(Q(publisher__icontains=publisher))
-    #     filtered = True
-    #     readable_query += ' from publisher ' + publisher
-    #
-    # if len(publishing_place):
-    #     all_results = all_results.filter(Q(pubplace__icontains=publishing_place))
-    #     filtered = True
-    #     readable_query += ' published in ' + publishing_place
-    #
-    #
+
     number_of_results_int = 50
     if number_of_results is not '':
         try:
@@ -1020,21 +936,25 @@ def do_advanced_search(request):
     readable_query += 'Showing first ' + str(number_of_results_int) + ' results. '
 
     im = ImagePicker()
-    all_results = im.advanced_search(request)
+    alternative_search = request.GET.get('alternative_search', '')
+    too_many = False
 
-    # all_results_haystack = im.advanced_haystack_search(request.GET)
-    # all_results = [x.object.flickr_id for x in all_results_haystack]
+    if alternative_search is '':
+        all_results = im.advanced_search(request)
+        if all_results.count() > 5000:
+            too_many = True
+    else:
+        all_results_haystack = im.advanced_haystack_search(request.GET)
+        all_results = [x.object.flickr_id for x in all_results_haystack]
+        if len(all_results) > 5000:
+            too_many = True
 
-    if all_results.count() < 5000:
+    if not too_many:
         for result in all_results:
             total_results += 1
             all_image_ids += result + ','
         readable_query += '(' + str(len(all_results)) + ' found)'
     else:
-        # if not filtered:
-        #     readable_query = 'No search filters applied, please add more detail to the query'
-        # else:
-
         readable_query += 'Please add more detail to the query. '
 
         for result in all_results[:5000]:
@@ -1048,7 +968,6 @@ def do_advanced_search(request):
 
     user_collections = []
     if request.user.is_authenticated():
-
         collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
         for model in collection_models:
             user_collections.append({'name': model.name,
