@@ -943,24 +943,48 @@ def do_advanced_search(request):
         all_results = im.advanced_search(request)
         if all_results.count() > 5000:
             too_many = True
+
+        if not too_many:
+            for result in all_results:
+                total_results += 1
+                all_image_ids += result + ','
+            readable_query += '(' + str(len(all_results)) + ' found)'
+        else:
+            readable_query += 'Please add more detail to the query. '
+
+            for result in all_results[:5000]:
+                total_results += 1
+                all_image_ids += result + ','
+            readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
+
     else:
         all_results_haystack = im.advanced_haystack_search(request.GET)
-        all_results = [x.object.flickr_id for x in all_results_haystack]
+        all_results = [x.object for x in all_results_haystack]
+
+        for o in all_results[:5000]:
+            if type(o) == Image:
+                # print 'image\n'
+                total_results += 1
+                all_image_ids += o.flickr_id + ','
+
+            if type(o) == Tag:
+                # print 'tag\n'
+                total_results += 1
+                all_image_ids += o.image.flickr_id + ','
+
+            if type(o) == ImageText:
+                # print 'text\n'
+                total_results += 1
+                all_image_ids += o.image.flickr_id + ','
+
         if len(all_results) > 5000:
-            too_many = True
+#            too_many = True
+            readable_query += 'Please add more detail to the query. '
+            readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
+        else:
+            readable_query += '(' + str(len(all_results)) + ' found)'
 
-    if not too_many:
-        for result in all_results:
-            total_results += 1
-            all_image_ids += result + ','
-        readable_query += '(' + str(len(all_results)) + ' found)'
-    else:
-        readable_query += 'Please add more detail to the query. '
 
-        for result in all_results[:5000]:
-            total_results += 1
-            all_image_ids += result + ','
-        readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
 
     results['advanced'] = []
 
