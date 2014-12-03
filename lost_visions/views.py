@@ -36,6 +36,7 @@ from lost_visions.categories import CategoryManager
 
 from lost_visions.utils import db_tools
 from lost_visions.utils.ImagePicker import ImagePicker
+from lost_visions.utils.TimeKeeper import TimeKeeper
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file, get_tested_azure_url
 from lost_visions.utils.flickr import getImageTags
 
@@ -157,21 +158,15 @@ def is_user_tag(tag):
         return True
 
 
-@requires_csrf_token
-def image(request, image_id):
-
-    image_id = clean(image_id, strip=True)
-
-    image_info = db_tools.get_image_info(image_id)
-    if image_info is None:
-        image_info = dict()
-
+# I am very sorry for whoever finds this....
+# Basically all URLs cannot be trusted, so we brute force
+# Prefer ARCCA, then azure, then flickr.
+def sanitise_image_info(image_info, request):
     image_info['image_area'] = int(image_info['flickr_original_height']) * int(image_info['flickr_original_width'])
 
     image_info['azure'] = get_tested_azure_url(image_info)
 
-    r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True)
-    print r
+    r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True, timeout=0.3)
     if r.status_code is not requests.codes.ok:
         if image_info['azure']:
             image_info['imageurl'] = image_info['azure']
@@ -179,10 +174,38 @@ def image(request, image_id):
             image_info['imageurl'] = image_info['flickr_url']
     else:
         image_info['imageurl'] = image_info['arcca_url']
+    return image_info
+
+@requires_csrf_token
+def image(request, image_id):
+
+    image_id = clean(image_id, strip=True)
+    image_model = models.Image.objects.get(flickr_id=image_id)
+    image_info = db_tools.get_image_info(image_model)
+
+    if image_info is None:
+        image_info = dict()
+    else:
+        image_info = sanitise_image_info(image_info, request)
+
+
+    # image_info['image_area'] = int(image_info['flickr_original_height']) * int(image_info['flickr_original_width'])
+    #
+    # image_info['azure'] = get_tested_azure_url(image_info)
+    #
+    # r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True)
+    # print r
+    # if r.status_code is not requests.codes.ok:
+    #     if image_info['azure']:
+    #         image_info['imageurl'] = image_info['azure']
+    #     else:
+    #         image_info['imageurl'] = image_info['flickr_url']
+    # else:
+    #     image_info['imageurl'] = image_info['arcca_url']
 
     formatted_info = dict()
     formatted_info['Issuance'] = image_info.get('Issuance', "")
-    formatted_info['Date of Publishing'] = image_info.get('date', "")
+    formatted_info['Date of Publication'] = image_info.get('date', "")
     formatted_info['Title'] = image_info.get('title', "")
     formatted_info['Volume'] = image_info.get('volume', "")
     formatted_info['Author'] = image_info.get('first_author', "")
@@ -924,7 +947,7 @@ def do_advanced_search(request):
     results['advanced'] = dict()
     total_results = 0
 
-    readable_query = 'Images '
+    readable_query = ''
     all_image_ids = ''
 
     number_of_results_int = 50
@@ -933,7 +956,7 @@ def do_advanced_search(request):
             number_of_results_int = int(number_of_results)
         except:
             pass
-    readable_query += 'Showing first ' + str(number_of_results_int) + ' results. '
+    readable_query += 'Showing first ' + str(number_of_results_int) + ' results '
 
     im = ImagePicker()
     alternative_search = request.GET.get('alternative_search', '')
@@ -1061,7 +1084,9 @@ def data_autocomplete(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-def get_image_data_from_array(id_list):
+def get_image_data_from_array(id_list, request):
+    # tk = TimeKeeper()
+    # tk.time_now('start', print_out=True)
     tag_results_dict = dict()
 
     q_or_objects = []
@@ -1071,15 +1096,20 @@ def get_image_data_from_array(id_list):
 
     if len(q_or_objects) > 0:
         image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
-
+        # tk.time_now('got db objects', print_out=True)
         for result in image_data:
             try:
                 tag_result = dict()
                 tag_result['title'] = result.title
 
                 try:
-                    tag_result['img'] = db_tools.get_image_info(result.flickr_id)['imageurl']
-                except:
+                    image_info = db_tools.get_image_info(result)
+                    # tk.time_now(result.flickr_id + '_image info', print_out=True)
+                    image_info = sanitise_image_info(image_info, request)
+                    # tk.time_now(result.flickr_id + '_sanitise', print_out=True)
+                    tag_result['img'] = image_info['imageurl']
+                except Exception as e:
+                    # tk.time_now(e, print_out=True)
                     tag_result['img'] = result.flickr_small_source
 
                 if tag_result['img'] is None:
@@ -1088,12 +1118,23 @@ def get_image_data_from_array(id_list):
                 if settings.use_flickr:
                     tag_result['img_small'] = result.flickr_small_source
                 else:
-                    tag_result['img_small'] = reverse('image.smaller_image', kwargs={
-                        'book_identifier': result.book_identifier,
-                        'volume': result.volume,
-                        'page': result.page,
-                        'image_idx': result.image_idx
-                    })
+                    try:
+                        arcca_smaller_url = reverse('image.smaller_image', kwargs={
+                            'book_identifier': result.book_identifier,
+                            'volume': result.volume,
+                            'page': result.page,
+                            'image_idx': result.image_idx
+                        })
+                        checking_url = request.build_absolute_uri(arcca_smaller_url)
+                        r = requests.head(checking_url, stream=True)
+                        # print checking_url, r
+                        # tk.time_now(result.flickr_id + '_url_check', print_out=True)
+                        if r.status_code is requests.codes.ok:
+                            tag_result['img_small'] = arcca_smaller_url
+                        else:
+                            raise
+                    except:
+                        tag_result['img_small'] = result.flickr_small_source
 
                 tag_result['date'] = result.date
                 tag_result['page'] = result.page.lstrip('0')
@@ -1103,8 +1144,10 @@ def get_image_data_from_array(id_list):
 
                 tag_results_dict[result.flickr_id] = tag_result
             except Exception as e:
+                print e
                 pass
-
+            # tk.time_now(result.flickr_id, print_out=True)
+    # tk.time_now('returning', print_out=True)
     return tag_results_dict
 
 
@@ -1129,8 +1172,10 @@ def get_resized_image(request, book_identifier, volume, page, image_idx):
             img.thumbnail((basewidth, hsize), Image.ANTIALIAS)
             # response['Content-Disposition'] = 'attachment; filename=%s' % filename
             img.save(response, "JPEG", quality=80, optimize=True, progressive=True)
-    except IOError:
-        print "cannot create thumbnail for '%s'" % filename
+        else:
+            raise
+    except:
+        raise Http404
     return response
 
 
@@ -1142,7 +1187,7 @@ def get_image_data(request):
     if ids:
         id_list = ids.split(',')
 
-        tag_results_dict = get_image_data_from_array(id_list)
+        tag_results_dict = get_image_data_from_array(id_list, request)
 
     return HttpResponse(json.dumps(tag_results_dict), content_type="application/json")
 
@@ -1159,7 +1204,8 @@ def user_dl_all(request):
 
         filenames = dict()
         for image_id in collection_list:
-            image_info = db_tools.get_image_info(image_id)
+            image_model = models.Image.objects.get(flickr_id=image_id)
+            image_info = db_tools.get_image_info(image_model)
 
             if image_info:
                 filenames[image_id] = (image_info['imageurl'])
@@ -1282,7 +1328,8 @@ def download_collection(request):
 
     filenames = dict()
     for image_id in image_ids:
-        image_info = db_tools.get_image_info(image_id)
+        image_model = models.Image.objects.get(flickr_id=image_id)
+        image_info = db_tools.get_image_info(image_model)
 
         if image_info:
             filenames[image_id] = (image_info['imageurl'])
@@ -1579,7 +1626,7 @@ def exhibition(request, collection_id):
         image_dict['title'] = image.image.title
         image_dict['page'] = image.image.page.lstrip('0')
         # image_dict['url'] = image.image.flickr_small_source
-        image_dict['url'] = db_tools.get_image_info(image.image.flickr_id)['imageurl']
+        image_dict['url'] = db_tools.get_image_info(image.image)['imageurl']
 
         try:
             image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
@@ -1634,7 +1681,7 @@ def similar_images(request, image_id):
         if len(a_set) > 0:
             tags_power_set.append(a_set)
 
-            image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set, and_or='and', number=10))
+            image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set, and_or='and', number=10), request)
 
             if image_id in image_data:
                 image_data.pop(image_id)
@@ -1664,7 +1711,7 @@ def similar_images(request, image_id):
     flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
                                .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)[:20]
     # print flickr_ids_from_book
-    book_images = get_image_data_from_array(flickr_ids_from_book)
+    book_images = get_image_data_from_array(flickr_ids_from_book, request)
 
     #TODO optimise
     image_object = models.Image.objects.get(flickr_id=image_id)
@@ -1685,7 +1732,7 @@ def similar_images(request, image_id):
         'largest_set': largest_set,
         'largest_set_size': len(largest_set),
         'largest_tag_set': largest_tag_set,
-        'machine_matches': get_image_data_from_array(machine_matched_ids)
+        'machine_matches': get_image_data_from_array(machine_matched_ids, request)
     }
 
     return HttpResponse(json.dumps(return_data),

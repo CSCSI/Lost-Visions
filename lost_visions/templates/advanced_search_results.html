@@ -110,7 +110,7 @@
                                 + '<td>' +
                                 '<a href="' + image_data['link'] + '" target="_blank">' +
                                 '<img src="' + image_data['img']  + '"' +
-                                'style="max-height: 80px; width:auto; display: block; margin: 0 auto">' +
+                                'style="max-height: 80px; width:auto; max-width: 100%; display: block; margin: 0 auto">' +
                                 '</a>'
                                 + '</td>'
                                 + '<td>' + image_data['author'] + '</td>'
@@ -128,7 +128,7 @@
                         table.append($(row));
                     }
 
-                } else if (view_toggle_btn.data("view") == "grid") {
+                } else if (view_toggle_btn.data("view") == "gallery") {
                     $('#results_table_div').remove();
 
                     var result_container = $('#grid-result-container').masonry({
@@ -217,24 +217,24 @@
 
         if($.cookie("lv_results_view_layout")) {
             var view = $.cookie("lv_results_view_layout");
-            if (view == "grid") {
-                view_toggle_btn.data("view", "grid");
+            if (view == "gallery") {
+                view_toggle_btn.data("view", "gallery");
                 view_toggle_btn.text("List view");
             } else if (view == "list") {
                 view_toggle_btn.data("view", "list");
-                view_toggle_btn.text("Grid view");
+                view_toggle_btn.text("Gallery view");
             }
         }
 
         view_toggle_btn.click(function(){
             if (view_toggle_btn.data("view") == "list") {
-                view_toggle_btn.data("view", "grid");
-                view_toggle_btn.text("Grid view");
-                $.cookie("lv_results_view_layout","grid", {expires: 365, path: '/'});
+                view_toggle_btn.data("view", "gallery");
+                view_toggle_btn.text("Gallery View");
+                $.cookie("lv_results_view_layout", "gallery", {expires: 365, path: '/'});
                 location.reload();
 
                 {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
-            } else if (view_toggle_btn.data("view") == "grid") {
+            } else if (view_toggle_btn.data("view") == "gallery") {
                 view_toggle_btn.data("view", "list");
                 view_toggle_btn.text("List view");
                 {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
@@ -250,7 +250,6 @@
         read_next_batch();
 
         $('#grid-result-container').ready(function(){
-            console.log('grid resutls loaded');
             set_sizes();
         });
 
@@ -293,7 +292,7 @@
 
     });
     </script>
-    <div id="view_toggle" class="btn btn-default" data-view="list">Toggle view</div>
+    <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
 
     <h3>{{ query }}</h3>
     <div id="grid-result-container"></div>
@@ -304,7 +303,7 @@
                 <tbody>
                 <tr>
                     <th>
-                        Image
+                        Illustration
                     </th>
                     <th>
                         Author

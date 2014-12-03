@@ -875,72 +875,72 @@
         {#            $( "#dictionary").focus();#}
         {#        });#}
 
-        $('#category_tree').bind("ready.jstree", function(){
+        {#        $('#category_tree').bind("ready.jstree", function(){#}
+        {##}
+        {#        }).jstree({ 'core' : {#}
+        {#            'data' : dmvi_categories#}
+        {##}
+        {#        }#}
+        {#        }).on("changed.jstree", function (e, data) {#}
+        {##}
+        {#            var inst = data.instance;#}
+        {#            var i, j = [];#}
+        {#            for(i = 0, j = data.selected.length; i < j; i++) {#}
+        {##}
+        {#                if (inst.is_leaf(inst.get_node(data.selected[i]))) {#}
+        {##}
+        {#                    var tag_string = inst.get_node(data.selected[i]).text#}
+        {#                    var id = 'id_' + tag_string;#}
+        {##}
+        {#                    var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});#}
+        {#                    var $label = $('<label/>').attr({for: id}).html(tag_string);#}
+        {##}
+        {##}
+        {#                    $("#add_category_body").prepend($label).prepend($check);#}
+        {##}
+        {#                    $( "input[type=checkbox]" )#}
+        {#                            .button();#}
+        {#                } else {#}
+        {#                    inst.toggle_node(inst.get_node(data.selected[i]));#}
+        {#                }#}
+        {#            }#}
+        {##}
+        {#        });#}
+        {##}
+        {#        var availableTags = [];#}
+        {##}
+        {#        dmvi_categories.forEach(function(entry) {#}
+        {##}
+        {#            availableTags.push(entry['text']);#}
+        {##}
+        {#        });#}
+        {##}
+        {##}
+        {#        cascade_nodes = function(id){#}
+        {#            dmvi_categories.forEach(function(entry) {#}
+        {#                if(entry['id'] == id) {#}
+        {#                    $('#category_tree').jstree('open_node', entry['id']);#}
+        {#                    cascade_nodes(entry['parent'])#}
+        {#                }#}
+        {#            });#}
+        {#        };#}
 
-        }).jstree({ 'core' : {
-            'data' : dmvi_categories
-
-        }
-        }).on("changed.jstree", function (e, data) {
-
-            var inst = data.instance;
-            var i, j = [];
-            for(i = 0, j = data.selected.length; i < j; i++) {
-
-                if (inst.is_leaf(inst.get_node(data.selected[i]))) {
-
-                    var tag_string = inst.get_node(data.selected[i]).text
-                    var id = 'id_' + tag_string;
-
-                    var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});
-                    var $label = $('<label/>').attr({for: id}).html(tag_string);
-
-
-                    {#                    $("#add_category_body").prepend($label).prepend($check);#}
-
-                    {#                    $( "input[type=checkbox]" )#}
-                    {#                            .button();#}
-                } else {
-                    inst.toggle_node(inst.get_node(data.selected[i]));
-                }
-            }
-
-        });
-
-        var availableTags = [];
-
-        dmvi_categories.forEach(function(entry) {
-
-            availableTags.push(entry['text']);
-
-        });
-
-
-        cascade_nodes = function(id){
-            dmvi_categories.forEach(function(entry) {
-                if(entry['id'] == id) {
-                    $('#category_tree').jstree('open_node', entry['id']);
-                    cascade_nodes(entry['parent'])
-                }
-            });
-        };
-
-        $( "#tags" ).autocomplete({
-            source: availableTags,
-            select: function( event, ui ) {
-                $('#category_tree').jstree('close_all', -1);
-                {#                    console.log( ui.item.label );#}
-                {#                    console.log( ui.item.value );#}
-                dmvi_categories.forEach(function(entry) {
-
-                    if (entry['text'] == ui.item.label) {
-                        {#                            $('#category_tree').jstree('toggle_node', entry['id']);#}
-                        cascade_nodes(entry['id'])
-                    }
-                });
-                return false;
-            }
-        });
+        {#        $( "#tags" ).autocomplete({#}
+        {#            source: availableTags,#}
+        {#            select: function( event, ui ) {#}
+        {#                $('#category_tree').jstree('close_all', -1);#}
+        {#                    console.log( ui.item.label );#}
+        {#                    console.log( ui.item.value );#}
+        {#                dmvi_categories.forEach(function(entry) {#}
+        {##}
+        {#                    if (entry['text'] == ui.item.label) {#}
+        {#                            $('#category_tree').jstree('toggle_node', entry['id']);#}
+        {#                        cascade_nodes(entry['id'])#}
+        {#                    }#}
+        {#                });#}
+        {#                return false;#}
+        {#            }#}
+        {#        });#}
 
         var active = true;
 
@@ -1507,7 +1507,7 @@
          data-step="5" data-intro='These are potentially similar Illustration' data-position="right">
         <div class="panel-heading">
             <h4 class="panel-title">
-                Similar Illustration
+                Similar Illustrations
             </h4>
         </div>
         <div id="similars" class="similar-images">
@@ -1524,7 +1524,7 @@
          data-step="6" data-intro='These are potentially similar images' data-position="right">
         <div class="panel-heading">
             <h4 class="panel-title">
-                Machine Matched Images
+                Machine Matched Illustrations
             </h4>
         </div>
         <div id="machine_matched_images" class="similar-images">
@@ -1540,7 +1540,7 @@
          data-step="6" data-intro='These are Illustration from this book' data-position="right">
         <div class="panel-heading">
             <h4 class="panel-title">
-                Book Illustration
+                Other Illustrations from this Book
             </h4>
         </div>
         <div id="book_images" class="similar-images">
@@ -1891,10 +1891,6 @@
 
 
 
-
-
-
-
                         <div id="question_number_3" class="panel panel-default">
                             <div>
                                 <div class="panel-body question-panel">
@@ -1908,7 +1904,6 @@
                                 </div>
                             </div>
                         </div>
-
 
 
 
@@ -1930,35 +1925,34 @@
                             </div>
                         </div>
                     </div>
-            </div>
-        </div>
 
-        <ul class="pager prev_next_pager">
-            <li style="float: left">
-                <div data-toggle="tooltip" data-placement="top"
-                     title="Previous Question" data-original-title="Previous"
-                     id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div></div>
-            </li>
-            <li style="float: left">
-                <div data-toggle="tooltip" data-placement="top"
-                     title="Next Question" data-original-title="Next"
-                     id="question-accordion-next" class="btn btn-success"><div class="fa fa-2x fa-angle-double-right"></div></div>
-            </li>
-            <li style="float: right">
-                <button id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
-                        title="Finish Tagging" data-original-title="Finish"
-                        type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>
-            </li>
-        </ul>
-        {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
-        <div class="navbar-right">
-            <div id="load_new_image" class="btn btn-primary">
-                <a href="{% url 'image.random' %}">Skip</a>
+
+                    <ul class="pager prev_next_pager">
+                        <li style="float: left">
+                            <div data-toggle="tooltip" data-placement="top"
+                                 title="Previous Question" data-original-title="Previous"
+                                 id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div> Back</div>
+                        </li>
+                        <li style="float: left">
+                            <div data-toggle="tooltip" data-placement="top"
+                                 title="Next Question" data-original-title="Next"
+                                 id="question-accordion-next" class="btn btn-success">Next <div class="fa fa-2x fa-angle-double-right"></div></div>
+                        </li>
+                        <li style="float: right">
+                            <button id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
+                                    title="Finish Tagging" data-original-title="Finish"
+                                    type="submit" class="btn btn-success">Finish Tagging this Illustration<div class="fa fa-2x fa-check"></div></button>
+                        </li>
+                    </ul>
+                    {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
+                    <div class="navbar-right">
+                        <div id="load_new_image" class="btn btn-success">
+                            <a href="{% url 'image.random' %}">Skip this Illustration</a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        </form>
-    </div>
-    </div>
 
     </div>
 

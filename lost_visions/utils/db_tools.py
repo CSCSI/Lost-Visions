@@ -5,6 +5,7 @@ from django.contrib.sites.models import Site
 from django.templatetags.static import static
 # from raven import Client
 import requests
+from lost_visions.utils.TimeKeeper import TimeKeeper
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
@@ -213,45 +214,52 @@ def find_image(image_info):
     return None
 
 
-def get_image_info(image_id):
+def get_image_info(image_model):
     try:
-        image_for_id = models.Image.objects.get(flickr_id=image_id)
-        image_info = get_info_from_image_model(image_for_id)
+        # image_for_id = models.Image.objects.get(flickr_id=image_id)
+        image_info = get_info_from_image_model(image_model)
 
         arcca_image = find_image(image_info)
         image_info['arcca_url'] = ''
         if arcca_image:
             image_info['arcca_url'] = arcca_image
 
-        image_for_id.views_begun += 1
-        image_for_id.save()
+        image_model.views_begun += 1
+        image_model.save()
         return image_info
-
-    except ObjectDoesNotExist:
-        print 'no object in db for ' + image_id
+    except:
         return None
 
 
 def get_tested_azure_url(image_info):
-    azure_url_part = u"http://blmc.blob.core.windows.net/{0[date]}/{0[book_identifier]}_{0[volume]}_{0[page]}_{0[image_idx]}_{0[date]}_imagesize.jpg".format(image_info)
+    try:
+        # tk = TimeKeeper()
+        # tk.time_now(image_info['flickr_id'] + '_azure_start', print_out=True)
+        azure_url_part = u"http://blmc.blob.core.windows.net/{0[date]}/{0[book_identifier]}_{0[volume]}_{0[page]}_{0[image_idx]}_{0[date]}_imagesize.jpg".format(image_info)
 
-    azure_url_part = azure_url_part.replace('imagesize', 'embellishments')
-    r = requests.head(azure_url_part, stream=True)
-    if r.status_code is requests.codes.ok:
-        return azure_url_part
-    else:
-        azure_url_part = azure_url_part.replace('embellishments', 'medium')
-        r = requests.head(azure_url_part, stream=True)
+        azure_url_part = azure_url_part.replace('imagesize', 'embellishments')
+        r = requests.head(azure_url_part, stream=True, timeout=0.3)
+        # tk.time_now(image_info['flickr_id'] + '_azure_embellishments', print_out=True)
+
         if r.status_code is requests.codes.ok:
             return azure_url_part
         else:
-            azure_url_part = azure_url_part.replace('medium', 'plates')
-            r = requests.head(azure_url_part, stream=True)
+            azure_url_part = azure_url_part.replace('embellishments', 'medium')
+            r = requests.head(azure_url_part, stream=True, timeout=0.3)
+            # tk.time_now(image_info['flickr_id'] + '_azure_medium', print_out=True)
+
             if r.status_code is requests.codes.ok:
                 return azure_url_part
             else:
-                return ''
-
+                azure_url_part = azure_url_part.replace('medium', 'plates')
+                r = requests.head(azure_url_part, stream=True, timeout=0.3)
+                # tk.time_now(image_info['flickr_id'] + '_azure_medium', print_out=True)
+                if r.status_code is requests.codes.ok:
+                    return azure_url_part
+                else:
+                    return None
+    except:
+        return None
 
 def read_tsv_file(filename, line_number):
     with open(filename) as f:
