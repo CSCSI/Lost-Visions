@@ -12,7 +12,8 @@
         $(document).ready(function () {
 
             $('#collapse_search_filter').accordion({
-                active: 0,
+                {#                icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },#}
+                active: false,
                 collapsible: true,
                 heightStyle: "content"
 
@@ -183,91 +184,117 @@
           method="get" class="advanced-search-form">{% csrf_token %}
         {{ tag_form.non_field_errors }}
 
-        <div
-                {#                data-toggle="tooltip" data-placement="top"#}
-                {#             title="Search Filters" data-original-title="Search Filters"#}
-                id="collapse_search_filter" class="panel-group"
-                data-step="1" data-intro='Search Filters' data-position="right">
 
+        <div class="panel-group" style="margin-top: 10px; border: solid #AAA 1px;">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    Advanced Search
+                    Search
                 </h4>
             </div>
 
-            <div class="container">
+            <div class="panel-body" style="padding: 1em 2.2em;">
                 <div class="col-md-6">
-
                     <div class="ui-widget">
                         <label class="'control-label" for="keyword">Keyword: </label>
                         <input class="'form-control" id="keyword" name="keyword" value="{{ query_array.keyword }}">
                     </div>
-
+                </div>
+                <div class="col-md-3">
                     <div class="ui-widget">
                         <label class="'control-label" for="tag_keywords_only">Only search tags: </label>
                         <input type="checkbox" class="'form-control" id="tag_keywords_only" name="tag_keywords_only">
                     </div>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="author">Author: </label>
-                        <input class="'form-control" id="author" name="author" value="{{ query_array.author }}">
-                    </div>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="illustrator">Illustrator: </label>
-                        <input class="'form-control" id="illustrator" name="illustrator"
-                               value="{{ query_array.illustrator }}">
-                    </div>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="publisher">Publisher: </label>
-                        <input class="'form-control" id="publisher" name="publisher" value="{{ query_array.publisher }}">
-                    </div>
-
-                    <div class="ui-widget">
-                        <label class="'control-label" for="publishing_place">Place of Publication: </label>
-                        <input class="'form-control" id="publishing_place" name="publishing_place"
-                               value="{{ query_array.publishing_place }}">
-                    </div>
-
                 </div>
-                <div class="col-md-6">
-                    <div class="ui-widget">
-                        <label class="'control-label" for="title">Title: </label>
-                        <input class="'form-control" id="title" name="title" value="{{ query_array.title }}">
-                    </div>
+                <div class="col-md-3">
+                    <ul class="pager prev_next_pager" style="padding: 0">
+                        <li style="float: right">
+                            <button type="submit" class="btn btn-success btn-sm">Search</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-footer" style="padding: 0">
+                <div
+                        {#                data-toggle="tooltip" data-placement="top"#}
+                        {#             title="Search Filters" data-original-title="Search Filters"#}
+                        id="collapse_search_filter" class="panel-group"
+                        data-step="1" data-intro='Search Filters' data-position="right">
 
-                    <div class="ui-widget">
-                        <label class="'control-label" for="date_from">Date From: </label>
-                        <select disabled class="'form-control" id="date_from" name="date_from"></select>
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            Advanced Options
+                        </h4>
                     </div>
+                    {#                    <div class="container">#}
+                    <div>
+                        <div class="col-md-6">
 
-                    <div class="ui-widget">
-                        <label class="'control-label" for="date_to">Date To: </label>
-                        <select disabled class="'form-control" id="date_to" name="date_to"></select>
-                    </div>
+                            {#                    <div class="ui-widget">#}
+                            {#                        <label class="'control-label" for="keyword">Keyword: </label>#}
+                            {#                        <input class="'form-control" id="keyword" name="keyword" value="{{ query_array.keyword }}">#}
+                            {#                    </div>#}
 
-                    <div class="ui-widget">
-                        <label class="'control-label" for="year">Decade: </label>
-                        <select class="'form-control" id="year" name="year" ></select>
-                    </div>
+                            {#                    <div class="ui-widget">#}
+                            {#                        <label class="'control-label" for="tag_keywords_only">Only search tags: </label>#}
+                            {#                        <input type="checkbox" class="'form-control" id="tag_keywords_only" name="tag_keywords_only">#}
+                            {#                    </div>#}
 
-                    <div class="ui-widget">
-                        <label class="'control-label" for="num_results">Number of Results: </label>
-                        <input class="'form-control" id="num_results" name="num_results" value="50">
-                    </div>
+                            <div class="ui-widget">
+                                <label class="'control-label" for="author">Author: </label>
+                                <input class="'form-control" id="author" name="author" value="{{ query_array.author }}">
+                            </div>
 
-                    <div class="ui-widget" style="text-align-last: right">
-                        <label class="'control-label" for="alternative_search">Alternative Search: </label>
-                        <input type="checkbox" class="'form-control" id="alternative_search" name="alternative_search">
+                            <div class="ui-widget">
+                                <label class="'control-label" for="illustrator">Illustrator: </label>
+                                <input class="'form-control" id="illustrator" name="illustrator"
+                                       value="{{ query_array.illustrator }}">
+                            </div>
+
+                            <div class="ui-widget">
+                                <label class="'control-label" for="publisher">Publisher: </label>
+                                <input class="'form-control" id="publisher" name="publisher" value="{{ query_array.publisher }}">
+                            </div>
+
+                            <div class="ui-widget">
+                                <label class="'control-label" for="publishing_place">Place of Publication: </label>
+                                <input class="'form-control" id="publishing_place" name="publishing_place"
+                                       value="{{ query_array.publishing_place }}">
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="ui-widget">
+                                <label class="'control-label" for="title">Title: </label>
+                                <input class="'form-control" id="title" name="title" value="{{ query_array.title }}">
+                            </div>
+
+                            <div class="ui-widget">
+                                <label class="'control-label" for="date_from">Date From: </label>
+                                <select disabled class="'form-control" id="date_from" name="date_from"></select>
+                            </div>
+
+                            <div class="ui-widget">
+                                <label class="'control-label" for="date_to">Date To: </label>
+                                <select disabled class="'form-control" id="date_to" name="date_to"></select>
+                            </div>
+
+                            <div class="ui-widget">
+                                <label class="'control-label" for="year">Decade: </label>
+                                <select class="'form-control" id="year" name="year" ></select>
+                            </div>
+
+                            <div class="ui-widget">
+                                <label class="'control-label" for="num_results">Number of Results: </label>
+                                <input class="'form-control" id="num_results" name="num_results" value="50">
+                            </div>
+
+                            <div class="ui-widget" style="text-align-last: right">
+                                <label class="'control-label" for="alternative_search">Alternative Search: </label>
+                                <input type="checkbox" class="'form-control" id="alternative_search" name="alternative_search">
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <ul class="pager prev_next_pager" style="padding: 0">
-                    <li style="float: right">
-                        <button type="submit" class="btn btn-primary btn-sm">Search!</button>
-                    </li>
-                </ul>
             </div>
         </div>
     </form>
