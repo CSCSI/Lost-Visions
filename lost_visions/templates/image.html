@@ -630,14 +630,16 @@
                     image_id: {{ image_id }}
                 },
                 success: function(data) {
+
+                    {#                    Get the question for this set of category buttons #}
                     var question = data['question'];
-                    {#                    console.log(data);#}
                     $('#category-question').html(question);
 
+                    {#                    Clear the category container, ready to put new category buttons in #}
                     var category_container = $('#category-container');
-
                     var masonry_container = category_container.masonry();
                     masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
+                    var category_extra_div = $('#category-extra').empty();
 
                     for (var ans in data['answers']) {
 
@@ -674,7 +676,7 @@
                     for (var ans in data['actions']) {
 
                         var classname = 'category-answer';
-                        if (data['actions'][ans].text.length > 9) {
+                        if (data['actions'][ans].text.length > 5) {
                             classname = 'category-answer wide';
                         } else {
 
@@ -697,12 +699,27 @@
                             </div>\
                         </div>\
                         ';
-                        {#                        style="min-width:80px; min-height: 80px; max-width:90px; max-height: 90px;\#}
 
-                        var elem = $(answer);
-                        masonry_container.append(elem).masonry( 'appended', elem );
+                        var action_elem = $(answer);
+                        masonry_container.append(action_elem).masonry( 'appended', action_elem );
+
+                        if (data['actions'][ans].action == 'person_name_entry') {
+                            var text_input = '<label class="control-label" for=person_name_entry"places">'
+                                    + data['actions'][ans].question +
+                                    '</label><input class="form-control" id="person_name_entry">';
+
+                            var text_input_elem = $(text_input);
+{#                            var category_extra_div = $('#category-extra');#}
+                            category_extra_div.append(text_input_elem);
+                            {#                    var masonry_container = $('#category-container').masonry();#}
+                            {#                    masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));#}
+
+                            setTimeout("$('.form-control').focus()", 500);
+                        }
 
                     }
+
+
 
                     enable_category_click();
 
@@ -720,6 +737,8 @@
 
         function enable_category_click() {
             $('.category-answer').click(function() {
+                var masonry_container = $('#category-container').masonry();
+                masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
 
                 if ($(this).data('action_name') == 'gazetteer') {
                     var cat_id = $(this).data('category_id');
@@ -786,8 +805,6 @@
                                     .appendTo( ul );
                         };
                     });
-                    var masonry_container = $('#category-container').masonry();
-                    masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
 
                     setTimeout("$('.form-control').focus()", 500);
                 }
@@ -831,116 +848,6 @@
         });
 
 
-
-        {#        $('#photo').click(function(e) {#}
-        {#            var posX = $(this).offset().left;#}
-        {#            var posY = $(this).offset().top;#}
-        {##}
-        {#            var x = (e.pageX - posX);#}
-        {#            var y = (e.pageY - posY);#}
-        {##}
-        {#            var canvas_object = $('#photo'),#}
-        {#                    canvas = canvas_object.get(0),#}
-        {#                    ctx = canvas.getContext('2d');#}
-        {#            canvas.width = canvas.width;#}
-        {##}
-        {#            ctx.strokeStyle = '#00FF00';#}
-        {##}
-        {#            all_tags.forEach(function(entry) {#}
-        {#                ctx.beginPath();#}
-        {#                ctx.fillStyle = "green";#}
-        {#                ctx.moveTo(entry.x_pixel, entry.y_pixel);#}
-        {#                ctx.arc(entry.x_pixel-10, entry.y_pixel-10, 10, 0, 2*Math.PI);#}
-        {#                ctx.fill();#}
-        {#                ctx.closePath();#}
-        {#                ctx.stroke();#}
-        {#            });#}
-        {##}
-        {#            ctx.strokeStyle = '#FF0000';#}
-        {##}
-        {#            ctx.beginPath();#}
-        {#            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);#}
-        {##}
-        {#            var coords = translateCoords(x, y, canvas, degs);#}
-        {##}
-        {#            ctx.rect(coords.x-10, coords.y-10, 20, 20);#}
-        {#            hightlighted_x_percent = coords.x_percent;#}
-        {#            hightlighted_y_percent = coords.y_percent;#}
-        {#            highlighted_x_pixel = coords.x;#}
-        {#            highlighted_y_pixel = coords.y;#}
-        {#            $('#focus_alerts').fadeOut(1000);#}
-        {##}
-        {#            ctx.stroke();#}
-        {##}
-        {#            $( "#dictionary").focus();#}
-        {#        });#}
-
-        {#        $('#category_tree').bind("ready.jstree", function(){#}
-        {##}
-        {#        }).jstree({ 'core' : {#}
-        {#            'data' : dmvi_categories#}
-        {##}
-        {#        }#}
-        {#        }).on("changed.jstree", function (e, data) {#}
-        {##}
-        {#            var inst = data.instance;#}
-        {#            var i, j = [];#}
-        {#            for(i = 0, j = data.selected.length; i < j; i++) {#}
-        {##}
-        {#                if (inst.is_leaf(inst.get_node(data.selected[i]))) {#}
-        {##}
-        {#                    var tag_string = inst.get_node(data.selected[i]).text#}
-        {#                    var id = 'id_' + tag_string;#}
-        {##}
-        {#                    var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});#}
-        {#                    var $label = $('<label/>').attr({for: id}).html(tag_string);#}
-        {##}
-        {##}
-        {#                    $("#add_category_body").prepend($label).prepend($check);#}
-        {##}
-        {#                    $( "input[type=checkbox]" )#}
-        {#                            .button();#}
-        {#                } else {#}
-        {#                    inst.toggle_node(inst.get_node(data.selected[i]));#}
-        {#                }#}
-        {#            }#}
-        {##}
-        {#        });#}
-        {##}
-        {#        var availableTags = [];#}
-        {##}
-        {#        dmvi_categories.forEach(function(entry) {#}
-        {##}
-        {#            availableTags.push(entry['text']);#}
-        {##}
-        {#        });#}
-        {##}
-        {##}
-        {#        cascade_nodes = function(id){#}
-        {#            dmvi_categories.forEach(function(entry) {#}
-        {#                if(entry['id'] == id) {#}
-        {#                    $('#category_tree').jstree('open_node', entry['id']);#}
-        {#                    cascade_nodes(entry['parent'])#}
-        {#                }#}
-        {#            });#}
-        {#        };#}
-
-        {#        $( "#tags" ).autocomplete({#}
-        {#            source: availableTags,#}
-        {#            select: function( event, ui ) {#}
-        {#                $('#category_tree').jstree('close_all', -1);#}
-        {#                    console.log( ui.item.label );#}
-        {#                    console.log( ui.item.value );#}
-        {#                dmvi_categories.forEach(function(entry) {#}
-        {##}
-        {#                    if (entry['text'] == ui.item.label) {#}
-        {#                            $('#category_tree').jstree('toggle_node', entry['id']);#}
-        {#                        cascade_nodes(entry['id'])#}
-        {#                    }#}
-        {#                });#}
-        {#                return false;#}
-        {#            }#}
-        {#        });#}
 
         var active = true;
 
@@ -1553,269 +1460,6 @@
 
     </div><!--/span-->
 
-    {#    <div class="col-xs-12 col-sm-4">#}
-    {##}
-    {#    <div class="container-fluid">#}
-    {##}
-    {#    <div id="right-main">#}
-    {##}
-    {##}
-    {#    <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}#}
-    {#    {{ tag_form.non_field_errors }}#}
-    {#    <input type="hidden" name="image_id" value="{{ image_id }}" />#}
-    {#    <input type="hidden" id = 'tag_info' name="tag_info" value="" />#}
-    {##}
-    {#    <div class="question-frame">#}
-    {#    <div class="panel-group" id="accordion" data-step="4" data-intro="These are the tagging options" data-position="left">#}
-    {##}
-    {##}
-    {#    <div id="objects_and_ideas" class="panel panel-default">#}
-    {#        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">#}
-    {#            <div class="panel-heading">#}
-    {#                    <div id="collapse-init" class="btn btn-primary btn-xs collapse-init">#}
-    {#                        +#}
-    {#            </div>#}
-    {#        </a>#}
-    {##}
-    {#        <div id="collapseOne" class="panel-collapse collapse in">#}
-    {#            <div class="panel-body question-panel">#}
-    {#                <h2>1/5</h2>#}
-    {#                <h3>Objects and Ideas</h3>#}
-    {##}
-    {#                <p>What things or ideas can you see in this image?</p>#}
-    {#                <p>For example:  "bird", "table", "winter", "love"</p>#}
-    {#                <div id="focus_alerts"></div>#}
-    {#                <div id="add_tags_body"></div>#}
-    {##}
-    {#                <div class="ui-widget">#}
-    {#                    <label class="'control-label" for="dictionary">Tags: </label>#}
-    {#                    <input class="'form-control" id="dictionary">#}
-    {#                </div>#}
-    {##}
-    {#            </div>#}
-    {#            <div class="panel-footer">#}
-    {#                <ul class="pager">#}
-    {#                    <li class="next">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"#}
-    {#                           class="btn btn-default">Next →</a>#}
-    {#                    </li>#}
-    {#                </ul>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-    {##}
-    {##}
-    {##}
-    {##}
-    {##}
-    {##}
-    {#    <div class="panel panel-default">#}
-    {#        <div class="panel-heading">#}
-    {#            <h4 class="panel-title">#}
-    {#                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">#}
-    {#                    Types of image#}
-    {#                </a>#}
-    {#            </h4>#}
-    {#        </div>#}
-    {##}
-    {#        <div id="collapseTwo" class="panel-collapse collapse">#}
-    {#            <div class="panel-body question-panel">#}
-    {##}
-    {#                <h3>Types of image</h3>#}
-    {##}
-    {#                <p>Please select the type of image, if any, from the options below</p>#}
-    {#                <div id="category-extra"></div>#}
-    {##}
-    {#                <div class="grid-sizer"></div>#}
-    {#                <div id="add_category_body"></div>#}
-    {##}
-    {#                <div id="category-question">{{ category_data.question }}</div>#}
-    {##}
-    {#                <div id="category-container" class="js-masonry"#}
-    {#                     data-masonry-options='{"itemSelector": ".category-answer" }'>#}
-    {#                </div>#}
-    {#            </div>#}
-    {#            <div class="panel-footer">#}
-    {#                <ul class="pager">#}
-    {#                    <li class="previous">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"#}
-    {#                           class="btn btn-default">← Previous</a>#}
-    {#                    </li>#}
-    {#                    <li class="next">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"#}
-    {#                           class="btn btn-default">Next →</a>#}
-    {#                    </li>#}
-    {#                </ul>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-    {##}
-    {##}
-    {##}
-    {##}
-    {##}
-    {#    <div class="panel panel-default">#}
-    {#        <div class="panel-heading">#}
-    {#            <h4 class="panel-title">#}
-    {#                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">#}
-    {#                    Caption#}
-    {#                </a>#}
-    {#            </h4>#}
-    {#        </div>#}
-    {#        <div id="collapseThree" class="panel-collapse collapse">#}
-    {#            <div class="panel-body">#}
-    {#                <h4>Please transcribe the Caption in this image, if present.</h4>#}
-    {#                <div id="free_text_caption" >#}
-    {#                    <label class="control-label" for="input_caption">Caption</label>#}
-    {#                    <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>#}
-    {#                </div>#}
-    {##}
-    {#            </div>#}
-    {#            <div class="panel-footer">#}
-    {#                <ul class="pager">#}
-    {#                    <li class="previous">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"#}
-    {#                           class="btn btn-default">← Previous</a>#}
-    {#                    </li>#}
-    {#                    <li class="next">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"#}
-    {#                           class="btn btn-default">Next →</a>#}
-    {#                    </li>#}
-    {#                </ul>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-    {##}
-    {##}
-    {##}
-    {##}
-    {#    <div class="panel panel-default">#}
-    {#        <div class="panel-heading">#}
-    {#            <h4 class="panel-title">#}
-    {#                <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">#}
-    {#                    Description#}
-    {#                </a>#}
-    {#            </h4>#}
-    {#        </div>#}
-    {#        <div id="collapseFive" class="panel-collapse collapse">#}
-    {#            <div class="panel-body">#}
-    {#                <h4>Please enter a description of the image</h4>#}
-    {##}
-    {#                <div id="free_text_description" class="row-fluid">#}
-    {#                    <label class="'control-label" for="free-text-area">Description</label>#}
-    {#                    <textarea name="image_description" class="form-control"#}
-    {#                              rows="3" id="free-text-area"></textarea>#}
-    {#                </div>#}
-    {##}
-    {#                <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
-    {#            </div>#}
-    {##}
-    {#            <div class="panel-footer">#}
-    {#                <ul class="pager">#}
-    {#                    <li class="previous">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"#}
-    {#                           class="btn btn-default">← Previous</a>#}
-    {#                    </li>#}
-    {#                </ul>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-    {##}
-    {##}
-    {##}
-    {##}
-    {#    <div class="panel panel-default">#}
-    {#        <div class="panel-heading">#}
-    {#            <h4 class="panel-title">#}
-    {#                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix">#}
-    {#                    Please select the tags below which describe the image#}
-    {#                </a>#}
-    {#            </h4>#}
-    {#        </div>#}
-    {#        <div id="collapseSix" class="panel-collapse collapse">#}
-    {#            <div class="panel-body">#}
-    {##}
-    {#                <div id="category-question">{{ category_data.question }}</div>#}
-    {##}
-    {#                <div id="category-container" class="js-masonry"#}
-    {#                     data-masonry-options='{"itemSelector": ".category-answer" }'>#}
-    {#                    {% for category_answer in category_data.answers %}#}
-    {#                        <div class="category-answer" data-category_id="{{ category_answer.id }}">#}
-    {#                            <div class="panel">#}
-    {#                                <div class="category-answer-image">#}
-    {#                                    <img src="{% static category_answer.img %}"#}
-    {#                                         style="min-width:70px; min-height: 70px; max-width:90px; max-height: 90px;#}
-    {#                                         margin:0 auto; display:block; border:1px">#}
-    {#                                </div>#}
-    {#                                <div class="panel-footer">#}
-    {#                                    <div class="wrap-text">#}
-    {#                                        {{ category_answer.text }}#}
-    {#                                    </div>#}
-    {#                                </div>#}
-    {#                            </div>#}
-    {#                        </div>#}
-    {##}
-    {#                    {% empty %}#}
-    {#                        <div class="category-answer">#}
-    {#                            <p>(No categories available)</p>#}
-    {#                        </div>#}
-    {#                    {% endfor %}#}
-    {#                </div>#}
-    {##}
-    {#            </div>#}
-    {#            <div class="panel-footer">#}
-    {#                <ul class="pager">#}
-    {#                    <li class="previous">#}
-    {#                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"#}
-    {#                           class="btn btn-default">← Previous</a>#}
-    {#                    </li>#}
-    {##}
-    {#                </ul>#}
-    {#            </div>#}
-    {#        </div>#}
-    {##}
-    {#    </div>#}
-    {##}
-    {##}
-    {##}
-    {##}
-    {##}
-    {#    {% if user.is_authenticated %}#}
-    {##}
-    {#    {% else %}#}
-    {#        <hr>#}
-    {#        <div class="bs-component">#}
-    {#            <div class="alert alert-dismissable alert-info">#}
-    {#                <button type="button" class="close" data-dismiss="alert">×</button>#}
-    {#                <strong>Heads up!</strong>   You are not logged in. You can do more if you sign up!#}
-    {##}
-    {#            </div>#}
-    {#            <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>#}
-    {#        </div>#}
-    {#    {% endif %}#}
-    {##}
-    {##}
-    {##}
-    {##}
-    {#    </div>#}
-    {#    </div>#}
-    {##}
-    {#    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
-    {#    <div class="navbar-right">#}
-    {#        <div id="load_new_image" class="btn btn-primary">#}
-    {#            <a href="{% url 'image.random' %}">Skip</a>#}
-    {#        </div>#}
-    {#    </div>#}
-    {#    </form>#}
-    {#    </div>#}
-    {#    </div>#}
-    {##}
-    {#    </div>#}
-
-
-
-
-
 
 
     <div class="col-xs-12 col-sm-5">
@@ -1842,23 +1486,19 @@
 
                     <div class="question-frame">
                         <div data-step="4" data-intro="These are the tagging options" data-position="left">
-
                             <div id="question_number_1" class="panel panel-default">
-
                                 <div id="collapseOne">
                                     <div class="panel-body question-panel">
                                         <h2>1/4</h2>
                                         <h3>Types of Illustration</h3>
-                                        <p>Please select the type of Illustration, if any, from the options below</p>
-                                        <div id="category-extra"></div>
-
-                                        <div class="grid-sizer"></div>
-                                        <div id="add_category_body"></div>
-
+                                        {#                                        <p>Is the illustration:</p>#}
                                         <div id="category-question">{{ category_data.question }}</div>
+                                        <div id="add_category_body"></div>
+                                        <div id="category-extra"></div>
 
                                         <div id="category-container" class="js-masonry"
                                              data-masonry-options='{"itemSelector": ".category-answer" }'>
+                                            <div class="grid-sizer"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -1875,7 +1515,7 @@
                                     <h2>2/4</h2>
                                     <h3>Objects and Ideas</h3>
 
-                                    <p>What things or ideas can you see in this Illustration?</p>
+                                    <p>Are there any other things or ideas in this illustration?</p>
                                     <p>For example:  "bird", "table", "winter", "love"</p>
                                     <div id="focus_alerts"></div>
                                     <div id="add_tags_body"></div>
@@ -1896,7 +1536,7 @@
                                 <div class="panel-body question-panel">
                                     <h2>3/4</h2>
                                     <h3>Caption</h3>
-                                    <h4>Please transcribe the Caption in this Illustration, if present.</h4>
+                                    <h4>If the Illustration has a caption, please transcribe it below:’</h4>
                                     <div id="free_text_caption" >
                                         <label class="control-label" for="input_caption">Caption</label>
                                         <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
@@ -1912,7 +1552,8 @@
                                 <div class="panel-body question-panel">
                                     <h2>4/4</h2>
                                     <h3>Description</h3>
-                                    <h4>Please enter a description of the Illustration</h4>
+                                    <h4>‘If there is anything else you would like to tell us about this illustration,
+                                        please enter it below:</h4>
 
                                     <div id="free_text_description" class="row-fluid">
                                         <label class="'control-label" for="free-text-area">Description</label>

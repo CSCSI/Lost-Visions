@@ -907,15 +907,29 @@ ICON_URL = STATIC_URL + 'media/images/icon/'
 
 category_manager = CategoryManager()
 
-
+# OK, this needs explaination
+# category_manager above stores the category "tree"
+# not really a tree, as linkages can go between anything and anything
 def image_category(request):
     print request.POST
+
+    # get the ID for the category just clicked
+    # if no cat_id then default to root ID of -1
     cat_id = request.POST.get('category_id', '-1')
 
     try:
+        #
         image_id = request.POST.get('image_id', None)
         if image_id is not None:
+
+            # TODO this is messy
+            # Update the map-page link and other Action links
+            # This will change as we're using dialogs instead of new tabs
             category_manager.update_image_actions(image_id)
+
+            # Get the category name for the id
+            # name is returned if available and should_save is True
+            # this is the word which gets saved as a tag
             category_name = category_manager.get_tag_for_category_id(cat_id)
             if category_name is not None:
                 tag = models.Tag()
@@ -929,6 +943,8 @@ def image_category(request):
         print e
         pass
 
+    # get data for the clicked category
+    # defines the buttons etc which should be shown next
     category_data = category_manager.get_category_data(cat_id)
 
     return HttpResponse(json.dumps(category_data), content_type="application/json")
