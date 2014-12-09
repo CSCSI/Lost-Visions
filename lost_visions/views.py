@@ -1751,7 +1751,7 @@ def similar_images(request, image_id):
         'machine_matches': get_image_data_from_array(machine_matched_ids, request)
     }
 
-    return HttpResponse(json.dumps(return_data),
+    return HttpResponse(json.dumps({}),
                         content_type="application/json")
 
 

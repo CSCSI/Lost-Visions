@@ -37,10 +37,11 @@ class Category():
 
 
 class Action():
-    def __init__(self, name, link='', question=''):
+    def __init__(self, name, link='', question='', type=''):
         self.name = name
         self.link = link
         self.question = question
+        self.type = type
 
     def __unicode__(self):
         return u'' + self.name + ' ' + self.link
@@ -63,7 +64,16 @@ class CategoryManager():
 
         self.actions['map'] = Action('map', link=link)
         self.actions['gazetteer'] = Action('gazetteer', link=link)
-        self.actions['person_name_entry'] = Action('person_name_entry', question='Can you name the person?')
+        self.actions['person_name_entry'] = Action('person_name_entry',
+                                                   question='Can you name the person?',
+                                                   type='text_entry')
+        self.actions['product_name_entry'] = Action('product_name_entry',
+                                                   question='Can you name the product?',
+                                                   type='text_entry')
+        self.actions['building_name_entry'] = Action('building_name_entry',
+                                                   question='Can you name the building?',
+                                                   type='text_entry')
+
 
     def load_default_categories(self):
 
@@ -78,15 +88,18 @@ class CategoryManager():
         self.categories[100] = Category('100', 'advert', 'an Advertisement?', ICON_URL + 'advert.jpg') \
             .set_question('Is there a product/brand name?') \
             .set_answers([101, 102])
-        self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False)
+        self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png')\
+            .set_save(False).set_action('product_name_entry')
         self.categories[102] = Category('102', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[200] = Category('200', 'building', 'a Building?', ICON_URL + 'building.jpg', ) \
             .set_question('What building is this?') \
-            .set_answers([201, 202, 203])
+            .set_answers([203, 204])
         # self.categories[201] = Category('201', 'interior', 'Interior?', ICON_URL + 'interior.jpg')
         # self.categories[202] = Category('202', 'exterior', 'Exterior?', ICON_URL + 'exterior.jpg')
-        self.categories[203] = Category('203', 'dont_know', "Don't know", ICON_URL + 'cross.png').set_save(False)
+        self.categories[203] = Category('203', 'save', "Save", ICON_URL + 'tick.png')\
+            .set_save(False).set_action('building_name_entry')
+        self.categories[204] = Category('204', 'dont_know', "Don't know", ICON_URL + 'cross.png').set_save(False)
 
         # self.categories[300] = Category('300', 'people', 'People?', ICON_URL + 'people.jpg') \
         #     .set_question('Is this image of an ...').set_answers([301, 302, 303])
@@ -209,7 +222,8 @@ class CategoryManager():
                                     'img': child_category.img,
                                     'link': action.link,
                                     'action': action.name,
-                                    'question': action.question
+                                    'question': action.question,
+                                    'type': action.type
                     })
 
             except:

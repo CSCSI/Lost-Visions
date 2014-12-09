@@ -646,8 +646,6 @@
                         var classname = 'category-answer';
                         if (data['answers'][ans].text.length > 5) {
                             classname = 'category-answer wide';
-                        } else {
-
                         }
 
                         var answer = '<div class="' + classname + '" data-category_id="' + data['answers'][ans].id + '"> \
@@ -663,13 +661,10 @@
                                     </div>\
                                 </div>\
                             </div>\
-                        </div>\
-                        ';
-                        {#                        style="min-width:80px; min-height: 80px; max-width:90px; max-height: 90px;\#}
+                        </div>';
 
                         var elem = $(answer);
                         masonry_container.append(elem).masonry( 'appended', elem );
-
                     }
 
 
@@ -678,12 +673,11 @@
                         var classname = 'category-answer';
                         if (data['actions'][ans].text.length > 5) {
                             classname = 'category-answer wide';
-                        } else {
-
                         }
 
                         var answer = '<div class="' + classname + '" data-link="' + data['actions'][ans].link +
                                 '" data-action_name="' + data['actions'][ans].action +
+                                '" data-type="' + data['actions'][ans].type +
                                 '" data-category_id="' + data['actions'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
@@ -697,32 +691,23 @@
                                     </div>\
                                 </div>\
                             </div>\
-                        </div>\
-                        ';
+                        </div>';
 
                         var action_elem = $(answer);
                         masonry_container.append(action_elem).masonry( 'appended', action_elem );
 
-                        if (data['actions'][ans].action == 'person_name_entry') {
-                            var text_input = '<label class="control-label" for=person_name_entry"places">'
+                        if (data['actions'][ans].type == 'text_entry') {
+                            var text_input = '<label class="control-label" for="' + data['actions'][ans].action + '">'
                                     + data['actions'][ans].question +
-                                    '</label><input class="form-control" id="person_name_entry">';
+                                    '</label><input class="form-control" id="' + data['actions'][ans].action + '">';
 
                             var text_input_elem = $(text_input);
-{#                            var category_extra_div = $('#category-extra');#}
                             category_extra_div.append(text_input_elem);
-                            {#                    var masonry_container = $('#category-container').masonry();#}
-                            {#                    masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));#}
 
                             setTimeout("$('.form-control').focus()", 500);
                         }
-
                     }
-
-
-
                     enable_category_click();
-
                     setTimeout("$('#category-container').masonry()", 1500);
                     category_container.masonry();
                 },
@@ -807,6 +792,15 @@
                     });
 
                     setTimeout("$('.form-control').focus()", 500);
+                }
+
+                else if ($(this).data('type') == 'text_entry') {
+                    var cat_id = $(this).data('category_id');
+                    var input_box = $('#' + $(this).data('action_name'));
+                    console.log(input_box);
+                    populate_categories(cat_id, null);
+
+                    alert(input_box.val() + ' ' + cat_id);
                 }
 
                 else if ($(this).data('link')) {
