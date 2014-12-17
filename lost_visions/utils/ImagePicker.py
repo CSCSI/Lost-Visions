@@ -310,7 +310,7 @@ class ImagePicker():
 
                 all_results = all_results.filter(reduce(operator.or_, ors))
 
-        all_results = all_results.values_list('flickr_id', flat=True).distinct()[:5000]
+        all_results = all_results.values_list('flickr_id', flat=True).distinct()[:500]
         logger.debug(all_results.query)
         return all_results
 

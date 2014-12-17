@@ -995,7 +995,7 @@ def do_advanced_search(request):
 
     if alternative_search is '':
         all_results = im.advanced_search(request)
-        if all_results.count() > 5000:
+        if all_results.count() > 500:
             too_many = True
 
         if not too_many:
@@ -1006,7 +1006,7 @@ def do_advanced_search(request):
         else:
             readable_query += 'Please add more detail to the query. '
 
-            for result in all_results[:5000]:
+            for result in all_results[:500]:
                 total_results += 1
                 all_image_ids += result + ','
             readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
