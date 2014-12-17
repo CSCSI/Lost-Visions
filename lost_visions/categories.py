@@ -62,17 +62,17 @@ class CategoryManager():
     def update_image_actions(self, image_id):
         link = reverse('image.map', kwargs={'image_id': image_id})
 
-        self.actions['map'] = Action('map', link=link)
+        self.actions['map'] = Action('map', link=link, type='map')
         self.actions['gazetteer'] = Action('gazetteer', link=link)
         self.actions['person_name_entry'] = Action('person_name_entry',
                                                    question='Can you name the person?',
                                                    type='text_entry')
         self.actions['product_name_entry'] = Action('product_name_entry',
-                                                   question='Can you name the product?',
-                                                   type='text_entry')
+                                                    question='Can you name the product?',
+                                                    type='text_entry')
         self.actions['building_name_entry'] = Action('building_name_entry',
-                                                   question='Can you name the building?',
-                                                   type='text_entry')
+                                                     question='What building is this?',
+                                                     type='text_entry')
 
 
     def load_default_categories(self):
@@ -88,16 +88,14 @@ class CategoryManager():
         self.categories[100] = Category('100', 'advert', 'an Advertisement?', ICON_URL + 'advert.jpg') \
             .set_question('Is there a product/brand name?') \
             .set_answers([101, 102])
-        self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png')\
+        self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png') \
             .set_save(False).set_action('product_name_entry')
         self.categories[102] = Category('102', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
 
-        self.categories[200] = Category('200', 'building', 'a Building?', ICON_URL + 'building.jpg', ) \
-            .set_question('What building is this?') \
-            .set_answers([203, 204])
+        self.categories[200] = Category('200', 'building', 'a Building?', ICON_URL + 'building.jpg', ).set_answers([203, 204])
         # self.categories[201] = Category('201', 'interior', 'Interior?', ICON_URL + 'interior.jpg')
         # self.categories[202] = Category('202', 'exterior', 'Exterior?', ICON_URL + 'exterior.jpg')
-        self.categories[203] = Category('203', 'save', "Save", ICON_URL + 'tick.png')\
+        self.categories[203] = Category('203', 'save', "Save", ICON_URL + 'tick.png') \
             .set_save(False).set_action('building_name_entry')
         self.categories[204] = Category('204', 'dont_know', "Don't know", ICON_URL + 'cross.png').set_save(False)
 
@@ -107,10 +105,9 @@ class CategoryManager():
         #     .set_question('Is this a named historical figure?').set_answers([311, 312])
         # self.categories[302] = Category('302', 'group', 'Group?', ICON_URL + 'lv-rect-station.png') \
         #     .set_question('Are there any named historical figures?').set_answers([321, 322])
-        self.categories[303] = Category('303', 'portrait', 'a Portrait?', ICON_URL + 'portrait.jpg') \
-            .set_question('Who is depicted?').set_answers([203, 304])
-        self.categories[304] = Category('304', 'lv_name_replace_me', "Person Name", ICON_URL + 'tick.png') \
-            .set_save(False).set_action('person_name_entry')
+        self.categories[303] = Category('303', 'portrait', 'a Portrait?', ICON_URL + 'portrait.jpg').set_answers([304, 305])
+        self.categories[304] = Category('304', "dont_know", "Don't know", ICON_URL + 'cross.png').set_save(False)
+        self.categories[305] = Category('305', 'named_person', "Save", ICON_URL + 'tick.png').set_action('person_name_entry')
 
         self.categories[311] = Category('311', 'no', 'No', ICON_URL + 'cross.png') \
             .set_question('Any Activities?').set_answers([321, 322]).set_save(False)
@@ -119,6 +116,8 @@ class CategoryManager():
         self.categories[321] = Category('321', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False)
         self.categories[322] = Category('322', 'no', 'No', ICON_URL + 'cross.png') \
             .set_save(False).set_question('Is the person in a named location?').set_answers([1000, 1])
+
+        # MOTIF
 
         self.categories[400] = Category('400', 'motif', 'a Decoration?', ICON_URL + 'motif.jpg') \
             .set_question('Is the decoration a ...').set_answers([401, 403, 404, 405, 406])
@@ -130,10 +129,6 @@ class CategoryManager():
         self.categories[406] = Category('406', 'no', 'None of These', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[500] = Category('500', 'title_page', 'Title Page?', ICON_URL + 'title_page.jpg')
-
-        self.categories[600] = Category('600', 'map', 'a Map?', ICON_URL + 'map.jpg') \
-            .set_question('Can you describe the mapped location..').set_answers([1001, 1002, 1])
-
 
         # self.categories[700] = Category('700', 'natural_world', 'Natural World?', ICON_URL + 'nature.jpg')\
         #     .set_question('Is the image of an ...').set_answers([701, 702, 703])
@@ -164,16 +159,21 @@ class CategoryManager():
 
         # self.categories[900] = Category('900', 'music', 'Musical Score?', ICON_URL + 'music.jpg')
 
+        self.categories[600] = Category('600', 'map', 'a Map?', ICON_URL + 'map.jpg') \
+            .set_question('Can you describe the mapped location..').set_answers([1001, 1002, 1004])
+
         self.categories[1000] = Category('1000', 'location', 'Location', ICON_URL + 'landscape.jpg') \
-            .set_save(False).set_question('Can you describe the location?').set_answers([1001, 1002, 1])
+            .set_save(False).set_question('Can you describe the location?').set_answers([1001, 1002, 1004])
 
         # self.categories[1200] = Category('1200', 'ethnographic', 'Travel/ Ethnography?', ICON_URL + 'travel.jpg')
         # self.categories[1300] = Category('1300', 'words', 'Handwritten Text?', ICON_URL + 'words.jpg')
 
-        self.categories[1001] = Category('1001', 'Name', 'By Name?', ICON_URL + 'lv-rect-station.png') \
-            .set_save(False).set_action('gazetteer')
-        self.categories[1002] = Category('1002', 'Map', 'On a map?', ICON_URL + 'map.jpg') \
-            .set_save(False).set_action('map')
+        self.categories[1001] = Category('1001', 'Name', 'By Name?', ICON_URL + 'lv-rect-station.png')\
+            .set_action('gazetteer').set_save(False).set_answers([1003, 1004])
+        self.categories[1002] = Category('1002', 'Map', 'On a map?', ICON_URL + 'map.jpg')\
+            .set_save(False).set_action('map').set_answers([1004])
+        self.categories[1003] = Category('1003', 'save', 'Save', ICON_URL + 'tick.png').set_save(False)
+        self.categories[1004] = Category('1004', 'back', 'Back', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[1100] = Category('1100', 'literature', 'Of Literature', ICON_URL + 'lv-rect-station.png') \
             .set_save(False).set_question('Does this Illustrate?').set_answers([1101, 1102, 1103, 406])

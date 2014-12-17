@@ -387,7 +387,7 @@
                 },
                 success: function(data) {
                     var ok = data['success'];
-                    alert("Saved success : " + ok);
+                    {#                    alert("Saved success : " + ok);#}
 
                 },
                 error: function(xhr, textStatus, errorThrown) {
@@ -430,8 +430,8 @@
 
         var mapping_dialog_form = $( "#mapping_dialog_form" ).dialog({
             autoOpen: false,
-            height: window_height - 100,
-            width: window_width - 60,
+            height: window_height - $('#navbar-main').height() - 40,
+            width: window_width - 20,
             modal: true,
             buttons: {
                 "Save Map": function() {
@@ -463,17 +463,24 @@
                 var map;
 
                 function initialize() {
+                    var x =  document.getElementById("x").value;
+                    var y =  document.getElementById("y").value;
+
+                    var ney =  document.getElementById("north_east_y").value;
+                    var nex = document.getElementById("north_east_x").value;
+                    var swy = document.getElementById("south_west_y").value;
+                    var swx = document.getElementById("south_west_x").value;
 
                     var mapOptions = {
-                        center: new google.maps.LatLng({{ y }},{{ x }}),
+                        center: new google.maps.LatLng(y, x),
                         zoom: 6
                     };
                     map = new google.maps.Map(document.getElementById('map-canvas'),
                             mapOptions);
 
                     var bounds = new google.maps.LatLngBounds(
-                            new google.maps.LatLng({{ sw_y }}, {{ sw_x }}),
-                            new google.maps.LatLng({{ ne_y }}, {{ ne_x }})
+                            new google.maps.LatLng(swy, swx),
+                            new google.maps.LatLng(ney, nex)
                     );
 
                     // Define the rectangle and set its editable property to true.
@@ -546,9 +553,12 @@
                         var content = 'Error: Your browser doesn\'t support geolocation.';
                     }
 
+                    var x =  document.getElementById("x").value;
+                    var y =  document.getElementById("y").value;
+
                     var options = {
                         map: map,
-                        position: new google.maps.LatLng({{ y }}, {{ x }}),
+                        position: new google.maps.LatLng(y, x),
                         content: content
                     };
 
@@ -561,8 +571,8 @@
 
             },
             close: function() {
-                {#                form[ 0 ].reset();#}
-                {#                allFields.removeClass( "ui-state-error" );#}
+                populate_categories(0, null, null);
+                $('#category-extra').empty();
             }
         });
 
@@ -620,26 +630,27 @@
             $('#mapping_dialog_form').dialog("open");
         });
 
-        function populate_categories(cat_id, callback) {
+        function populate_categories(cat_id, callback, text) {
             $.ajax({
                 type: "POST",
                 url: "{% url 'image.category' %}",
                 data: {
                     csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
                     category_id: cat_id,
+                    text_entry: text,
                     image_id: {{ image_id }}
                 },
                 success: function(data) {
-
-                    {#                    Get the question for this set of category buttons #}
-                    var question = data['question'];
-                    $('#category-question').html(question);
 
                     {#                    Clear the category container, ready to put new category buttons in #}
                     var category_container = $('#category-container');
                     var masonry_container = category_container.masonry();
                     masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
                     var category_extra_div = $('#category-extra').empty();
+
+                    {#                    Get the question for this set of category buttons #}
+                    var question = data['question'];
+                    $('#category-question').html(question);
 
                     for (var ans in data['answers']) {
 
@@ -758,27 +769,51 @@
                             minLength: 3,
                             select: function( event, ui ) {
 
-                                var map_link_string = map_link
-                                        + '?x=' + ui.item.properties.centroid.split(', ')[0]
-                                        + '&y=' + ui.item.properties.centroid.split(', ')[1]
+                                var x = ui.item.properties.centroid.split(', ')[0];
+                                var y = ui.item.properties.centroid.split(', ')[1];
+                                var nex = ui.item.bbox[0];
+                                var ney = ui.item.bbox[1];
+                                var swx = ui.item.bbox[2];
+                                var swy = ui.item.bbox[3];
 
-                                        + '&nex=' + ui.item.bbox[0]
-                                        + '&ney=' + ui.item.bbox[1]
-                                        + '&swx=' + ui.item.bbox[2]
-                                        + '&swy=' + ui.item.bbox[3];
+                                var map_link_string = map_link
+                                        + '?x=' + x
+                                        + '&y=' + y
+                                        + '&nex=' + nex
+                                        + '&ney=' + ney
+                                        + '&swx=' + swx
+                                        + '&swy=' + swy;
+
+                                if (nex == swx) {
+                                    nex = nex + 0.05;
+                                    swx = swx - 0.05;
+                                }
+                                if (ney == swy) {
+                                    ney = ney + 0.05;
+                                    swy = swy - 0.05;
+                                }
+
+                                document.getElementById("x").value = x;
+                                document.getElementById("y").value = y;
+                                document.getElementById("north_east_y").value = ney;
+                                document.getElementById("north_east_x").value = nex;
+                                document.getElementById("south_west_y").value = swy;
+                                document.getElementById("south_west_x").value = swx;
 
                                 console.log(map_link_string);
 
-                                var win = window.open( map_link_string, '_blank');
-                                if(win){
-                                    //Browser has allowed it to be opened
-                                    win.focus();
-                                }else{
-                                    //Broswer has blocked it
-                                    alert('Please allow popups for this site');
-                                }
+                                {#                                var win = window.open( map_link_string, '_blank');#}
+                                {#                                if(win){#}
+                                {#                                    //Browser has allowed it to be opened#}
+                                {#                                    win.focus();#}
+                                {#                                }else{#}
+                                {#                                    //Broswer has blocked it#}
+                                {#                                    alert('Please allow popups for this site');#}
+                                {#                                }#}
 
-                                populate_categories(cat_id, null);
+                                $('#mapping_dialog_form').data('x', x).data('y', y).data('nex', nex).data('ney', ney).data('swx', swx).data('swy', swy).dialog("open");
+
+                                populate_categories(cat_id, null, null);
                                 category_extra_div.empty();
 
                             }
@@ -798,32 +833,34 @@
                     var cat_id = $(this).data('category_id');
                     var input_box = $('#' + $(this).data('action_name'));
                     console.log(input_box);
-                    populate_categories(cat_id, null);
+                    populate_categories(cat_id, null, input_box.val());
 
                     alert(input_box.val() + ' ' + cat_id);
                 }
 
-                else if ($(this).data('link')) {
-                    var win = window.open($(this).data('link'), '_blank');
-                    if(win){
-                        //Browser has allowed it to be opened
-                        win.focus();
-                    }else{
-                        //Broswer has blocked it
-                        alert('Please allow popups for this site');
-                    }
-                    var cat_id = $(this).data('category_id');
-                    populate_categories(cat_id, null);
+                        {#                else if ($(this).data('link')) {#}
+                        {#                    var win = window.open($(this).data('link'), '_blank');#}
+                        {#                    if(win){#}
+                        {#                        //Browser has allowed it to be opened#}
+                        {#                        win.focus();#}
+                        {#                    }else{#}
+                        {#                        //Broswer has blocked it#}
+                        {#                        alert('Please allow popups for this site');#}
+                        {#                    }#}
+                        {#                    var cat_id = $(this).data('category_id');#}
+                        {#                    populate_categories(cat_id, null, null);#}
+                        {#                }#}
+                else if ($(this).data('action_name') == 'map') {
+                    $('#mapping_dialog_form').dialog("open");
                 }
-
                 else {
                     var cat_id = $(this).data('category_id');
-                    populate_categories(cat_id, null);
+                    populate_categories(cat_id, null, null);
                 }
             });
         }
 
-        populate_categories(0, enable_category_click);
+        populate_categories(0, enable_category_click, null);
 
         $('#add_tag').click(function(){
 
@@ -1650,6 +1687,9 @@
 
 
         <input type="hidden" name="image_id" value="{{ image_id }}" />
+        <input type="hidden" id = 'x' name="x" value="{{ x }}" />
+        <input type="hidden" id = 'y' name="y" value="{{ y }}" />
+
         <input type="hidden" id = 'north_east_x' name="north_east_x" value="{{ ne_x }}" />
         <input type="hidden" id = 'north_east_y' name="north_east_y" value="{{ ne_y }}" />
         <input type="hidden" id = 'south_west_x' name="south_west_x" value="{{ sw_x }}" />

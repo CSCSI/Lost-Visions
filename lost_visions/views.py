@@ -234,7 +234,7 @@ def image(request, image_id):
         linked['name'] = link_image.name
         linked_image_data.append(linked)
 
-    print pprint.pformat(image_info)
+    # print pprint.pformat(image_info)
 
     image_descriptions = models.ImageText.objects.filter(image__flickr_id=image_id)
     image_descs = []
@@ -905,7 +905,9 @@ def user_home(request):
 
 ICON_URL = STATIC_URL + 'media/images/icon/'
 
+
 category_manager = CategoryManager()
+
 
 # OK, this needs explaination
 # category_manager above stores the category "tree"
@@ -917,9 +919,11 @@ def image_category(request):
     # if no cat_id then default to root ID of -1
     cat_id = request.POST.get('category_id', '-1')
 
+    request_user = get_request_user(request)
     try:
         #
         image_id = request.POST.get('image_id', None)
+        image_model = models.Image.objects.get(flickr_id=request.POST['image_id'])
         if image_id is not None:
 
             # TODO this is messy
@@ -934,11 +938,22 @@ def image_category(request):
             if category_name is not None:
                 tag = models.Tag()
                 tag.tag = category_name
-                tag.image = models.Image.objects.get(flickr_id=request.POST['image_id'])
-                tag.user = get_request_user(request)
+                tag.image = image_model
+                tag.user = request_user
                 tag.timestamp = datetime.now(tzlocal())
                 tag.tag_order = 0
                 tag.save()
+
+        text_entry = request.POST.get('text_entry', '')
+        if len(text_entry):
+            tag = models.Tag()
+            tag.tag = text_entry
+            tag.image = image_model
+            tag.user = request_user
+            tag.timestamp = datetime.now(tzlocal())
+            tag.tag_order = 0
+            tag.save()
+
     except Exception as e:
         print e
         pass
