@@ -36,7 +36,7 @@ from lost_visions.categories import CategoryManager
 
 from lost_visions.utils import db_tools
 from lost_visions.utils.ImagePicker import ImagePicker
-from lost_visions.utils.TimeKeeper import TimeKeeper
+# from lost_visions.utils.TimeKeeper import TimeKeeper
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file, get_tested_azure_url
 from lost_visions.utils.flickr import getImageTags
 
@@ -1766,7 +1766,7 @@ def similar_images(request, image_id):
         'machine_matches': get_image_data_from_array(machine_matched_ids, request)
     }
 
-    return HttpResponse(json.dumps({}),
+    return HttpResponse(json.dumps(return_data),
                         content_type="application/json")
 
 
