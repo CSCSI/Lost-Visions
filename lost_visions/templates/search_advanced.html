@@ -180,13 +180,19 @@
         })
     </script>
 
+    <div class="row title-header">
+        <div class="title-logo col-md-12">
+            <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_Search.png" %}" style="min-height: 53px"/>
+        </div>
+    </div>
+
     <form action="{% url 'do_advanced_search' %}" id="advanced-search-form"
           method="get" class="advanced-search-form">{% csrf_token %}
         {{ tag_form.non_field_errors }}
 
 
         <div class="panel-group" style="margin-top: 10px; border: solid #AAA 1px;">
-            <div class="panel-heading">
+            <div class="panel-heading search-heading">
                 <h4 class="panel-title" style="color: #ffffff">
                     Search
                 </h4>

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 
 {% block content %}
 
@@ -29,13 +30,13 @@
                         delete_image: true
                     },
                     success: function(data) {
-{#                        alert("Removed Image");#}
+                        {#                        alert("Removed Image");#}
                         $('#bl_item_' + id).remove();
                         $('.js-masonry').masonry();
 
                     },
                     error: function(xhr, textStatus, errorThrown) {
-{#                        alert("Problem removing Image: "+errorThrown+xhr.status+xhr.responseText);#}
+                        {#                        alert("Problem removing Image: "+errorThrown+xhr.status+xhr.responseText);#}
                     }
                 });
 
@@ -149,7 +150,7 @@
                         },
                         success: function(data) {
                             edit_collection_dialog.dialog( "close" );
-{#                            alert('Renamed collection ' + name + ' to ' + new_collection_name);#}
+                            {#                            alert('Renamed collection ' + name + ' to ' + new_collection_name);#}
                             location.reload();
                         },
                         error: function(xhr, textStatus, errorThrown) {}
@@ -213,7 +214,7 @@
                         },
                         success: function(data) {
                             image_caption_dialog_form.dialog( "close" );
-{#                            alert('Added caption ' + new_caption + ' to image ' + image_id);#}
+                            {#                            alert('Added caption ' + new_caption + ' to image ' + image_id);#}
                             location.reload();
                         },
                         error: function(xhr, textStatus, errorThrown) {}
@@ -242,151 +243,120 @@
 
     </script>
 
-    <div id="share_all_dialogue" title="Share Entire Image Collection">
-        Share this URL : <br>
-        <a id="share_collection_ref" href="{% url 'dl_collection' %}">http://lost-visions.cf.ac.uk{% url 'dl_collection' %}</a>
-        <br><br>
-
-    </div>
-
-    <div class="col-xs-12 col-sm-6">
-        <div class="bs-example table-responsive">
-            <table class="table table-striped table-hover">
-                <tr>
-                    <td>Number of Images you have tagged : </td>
-                    <td>{{ metrics.user_tagged_image_number }}</td>
-                </tr>
-                <tr>
-                    <td>Number of tags you have produced : </td>
-                    <td>{{ metrics.user_tags_number }}</td>
-                </tr>
-            </table>
+    <div class="row title-header">
+        <div class="title-logo col-md-12">
+            <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_MyCollections.png" %}" style="min-height: 53px"/>
         </div>
     </div>
 
-    <div class="col-xs-12 col-sm-6">
-        <div class="bs-example table-responsive">
-            <table class="table table-striped table-hover">
-                <tr>
-                    <td>Total number of tagged images : </td>
-                    <td>{{ metrics.total_tagged_image_number }}</td>
-                </tr>
-                <tr>
-                    <td>Total number of image tags : </td>
-                    <td>{{ metrics.total_tags_number }}</td>
-                </tr>
-            </table>
+    <div class="container cold-md-12">
+        <div class="col-md-6">
+            <div class="user-home-stats">
+                <table class="user-home-table">
+                    <tr>
+                        <th>Number of Images you have tagged : </th>
+                        <td>{{ metrics.user_tagged_image_number }}</td>
+                    </tr>
+                </table>
+                <table class="user-home-table">
+                    <tr>
+                        <th>Number of tags you have produced : </th>
+                        <td>{{ metrics.user_tags_number }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="user-home-stats">
+                <table class="user-home-table">
+                    <tr>
+                        <th>Total number of tagged images : </th>
+                        <td>{{ metrics.total_tagged_image_number }}</td>
+                    </tr>
+                </table>
+                <table class="user-home-table">
+                    <tr>
+                        <th>Total number of image tags : </th>
+                        <td>{{ metrics.total_tags_number }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
-    <hr>
+    <div class="container">
 
-    <h3>Your Saved Images :</h3>
+        <div class="col-md-12">
 
-    {#    <form action="{% url 'user_dl_all' %}" method="get">{% csrf_token %}#}
-    {#        <input type="hidden" name="collection_ids" value="{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}"/>#}
-    {#        <button type="submit" class="btn btn-default">Download All</button>#}
-    {#    </form>#}
-    {#    <hr>#}
+            <hr>
 
-    {#    <table>#}
-    {#        <tr>#}
-    {#            <td>#}
-    {#                <div id="download_all" class="btn btn-default">Download all</div>#}
-    {#            </td>#}
-    {#            <td>#}
-    {#                <div id="share_all" class="btn btn-warning">Share this collection</div>#}
-    {#            </td>#}
-    {#            <td>#}
-    {#                <div style="padding: 10px; margin-top: 10px">#}
-    {#                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'user_dl_all' %}?collection_ids={% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>#}
-    {#                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
-    {#                </div>#}
-    {#            </td>#}
-    {#        </tr>#}
-    {#    </table>#}
-    {#    <hr>#}
-    {#    <div id="result-container" class="js-masonry"#}
-    {#         data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>#}
-    {#        <br>#}
-    {#        {% for saved_image_key, saved_image_data in images.items %}#}
-    {#            <div class="bl_item" id="bl_item_{{ saved_image_key }}" data-id="{{ saved_image_key }}">#}
-    {#                <div class="panel">#}
-    {#                    <a href="{% url 'image' saved_image_key %}" target="_blank">#}
-    {#                        <img src="{{ saved_image_data.url }}" style='width:100%; height:auto;'>#}
-    {#                    </a>#}
-    {#                    <div class="panel-footer">#}
-    {#                        Image ID : {{ saved_image_key }}#}
-    {#                        <br>#}
-    {#                        Page : {{ saved_image_data.page }}#}
-    {#                    </div>#}
-    {#                </div>#}
-    {#            </div>#}
-    {#        {% empty %}#}
-    {#            <div class="bl_item" >#}
-    {#                (You have not yet saved any images)#}
-    {#            </div>#}
-    {#        {% endfor %}#}
-    {#    </div>#}
+            <h3>Your Saved Images :</h3>
 
 
-    {% for k, b in users_collections.items %}
+            {% for k, b in users_collections.items %}
+                <div class="col-md-6">
 
-        <h3>{{ b.collection_name }}</h3>
-        <table>
-            <tr>
-                <td>
-                    <div id="edit_collection_{{ k }}"
-                         data-collection_id="{{ k }}"
-                         data-collection_name="{{ b.collection_name }}"
-                         class="btn btn-default edit_collection">Edit Collection</div>
-                </td>
-                <td>
-                    <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
-                         class="btn btn-default dl_collection">Download Collection</div>
-                </td>
-                <td>
-                    <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
-                </td>
-                <td>
-                    <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
-                </td>
-                <td>
-                    <div style="padding: 10px; margin-top: 10px">
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                    <h3>{{ b.collection_name }}</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="edit_collection_{{ k }}"
+                                     data-collection_id="{{ k }}"
+                                     data-collection_name="{{ b.collection_name }}"
+                                     class="btn btn-default edit_collection">Edit Collection</div>
+                            </td>
+                            <td>
+                                <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
+                                     class="btn btn-default dl_collection">Download Collection</div>
+                            </td>
+                            <td>
+                                <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
+                            </td>
+                            <td>
+                                <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
+                            </td>
+                            <td>
+                                <div style="padding: 10px; margin-top: 10px">
+                                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
+                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <div id="result-container" class="js-masonry"
+                         data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
+                        {% for d in b.images %}
+                            <div class="bl_item" id="bl_item_{{ d.flickr_id }}"
+                                 data-id="{{ d.flickr_id }}" data-collection_id="{{ k }}">
+                                <div class="panel">
+                                    <a href="{% url 'image' d.flickr_id %}" target="_blank">
+                                        <img src="{{ d.url }}" style='width:100%; height:auto;'>
+                                    </a>
+                                    <div class="panel-footer">
+                                        {{ d.caption }}
+                                        {#                            Image ID : {{ d.flickr_id }}#}
+                                        {#                            <br>#}
+                                        {#                            Page : {{ d.page }}#}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                </td>
-            </tr>
-        </table>
-
-
-        <div id="result-container" class="js-masonry"
-             data-masonry-options='{"columnWidth": 100, "itemSelector": ".bl_item" }'>
-            {% for d in b.images %}
-                <div class="bl_item" id="bl_item_{{ d.flickr_id }}"
-                     data-id="{{ d.flickr_id }}" data-collection_id="{{ k }}">
-                    <div class="panel">
-                        <a href="{% url 'image' d.flickr_id %}" target="_blank">
-                            <img src="{{ d.url }}" style='width:100%; height:auto;'>
-                        </a>
-                        <div class="panel-footer">
-                            {{ d.caption }}
-                            {#                            Image ID : {{ d.flickr_id }}#}
-                            {#                            <br>#}
-                            {#                            Page : {{ d.page }}#}
-                        </div>
-                    </div>
+                    <hr>
                 </div>
+            {% empty %}
+                <div class="bl_item" >
+                    (You have not yet saved any images)
+                </div>
+                <hr>
             {% endfor %}
+
         </div>
-        <hr>
-    {% empty %}
-        <div class="bl_item" >
-            (You have not yet saved any images)
-        </div>
-        <hr>
-    {% endfor %}
+
+    </div>
 
     {#    {{ users_collections }}#}
     <div id="edit_collection_dialog_form" title="Edit this collection">
@@ -416,4 +386,11 @@
             </fieldset>
         </form>
     </div>
+
+    <div id="share_all_dialogue" title="Share Entire Image Collection">
+        Share this URL : <br>
+        <a id="share_collection_ref" href="{% url 'dl_collection' %}">http://lost-visions.cf.ac.uk{% url 'dl_collection' %}</a>
+        <br><br>
+    </div>
+
 {% endblock %}

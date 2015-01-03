@@ -201,8 +201,12 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 }
 
 .title-logo {
+    /*margin-top: 30px;*/
+    /*margin-bottom: 30px;*/
+}
+
+.social-panel {
     margin-top: 30px;
-    margin-bottom: 30px;
 }
 
 /*home page*/
@@ -569,6 +573,10 @@ a:hover#save_image.btn.btn-default.save_image  {
     height: 50%;
 }
 
+.ui-accordion-header-icon {
+    background-color: #fff;
+}
+
 #ui-accordion-collapse_cloud-header-0 {
     margin-top: 30px;
     background-color: #d17f04;
@@ -601,7 +609,7 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 #ui-accordion-collapse_search_filter-header-0 {
     /*margin-top: 30px;*/
-    background-color: #d17f04;
+    background-color: #4E84B2;
     color: #ffffff;
 }
 
@@ -611,10 +619,31 @@ a:hover#save_image.btn.btn-default.save_image  {
     color: #ffffff;
 }
 /* Advanced search*/
+#advanced-search-form > div > div.panel-body > div > ul > li > button {
+    background-color: #4E84B2;
+    border-color: #404448;
+}
+
+#advanced-search-form > div > div.panel-body > div > ul > li > button:hover {
+    background-color: #417690;
+    border-color: #404448;
+}
+
+#results_table > tbody > tr > th {
+    border-top: 1px solid #4E84B2;
+}
+
+#results_table > tbody > tr > td {
+    border-top: 1px solid #4E84B2;
+}
 
 .advanced-search-form label {
     display: inline-block;
     width: 150px;
+}
+
+.search-heading {
+    background-color: #4E84B2;
 }
 
 .signup label {
@@ -815,6 +844,28 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 #machine_matched_list li a img:hover{
     border: 2px ridge #d17f04;
+}
+
+
+/*##################################################*/
+.user-home-table{
+    width: 100%;
+margin: 10px;
+}
+
+.user-home-table th {
+    color: #ffffff;
+    background-color: #A365BA;
+    padding: 10px;
+}
+
+.user-home-table td {
+    color: #ffffff;
+    background-color: #A365BA;
+    font-size: x-large;
+    font-weight: bold;
+    text-align: right;
+    padding: 10px 1.5em 10px 10px;
 }
 
 /*##################################################*/
