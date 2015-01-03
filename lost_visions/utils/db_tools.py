@@ -5,7 +5,7 @@ from django.contrib.sites.models import Site
 from django.templatetags.static import static
 # from raven import Client
 import requests
-from lost_visions.utils.TimeKeeper import TimeKeeper
+# from lost_visions.utils.TimeKeeper import TimeKeeper
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 

@@ -296,6 +296,9 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     margin: 5px;
 }
 
+#load_new_image > a {
+    color: #ffffff;
+}
 
 .side-menu {
     /*height: 200px;*/
