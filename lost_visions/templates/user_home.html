@@ -243,87 +243,114 @@
 
     </script>
 
-    <div class="row title-header">
-        <div class="title-logo col-md-12">
-            <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_MyCollections.png" %}" style="min-height: 53px"/>
-        </div>
-    </div>
-
-    <div class="container cold-md-12">
-        <div class="col-md-6">
-            <div class="user-home-stats">
-                <table class="user-home-table">
-                    <tr>
-                        <th>Number of Images you have tagged : </th>
-                        <td>{{ metrics.user_tagged_image_number }}</td>
-                    </tr>
-                </table>
-                <table class="user-home-table">
-                    <tr>
-                        <th>Number of tags you have produced : </th>
-                        <td>{{ metrics.user_tags_number }}</td>
-                    </tr>
-                </table>
+    <div class="container home-content-main">
+        <div class="row">
+            <div class="title-logo col-md-12">
+                <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_MyCollections.png" %}" style="min-height: 53px"/>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="user-home-stats">
-                <table class="user-home-table">
-                    <tr>
-                        <th>Total number of tagged images : </th>
-                        <td>{{ metrics.total_tagged_image_number }}</td>
-                    </tr>
-                </table>
-                <table class="user-home-table">
-                    <tr>
-                        <th>Total number of image tags : </th>
-                        <td>{{ metrics.total_tags_number }}</td>
-                    </tr>
-                </table>
+        <div class="row">
+            <div>
+                <div class="col-md-6">
+                    <div class="user-home-stats">
+                        <table class="user-home-table">
+                            <tr>
+                                <th>Number of Images you have tagged : </th>
+                                <td>{{ metrics.user_tagged_image_number }}</td>
+                            </tr>
+                        </table>
+                        <table class="user-home-table">
+                            <tr>
+                                <th>Number of tags you have produced : </th>
+                                <td>{{ metrics.user_tags_number }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="user-home-stats">
+                        <table class="user-home-table">
+                            <tr>
+                                <th>Total number of tagged images : </th>
+                                <td>{{ metrics.total_tagged_image_number }}</td>
+                            </tr>
+                        </table>
+                        <table class="user-home-table">
+                            <tr>
+                                <th>Total number of image tags : </th>
+                                <td>{{ metrics.total_tags_number }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="container">
-
-        <div class="col-md-12">
-
-            <hr>
-
-            <h3>Your Saved Images :</h3>
-
+        <div class="row">
+            {#            <div class="col-md-12">#}
+            <div class="col-md-12">
+                <h3>Your Saved Images :</h3>
+            </div>
 
             {% for k, b in users_collections.items %}
                 <div class="col-md-6">
 
                     <h3>{{ b.collection_name }}</h3>
-                    <table>
-                        <tr>
-                            <td>
-                                <div id="edit_collection_{{ k }}"
-                                     data-collection_id="{{ k }}"
-                                     data-collection_name="{{ b.collection_name }}"
-                                     class="btn btn-default edit_collection">Edit Collection</div>
-                            </td>
-                            <td>
-                                <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
-                                     class="btn btn-default dl_collection">Download Collection</div>
-                            </td>
-                            <td>
-                                <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
-                            </td>
-                            <td>
-                                <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
-                            </td>
-                            <td>
-                                <div style="padding: 10px; margin-top: 10px">
-                                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
-                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+
+                    <div style="margin-left: 15px">
+                        <div class="row">
+                            <div id="edit_collection_{{ k }}"
+                                 data-collection_id="{{ k }}"
+                                 data-collection_name="{{ b.collection_name }}"
+                                 class="btn btn-default edit_collection">Edit Collection</div>
+
+                            <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
+                                 class="btn btn-default dl_collection">Download Collection</div>
+
+                            <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
+                        </div>
+                        <div class="row">
+                            <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
+
+                            <div class="btn"  style="padding: 10px; margin-top: 10px">
+                                <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
+                                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    {#                    <table>#}
+                    {#                        <tr>#}
+                    {#                            <td>#}
+                    {#                                <div id="edit_collection_{{ k }}"#}
+                    {#                                     data-collection_id="{{ k }}"#}
+                    {#                                     data-collection_name="{{ b.collection_name }}"#}
+                    {#                                     class="btn btn-default edit_collection">Edit Collection</div>#}
+                    {#                            </td>#}
+                    {#                            <td>#}
+                    {#                                <div id="download_collection{{ k }}" data-collection_id="{{ k }}"#}
+                    {#                                     class="btn btn-default dl_collection">Download Collection</div>#}
+                    {#                            </td>#}
+                    {##}
+                    {#                            <td>#}
+                    {#                                <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>#}
+                    {#                            </td>#}
+                    {#                        </tr>#}
+                    {#                        <tr>#}
+                    {#                            <td>#}
+                    {#                                <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>#}
+                    {#                            </td>#}
+                    {#                            <td>#}
+                    {#                                <div style="padding: 10px; margin-top: 10px">#}
+                    {#                                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>#}
+                    {#                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
+                    {#                                </div>#}
+                    {#                            </td>#}
+                    {#                        </tr>#}
+                    {#                    </table>#}
 
 
                     <div id="result-container" class="js-masonry"
@@ -356,8 +383,8 @@
 
         </div>
 
+        {#        </div>#}
     </div>
-
     {#    {{ users_collections }}#}
     <div id="edit_collection_dialog_form" title="Edit this collection">
         <p class="validateTips">Edit collection details</p>

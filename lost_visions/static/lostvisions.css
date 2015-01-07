@@ -851,9 +851,13 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 
 /*##################################################*/
-.user-home-table{
+.user-home-stats {
+    margin-left: -15px;
+}
+
+.user-home-table {
     width: 100%;
-margin: 10px;
+    margin: 10px;
 }
 
 .user-home-table th {
@@ -869,6 +873,18 @@ margin: 10px;
     font-weight: bold;
     text-align: right;
     padding: 10px 1.5em 10px 10px;
+}
+
+#share_all {
+    color: #ffffff;
+    background-color: #A365BA;
+    border-color: #A365BA;
+}
+
+#share_all:hover {
+    color: #ffffff;
+    background-color: #704680;
+    border-color: #A365BA;
 }
 
 /*##################################################*/
