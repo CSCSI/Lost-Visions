@@ -39,6 +39,7 @@ from lost_visions.utils.ImagePicker import ImagePicker
 # from lost_visions.utils.TimeKeeper import TimeKeeper
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file, get_tested_azure_url
 from lost_visions.utils.flickr import getImageTags
+from PIL import Image
 
 @requires_csrf_token
 def home(request):

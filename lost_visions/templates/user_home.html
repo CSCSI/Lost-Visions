@@ -295,62 +295,33 @@
             </div>
 
             {% for k, b in users_collections.items %}
-                <div class="col-md-6">
+                                <div class="col-md-12">
 
-                    <h3>{{ b.collection_name }}</h3>
+                <h3>{{ b.collection_name }}</h3>
 
-                    <div style="margin-left: 15px">
-                        <div class="row">
-                            <div id="edit_collection_{{ k }}"
-                                 data-collection_id="{{ k }}"
-                                 data-collection_name="{{ b.collection_name }}"
-                                 class="btn btn-default edit_collection">Edit Collection</div>
+                <div style="margin-left: 15px">
+                    <div class="row">
+                        <div id="edit_collection_{{ k }}"
+                             data-collection_id="{{ k }}"
+                             data-collection_name="{{ b.collection_name }}"
+                             class="btn btn-default edit_collection">Edit Collection</div>
 
-                            <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
-                                 class="btn btn-default dl_collection">Download Collection</div>
+                        <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
+                             class="btn btn-default dl_collection">Download Collection</div>
 
-                            <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
+                        <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
+                    </div>
+                    <div class="row">
+                        <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
+
+                        <div class="btn"  style="padding: 10px; margin-top: 10px">
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
+                            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
                         </div>
-                        <div class="row">
-                            <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
-
-                            <div class="btn"  style="padding: 10px; margin-top: 10px">
-                                <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
-                                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
-                            </div>
-                        </div>
+                                                </div>
                     </div>
 
-                    {#                    <table>#}
-                    {#                        <tr>#}
-                    {#                            <td>#}
-                    {#                                <div id="edit_collection_{{ k }}"#}
-                    {#                                     data-collection_id="{{ k }}"#}
-                    {#                                     data-collection_name="{{ b.collection_name }}"#}
-                    {#                                     class="btn btn-default edit_collection">Edit Collection</div>#}
-                    {#                            </td>#}
-                    {#                            <td>#}
-                    {#                                <div id="download_collection{{ k }}" data-collection_id="{{ k }}"#}
-                    {#                                     class="btn btn-default dl_collection">Download Collection</div>#}
-                    {#                            </td>#}
-                    {##}
-                    {#                            <td>#}
-                    {#                                <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>#}
-                    {#                            </td>#}
-                    {#                        </tr>#}
-                    {#                        <tr>#}
-                    {#                            <td>#}
-                    {#                                <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>#}
-                    {#                            </td>#}
-                    {#                            <td>#}
-                    {#                                <div style="padding: 10px; margin-top: 10px">#}
-                    {#                                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>#}
-                    {#                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
-                    {#                                </div>#}
-                    {#                            </td>#}
-                    {#                        </tr>#}
-                    {#                    </table>#}
 
 
                     <div id="result-container" class="js-masonry"
