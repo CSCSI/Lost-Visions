@@ -550,7 +550,7 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 .category-answer-image {
     margin: 1px;
-    margin-top: 3px;
+    /*margin-top: 1px;*/
     /*height: 40px;*/
     /*width: 40px;*/
 }

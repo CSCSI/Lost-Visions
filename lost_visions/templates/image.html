@@ -665,13 +665,15 @@
                                     <img src="' + data['answers'][ans].img + '"\
                                          style="width:100%; height: auto;\
                                          margin:0 auto; display:block; border:1px">\
-                                </div>\
-                                <div class="panel-footer">\
+                                </div>';
+                        if (data['answers'][ans].text != ''){
+                            answer +=    '<div class="panel-footer">\
                                     <div class="wrap-text">\
                                         ' + data['answers'][ans].text + '\
                                     </div>\
-                                </div>\
-                            </div>\
+                                </div>';
+                        }
+                        answer += '</div>\
                         </div>';
 
                         var elem = $(answer);
@@ -1306,7 +1308,7 @@
     {#        <div id="output"></div>#}
     {#    </div>#}
 
-{#    <div id="map_btn" class="btn btn-default">MAP STUFF</div>#}
+    {#    <div id="map_btn" class="btn btn-default">MAP STUFF</div>#}
 
     <div data-toggle="tooltip" data-placement="top"
          title="Tags previously added for this Illustration" data-original-title="Image Tags"

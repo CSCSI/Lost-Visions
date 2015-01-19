@@ -6,6 +6,7 @@ from crowdsource.settings import STATIC_URL #RAVEN_CONFIG
 __author__ = 'ubuntu'
 
 ICON_URL = STATIC_URL + 'media/images/icon/'
+NEW_DESIGN_URL = STATIC_URL + 'media/images/new_design/'
 
 
 class Category():
@@ -85,14 +86,16 @@ class CategoryManager():
             .set_answers([100, 200, 303, 400, 500, 600, 800, 1000, 1100]) \
             .set_save(False)
 
-        self.categories[100] = Category('100', 'advert', 'an Advertisement?', ICON_URL + 'advert.jpg') \
+        self.categories[100] = Category('100', 'advert', '',
+                                        NEW_DESIGN_URL + 'TagImages_Categories_Advertisement.png') \
             .set_question('Is there a product/brand name?') \
             .set_answers([101, 102])
         self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png') \
             .set_save(False).set_action('product_name_entry')
         self.categories[102] = Category('102', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
 
-        self.categories[200] = Category('200', 'building', 'a Building?', ICON_URL + 'building.jpg', ).set_answers([203, 204])
+        self.categories[200] = Category('200', 'building', '',
+                                        NEW_DESIGN_URL + 'TagImages_Categories_Building.png').set_answers([203, 204])
         # self.categories[201] = Category('201', 'interior', 'Interior?', ICON_URL + 'interior.jpg')
         # self.categories[202] = Category('202', 'exterior', 'Exterior?', ICON_URL + 'exterior.jpg')
         self.categories[203] = Category('203', 'save', "Save", ICON_URL + 'tick.png') \
@@ -105,7 +108,7 @@ class CategoryManager():
         #     .set_question('Is this a named historical figure?').set_answers([311, 312])
         # self.categories[302] = Category('302', 'group', 'Group?', ICON_URL + 'lv-rect-station.png') \
         #     .set_question('Are there any named historical figures?').set_answers([321, 322])
-        self.categories[303] = Category('303', 'portrait', 'a Portrait?', ICON_URL + 'portrait.jpg').set_answers([304, 305])
+        self.categories[303] = Category('303', 'portrait', '', NEW_DESIGN_URL + 'TagImages_Categories_Portrait.png').set_answers([304, 305])
         self.categories[304] = Category('304', "dont_know", "Don't know", ICON_URL + 'cross.png').set_save(False)
         self.categories[305] = Category('305', 'named_person', "Save", ICON_URL + 'tick.png').set_action('person_name_entry')
 
@@ -119,7 +122,7 @@ class CategoryManager():
 
         # MOTIF
 
-        self.categories[400] = Category('400', 'motif', 'a Decoration?', ICON_URL + 'motif.jpg') \
+        self.categories[400] = Category('400', 'motif', '', NEW_DESIGN_URL + 'TagImages_Categories_Decoration.png') \
             .set_question('Is the decoration a ...').set_answers([401, 403, 404, 405, 406])
         self.categories[401] = Category('401', 'border', 'Decorative Border?', ICON_URL + 'border.jpg')
         # self.categories[402] = Category('402', 'emblem', 'Emblem?', ICON_URL + 'lv-rect-station.png')
@@ -128,7 +131,7 @@ class CategoryManager():
         self.categories[405] = Category('405', 'decorative letter', 'Decorative Letter?', ICON_URL + 'letter.jpg')
         self.categories[406] = Category('406', 'no', 'None of These', ICON_URL + 'cross.png').set_save(False)
 
-        self.categories[500] = Category('500', 'title_page', 'Title Page?', ICON_URL + 'title_page.jpg')
+        self.categories[500] = Category('500', 'title_page', '', NEW_DESIGN_URL + 'TagImages_Categories_TitlePage.png')
 
         # self.categories[700] = Category('700', 'natural_world', 'Natural World?', ICON_URL + 'nature.jpg')\
         #     .set_question('Is the image of an ...').set_answers([701, 702, 703])
@@ -137,7 +140,7 @@ class CategoryManager():
         # self.categories[702] = Category('702', 'vegetable', 'Vegetable?', ICON_URL + 'lv-rect-station.png')
         # self.categories[703] = Category('703', 'mineral', 'Mineral?', ICON_URL + 'lv-rect-station.png')
 
-        self.categories[800] = Category('800', 'scientific_drawing', 'Scientific?', ICON_URL + 'science.jpg') \
+        self.categories[800] = Category('800', 'scientific_drawing', '', NEW_DESIGN_URL + 'TagImages_Categories_Scientific.png') \
             .set_question('Is the Diagram ...') \
             .set_answers([801, 802, 803, 804, 805, 806, 807, 808])
         self.categories[801] = Category('801', 'Geological', 'Geological?', ICON_URL + 'lv-rect-station.png') \
@@ -159,10 +162,10 @@ class CategoryManager():
 
         # self.categories[900] = Category('900', 'music', 'Musical Score?', ICON_URL + 'music.jpg')
 
-        self.categories[600] = Category('600', 'map', 'a Map?', ICON_URL + 'map.jpg') \
+        self.categories[600] = Category('600', 'map', '', NEW_DESIGN_URL + 'TagImages_Categories_Map.png') \
             .set_question('Can you describe the mapped location..').set_answers([1001, 1002, 1004])
 
-        self.categories[1000] = Category('1000', 'location', 'Location', ICON_URL + 'landscape.jpg') \
+        self.categories[1000] = Category('1000', 'location', '', NEW_DESIGN_URL + 'TagImages_Categories_Location.png') \
             .set_save(False).set_question('Can you describe the location?').set_answers([1001, 1002, 1004])
 
         # self.categories[1200] = Category('1200', 'ethnographic', 'Travel/ Ethnography?', ICON_URL + 'travel.jpg')
@@ -175,7 +178,7 @@ class CategoryManager():
         self.categories[1003] = Category('1003', 'save', 'Save', ICON_URL + 'tick.png').set_save(False)
         self.categories[1004] = Category('1004', 'back', 'Back', ICON_URL + 'cross.png').set_save(False)
 
-        self.categories[1100] = Category('1100', 'literature', 'Of Literature', ICON_URL + 'lv-rect-station.png') \
+        self.categories[1100] = Category('1100', 'literature', '', NEW_DESIGN_URL + 'TagImages_Categories_Literature.png') \
             .set_save(False).set_question('Does this Illustrate?').set_answers([1101, 1102, 1103, 406])
         self.categories[1101] = Category('1101', 'poem', 'a Poem', ICON_URL + 'lv-rect-station.png')
         self.categories[1102] = Category('1102', 'play', 'a Play', ICON_URL + 'lv-rect-station.png')
