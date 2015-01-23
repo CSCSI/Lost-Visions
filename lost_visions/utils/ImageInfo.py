@@ -17,13 +17,13 @@ def get_image_data_with_location(id_list):
     trimmed_id_list = []
 
     # q_or_objects = []
-    where = ' where (flickr_id == '
+    where = ' where (flickr_id = '
     for image_id in id_list:
         if image_id:
             # q_or_objects.append(Q(flickr_id=image_id))
             trimmed_id_list.append(image_id)
 
-    where += ' or flickr_id == '.join(['%s' for i in range(0, len(trimmed_id_list))])
+    where += ' or flickr_id = '.join(['%s' for i in range(0, len(trimmed_id_list))])
 
     where += ');'
 
