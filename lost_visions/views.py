@@ -1,6 +1,7 @@
 import ast
 import json
 import os
+import pprint
 from random import randint
 import re
 import urllib
@@ -31,7 +32,7 @@ from bleach import clean
 from lost_visions.categories import CategoryManager
 
 from lost_visions.utils import db_tools
-from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_from_array
+from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_from_array, get_image_data_with_location
 from lost_visions.utils.ImagePicker import ImagePicker
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
@@ -160,8 +161,10 @@ def is_user_tag(tag):
 def image(request, image_id):
 
     image_id = clean(image_id, strip=True)
-    image_model = models.Image.objects.get(flickr_id=image_id)
-    image_info = db_tools.get_image_info(image_model)
+    # image_model = models.Image.objects.get(flickr_id=image_id)
+
+    image_models = get_image_data_with_location([image_id])
+    image_info = db_tools.get_image_info(image_models[0])
 
     if image_info is None:
         image_info = dict()

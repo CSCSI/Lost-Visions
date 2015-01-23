@@ -13,8 +13,7 @@ from lost_visions.utils.db_tools import get_tested_azure_url, get_thumbnail_imag
 __author__ = 'ubuntu'
 
 
-def get_image_data_from_array(id_list, request):
-    tag_results_dict = dict()
+def get_image_data_with_location(id_list):
     trimmed_id_list = []
 
     # q_or_objects = []
@@ -45,6 +44,48 @@ def get_image_data_from_array(id_list, request):
         #     print res.id
         #     print pprint.pformat(res.__dict__)
         #     print '****\n'
+
+        return fast_image_data
+    else:
+        return Exception('No valid IDs given')
+
+
+def get_image_data_from_array(id_list, request):
+    tag_results_dict = dict()
+
+    # trimmed_id_list = []
+    #
+    # # q_or_objects = []
+    # where = ' where (flickr_id = '
+    # for image_id in id_list:
+    #     if image_id:
+    #         # q_or_objects.append(Q(flickr_id=image_id))
+    #         trimmed_id_list.append(image_id)
+    #
+    # where += ' or flickr_id = '.join(['%s' for i in range(0, len(trimmed_id_list))])
+    #
+    # where += ');'
+    #
+    # print 'getting image data from list::' + str(trimmed_id_list)
+    # if len(trimmed_id_list) > 0:
+    #     # image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
+    #     # print image_data.query
+    #     # print pprint.pformat(image_data)
+    #
+    #     query = 'SELECT il."location", im."id", im."views_begun", im."views_completed", im."volume", im."publisher", im."title", im."first_author", im."BL_DLS_ID", im."pubplace", im."book_identifier", im."ARK_id_of_book", im."date", im."flickr_url", im."image_idx", im."page", im."flickr_id", im."flickr_small_source", im."flickr_small_height", im."flickr_small_width", im."flickr_medium_source", im."flickr_medium_height", im."flickr_medium_width", im."flickr_large_source", im."flickr_large_height", im."flickr_large_width", im."flickr_original_source", im."flickr_original_height", im."flickr_original_width"'' \
+    #     from "image" as im left outer join lost_visions_imagelocation as il \
+    #     on im.book_identifier = il.book_id and im.volume = il.volume and im.page = il.page and im.image_idx = il.idx'
+    #     query += where
+    #
+    #     fast_image_data = models.Image.objects.db_manager('default').raw(query, trimmed_id_list)
+    #     # print fast_image_data.query
+    #     # for res in fast_image_data:
+    #     #     print res.id
+    #     #     print pprint.pformat(res.__dict__)
+    #     #     print '****\n'
+
+    try:
+        fast_image_data = get_image_data_with_location(id_list)
 
         for result in fast_image_data:
             try:
@@ -105,6 +146,8 @@ def get_image_data_from_array(id_list, request):
             except Exception as e88:
                 print 'error 3455##' + str(e88)
                 pass
+    except:
+        pass
     return tag_results_dict
 
 
