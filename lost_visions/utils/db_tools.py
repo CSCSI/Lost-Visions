@@ -1,5 +1,4 @@
 import os
-import pprint
 import re
 from django.contrib.sites.models import Site
 from django.templatetags.static import static
@@ -82,15 +81,17 @@ def get_thumbnail_image(image_info):
         if image_path is None:
             raise Exception('Location from DB is None')
 
-        image_path = image_path.replace(recorded_image_root, resized_start)
+        image_path = image_path.replace(recorded_image_root, resized_start) + '.thumb.jpg'
+
+        image_web_path = image_path.replace(resized_start, web_server_start_resized)
 
         if not os.access(image_path, os.R_OK):
-            raise Exception('thumbnail image unavailable in arcca')
+            raise Exception('thumbnail image unavailable in arcca ' + image_path + ' ' + image_web_path)
 
-        image_path = image_path.replace(resized_start, web_server_start_resized)
-        return image_path + '.thumb.jpg'
+        return image_web_path
 
     except Exception as e4:
+        print e4
         raise
 
 

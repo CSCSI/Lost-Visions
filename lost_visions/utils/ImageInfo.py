@@ -39,7 +39,7 @@ def get_image_data_with_location(id_list):
         query += where
 
         fast_image_data = models.Image.objects.db_manager('default').raw(query, trimmed_id_list)
-        print fast_image_data.query
+        # print fast_image_data.query
         # for res in fast_image_data:
         #     print res.id
         #     print pprint.pformat(res.__dict__)
