@@ -17,13 +17,13 @@ def get_image_data_with_location(id_list):
     trimmed_id_list = []
 
     # q_or_objects = []
-    where = ' where (flickr_id = '
+    where = ' where (flickr_id == '
     for image_id in id_list:
         if image_id:
             # q_or_objects.append(Q(flickr_id=image_id))
             trimmed_id_list.append(image_id)
 
-    where += ' or flickr_id = '.join(['%s' for i in range(0, len(trimmed_id_list))])
+    where += ' or flickr_id == '.join(['%s' for i in range(0, len(trimmed_id_list))])
 
     where += ');'
 
@@ -39,7 +39,7 @@ def get_image_data_with_location(id_list):
         query += where
 
         fast_image_data = models.Image.objects.db_manager('default').raw(query, trimmed_id_list)
-        # print fast_image_data.query
+        print fast_image_data.query
         # for res in fast_image_data:
         #     print res.id
         #     print pprint.pformat(res.__dict__)
@@ -107,33 +107,36 @@ def get_image_data_from_array(id_list, request):
                 if settings.use_flickr:
                     tag_result['img_small'] = result.flickr_small_source
                 else:
-                    try:
-                        tag_result['img_small'] = get_thumbnail_image(result)
-                        # tag_result['img_small'] = result.location
-                    except Exception as e:
-                        pass
-                        # print 'error ' + str(e)
+                    if settings.find_arcca_thumbnail:
+                        try:
+                            tag_result['img_small'] = get_thumbnail_image(result)
+                        except Exception as e:
+                            pass
+                            # print 'error ' + str(e)
 
                 # If we don't have a small image url yet, go find one.
                 # print 'img-small : ' + tag_result.get('img_small', 'no img-small')
                 if tag_result.get('img_small', '') == '':
 
-                    try:
-                        arcca_smaller_url = reverse('image.smaller_image', kwargs={
-                            'book_identifier': result.book_identifier,
-                            'volume': result.volume,
-                            'page': result.page,
-                            'image_idx': result.image_idx
-                        })
-                        checking_url = request.build_absolute_uri(arcca_smaller_url)
-                        r = requests.head(checking_url, stream=True)
-                        # print checking_url, r
-                        if r.status_code is requests.codes.ok:
-                            tag_result['img_small'] = arcca_smaller_url
-                        else:
-                            raise
-                    except Exception as e2:
-                        print 'error 1355#' + str(e2)
+                    if settings.shrink_arcca_images:
+                        try:
+                            arcca_smaller_url = reverse('image.smaller_image', kwargs={
+                                'book_identifier': result.book_identifier,
+                                'volume': result.volume,
+                                'page': result.page,
+                                'image_idx': result.image_idx
+                            })
+                            checking_url = request.build_absolute_uri(arcca_smaller_url)
+                            r = requests.head(checking_url, stream=True)
+                            # print checking_url, r
+                            if r.status_code is requests.codes.ok:
+                                tag_result['img_small'] = arcca_smaller_url
+                            else:
+                                raise Exception('arcca request error ' + checking_url)
+                        except:
+                            pass
+
+                    if tag_result.get('img_small', '') == '':
                         tag_result['img_small'] = result.flickr_small_source
 
                 tag_result['date'] = result.date
@@ -158,14 +161,22 @@ def get_image_data_from_array(id_list, request):
 def sanitise_image_info(image_info, request):
     image_info['image_area'] = int(image_info['flickr_original_height']) * int(image_info['flickr_original_width'])
 
-    image_info['azure'] = get_tested_azure_url(image_info)
+    if settings.use_azure:
+        image_info['azure'] = get_tested_azure_url(image_info)
 
-    r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True, timeout=0.3)
-    if r.status_code is not requests.codes.ok:
-        if image_info['azure']:
-            image_info['imageurl'] = image_info['azure']
+        r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True, timeout=0.3)
+        if r.status_code is not requests.codes.ok:
+            if image_info['azure']:
+                image_info['imageurl'] = image_info['azure']
+            else:
+                image_info['imageurl'] = image_info['flickr_url']
         else:
-            image_info['imageurl'] = image_info['flickr_url']
+            image_info['imageurl'] = image_info['arcca_url']
+
     else:
-        image_info['imageurl'] = image_info['arcca_url']
+        if image_info.get('arcca_url', '') == '':
+            image_info['imageurl'] = image_info['flickr_url']
+        else:
+            image_info['imageurl'] = image_info['arcca_url']
+
     return image_info

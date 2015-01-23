@@ -114,6 +114,9 @@ def find_image(image_info):
             # scratch_start = '/scratch/lost-visions/images-found/'
             image_path = image_path.replace(recorded_image_root, bl_image_root)
 
+            if not os.access(image_path, os.R_OK):
+                raise Exception('image unavailable in arcca')
+
             return image_path.replace(bl_image_root, web_server_start)
 
     except Exception as e:
@@ -251,7 +254,11 @@ def get_image_info(image_model):
         # image_for_id = models.Image.objects.get(flickr_id=image_id)
         image_info = get_info_from_image_model(image_model)
 
-        arcca_image = find_image(image_info)
+        try:
+            arcca_image = find_image(image_info)
+        except:
+            arcca_image == None
+
         image_info['arcca_url'] = ''
         if arcca_image:
             image_info['arcca_url'] = arcca_image
