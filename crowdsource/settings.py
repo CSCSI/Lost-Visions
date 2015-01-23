@@ -218,7 +218,7 @@ db_regex_char = "\\b"
 thumbnail_size = 300
 use_flickr = False
 shrink_arcca_images = False
-find_arcca_thumbnail = False
+find_arcca_thumbnail = True
 use_azure = False
 
 try:

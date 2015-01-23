@@ -83,6 +83,10 @@ def get_thumbnail_image(image_info):
             raise Exception('Location from DB is None')
 
         image_path = image_path.replace(recorded_image_root, resized_start)
+
+        if not os.access(image_path, os.R_OK):
+            raise Exception('thumbnail image unavailable in arcca')
+
         image_path = image_path.replace(resized_start, web_server_start_resized)
         return image_path + '.thumb.jpg'
 
