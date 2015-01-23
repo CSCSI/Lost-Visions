@@ -721,7 +721,7 @@
                         }
                     }
                     enable_category_click();
-                    setTimeout("$('#category-container').masonry()", 1500);
+                    setInterval("$('#category-container').masonry()", 500);
                     category_container.masonry();
                 },
                 error: function(xhr, textStatus, errorThrown) {

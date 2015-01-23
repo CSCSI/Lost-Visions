@@ -1,7 +1,6 @@
 import ast
 import json
 import os
-import pprint
 from random import randint
 import re
 import urllib
@@ -20,24 +19,21 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.templatetags.static import static
 from django.views.decorators.csrf import requires_csrf_token
-import operator
 import itertools
 from pygeoip import GeoIP
-import requests
 from crowdsource import settings
 from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size
 from lost_visions import forms, models
-from lost_visions.models import Tag, GeoTag, SearchQuery, User, LostVisionUser, Image, ImageText
+from lost_visions.models import Tag, ImageText
 from ipware.ip import get_ip
 from bleach import clean
 from lost_visions.categories import CategoryManager
 
 from lost_visions.utils import db_tools
+from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_from_array
 from lost_visions.utils.ImagePicker import ImagePicker
-# from lost_visions.utils.TimeKeeper import TimeKeeper
-from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file, get_tested_azure_url
+from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
 from PIL import Image
 
@@ -159,23 +155,6 @@ def is_user_tag(tag):
         return True
 
 
-# I am very sorry for whoever finds this....
-# Basically all URLs cannot be trusted, so we brute force
-# Prefer ARCCA, then azure, then flickr.
-def sanitise_image_info(image_info, request):
-    image_info['image_area'] = int(image_info['flickr_original_height']) * int(image_info['flickr_original_width'])
-
-    image_info['azure'] = get_tested_azure_url(image_info)
-
-    r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True, timeout=0.3)
-    if r.status_code is not requests.codes.ok:
-        if image_info['azure']:
-            image_info['imageurl'] = image_info['azure']
-        else:
-            image_info['imageurl'] = image_info['flickr_url']
-    else:
-        image_info['imageurl'] = image_info['arcca_url']
-    return image_info
 
 @requires_csrf_token
 def image(request, image_id):
@@ -1116,71 +1095,6 @@ def data_autocomplete(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
-def get_image_data_from_array(id_list, request):
-    # tk = TimeKeeper()
-    # tk.time_now('start', print_out=True)
-    tag_results_dict = dict()
-
-    q_or_objects = []
-    for image_id in id_list:
-        if image_id:
-            q_or_objects.append(Q(flickr_id=image_id))
-
-    if len(q_or_objects) > 0:
-        image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
-        # tk.time_now('got db objects', print_out=True)
-        for result in image_data:
-            try:
-                tag_result = dict()
-                tag_result['title'] = result.title
-
-                try:
-                    image_info = db_tools.get_image_info(result)
-                    # tk.time_now(result.flickr_id + '_image info', print_out=True)
-                    image_info = sanitise_image_info(image_info, request)
-                    # tk.time_now(result.flickr_id + '_sanitise', print_out=True)
-                    tag_result['img'] = image_info['imageurl']
-                except Exception as e:
-                    # tk.time_now(e, print_out=True)
-                    tag_result['img'] = result.flickr_small_source
-
-                if tag_result['img'] is None:
-                    tag_result['img'] = result.flickr_small_source
-
-                if settings.use_flickr:
-                    tag_result['img_small'] = result.flickr_small_source
-                else:
-                    try:
-                        arcca_smaller_url = reverse('image.smaller_image', kwargs={
-                            'book_identifier': result.book_identifier,
-                            'volume': result.volume,
-                            'page': result.page,
-                            'image_idx': result.image_idx
-                        })
-                        checking_url = request.build_absolute_uri(arcca_smaller_url)
-                        r = requests.head(checking_url, stream=True)
-                        # print checking_url, r
-                        # tk.time_now(result.flickr_id + '_url_check', print_out=True)
-                        if r.status_code is requests.codes.ok:
-                            tag_result['img_small'] = arcca_smaller_url
-                        else:
-                            raise
-                    except:
-                        tag_result['img_small'] = result.flickr_small_source
-
-                tag_result['date'] = result.date
-                tag_result['page'] = result.page.lstrip('0')
-                tag_result['book_id'] = result.book_identifier
-                tag_result['author'] = result.first_author
-                tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
-
-                tag_results_dict[result.flickr_id] = tag_result
-            except Exception as e:
-                print e
-                pass
-            # tk.time_now(result.flickr_id, print_out=True)
-    # tk.time_now('returning', print_out=True)
-    return tag_results_dict
 
 
 def get_resized_image(request, book_identifier, volume, page, image_idx):
@@ -1193,6 +1107,8 @@ def get_resized_image(request, book_identifier, volume, page, image_idx):
                                                              page=page,
                                                              idx=image_idx)
         if len(image_location):
+
+
             img = Image.open(image_location[0].location)
             print image_location[0].location
             # img.verify()

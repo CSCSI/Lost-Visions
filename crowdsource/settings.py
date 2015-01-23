@@ -205,8 +205,12 @@ bl_folder = ''
 db_json_location = ''
 db_cleaned_json_location = ''
 
-bl_image_root = '/scratch/lost-visions/images-found/'
+recorded_image_root = '/scratch/lost-visions/images-found/'
+web_server_start_resized = '/static/media/images/resized/'
+web_server_start = '/static/media/images/scans/'
 
+bl_image_root = '/lost-visions/images-found/'
+resized_start = '/lost-visions/resized/lost-visions/images-found/'
 
 #\b for sqlite \y for postgres
 db_regex_char = "\\b"

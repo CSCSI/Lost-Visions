@@ -11,7 +11,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
 import json
 from django.db.models import Q
-from crowdsource.settings import BASE_DIR, STATIC_URL, bl_image_root
+from crowdsource.settings import BASE_DIR, STATIC_URL, bl_image_root, web_server_start, recorded_image_root, \
+    resized_start, web_server_start_resized
 from random import randint
 from django.core import serializers
 from lost_visions import models, wordnet
@@ -58,34 +59,65 @@ def get_info_from_image_model(image_model):
 
     if image_info['flickr_url'] == '':
         image_info['flickr_url'] = image_model.flickr_original_source
-
+    image_info['location'] = image_model.location
     return image_info
 
 
-def find_image(image_info):
-
-    book_id = image_info['book_identifier']
-    volume = image_info['volume']
-    page = image_info['page']
-    index = image_info['image_idx']
+def get_thumbnail_image(image_info):
+    # book_id = image_info['book_identifier']
+    # volume = image_info['volume']
+    # page = image_info['page']
+    # index = image_info['image_idx']
 
     try:
         # found_image = models.Image.objects.get(book_identifier=book_id, volume=volume, page=page, image_idx=index)
         # image_location = models.ImageLocation.objects.get(image=found_image)
 
-        image_location = models.ImageLocation.objects.filter(book_id=book_id,
-                                                             volume=volume,
-                                                             page=page,
-                                                             idx=index)
+        # image_location = models.ImageLocation.objects.filter(book_id=book_id,
+        #                                                      volume=volume,
+        #                                                      page=page,
+        #                                                      idx=index)
 
-        image_path = image_location[0].location
+        image_path = image_info.location
+        if image_path is None:
+            raise Exception('Location from DB is None')
 
-        # scratch_start = '/scratch/lost-visions/images-found/'
-        web_server_start = '/static/media/images/scans/'
+        image_path = image_path.replace(recorded_image_root, resized_start)
+        image_path = image_path.replace(resized_start, web_server_start_resized)
+        return image_path + '.thumb.jpg'
 
-        return image_path.replace(bl_image_root, web_server_start)
+    except Exception as e4:
+        raise
+
+
+def find_image(image_info):
+    # book_id = image_info['book_identifier']
+    # volume = image_info['volume']
+    # page = image_info['page']
+    # index = image_info['image_idx']
+
+    try:
+        # found_image = models.Image.objects.get(book_identifier=book_id, volume=volume, page=page, image_idx=index)
+        # image_location = models.ImageLocation.objects.get(image=found_image)
+
+        # image_location = models.ImageLocation.objects.filter(book_id=book_id,
+        #                                                      volume=volume,
+        #                                                      page=page,
+        #                                                      idx=index)
+        #
+        # image_path = image_location[0].location
+
+        image_path = image_info['location']
+        if image_path is None:
+            raise Exception('Location from DB is None')
+        else:
+            # scratch_start = '/scratch/lost-visions/images-found/'
+            image_path = image_path.replace(recorded_image_root, bl_image_root)
+
+            return image_path.replace(bl_image_root, web_server_start)
 
     except Exception as e:
+        # print 'e3423232' + str(e)
         pass
 
     try:
@@ -223,11 +255,11 @@ def get_image_info(image_model):
         image_info['arcca_url'] = ''
         if arcca_image:
             image_info['arcca_url'] = arcca_image
-
         image_model.views_begun += 1
         image_model.save()
         return image_info
-    except:
+    except Exception as e84:
+        print 'e84 ' + str(e84)
         return None
 
 
