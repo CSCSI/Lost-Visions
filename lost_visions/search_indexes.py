@@ -13,6 +13,8 @@ class ImageIndex(indexes.SearchIndex, indexes.Indexable):
     publisher = indexes.CharField(model_attr='publisher')
     date = indexes.CharField(model_attr='date')
 
+    flickr_id = indexes.CharField(model_attr='flickr_id')
+
     def get_model(self):
         return Image
 
@@ -25,6 +27,7 @@ class ImageIndex(indexes.SearchIndex, indexes.Indexable):
 class TagIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     tag = indexes.CharField(model_attr='tag')
+    flickr_id = indexes.CharField(model_attr='image__flickr_id')
 
     def get_model(self):
         return Tag
@@ -38,6 +41,7 @@ class TextIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     caption = indexes.CharField(model_attr='caption')
     description = indexes.CharField(model_attr='description')
+    flickr_id = indexes.CharField(model_attr='image__flickr_id')
 
     def get_model(self):
         return ImageText

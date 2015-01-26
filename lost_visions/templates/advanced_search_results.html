@@ -211,6 +211,24 @@
         });
     }
 
+        function search_ids(ids){
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'get_image_data' %}",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                image_ids: ids
+            },
+            success: function(data) {
+
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert("Problem requesting Image: "+errorThrown+xhr.status+xhr.responseText);
+            }
+        });
+    }
+
     $(document).ready(function(){
 
         var view_toggle_btn = $('#view_toggle');

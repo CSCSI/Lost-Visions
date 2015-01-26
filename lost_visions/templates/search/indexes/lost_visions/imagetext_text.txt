@@ -1,2 +1,3 @@
 {{ object.caption }}
 {{ object.description }}
+{{ object.image.flickr_id }}

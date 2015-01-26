@@ -34,6 +34,7 @@ from lost_visions.categories import CategoryManager
 from lost_visions.utils import db_tools
 from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_from_array, get_image_data_with_location
 from lost_visions.utils.ImagePicker import ImagePicker
+from lost_visions.utils.TimeKeeper import TimeKeeper
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
 from PIL import Image
@@ -954,6 +955,9 @@ def search_advanced(request):
 
 def do_advanced_search(request):
 
+    tk = TimeKeeper()
+    tk.time_now('start')
+
     keywords = request.GET.get('keyword', '')
     number_of_results = request.GET.get('num_results', '')
 
@@ -976,16 +980,26 @@ def do_advanced_search(request):
     alternative_search = request.GET.get('alternative_search', '')
     too_many = False
 
+    tk.time_now('start search')
+
     if alternative_search is '':
         all_results = im.advanced_search(request)
+
+        tk.time_now('search done, begin sort')
+
         if all_results.count() > 500:
             too_many = True
 
+        tk.time_now('counted results')
+
         if not too_many:
+            tk.time_now('begin id join')
             for result in all_results:
                 total_results += 1
                 all_image_ids += result + ','
-            readable_query += '(' + str(len(all_results)) + ' found)'
+            readable_query += '(over ' + str(len(all_results)) + ' found)'
+
+            tk.time_now('finish id join')
         else:
             readable_query += 'Please add more detail to the query. '
 
@@ -994,35 +1008,49 @@ def do_advanced_search(request):
                 all_image_ids += result + ','
             readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
 
+        tk.time_now('done search')
     else:
-        all_results_haystack = im.advanced_haystack_search(request.GET)
-        all_results = [x.object for x in all_results_haystack]
+        all_results_haystack = im.advanced_haystack_search(request.GET).load_all()
 
-        for o in all_results[:5000]:
-            if type(o) == Image:
-                # print 'image\n'
-                total_results += 1
-                all_image_ids += o.flickr_id + ','
+        tk.time_now('search done, begin sort')
 
-            if type(o) == Tag:
-                # print 'tag\n'
-                total_results += 1
-                all_image_ids += o.image.flickr_id + ','
+        for x in all_results_haystack[:500]:
+            # print x.flickr_id
+            print pprint.pformat(x.__dict__.get('flickr_id'))
+            all_image_ids += x.flickr_id + ','
 
-            if type(o) == ImageText:
-                # print 'text\n'
-                total_results += 1
-                all_image_ids += o.image.flickr_id + ','
+        # all_results = [x.object for x in all_results_haystack]
 
-        if len(all_results) > 5000:
+        tk.time_now('pulled search objects')
+
+        result_count = all_results_haystack.count()
+
+        # for o in all_results[:5000]:
+            # if type(o) == Image:
+            #     # print 'image\n'
+            #     total_results += 1
+            #     all_image_ids += o.flickr_id + ','
+            #
+            # if type(o) == Tag:
+            #     # print 'tag\n'
+            #     total_results += 1
+            #     all_image_ids += o.image.flickr_id + ','
+            #
+            # if type(o) == ImageText:
+            #     # print 'text\n'
+            #     total_results += 1
+            #     all_image_ids += o.image.flickr_id + ','
+
+        tk.time_now('pulled image_ids')
+
+        if result_count > 5000:
 #            too_many = True
             readable_query += 'Please add more detail to the query. '
-            readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
+            readable_query += 'Only returning first 5000 images of (' + str(result_count) + ' found)'
         else:
-            readable_query += '(' + str(len(all_results)) + ' found)'
+            readable_query += '(' + str(result_count) + ' found)'
 
-
-
+        tk.time_now('done alt search')
     results['advanced'] = []
 
     response_data = {'results': results, 'size': total_results, 'search_string': keywords}
@@ -1033,6 +1061,7 @@ def do_advanced_search(request):
         for model in collection_models:
             user_collections.append({'name': model.name,
                                      'id': str(model.id)})
+    tk.time_now('got collections')
 
     return render(request, 'advanced_search_results.html',
                   {'results': response_data,

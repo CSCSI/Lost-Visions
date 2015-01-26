@@ -91,7 +91,7 @@ def get_thumbnail_image(image_info):
         return image_web_path
 
     except Exception as e4:
-        print e4
+        # print e4
         raise
 
 
