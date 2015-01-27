@@ -1029,7 +1029,8 @@ def do_advanced_search(request):
             to_join.append(x.flickr_id)
 
         # all_results = [x.object for x in all_results_haystack]
-        all_image_ids = ','.join(to_join)
+        if len(to_join) > 0:
+            all_image_ids = ','.join(to_join)
 
         # tk.time_now('pulled search objects')
 

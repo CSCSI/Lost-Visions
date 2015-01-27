@@ -216,10 +216,7 @@
         $.ajax({
             type: "POST",
             url: "{% url 'get_image_data' %}",
-            data: {
-                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                image_ids: ids
-            },
+            data: $('#advanced-search-form').serializeArray(),
             success: function(data) {
 
             },
@@ -310,6 +307,9 @@
             }
         });
 
+{#        console.log($('#advanced-search-form').serializeArray());#}
+
+{#        search_ids([])#}
     });
     $(window).load(function(){
 
