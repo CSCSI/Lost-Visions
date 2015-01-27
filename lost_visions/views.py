@@ -1026,7 +1026,7 @@ def do_advanced_search(request):
         # print type(all_results_haystack)
 
         to_join = []
-        for x in all_results_haystack: #[:500]:
+        for x in all_results_haystack[:500]:
             # print x.flickr_id
             # print pprint.pformat(x.__dict__.get('flickr_id'))
             # all_image_ids += x.flickr_id + ','
