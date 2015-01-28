@@ -32,6 +32,9 @@ class TagIndex(indexes.SearchIndex, indexes.Indexable):
     def get_model(self):
         return Tag
 
+    def get_updated_field(self):
+        return "timestamp"
+
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.filter(timestamp__lte=datetime.datetime.now())
@@ -45,6 +48,9 @@ class TextIndex(indexes.SearchIndex, indexes.Indexable):
 
     def get_model(self):
         return ImageText
+
+    def get_updated_field(self):
+        return "timestamp"
 
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
