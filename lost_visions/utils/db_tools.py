@@ -1,15 +1,7 @@
 import os
-import re
-from django.contrib.sites.models import Site
-from django.templatetags.static import static
-# from raven import Client
-import requests
-# from lost_visions.utils.TimeKeeper import TimeKeeper
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
-
+import requests
 import json
-from django.db.models import Q
 from crowdsource.settings import BASE_DIR, STATIC_URL, bl_image_root, web_server_start, recorded_image_root, \
     resized_start, web_server_start_resized
 from random import randint

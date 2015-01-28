@@ -4,6 +4,7 @@ import logging
 import os
 from random import randint
 import re
+from types import NoneType
 import urllib
 import urllib2
 import zipfile
@@ -1021,12 +1022,16 @@ def do_advanced_search(request):
 
         # tk.time_now('search done, begin sort')
 
+        # print all_results_haystack
+        # print type(all_results_haystack)
+
         to_join = []
         for x in all_results_haystack[:500]:
             # print x.flickr_id
             # print pprint.pformat(x.__dict__.get('flickr_id'))
             # all_image_ids += x.flickr_id + ','
-            to_join.append(x.flickr_id)
+            if type(x.flickr_id) is not NoneType:
+                to_join.append(x.flickr_id)
 
         # all_results = [x.object for x in all_results_haystack]
         if len(to_join) > 0:

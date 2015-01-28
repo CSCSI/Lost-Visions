@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 import errno
 from nltk import corpus
 from BeautifulSoup import BeautifulSoup
