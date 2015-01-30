@@ -522,7 +522,7 @@ a:hover#save_image.btn.btn-default.save_image  {
 
 .category-answer {
     /*height: 40px;*/
-    width: 50%;
+    width: 33%;
     margin-bottom: 10px;
     /*margin-right: 10px;*/
     /*position: absolute;*/
@@ -537,7 +537,7 @@ a:hover#save_image.btn.btn-default.save_image  {
 }
 
 .category-answer.wide {
-    width: 50%;
+    width: 33%;
 }
 
 
