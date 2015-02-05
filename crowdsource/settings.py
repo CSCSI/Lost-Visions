@@ -147,6 +147,8 @@ DATABASES = {
     #  }
 }
 
+# DATABASE_ROUTERS = ['lost_visions.MarioRouter.MarioRouter']
+
 # POSTGIS_VERSION = ( 1.5, )
 
 # RAVEN_CONFIG = {

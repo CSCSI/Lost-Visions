@@ -110,6 +110,7 @@
     }
 
     function add_tag_button(tag_string, synset) {
+        console.log(tag_string + ' : ' + synset);
         var id = 'id_' + tag_string;
 
         var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
@@ -164,34 +165,40 @@
             {#            document.getElementById("tag_info").value#}
             $('#final_tags').empty();
 
-            var user_tags = JSON.parse(document.getElementById("tag_info").value);
-            var just_tags = [];
-            for (tag in user_tags) {
-                {#                        console.log(user_tags[tag]);#}
-                {#                        console.log(user_tags[tag].tag);#}
-{#                console.log(user_tags[tag]['tag']);#}
-                just_tags.push(user_tags[tag]['tag']);
+            get_alt_tags(function(data) {
+                document.getElementById("tag_info").value = JSON.stringify(data);
 
-                var tag_string = user_tags[tag]['tag'];
-                var id = 'id_' + tag_string;
 
-                var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
-                        + 'id="' + id +
-                        '" name="' + tag_string +'">'  + tag_string + '</div>';
+                var user_tags = JSON.parse(document.getElementById("tag_info").value);
+                var just_tags = [];
+                for (tag in user_tags) {
 
-                var button_toggle_component = $($button_toggle).click(function(){
-                    $(this).remove();
-                }).tooltip();
+                    just_tags.push(user_tags[tag]['tag']);
 
-                $("#final_tags").append(button_toggle_component);
+                    var tag_string = user_tags[tag]['tag'];
+                    var id = 'id_' + tag_string;
 
-            }
+                    var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                            + 'id="' + id +
+                            '" name="' + tag_string +'">'  + tag_string + '</div>';
 
-            alert('submit pressed ' + just_tags);
+                    var button_toggle_component = $($button_toggle).click(function(){
+                        $(this).remove();
+                    }).tooltip();
 
-            $('#finish_tagging_dialog_form').dialog("open");
+                    $("#final_tags").append(button_toggle_component);
 
-{#            $('#image-taggin-form').submit(event);#}
+                }
+
+                alert('submit pressed ' + just_tags);
+
+                $('#finish_tagging_dialog_form').dialog("open");
+
+                {#            $('#image-taggin-form').submit(event);#}
+            });
+
+
+
 
         });
 
@@ -431,7 +438,7 @@
                     var e = document.getElementById("user_collection_select");
                     var collection_id = e.options[e.selectedIndex].value;
 
-{#                    console.log({{ image_id }} + ' ' + collection_id);#}
+                    {#                    console.log({{ image_id }} + ' ' + collection_id);#}
 
                     if (collection_id == "NEW COLLECTION"){
                         save_image_dialog_form.dialog("close");
@@ -459,7 +466,27 @@
         });
 
 
+        function get_alt_tags(callback) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'image.alt_tags' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    tag_info: document.getElementById("tag_info").value
+                },
+                success: function(data) {
+                    var ok = data['success'];
+                    console.log(data);
+                    callback(data);
+                    {#                    alert("Saved success : " + ok);#}
 
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                    callback(null);
+                }
+            });
+        }
 
 
 
@@ -726,6 +753,7 @@
 
                         var answer = '<div class="' + classname + '" ' +
                                 'data-category_name="' + data['answers'][ans].name + '" ' +
+                                'data-category_synset="' + data['answers'][ans].synset + '" ' +
                                 'data-category_save="' + data['answers'][ans].save + '" ' +
                                 'data-category_id="' + data['answers'][ans].id + '"> \
                             <div class="panel">\
@@ -810,7 +838,7 @@
                     var cat_id = $(this).data('category_id');
                     var map_link = $(this).data('link');
 
-{#                    console.log('clicked a request to show gazetteer');#}
+                    {#                    console.log('clicked a request to show gazetteer');#}
 
                     var places_autocomplete = '<label class="control-label" for="places">Location: </label> \
                     <input class="form-control" id="places">'
@@ -927,9 +955,9 @@
                     $('#mapping_dialog_form').dialog("open");
                 }
                 else {
-{#                    console.log($(this).data('category_save'));#}
+                    {#                    console.log($(this).data('category_save'));#}
                     if ($(this).data('category_save') == true) {
-                        add_tag_button($(this).data('category_name'), '');
+                        add_tag_button($(this).data('category_name'), $(this).data('category_synset'));
                     }
                     var cat_id = $(this).data('category_id');
                     populate_categories(cat_id, null, null);

@@ -2,6 +2,7 @@ import ast
 import json
 import logging
 import os
+import pprint
 from random import randint
 import re
 from types import NoneType
@@ -38,6 +39,7 @@ from lost_visions.utils.ImagePicker import ImagePicker
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
 from PIL import Image
+from lost_visions import mario_models
 
 @requires_csrf_token
 def home(request):
@@ -46,6 +48,52 @@ def home(request):
     #     print request.user.username
     return render(request, 'home.html',
                   context_instance=RequestContext(request))
+
+@requires_csrf_token
+def get_alternative_tags(request):
+    tag_info = request.POST['tag_info']
+    tags_xy = ast.literal_eval(tag_info)
+
+    print tags_xy
+    response_data = []
+
+    for user_tag in tags_xy:
+        try:
+            alternative_words = db_tools.list_wordnet_links(user_tag['synset'])[::-1]
+            print alternative_words
+            alternative_words.append([user_tag['tag'], [0, 0]])
+
+            for index, weighted_word in enumerate(alternative_words):
+                # tag = models.Tag()
+                tag = {}
+                word = weighted_word[0]
+                print word
+                tag['tag'] = clean(word, strip=True)
+                tag['x_percent'] = clean(str(user_tag['x_percent']), strip=True)
+                tag['y_percent'] = clean(str(user_tag['y_percent']), strip=True)
+                # try:
+                # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
+                # date_object = parser.parse()
+                tag['timestamp'] = str(user_tag['datetime'])
+                # except Exception as e3:
+                #     print e3
+                #     pass
+
+                tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
+
+                print tag_order
+
+                tag_hyp_dist = int(weighted_word[1][0]) + 1
+                tag_syn_val = int(weighted_word[1][1]) + 1
+                tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+
+                print tag_order
+                tag['tag_order'] = tag_order
+                response_data.append(tag)
+        except Exception as e2:
+            print e2
+            pass
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 @requires_csrf_token
@@ -1776,3 +1824,54 @@ def image_data(request, image_id):
 
 def education(request):
     return render_to_response('education.html')
+
+
+def mario_find(request, flickr_id):
+
+    print flickr_id
+
+    # query = "SELECT wordid, lemma, definition, synsetid, pos, sensenum FROM words LEFT JOIN senses s USING (wordid) " \
+    #         "LEFT JOIN synsets USING (synsetid) where lemma like %s " \
+    #         "order by length(lemma), sensenum COLLATE NOCASE ASC limit %s"
+
+    results = mario_models.Profiles.objects.filter(fileid__contains=flickr_id)
+
+    # .objects.db_manager('wordnet').raw(query, [searchword + '%', limit])
+
+
+    # found_ids = models.Profiles()
+
+    stuff = {}
+
+    if len(results) > 0:
+        for result in results:
+            print pprint.pformat(result.__dict__)
+
+            # normalised = mario_models.Normalized.objects.filter(profileid=result.id)
+            normalised = mario_models.Normalized.objects.filter(profileid=result)
+
+            print normalised.query
+
+            stuff[result.pk] = json.loads(serializers.serialize('json', normalised))
+
+            tags_2_profiles =  result.tag2profile_set.all()
+
+            # print tags_2_profiles
+            stuff['tags'] = []
+
+            for tag_relation in tags_2_profiles:
+                for tag in mario_models.Tags.objects.filter(tagid=tag_relation.tagid):
+                    stuff['tags'].append(tag.tag)
+
+            # tag2profile_ids = mario_models.Tag2Profile.objects.filter(profileid=result)
+            #
+            # print tag2profile_ids.__dict__
+            #
+            # for tag_id in tag2profile_ids:
+            #     print tag_id
+            #     tag = mario_models.Tags.objects.filter(tagid=tag_id.tagid)
+            #
+            #     stuff['tags'].append(tag)
+
+    # return_data = serializers.serialize('json', results)
+    return HttpResponse(json.dumps(stuff, indent=4), content_type="application/json")

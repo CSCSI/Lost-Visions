@@ -77,6 +77,7 @@ def alt_tags(tag_text, image, user):
             tag_hyp_dist = int(weighted_word[1][0]) + 1
             tag_syn_val = int(weighted_word[1][1]) + 1
             tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+            print tag_order
 
             write_tag(word, image, user, tag_order=tag_order)
 

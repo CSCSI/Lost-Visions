@@ -14,6 +14,8 @@ urlpatterns = patterns('',
                        url(r'^education', 'lost_visions.views.education', name='education'),
                        url(r'^stats', 'lost_visions.views.stats', name='stats'),
 
+                       url(r'^mario/(?P<flickr_id>\d+)', 'lost_visions.views.mario_find', name='mario'),
+
                        url(r'^login', 'lost_visions.views.login', name='login'),
                        url(r'^do_login', 'lost_visions.views.do_login', name='login.do_login'),
 
@@ -56,6 +58,8 @@ urlpatterns = patterns('',
 
 
                        url(r'^image/tags', 'lost_visions.views.image_tags', name='image.tags'),
+                       url(r'^image/alt_tags', 'lost_visions.views.get_alternative_tags', name='image.alt_tags'),
+
                        url(r'^image/category', 'lost_visions.views.image_category', name='image.category'),
                        url(r'^image/random', 'lost_visions.views.random_image', name='image.random'),
                        url(r'^image/grabflickr', 'lost_visions.views.grab_flickr', name='image.grab_flickr'),

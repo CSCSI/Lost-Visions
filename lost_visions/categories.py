@@ -44,6 +44,7 @@ class Category():
         self.answer_ids = []
         self.should_save = True
         self.action_name = ''
+        self.synset = ''
 
     def set_question(self, text):
         self.question = text
@@ -59,6 +60,10 @@ class Category():
 
     def set_action(self, action_name):
         self.action_name = action_name
+        return self
+
+    def set_synset(self, synset):
+        self.synset = synset
         return self
 
 
@@ -113,7 +118,7 @@ class CategoryManager():
 
         self.categories[100] = Category('100', 'advert', '', ADVERT_BUTTON_IMAGE_URL) \
             .set_question('Is there a product/brand name?') \
-            .set_answers([101, 102])
+            .set_answers([101, 102]).set_synset('advert.n.1')
         self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png') \
             .set_save(False).set_action('product_name_entry')
         self.categories[102] = Category('102', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
@@ -145,7 +150,7 @@ class CategoryManager():
 
         # MOTIF
 
-        self.categories[400] = Category('400', 'motif', '', DECORATION_BUTTON_IMAGE_URL) \
+        self.categories[400] = Category('400', 'decoration', '', DECORATION_BUTTON_IMAGE_URL) \
             .set_question('Is the decoration a ...').set_answers([401, 403, 404, 405, 406])
         self.categories[401] = Category('401', 'border', 'Decorative Border?', ICON_URL + 'border.jpg')
         # self.categories[402] = Category('402', 'emblem', 'Emblem?', ICON_URL + 'lv-rect-station.png')
@@ -237,6 +242,7 @@ class CategoryManager():
 
                     answer_categories.append({'name': child_category.name,
                                               'save': child_category.should_save,
+                                              'synset': child_category.synset,
                                               'id': child_category.category_id,
                                               'text': child_category.text,
                                               'img': child_category.img})
@@ -245,6 +251,7 @@ class CategoryManager():
                     actions.append({'name': child_category.name,
                                     'id': child_category.category_id,
                                     'save': child_category.should_save,
+                                    'synset': child_category.synset,
                                     'text': child_category.text,
                                     'img': child_category.img,
                                     'link': action.link,

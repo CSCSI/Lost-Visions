@@ -4,7 +4,8 @@ from django.contrib import admin
 from django.contrib import admin
 from django.db.models import get_models, get_app
 from lost_visions.models import Tag, GeoTag, SavedImages, ImageText, LinkedImage, ImageMapping, SavedImageCaption
-
+from lost_visions.mario_models import *
+# from lost_visions.wordnet import *
 
 class ImageSanityAdmin(admin.ModelAdmin):
     raw_id_fields = ("image",)
