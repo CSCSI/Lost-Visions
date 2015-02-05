@@ -207,7 +207,6 @@ class CategoryManager():
         self.categories[1102] = Category('1102', 'play', 'a Play', ICON_URL + 'lv-rect-station.png')
         self.categories[1103] = Category('1103', 'novel', 'a Novel', ICON_URL + 'lv-rect-station.png')
 
-
     def get_tag_for_category_id(self, category_id):
         try:
             category = self.categories.get(int(category_id), 0)
@@ -237,6 +236,7 @@ class CategoryManager():
                 if child_category.action_name is '':
 
                     answer_categories.append({'name': child_category.name,
+                                              'save': child_category.should_save,
                                               'id': child_category.category_id,
                                               'text': child_category.text,
                                               'img': child_category.img})
@@ -244,6 +244,7 @@ class CategoryManager():
                     action = self.actions.get(child_category.action_name)
                     actions.append({'name': child_category.name,
                                     'id': child_category.category_id,
+                                    'save': child_category.should_save,
                                     'text': child_category.text,
                                     'img': child_category.img,
                                     'link': action.link,

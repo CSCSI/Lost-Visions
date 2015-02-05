@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <h1>
+    Education uses of the Illustration Archive
+    </h1>
+
+    <p>
+        <a target="_blank" href="{% static 'media/documents/LostVisionsWorkshop.docx.pdf' %}">Worksheet</a>
+    </p>
+    <p>
+        With many thanks to:
+    </p>
+    <table>
+        <tr>
+            <td style="padding: 10px">
+                <p><img src="{% static 'media/documents/ljmu/ljmu-content-page-logo-2013-ready.png' %}"></p>
+
+            </td>
+            <td style="padding: 10px">
+                <p>Clare Horrocks BA (Hons), MA, CT VCM, PHD<br>
+                    Senior Lecturer, Humanities and Social Science<br>
+                    Liverpool John Moores University<br>
+                </p>
+            </td>
+        </tr>
+    </table>
+
+{% endblock %}

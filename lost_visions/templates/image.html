@@ -109,19 +109,91 @@
         });
     }
 
+    function add_tag_button(tag_string, synset) {
+        var id = 'id_' + tag_string;
+
+        var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                + 'id="' + id +
+                '" name="' + tag_string +
+                '" x_percent="' + hightlighted_x_percent +
+                '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';
+
+        var d = new Date();
+        var datetime = d.toISOString();
+        all_tags.push({tag: tag_string,
+            synset: synset,
+            x_percent: hightlighted_x_percent,
+            y_percent: hightlighted_y_percent,
+            x_pixel: highlighted_x_pixel,
+            y_pixel: highlighted_y_pixel,
+            datetime: datetime,
+            tag_order: all_tags.length
+        });
+
+        hightlighted_x_percent = 0;
+        hightlighted_y_percent = 0;
+        highlighted_x_pixel = 0;
+        highlighted_y_pixel = 0;
+
+        document.getElementById("tag_info").value = JSON.stringify(all_tags);
+        {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
+
+        {#                $("#add_tags_body").prepend($label).prepend($check);#}
+
+        var button_toggle_component = $($button_toggle).click(function(){
+            $(this).remove();
+        }).tooltip();
+
+        $("#add_tags_body").append(button_toggle_component);
+
+    }
+
+    {#    This is important #}
+    var all_tags = [];
+
+    var hightlighted_x_percent = 0;
+    var hightlighted_y_percent = 0;
+    var highlighted_x_pixel = 0;
+    var highlighted_y_pixel = 0;
+
     var current_question_pane = 1;
     $(document).ready(function () {
 
-        {#        $('#tagging-submit-btn').click(function(event){#}
-        {#            $('#image-taggin-form').submit(event);#}
-        {#        });#}
-        {##}
-        {#        $( "#image-taggin-form" ).submit(function( event ) {#}
-        {#            alert( "Handler for .submit() called." );#}
-        {#            console.log(event);#}
-        {#            console.log(event.target.id);#}
-        {#            event.preventDefault();#}
-        {#        });#}
+        $('#tagging-submit-btn').click(function(event){
+
+            {#            document.getElementById("tag_info").value#}
+            $('#final_tags').empty();
+
+            var user_tags = JSON.parse(document.getElementById("tag_info").value);
+            var just_tags = [];
+            for (tag in user_tags) {
+                {#                        console.log(user_tags[tag]);#}
+                {#                        console.log(user_tags[tag].tag);#}
+{#                console.log(user_tags[tag]['tag']);#}
+                just_tags.push(user_tags[tag]['tag']);
+
+                var tag_string = user_tags[tag]['tag'];
+                var id = 'id_' + tag_string;
+
+                var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                        + 'id="' + id +
+                        '" name="' + tag_string +'">'  + tag_string + '</div>';
+
+                var button_toggle_component = $($button_toggle).click(function(){
+                    $(this).remove();
+                }).tooltip();
+
+                $("#final_tags").append(button_toggle_component);
+
+            }
+
+            alert('submit pressed ' + just_tags);
+
+            $('#finish_tagging_dialog_form').dialog("open");
+
+{#            $('#image-taggin-form').submit(event);#}
+
+        });
 
         $('#image-taggin-form').bind("keyup keypress", function(e) {
             var code = e.keyCode || e.which;
@@ -235,7 +307,6 @@
             window.open(link, '_blank');
         });
 
-        var all_tags = [];
 
         $( "#dictionary" ).autocomplete({
             source: "{% url 'find.word' %}",
@@ -249,48 +320,42 @@
                 var id = 'id_' + tag_string;
                 var synset = ui.item.synset;
 
-                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});
-                var $label = $('<label/>').attr({for: id}).html(tag_string);
+                {#                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});#}
+                {#                var $label = $('<label/>').attr({for: id}).html(tag_string);#}
 
-                var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
-                        + 'id="' + id +
-                        '" name="' + tag_string +
-                        '" x_percent="' + hightlighted_x_percent +
-                        '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';
+                add_tag_button(tag_string, synset);
 
-
-                var d = new Date();
-                var datetime = d.toISOString();
-                all_tags.push({tag: tag_string,
-                    synset: synset,
-                    x_percent: hightlighted_x_percent,
-                    y_percent: hightlighted_y_percent,
-                    x_pixel: highlighted_x_pixel,
-                    y_pixel: highlighted_y_pixel,
-                    datetime: datetime,
-                    tag_order: all_tags.length
-                });
-
-                hightlighted_x_percent = 0;
-                hightlighted_y_percent = 0;
-                highlighted_x_pixel = 0;
-                highlighted_y_pixel = 0;
-
-                document.getElementById("tag_info").value = JSON.stringify(all_tags);
+                {#                var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'#}
+                {#                        + 'id="' + id +#}
+                {#                        '" name="' + tag_string +#}
+                {#                        '" x_percent="' + hightlighted_x_percent +#}
+                {#                        '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';#}
+                {##}
+                {##}
+                {#                var d = new Date();#}
+                {#                var datetime = d.toISOString();#}
+                {#                all_tags.push({tag: tag_string,#}
+                {#                    synset: synset,#}
+                {#                    x_percent: hightlighted_x_percent,#}
+                {#                    y_percent: hightlighted_y_percent,#}
+                {#                    x_pixel: highlighted_x_pixel,#}
+                {#                    y_pixel: highlighted_y_pixel,#}
+                {#                    datetime: datetime,#}
+                {#                    tag_order: all_tags.length#}
+                {#                });#}
+                {##}
+                {##}
+                {##}
+                {#                document.getElementById("tag_info").value = JSON.stringify(all_tags);#}
                 {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
-
+                {##}
                 {#                $("#add_tags_body").prepend($label).prepend($check);#}
-
-                var button_toggle_component = $($button_toggle).click(function(){
-                    $(this).remove();
-                }).tooltip();
-
-                $("#add_tags_body").append(button_toggle_component);
-
-                {#                    $("[data-toggle='tooltip']").tooltip();#}
-
-                {#                $( "input[type=checkbox]" )#}
-                {#                        .button();#}
+                {##}
+                {#                var button_toggle_component = $($button_toggle).click(function(){#}
+                {#                    $(this).remove();#}
+                {#                }).tooltip();#}
+                {##}
+                {#                $("#add_tags_body").append(button_toggle_component);#}
 
                 ui.item.value = "";
             }
@@ -329,6 +394,32 @@
             window.location.replace('{% url 'image.random' %}');
         });
 
+
+        var finish_tagging_dialog_form = $( "#finish_tagging_dialog_form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Save Image": function() {
+
+                    finish_tagging_dialog_form.dialog( "close" );
+                    $('#image-taggin-form').submit();
+
+                },
+                Cancel: function() {
+                    finish_tagging_dialog_form.dialog( "close" );
+                }
+            },
+            open : function() {
+
+            },
+            close: function() {
+
+            }
+        });
+
+
         var save_image_dialog_form = $( "#save_image_dialog_form" ).dialog({
             autoOpen: false,
             height: 300,
@@ -340,7 +431,7 @@
                     var e = document.getElementById("user_collection_select");
                     var collection_id = e.options[e.selectedIndex].value;
 
-                    console.log({{ image_id }} + ' ' + collection_id);
+{#                    console.log({{ image_id }} + ' ' + collection_id);#}
 
                     if (collection_id == "NEW COLLECTION"){
                         save_image_dialog_form.dialog("close");
@@ -395,32 +486,6 @@
                 }
             });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         $('#map-canvas').height($(window).height());
@@ -659,7 +724,10 @@
                             classname = 'category-answer wide';
                         }
 
-                        var answer = '<div class="' + classname + '" data-category_id="' + data['answers'][ans].id + '"> \
+                        var answer = '<div class="' + classname + '" ' +
+                                'data-category_name="' + data['answers'][ans].name + '" ' +
+                                'data-category_save="' + data['answers'][ans].save + '" ' +
+                                'data-category_id="' + data['answers'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
                                     <img src="' + data['answers'][ans].img + '"\
@@ -742,7 +810,7 @@
                     var cat_id = $(this).data('category_id');
                     var map_link = $(this).data('link');
 
-                    console.log('clicked a request to show gazetteer');
+{#                    console.log('clicked a request to show gazetteer');#}
 
                     var places_autocomplete = '<label class="control-label" for="places">Location: </label> \
                     <input class="form-control" id="places">'
@@ -770,6 +838,9 @@
                             },
                             minLength: 3,
                             select: function( event, ui ) {
+
+                                add_tag_button(ui.item.properties['name'], '');
+                                add_tag_button(ui.item.properties['country'], '');
 
                                 var x = ui.item.properties.centroid.split(', ')[0];
                                 var y = ui.item.properties.centroid.split(', ')[1];
@@ -856,6 +927,10 @@
                     $('#mapping_dialog_form').dialog("open");
                 }
                 else {
+{#                    console.log($(this).data('category_save'));#}
+                    if ($(this).data('category_save') == true) {
+                        add_tag_button($(this).data('category_name'), '');
+                    }
                     var cat_id = $(this).data('category_id');
                     populate_categories(cat_id, null, null);
                 }
@@ -1113,10 +1188,10 @@
         }
 
 
-        var hightlighted_x_percent = 0;
-        var hightlighted_y_percent = 0;
-        var highlighted_x_pixel = 0;
-        var highlighted_y_pixel = 0;
+        {#        var hightlighted_x_percent = 0;#}
+        {#        var hightlighted_y_percent = 0;#}
+        {#        var highlighted_x_pixel = 0;#}
+        {#        var highlighted_y_pixel = 0;#}
 
         $('#side-menu-open').click(function(){
             $('.side-menu-content-wide').show('slide', 100);
@@ -1159,36 +1234,36 @@
                         <ul class="side-menu-list">
                             <li>
                                 <a data-toggle="tooltip" data-placement="top"
-                                   title="Rotate Image Left" data-original-title="Rotate Left"
+                                   title="Rotate illustration left" data-original-title="Rotate Left"
                                    class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-rotate-left"></div></a>
                             </li>
                             <li>
                                 <a data-toggle="tooltip" data-placement="top"
-                                   title="Rotate image Right" data-original-title="Rotate Right"
+                                   title="Rotate illustration right" data-original-title="Rotate Right"
                                    class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-rotate-right"></div></a>
                             </li>
                             <li data-toggle="tooltip" data-placement="top"
-                                title="Zoom Image" data-original-title="Zoom">
+                                title="Zoom Illustration" data-original-title="Zoom">
                                 <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">
                                     <div class="fa fa-search-plus"></div></a>
                             </li>
                             <li>
                                 <a data-toggle="tooltip" data-placement="top"
-                                   title="View The Page This Image Came From" data-original-title="Full Page"
+                                   title="View the page this illustration came from" data-original-title="Full Page"
                                    class="btn btn-success side-menu-btn" target="_blank"
                                    href="{{ page_turner_url }}"
                                         ><div class="fa fa-book"></div></a>
                             </li>
                             <li>
                                 <a data-toggle="tooltip" data-placement="top"
-                                   title="Download Image" data-original-title="Download"
+                                   title="Download illustration" data-original-title="Download"
                                    class="btn btn-success side-menu-btn" target="_blank"
                                    href="{{ image.imageurl }}"><div class="fa fa-cloud-download"></div></a>
                             </li>
                             {% if user.is_authenticated %}
                                 <li>
                                     <div data-toggle="tooltip" data-placement="top"
-                                         title="Add Image To Favourites" data-original-title="Save"
+                                         title="Add illustration to Favourites" data-original-title="Save"
                                          class="btn btn-success side-menu-btn save_image_btn save_image"><div class="fa fa-heart"></div></div>
                                 </li>
                             {% endif %}
@@ -1246,7 +1321,7 @@
         </div>
     </div>
 
-{#    <div class="container">#}
+    {#    <div class="container">#}
     <div class="row" style="margin: 0 auto; width: 90%">
         <div class="title-logo col-md-12">
             <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_TagImages.png" %}" style="min-height: 53px"/>
@@ -1469,137 +1544,139 @@
 
     <div class="col-xs-12 col-sm-5">
 
-            <div id="right-main">
-                {% if user.is_authenticated %}
+        <div id="right-main">
+            {% if user.is_authenticated %}
 
-                {% else %}
-                    <div class="bs-component">
-                        <div class="alert alert-dismissable alert-info">
-                            <button type="button" class="close" data-dismiss="alert">×</button>
-                            You are not logged in. You can do more if you sign up!
-                        </div>
-                        <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
+            {% else %}
+                <div class="bs-component">
+                    <div class="alert alert-dismissable alert-info">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        You are not logged in. You can do more if you sign up!
                     </div>
-                {% endif %}
+                    <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
+                </div>
+            {% endif %}
 
-                <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
-                    {{ tag_form.non_field_errors }}
-                    <input type="hidden" name="image_id" value="{{ image_id }}" />
-                    <input type="hidden" id = 'tag_info' name="tag_info" value="" />
+            <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
+                {{ tag_form.non_field_errors }}
+                <input type="hidden" name="image_id" value="{{ image_id }}" />
+                <input type="hidden" id = 'tag_info' name="tag_info" value="" />
 
-                    <div class="question-frame">
-                        <div data-step="4" data-intro="These are the tagging options" data-position="left">
-                            <div id="question_number_1" class="panel panel-default">
-                                <div id="collapseOne">
-                                    <div class="panel-body question-panel">
-                                        <h2>1/4</h2>
-                                        <h3>Types of Illustration</h3>
-                                        {#                                        <p>Is the illustration:</p>#}
-                                        <div id="category-question">{{ category_data.question }}</div>
-                                        <div id="add_category_body"></div>
-                                        <div id="category-extra"></div>
-
-                                        <div id="category-container" class="js-masonry"
-                                             data-masonry-options='{"itemSelector": ".category-answer" }'>
-                                            <div class="grid-sizer"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <div id="question_number_2" class="panel panel-default">
-                            <div id="collapseTwo">
-                                {#                                     data-toggle="tooltip" data-placement="top"#}
-                                {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
+                <div class="question-frame">
+                    <div data-step="4" data-intro="These are the tagging options" data-position="left">
+                        <div id="question_number_1" class="panel panel-default">
+                            <div id="collapseOne">
                                 <div class="panel-body question-panel">
-                                    <h2>2/4</h2>
-                                    <h3>Objects and Ideas</h3>
+                                    <h2>1/4</h2>
+                                    <h3>Types of Illustration</h3>
+                                    {#                                        <p>Is the illustration:</p>#}
+                                    <div id="category-question">{{ category_data.question }}</div>
+                                    <div id="add_category_body"></div>
+                                    <div id="category-extra"></div>
 
-                                    <p>Are there any other things or ideas in this illustration?</p>
-                                    <p>For example:  "bird", "table", "winter", "love"</p>
-                                    <div id="focus_alerts"></div>
-                                    <div id="add_tags_body"></div>
-
-                                    <div class="ui-widget">
-                                        <label class="'control-label" for="dictionary">Tags: </label>
-                                        <input
-                                                class="'form-control" id="dictionary">
+                                    <div id="category-container" class="js-masonry"
+                                         data-masonry-options='{"itemSelector": ".category-answer" }'>
+                                        <div class="grid-sizer"></div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <div id="question_number_3" class="panel panel-default">
-                            <div>
-                                <div class="panel-body question-panel">
-                                    <h2>3/4</h2>
-                                    <h3>Caption</h3>
-                                    <h4>If the Illustration has a caption, please transcribe it below:’</h4>
-                                    <div id="free_text_caption" >
-                                        <label class="control-label" for="input_caption">Caption</label>
-                                        <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <div id="question_number_4" class="panel panel-default">
-                            <div id="collapseFive">
-                                <div class="panel-body question-panel">
-                                    <h2>4/4</h2>
-                                    <h3>Description</h3>
-                                    <h4>‘If there is anything else you would like to tell us about this illustration,
-                                        please enter it below:</h4>
-
-                                    <div id="free_text_description" class="row-fluid">
-                                        <label class="'control-label" for="free-text-area">Description</label>
-                                        <textarea name="image_description" class="form-control"
-                                                  rows="3" id="free-text-area"></textarea>
-                                    </div>
-
-                                    {#                                        <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
                                 </div>
                             </div>
                         </div>
                     </div>
 
 
-                    <ul class="pager prev_next_pager">
-                        <li style="float: left">
-                            <div data-toggle="tooltip" data-placement="top"
-                                 title="Previous Question" data-original-title="Previous"
-                                 id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div> Back</div>
-                        </li>
-                        <li style="float: left">
-                            <div data-toggle="tooltip" data-placement="top"
-                                 title="Next Question" data-original-title="Next"
-                                 id="question-accordion-next" class="btn btn-success">Next <div class="fa fa-2x fa-angle-double-right"></div></div>
-                        </li>
-                        <li style="float: right">
-                            <button id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
-                                    title="Finish Tagging" data-original-title="Finish"
-                                    type="submit" class="btn btn-success">Finish Tagging this Illustration<div class="fa fa-2x fa-check"></div></button>
-                        </li>
-                    </ul>
-                    {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
-                    <div class="navbar-right">
-                        <div id="load_new_image" class="btn btn-success">
-                            <a href="{% url 'image.random' %}">Skip this Illustration</a>
+
+                    <div id="question_number_2" class="panel panel-default">
+                        <div id="collapseTwo">
+                            {#                                     data-toggle="tooltip" data-placement="top"#}
+                            {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
+                            <div class="panel-body question-panel">
+                                <h2>2/4</h2>
+                                <h3>Objects and Ideas</h3>
+
+                                <p>Are there any other things or ideas in this illustration?</p>
+                                <p>For example:  "bird", "table", "winter", "love"</p>
+                                <div id="focus_alerts"></div>
+                                <div id="add_tags_body"></div>
+
+                                <div class="ui-widget">
+                                    <label class="'control-label" for="dictionary">Tags: </label>
+                                    <input
+                                            class="'form-control" id="dictionary">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </form>
-            </div>
+
+
+
+                    <div id="question_number_3" class="panel panel-default">
+                        <div>
+                            <div class="panel-body question-panel">
+                                <h2>3/4</h2>
+                                <h3>Caption</h3>
+                                <h4>If the Illustration has a caption, please transcribe it below:’</h4>
+                                <div id="free_text_caption" >
+                                    <label class="control-label" for="input_caption">Caption</label>
+                                    <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div id="question_number_4" class="panel panel-default">
+                        <div id="collapseFive">
+                            <div class="panel-body question-panel">
+                                <h2>4/4</h2>
+                                <h3>Description</h3>
+                                <h4>‘If there is anything else you would like to tell us about this illustration,
+                                    please enter it below:</h4>
+
+                                <div id="free_text_description" class="row-fluid">
+                                    <label class="'control-label" for="free-text-area">Description</label>
+                                    <textarea name="image_description" class="form-control"
+                                              rows="3" id="free-text-area"></textarea>
+                                </div>
+
+                                {#                                        <h4><a href="#">Or Discuss this Image on the Forum</a></h4>#}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <ul class="pager prev_next_pager">
+                    <li style="float: left">
+                        <div data-toggle="tooltip" data-placement="top"
+                             title="Previous Question" data-original-title="Previous"
+                             id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div> Back</div>
+                    </li>
+                    <li style="float: left">
+                        <div data-toggle="tooltip" data-placement="top"
+                             title="Next Question" data-original-title="Next"
+                             id="question-accordion-next" class="btn btn-success">Next <div class="fa fa-2x fa-angle-double-right"></div></div>
+                    </li>
+                    <li style="float: right">
+                        <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
+                             title="Finish Tagging" data-original-title="Finish"
+                                {#                                type="submit" #}
+                             class="btn btn-success">Finish Tagging this Illustration<div class="fa fa-2x fa-check"></div>
+                        </div>
+                    </li>
+                </ul>
+                {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
+                <div class="navbar-right">
+                    <div id="load_new_image" class="btn btn-success">
+                        <a href="{% url 'image.random' %}">Skip this Illustration</a>
+                    </div>
+                </div>
+            </form>
+        </div>
 
     </div>
 
-{#    </div>#}
+    {#    </div>#}
     {#end of main bootsrap container#}
 
 
@@ -1642,6 +1719,16 @@
         </form>
     </div>
 
+    <div id="finish_tagging_dialog_form" title="Complete Illustration Tagging">
+        <p class="validateTips">Please remove any incorrect tags then complete the illustration tagging</p>
+        <div id="finish_tagging_data" data-collection_id="" data-collection_name=""></div>
+        <form>
+            <fieldset>
+                <div id="final_tags"></div>
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
 
     <div id="mapping_dialog_form" title="Map Illustration">
         {#        <p class="validateTips">Map Image</p>#}

@@ -16,6 +16,15 @@ a{
 h2 {
     font-weight: bold;
     color: #A0A2A6;
+    font-size: 14px;
+    margin: 5px;
+}
+
+h3 {
+       /*font-weight: bold;*/
+    /*color: #A0A2A6;*/
+    font-size: 18px;
+    margin: 5px;
 }
 
 html, body {
@@ -94,6 +103,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div {
 
 .navbar-nav {
     margin: 0 auto;
+    padding-top: 0.2em;
 }
 
 body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
@@ -212,8 +222,8 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 /*home page*/
 .base-container {
     padding-top: 38px;
-    padding-left: 0px;
-    padding-right: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .title-header {

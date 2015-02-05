@@ -1745,6 +1745,14 @@ def image_data(request, image_id):
     image_data_model = models.Image.objects.get(flickr_id=image_id)
     serialized_image_model = serializers.serialize('json', [image_data_model])
 
+    tags = models.Tag.objects.filter(image=image_data_model)
+    tags_list = []
+    for tag in tags:
+        tags_list.append({
+            'tag': tag.tag,
+            'tag_order': tag.tag_order
+        })
+
     image_location = models.ImageLocation.objects.filter(book_id=image_data_model.book_identifier)
     serialized_location_model = serializers.serialize('json', image_location)
 
@@ -1758,8 +1766,13 @@ def image_data(request, image_id):
 
     return_data = {
         'bl_flickr_data': json.loads(serialized_image_model),
+        'tags': tags_list,
         'descriptors': json.loads(serialized_descriptors_model),
         'image_location': json.loads(serialized_location_model),
         'matches': json.loads(serialized_matches_model)
     }
     return HttpResponse(json.dumps(return_data, indent=4), content_type="application/json")
+
+
+def education(request):
+    return render_to_response('education.html')
