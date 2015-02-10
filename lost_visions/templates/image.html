@@ -30,10 +30,6 @@
 
     var font_size = getDefaultFontSize()[1];
 
-    {#    function getFontSize(small, big, value) {#}
-    {#        return font_size + ((value -1) * (10 / {{ most_used_tag_count }}) * font_size);#}
-    {#    }#}
-
     function tidy_masonry() {
 
         setTimeout("$('#category-container').masonry()", 1500);
@@ -90,18 +86,22 @@
                 $('#book_images').html(book_images);
 
 
+                console.log('mm:' + _.size(data['machine_matches']));
                 var machine_matched = '<ul id="machine_matched_list">';
-                for (var img_data in data['machine_matches']) {
-                    machine_matched += '<li>';
-                    machine_matched += '<a href="' + data['machine_matches'][img_data]['link']  + '" target="_blank">';
-                    machine_matched += '<img src="' + data['machine_matches'][img_data]['img_small'] +
-                            '" class="similar-image"></img>';
-                    machine_matched += '</a>';
-                    machine_matched += '</li>';
+                if (_.size(data['machine_matches']) == 0) {
+                    $('#collapse_machine_matched').accordion({active: false});
+                } else {
+                    for (var img_data in data['machine_matches']) {
+                        machine_matched += '<li>';
+                        machine_matched += '<a href="' + data['machine_matches'][img_data]['link']  + '" target="_blank">';
+                        machine_matched += '<img src="' + data['machine_matches'][img_data]['img_small'] +
+                                '" class="similar-image"></img>';
+                        machine_matched += '</a>';
+                        machine_matched += '</li>';
+                    }
                 }
                 machine_matched += '</ul>';
                 $('#machine_matched_images').html(machine_matched);
-
             },
             error: function(xhr, textStatus, errorThrown) {
                 console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
@@ -149,6 +149,16 @@
 
     }
 
+    function scroll_to_top(callback){
+        $("body").animate(
+                { scrollTop: "0" },
+                {
+                    duration: 600,
+                    complete: callback
+                }
+        );
+    }
+
     {#    This is important #}
     var all_tags = [];
 
@@ -161,44 +171,17 @@
     $(document).ready(function () {
 
         $('#tagging-submit-btn').click(function(event){
-
-            {#            document.getElementById("tag_info").value#}
-            $('#final_tags').empty();
-
-            get_alt_tags(function(data) {
-                document.getElementById("tag_info").value = JSON.stringify(data);
-
-
-                var user_tags = JSON.parse(document.getElementById("tag_info").value);
-                var just_tags = [];
-                for (tag in user_tags) {
-
-                    just_tags.push(user_tags[tag]['tag']);
-
-                    var tag_string = user_tags[tag]['tag'];
-                    var id = 'id_' + tag_string;
-
-                    var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
-                            + 'id="' + id +
-                            '" name="' + tag_string +'">'  + tag_string + '</div>';
-
-                    var button_toggle_component = $($button_toggle).click(function(){
-                        $(this).remove();
-                    }).tooltip();
-
-                    $("#final_tags").append(button_toggle_component);
-
-                }
-
-                alert('submit pressed ' + just_tags);
-
+            {#            $("body").animate(#}
+            {#                    { scrollTop: "0" },#}
+            {#                    {#}
+            {#                        duration: 600,#}
+            {#                        complete : function(){#}
+            {#                        }#}
+            {#                    }#}
+            {#            );#}
+            scroll_to_top(function(){
                 $('#finish_tagging_dialog_form').dialog("open");
-
-                {#            $('#image-taggin-form').submit(event);#}
             });
-
-
-
 
         });
 
@@ -213,37 +196,36 @@
         get_similar_images({{ image_id }});
 
         $('#question-accordion-prev').click(function(){
-
             if (current_question_pane - 1 > 0){
                 var current_div = '#question_number_' + current_question_pane;
                 $(current_div).hide('slide', 500, function(){
 
                     current_question_pane -= 1;
-                    $('#question_number_' + current_question_pane).show('blind', 500, tidy_masonry());
+                    $('#question_number_' + current_question_pane).show('blind', 500, function() {
+                        scroll_to_top(tidy_masonry());
+                    });
                 });
             }
-
         });
 
-        $('#question-accordion-next').click(function(){
-            if (current_question_pane + 1 < 5){
+        $('#question-accordion-next').click(function() {
+            if (current_question_pane + 1 < 5) {
                 var div_name = '#question_number_' + current_question_pane;
 
-                $(div_name).hide('slide', 500, function(){
+                $(div_name).hide('slide', 500, function() {
 
                     current_question_pane += 1;
-                    $('#question_number_' + current_question_pane).show('blind', 500, tidy_masonry());
+                    $('#question_number_' + current_question_pane).show('blind', 500, function() {
+                        scroll_to_top(tidy_masonry());
+                    });
                 });
             }
         });
 
-        {#        $('#question_number_1').hide();#}
         $('#question_number_2').hide();
         $('#question_number_3').hide();
         $('#question_number_4').hide();
         $('#question_number_5').hide();
-
-
 
         $('.js-masonry').masonry();
 
@@ -401,11 +383,13 @@
             window.location.replace('{% url 'image.random' %}');
         });
 
+        var window_height = $(window).height();
+        var window_width = $(window).width();
 
         var finish_tagging_dialog_form = $( "#finish_tagging_dialog_form" ).dialog({
             autoOpen: false,
-            height: 300,
-            width: 350,
+            height: window_height * 0.75,
+            width: window_width * 0.5,
             modal: true,
             buttons: {
                 "Save Image": function() {
@@ -419,6 +403,34 @@
                 }
             },
             open : function() {
+
+                get_alt_tags(function(data) {
+                    document.getElementById("tag_info").value = JSON.stringify(data);
+
+                    var user_tags = JSON.parse(document.getElementById("tag_info").value);
+                    var just_tags = [];
+                    var final_tags_div = $('#final_tags');
+                    final_tags_div.empty();
+
+                    for (tag in user_tags) {
+
+                        just_tags.push(user_tags[tag]['tag']);
+
+                        var tag_string = user_tags[tag]['tag'];
+                        var id = 'id_' + tag_string;
+
+                        var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                                + 'id="' + id +
+                                '" name="' + tag_string +'">'  + tag_string + '</div>';
+
+                        var button_toggle_component = $($button_toggle).click(function(){
+                            $(this).toggle('blind', {}, 600, function(){
+                               $(this).remove();
+                            });
+                        }).tooltip();
+                        final_tags_div.append(button_toggle_component);
+                    }
+                });
 
             },
             close: function() {
@@ -475,10 +487,8 @@
                     tag_info: document.getElementById("tag_info").value
                 },
                 success: function(data) {
-                    var ok = data['success'];
-                    console.log(data);
+{#                    console.log(data);#}
                     callback(data);
-                    {#                    alert("Saved success : " + ok);#}
 
                 },
                 error: function(xhr, textStatus, errorThrown) {
@@ -903,15 +913,6 @@
 
                                 console.log(map_link_string);
 
-                                {#                                var win = window.open( map_link_string, '_blank');#}
-                                {#                                if(win){#}
-                                {#                                    //Browser has allowed it to be opened#}
-                                {#                                    win.focus();#}
-                                {#                                }else{#}
-                                {#                                    //Broswer has blocked it#}
-                                {#                                    alert('Please allow popups for this site');#}
-                                {#                                }#}
-
                                 $('#mapping_dialog_form').data('x', x).data('y', y).data('nex', nex).data('ney', ney).data('swx', swx).data('swy', swy).dialog("open");
 
                                 populate_categories(cat_id, null, null);
@@ -939,18 +940,6 @@
                     alert(input_box.val() + ' ' + cat_id);
                 }
 
-                        {#                else if ($(this).data('link')) {#}
-                        {#                    var win = window.open($(this).data('link'), '_blank');#}
-                        {#                    if(win){#}
-                        {#                        //Browser has allowed it to be opened#}
-                        {#                        win.focus();#}
-                        {#                    }else{#}
-                        {#                        //Broswer has blocked it#}
-                        {#                        alert('Please allow popups for this site');#}
-                        {#                    }#}
-                        {#                    var cat_id = $(this).data('category_id');#}
-                        {#                    populate_categories(cat_id, null, null);#}
-                        {#                }#}
                 else if ($(this).data('action_name') == 'map') {
                     $('#mapping_dialog_form').dialog("open");
                 }
@@ -973,12 +962,6 @@
             var tag_string = input_field.val();
             if (tag_string != "") {
                 var id = 'id_' + tag_string;
-
-                {#                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string});#}
-                {#                var $label = $('<label/>').attr({for: id}).html(tag_string);#}
-                {##}
-                {#                $( "input[type=checkbox]" )#}
-                {#                        .button();#}
             }
             input_field.val("");
         });
@@ -1015,10 +998,6 @@
             $('html,body').animate({scrollTop: ui.newHeader.offset().top},'slow');
         });
 
-        function scrollToAnchor(aid){
-            var aTag = $("a[name='"+ aid +"']");
-            $('html,body').animate({scrollTop: aTag.offset().top},'slow');
-        }
 
         {#        <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">#}
 
@@ -1214,12 +1193,6 @@
 
             return { 'width': rotatedWidth, 'height': rotatedHeight };
         }
-
-
-        {#        var hightlighted_x_percent = 0;#}
-        {#        var hightlighted_y_percent = 0;#}
-        {#        var highlighted_x_pixel = 0;#}
-        {#        var highlighted_y_pixel = 0;#}
 
         $('#side-menu-open').click(function(){
             $('.side-menu-content-wide').show('slide', 100);
@@ -1731,7 +1704,7 @@
     </div>
 
     <div id="save_image_dialog_form" title="Save Image to Collecton">
-        <p class="validateTips">Save Illustration to Collecton</p>
+        <p class="validateTips">Save Illustration to Collection</p>
         <div id="save_image_data" data-collection_id="" data-collection_name=""></div>
         <form>
             <fieldset>
@@ -1748,11 +1721,15 @@
     </div>
 
     <div id="finish_tagging_dialog_form" title="Complete Illustration Tagging">
-        <p class="validateTips">Please remove any incorrect tags then complete the illustration tagging</p>
+        <p class="validateTips">Click any incorrect tags to remove them, then Finish tagging.</p>
         <div id="finish_tagging_data" data-collection_id="" data-collection_name=""></div>
         <form>
             <fieldset>
-                <div id="final_tags"></div>
+                <div id="final_tags">
+                    <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                        <div class="fa fa-3x fa-spinner fa-spin"></div>
+                    </div>
+                </div>
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
             </fieldset>
         </form>

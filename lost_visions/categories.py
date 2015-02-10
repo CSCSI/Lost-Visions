@@ -33,6 +33,9 @@ SCIENTIFIC_BUTTON_IMAGE_URL = MIKEY_URL + "scientific.jpg"
 LOCATION_BUTTON_IMAGE_URL = MIKEY_URL + "location.jpg"
 LITERATURE_BUTTON_IMAGE_URL = MIKEY_URL + "literature.jpg"
 
+YES_BUTTON_URL = MIKEY_URL + "yes button.jpg"
+NO_BUTTON_URL = MIKEY_URL + "No button.jpg"
+
 
 class Category():
     def __init__(self, category_id, name, text, img):
@@ -108,8 +111,8 @@ class CategoryManager():
 
     def load_default_categories(self):
 
-        self.categories[0] = Category('0', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False)
-        self.categories[1] = Category('1', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
+        self.categories[0] = Category('0', 'yes', 'Yes', YES_BUTTON_URL).set_save(False)
+        self.categories[1] = Category('1', 'no', 'No', NO_BUTTON_URL).set_save(False)
 
         self.categories[0] = Category('-1', 'root', 'Root', '') \
             .set_question('Is the illustration:') \
@@ -119,11 +122,12 @@ class CategoryManager():
         self.categories[100] = Category('100', 'advert', '', ADVERT_BUTTON_IMAGE_URL) \
             .set_question('Is there a product/brand name?') \
             .set_answers([101, 102]).set_synset('advert.n.1')
-        self.categories[101] = Category('101', 'yes', 'Yes', ICON_URL + 'tick.png') \
+        self.categories[101] = Category('101', 'yes', 'Yes', YES_BUTTON_URL) \
             .set_save(False).set_action('product_name_entry')
-        self.categories[102] = Category('102', 'no', 'No', ICON_URL + 'cross.png').set_save(False)
+        self.categories[102] = Category('102', 'no', 'No', NO_BUTTON_URL).set_save(False)
 
-        self.categories[200] = Category('200', 'building', '', BUILDING_BUTTON_IMAGE_URL).set_answers([203, 204])
+        self.categories[200] = Category('200', 'building', '', BUILDING_BUTTON_IMAGE_URL)\
+            .set_answers([203, 204]).set_synset('building.n.1')
         # self.categories[201] = Category('201', 'interior', 'Interior?', ICON_URL + 'interior.jpg')
         # self.categories[202] = Category('202', 'exterior', 'Exterior?', ICON_URL + 'exterior.jpg')
         self.categories[203] = Category('203', 'save', "Save", ICON_URL + 'tick.png') \
@@ -136,30 +140,34 @@ class CategoryManager():
         #     .set_question('Is this a named historical figure?').set_answers([311, 312])
         # self.categories[302] = Category('302', 'group', 'Group?', ICON_URL + 'lv-rect-station.png') \
         #     .set_question('Are there any named historical figures?').set_answers([321, 322])
-        self.categories[303] = Category('303', 'portrait', '', PORTRAIT_BUTTON_IMAGE_URL).set_answers([304, 305])
+        self.categories[303] = Category('303', 'portrait', '', PORTRAIT_BUTTON_IMAGE_URL)\
+            .set_answers([304, 305]).set_save('portrait.n.2')
         self.categories[304] = Category('304', "dont_know", "Don't know", ICON_URL + 'cross.png').set_save(False)
         self.categories[305] = Category('305', 'named_person', "Save", ICON_URL + 'tick.png').set_action('person_name_entry')
 
-        self.categories[311] = Category('311', 'no', 'No', ICON_URL + 'cross.png') \
+        self.categories[311] = Category('311', 'no', 'No', NO_BUTTON_URL) \
             .set_question('Any Activities?').set_answers([321, 322]).set_save(False)
         self.categories[312] = Category('312', 'add', 'Add', ICON_URL + 'tick.png') \
             .set_question('Any Activities?').set_answers([321, 322]).set_save(False)
-        self.categories[321] = Category('321', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False)
-        self.categories[322] = Category('322', 'no', 'No', ICON_URL + 'cross.png') \
+        self.categories[321] = Category('321', 'yes', 'Yes', YES_BUTTON_URL).set_save(False)
+        self.categories[322] = Category('322', 'no', 'No', NO_BUTTON_URL) \
             .set_save(False).set_question('Is the person in a named location?').set_answers([1000, 1])
 
         # MOTIF
 
         self.categories[400] = Category('400', 'decoration', '', DECORATION_BUTTON_IMAGE_URL) \
-            .set_question('Is the decoration a ...').set_answers([401, 403, 404, 405, 406])
-        self.categories[401] = Category('401', 'border', 'Decorative Border?', ICON_URL + 'border.jpg')
+            .set_question('Is the decoration a ...').set_answers([401, 403, 404, 405, 406]).set_synset('decoration.n.1')
+        self.categories[401] = Category('401', 'border', 'Decorative Border?', ICON_URL + 'border.jpg')\
+            .set_synset('border.n.5')
         # self.categories[402] = Category('402', 'emblem', 'Emblem?', ICON_URL + 'lv-rect-station.png')
-        self.categories[403] = Category('403', 'motif', 'Decorative Motif?', ICON_URL + 'motif.jpg')
-        self.categories[404] = Category('404', 'coat_of_arms', 'Coat of Arms?', ICON_URL + 'coat_of_arms.jpg')
+        self.categories[403] = Category('403', 'motif', 'Decorative Motif?', ICON_URL + 'motif.jpg')\
+            .set_synset('motif.n.1')
+        self.categories[404] = Category('404', 'coat_of_arms', 'Coat of Arms?', ICON_URL + 'coat_of_arms.jpg')\
+            .set_synset('coat of arms.n.1')
         self.categories[405] = Category('405', 'decorative letter', 'Decorative Letter?', ICON_URL + 'letter.jpg')
-        self.categories[406] = Category('406', 'no', 'None of These', ICON_URL + 'cross.png').set_save(False)
+        self.categories[406] = Category('406', 'no', 'None of These', NO_BUTTON_URL).set_save(False)
 
-        self.categories[500] = Category('500', 'title_page', '', TITLE_PAGE_BUTTON_IMAGE_URL)
+        self.categories[500] = Category('500', 'title_page', '', TITLE_PAGE_BUTTON_IMAGE_URL).set_synset('title page.n.1')
 
         # self.categories[700] = Category('700', 'natural_world', 'Natural World?', ICON_URL + 'nature.jpg')\
         #     .set_question('Is the image of an ...').set_answers([701, 702, 703])
@@ -169,7 +177,7 @@ class CategoryManager():
         # self.categories[703] = Category('703', 'mineral', 'Mineral?', ICON_URL + 'lv-rect-station.png')
 
         self.categories[800] = Category('800', 'scientific_drawing', '', SCIENTIFIC_BUTTON_IMAGE_URL) \
-            .set_question('Is the Diagram ...') \
+            .set_question('Is the Diagram ...').set_synset('diagram.n.1') \
             .set_answers([801, 802, 803, 804, 805, 806, 807, 808])
         self.categories[801] = Category('801', 'Geological', 'Geological?', ICON_URL + 'lv-rect-station.png') \
             .set_question('Does the Diagram describe a named location?').set_answers([810, 1])
@@ -185,13 +193,14 @@ class CategoryManager():
 
         self.categories[807] = Category('807', 'architectural', 'Architectural Drawing?', ICON_URL + 'schematic.jpg') \
             .set_question('Is the architectural drawing of a named location?').set_answers([817, 1])
-        self.categories[817] = Category('810', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False).set_answers([1000])
-        self.categories[808] = Category('808', 'no', 'None of These', ICON_URL + 'cross.png').set_save(False)
+        self.categories[817] = Category('810', 'yes', 'Yes', YES_BUTTON_URL).set_save(False).set_answers([1000])
+        self.categories[808] = Category('808', 'no', 'None of These', NO_BUTTON_URL).set_save(False)
 
         # self.categories[900] = Category('900', 'music', 'Musical Score?', ICON_URL + 'music.jpg')
 
-        self.categories[600] = Category('600', 'map', '', MAP_BUTTON_IMAGE_URL) \
-            .set_question('Can you describe the mapped location..').set_answers([1001, 1002, 1004])
+        self.categories[600] = Category('600', 'map', '', MAP_BUTTON_IMAGE_URL).set_synset('map.n.1') \
+            .set_question('Can you describe the mapped location..')\
+            .set_answers([1001, 1002, 1004]).set_synset('map.n.1')
 
         self.categories[1000] = Category('1000', 'location', '', LOCATION_BUTTON_IMAGE_URL) \
             .set_save(False).set_question('Can you describe the location?').set_answers([1001, 1002, 1004])
@@ -207,7 +216,8 @@ class CategoryManager():
         self.categories[1004] = Category('1004', 'back', 'Back', ICON_URL + 'cross.png').set_save(False)
 
         self.categories[1100] = Category('1100', 'literature', '', LITERATURE_BUTTON_IMAGE_URL) \
-            .set_save(False).set_question('Does this Illustrate?').set_answers([1101, 1102, 1103, 406])
+            .set_save(False).set_synset('illustration.n.1')\
+            .set_question('Does this Illustrate?').set_answers([1101, 1102, 1103, 406])
         self.categories[1101] = Category('1101', 'poem', 'a Poem', ICON_URL + 'lv-rect-station.png')
         self.categories[1102] = Category('1102', 'play', 'a Play', ICON_URL + 'lv-rect-station.png')
         self.categories[1103] = Category('1103', 'novel', 'a Novel', ICON_URL + 'lv-rect-station.png')

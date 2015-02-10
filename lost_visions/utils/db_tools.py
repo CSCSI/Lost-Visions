@@ -1,4 +1,6 @@
 import os
+import pprint
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 import requests
 import json
@@ -481,6 +483,7 @@ def list_wordnet_links(tag_synset_id):
     loop = 1
     try:
         word_synset = wn.synset(tag_synset_id)
+        # print pprint.pformat(word_synset)
         for index, lemma in enumerate(word_synset.lemmas):
             if lemma.name != tag_synset_id.split('.')[0]:
                 # print lemma.name + ':' + tag_synset_id.split('.')[0]
@@ -490,8 +493,7 @@ def list_wordnet_links(tag_synset_id):
         synset, synset_list = get_hypernyms(word_synset, initial_list, loop)
         return synset_list
     except Exception as e:
-        # client = Client('http://8eedfb9d1deb48a39af1f63b825e4ccc:e0f83797e67a462c9c65f270296e672c@lost-visions.cf.ac.uk/sentry/2')
-        # client.captureException()
+        # print 'list_wordnet_links: ' + str(e)
         return initial_list
 
 # we stop looking upwards for parent words once we reach these pretty useless tags
@@ -502,18 +504,25 @@ useless_words = ['artifact', 'being', 'abstraction', 'state',
 
 def get_hypernyms(synset, synset_list, loop=0):
     try:
+        # print 'hypernyms: ' + str(synset.hypernyms())
         for word in synset.hypernyms():
+            # print 'lemmas: ' + str(word.lemmas)
             for index, lemma in enumerate(word.lemmas[0:2]):
                 word_string = str(lemma.name)
+                # print 'word_string: ' + word_string
                 if word_string in useless_words:
-                    return synset_list
+                    # print 'synset_list_a ' + str(synset_list)
+                    return (word, synset_list, loop), synset_list
                 else:
+                    # print 'synset_list_b ' + str(synset_list)
                     synset_list.append([word_string.replace('_', ' '), [loop, index]])
 
             loop += 1
             if loop > 4:
-                return synset_list
+                # print 'synset_list_c ' + str(synset_list)
+                return (word, synset_list, loop), synset_list
             else:
                 return get_hypernyms(word, synset_list, loop), synset_list
-    except:
-        return synset_list
+    except Exception as e45:
+        # print 'get_hypernyms: ' + str(e45)
+        return ('', synset_list, loop), synset_list
