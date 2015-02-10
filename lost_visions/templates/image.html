@@ -171,18 +171,9 @@
     $(document).ready(function () {
 
         $('#tagging-submit-btn').click(function(event){
-            {#            $("body").animate(#}
-            {#                    { scrollTop: "0" },#}
-            {#                    {#}
-            {#                        duration: 600,#}
-            {#                        complete : function(){#}
-            {#                        }#}
-            {#                    }#}
-            {#            );#}
             scroll_to_top(function(){
                 $('#finish_tagging_dialog_form').dialog("open");
             });
-
         });
 
         $('#image-taggin-form').bind("keyup keypress", function(e) {
@@ -424,9 +415,10 @@
                                 '" name="' + tag_string +'">'  + tag_string + '</div>';
 
                         var button_toggle_component = $($button_toggle).click(function(){
-                            $(this).toggle('blind', {}, 600, function(){
-                               $(this).remove();
-                            });
+                            $(this).remove();
+
+{#                            TODO an attempt at flashy stuff #}
+{#                            $(this).toggle('scale', {}, 600, function(){});#}
                         }).tooltip();
                         final_tags_div.append(button_toggle_component);
                     }
@@ -487,7 +479,7 @@
                     tag_info: document.getElementById("tag_info").value
                 },
                 success: function(data) {
-{#                    console.log(data);#}
+                    {#                    console.log(data);#}
                     callback(data);
 
                 },
@@ -1725,9 +1717,14 @@
         <div id="finish_tagging_data" data-collection_id="" data-collection_name=""></div>
         <form>
             <fieldset>
-                <div id="final_tags">
-                    <div style="margin: 0 auto; text-align: center; margin-top: 20px">
-                        <div class="fa fa-3x fa-spinner fa-spin"></div>
+                <div class="final_tags_hcenterbox">
+
+                    <div class="final_tags_vcenterbox">
+                        <div id="final_tags">
+                            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                                <div class="fa fa-3x fa-spinner fa-spin"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
