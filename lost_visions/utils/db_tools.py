@@ -12,7 +12,7 @@ from lost_visions import models, wordnet
 from django.core.exceptions import ObjectDoesNotExist
 
 import nltk
-from nltk.corpus import wordnet as wn
+from nltk.corpus import wordnet as wn, WordNetCorpusReader
 
 __author__ = 'ubuntu'
 
@@ -483,17 +483,26 @@ def list_wordnet_links(tag_synset_id):
     loop = 1
     try:
         word_synset = wn.synset(tag_synset_id)
-        # print pprint.pformat(word_synset)
+        # print 'attributes: ' + str(word_synset.__dict__)
+
+        # print 'synset: ' + pprint.pformat(word_synset.__dict__)
         for index, lemma in enumerate(word_synset.lemmas):
+            # print '\n' + lemma.name
+            # print wn.lemma_from_key(lemma.key)
+
+            # print 'no way: ' + str(wn._synset_from_pos_and_offset(lemma.synset.pos, lemma.synset.offset))
+
+            # print 'lemma dict synset: ' + pprint.pformat(lemma.__dict__)
+            # print 'lemma dict synset: ' + pprint.pformat(lemma.synset.__dict__)
             if lemma.name != tag_synset_id.split('.')[0]:
                 # print lemma.name + ':' + tag_synset_id.split('.')[0]
-                initial_list.append([lemma.name, [loop, index]])
+                initial_list.append([lemma.name, [loop, index], lemma.synset.name])
 
         loop += 1
         synset, synset_list = get_hypernyms(word_synset, initial_list, loop)
         return synset_list
     except Exception as e:
-        # print 'list_wordnet_links: ' + str(e)
+        print 'list_wordnet_links: ' + str(e)
         return initial_list
 
 # we stop looking upwards for parent words once we reach these pretty useless tags
@@ -503,11 +512,15 @@ useless_words = ['artifact', 'being', 'abstraction', 'state',
 
 
 def get_hypernyms(synset, synset_list, loop=0):
+    # print '\nlist so far: ' + str(synset_list)
+
     try:
         # print 'hypernyms: ' + str(synset.hypernyms())
         for word in synset.hypernyms():
-            # print 'lemmas: ' + str(word.lemmas)
+            # print '\nlemmas: ' + str(word.lemmas)
             for index, lemma in enumerate(word.lemmas[0:2]):
+                # print '\nfull lemma ' + str(lemma.__dict__)
+                # print 'full lemma synset ' + str(lemma.synset.__dict__)
                 word_string = str(lemma.name)
                 # print 'word_string: ' + word_string
                 if word_string in useless_words:
@@ -515,7 +528,7 @@ def get_hypernyms(synset, synset_list, loop=0):
                     return (word, synset_list, loop), synset_list
                 else:
                     # print 'synset_list_b ' + str(synset_list)
-                    synset_list.append([word_string.replace('_', ' '), [loop, index]])
+                    synset_list.append([word_string.replace('_', ' '), [loop, index], lemma.synset.name])
 
             loop += 1
             if loop > 4:
@@ -524,5 +537,5 @@ def get_hypernyms(synset, synset_list, loop=0):
             else:
                 return get_hypernyms(word, synset_list, loop), synset_list
     except Exception as e45:
-        # print 'get_hypernyms: ' + str(e45)
+        print 'get_hypernyms: ' + str(e45)
         return ('', synset_list, loop), synset_list

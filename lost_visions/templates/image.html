@@ -31,18 +31,8 @@
     var font_size = getDefaultFontSize()[1];
 
     function tidy_masonry() {
-
         setTimeout("$('#category-container').masonry()", 1500);
         $('#category-container').masonry();
-    }
-
-    function sleep(milliseconds) {
-        var start = new Date().getTime();
-        for (var i = 0; i < 1e7; i++) {
-            if ((new Date().getTime() - start) > milliseconds){
-                break;
-            }
-        }
     }
 
     function get_similar_images(image_id) {
@@ -121,15 +111,20 @@
 
         var d = new Date();
         var datetime = d.toISOString();
-        all_tags.push({tag: tag_string,
+        var tag_uid = get_next_id();
+        all_tags[tag_uid] = {
+            tag: tag_string,
+            {#            tag_id: get_next_id(),#}
             synset: synset,
             x_percent: hightlighted_x_percent,
             y_percent: hightlighted_y_percent,
             x_pixel: highlighted_x_pixel,
             y_pixel: highlighted_y_pixel,
             datetime: datetime,
-            tag_order: all_tags.length
-        });
+            tag_order: tag_uid
+        };
+        console.log('add_tag_button');
+        console.log(all_tags);
 
         hightlighted_x_percent = 0;
         hightlighted_y_percent = 0;
@@ -139,8 +134,6 @@
         document.getElementById("tag_info").value = JSON.stringify(all_tags);
         {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
 
-        {#                $("#add_tags_body").prepend($label).prepend($check);#}
-
         var button_toggle_component = $($button_toggle).click(function(){
             $(this).remove();
         }).tooltip();
@@ -148,6 +141,32 @@
         $("#add_tags_body").append(button_toggle_component);
 
     }
+
+
+    function get_alt_tags(callback) {
+{#        alert(document.getElementById("tag_info").value);#}
+        $.ajax({
+            type: "POST",
+            url: "{% url 'image.alt_tags' %}",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+{#                tag_info: document.getElementById("tag_info").value#}
+                tag_info: JSON.stringify(all_tags)
+            },
+            success: function(data) {
+{#                alert(document.getElementById("tag_info").value);#}
+
+                {#                    console.log(data);#}
+                callback(data);
+
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                callback(null);
+            }
+        });
+    }
+
 
     function scroll_to_top(callback){
         $("body").animate(
@@ -159,8 +178,13 @@
         );
     }
 
+    var uid = 0;
+    function get_next_id() {
+        return uid++;
+    }
+
     {#    This is important #}
-    var all_tags = [];
+    var all_tags = {};
 
     var hightlighted_x_percent = 0;
     var hightlighted_y_percent = 0;
@@ -170,11 +194,95 @@
     var current_question_pane = 1;
     $(document).ready(function () {
 
+        var finish_tagging_dialog_form = null;
+        function setup_finish_dialog() {
+
+            var window_height = $(window).height();
+            var window_width = $(window).width();
+
+            finish_tagging_dialog_form = $( "#finish_tagging_dialog_form" ).dialog({
+                autoOpen: false,
+                height: window_height * 0.75,
+                width: window_width * 0.5,
+                modal: true,
+                buttons: {
+                    "Save Image": function() {
+
+                        finish_tagging_dialog_form.dialog( "close" );
+                        $('#image-taggin-form').submit();
+
+                    },
+                    Cancel: function() {
+                        console.log('on close:');
+                        console.log(all_tags);
+{#                        alert(all_tags);#}
+                        finish_tagging_dialog_form.dialog( "close");
+{#                        setup_finish_dialog();#}
+                    }
+                },
+                open : function() {
+                    console.log('on open:');
+                    console.log(all_tags);
+
+                    get_alt_tags(function(data) {
+                        var data_string = JSON.stringify(data);
+                        document.getElementById("tag_info").value = data_string;
+
+                        var user_tags = data;
+
+                        var final_tags_div = $('#final_tags');
+                        final_tags_div.empty();
+
+                        for (var tag_index in user_tags) {
+                            var tag_uid = get_next_id();
+                            all_tags[tag_uid] = {
+                                tag: user_tags[tag_index]['tag'],
+                                {#                            tag_id: tag_uid,#}
+                                synset: user_tags[tag_index]['synset'],
+                                x_percent: user_tags[tag_index]['x_percent'],
+                                y_percent: user_tags[tag_index]['y_percent'],
+                                datetime: user_tags[tag_index]['timestamp'],
+                                tag_order: user_tags[tag_index]['tag_order']
+                            };
+
+                            var tag_string = user_tags[tag_index]['tag'];
+                            var id = 'id_' + tag_string;
+
+                            var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                                    + 'data-uid="' + tag_uid + '" '
+                                    + 'id="' + id + '" '
+                                    + 'name="' + tag_string +'">'  + tag_string + '</div>';
+
+                            var button_toggle_component = $($button_toggle).click(function(){
+                                $(this).remove();
+                                var remove_uid = $(this).data('uid');
+
+                                alert(remove_uid);
+                                delete all_tags[remove_uid];
+                                {#                            TODO an attempt at flashy stuff #}
+                                {#                            $(this).toggle('scale', {}, 600, function(){});#}
+                            }).tooltip();
+                            final_tags_div.append(button_toggle_component);
+                        }
+                    });
+
+                },
+                close: function() {
+
+                }
+            });
+
+        }
+
+        setup_finish_dialog();
         $('#tagging-submit-btn').click(function(event){
             scroll_to_top(function(){
+
                 $('#finish_tagging_dialog_form').dialog("open");
             });
         });
+
+
 
         $('#image-taggin-form').bind("keyup keypress", function(e) {
             var code = e.keyCode || e.which;
@@ -374,61 +482,8 @@
             window.location.replace('{% url 'image.random' %}');
         });
 
-        var window_height = $(window).height();
-        var window_width = $(window).width();
 
-        var finish_tagging_dialog_form = $( "#finish_tagging_dialog_form" ).dialog({
-            autoOpen: false,
-            height: window_height * 0.75,
-            width: window_width * 0.5,
-            modal: true,
-            buttons: {
-                "Save Image": function() {
 
-                    finish_tagging_dialog_form.dialog( "close" );
-                    $('#image-taggin-form').submit();
-
-                },
-                Cancel: function() {
-                    finish_tagging_dialog_form.dialog( "close" );
-                }
-            },
-            open : function() {
-
-                get_alt_tags(function(data) {
-                    document.getElementById("tag_info").value = JSON.stringify(data);
-
-                    var user_tags = JSON.parse(document.getElementById("tag_info").value);
-                    var just_tags = [];
-                    var final_tags_div = $('#final_tags');
-                    final_tags_div.empty();
-
-                    for (tag in user_tags) {
-
-                        just_tags.push(user_tags[tag]['tag']);
-
-                        var tag_string = user_tags[tag]['tag'];
-                        var id = 'id_' + tag_string;
-
-                        var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
-                                + 'id="' + id +
-                                '" name="' + tag_string +'">'  + tag_string + '</div>';
-
-                        var button_toggle_component = $($button_toggle).click(function(){
-                            $(this).remove();
-
-{#                            TODO an attempt at flashy stuff #}
-{#                            $(this).toggle('scale', {}, 600, function(){});#}
-                        }).tooltip();
-                        final_tags_div.append(button_toggle_component);
-                    }
-                });
-
-            },
-            close: function() {
-
-            }
-        });
 
 
         var save_image_dialog_form = $( "#save_image_dialog_form" ).dialog({
@@ -470,27 +525,6 @@
         });
 
 
-        function get_alt_tags(callback) {
-            $.ajax({
-                type: "POST",
-                url: "{% url 'image.alt_tags' %}",
-                data: {
-                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                    tag_info: document.getElementById("tag_info").value
-                },
-                success: function(data) {
-                    {#                    console.log(data);#}
-                    callback(data);
-
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
-                    callback(null);
-                }
-            });
-        }
-
-
 
 
         function saveMapPoints(ney, nex, swy, swx) {
@@ -515,7 +549,6 @@
                 }
             });
         }
-
 
         $('#map-canvas').height($(window).height());
 
@@ -949,7 +982,6 @@
         populate_categories(0, enable_category_click, null);
 
         $('#add_tag').click(function(){
-
             var input_field = $("#input_tag");
             var tag_string = input_field.val();
             if (tag_string != "") {
@@ -957,7 +989,6 @@
             }
             input_field.val("");
         });
-
 
 
         var active = true;
@@ -989,9 +1020,6 @@
             {#            $.scrollTo( ui.newHeader ); // or ui.newContent, if you prefer#}
             $('html,body').animate({scrollTop: ui.newHeader.offset().top},'slow');
         });
-
-
-        {#        <a style="display: block" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">#}
 
         var canvas_object = $('#photo'),
                 canvas = canvas_object.get(0),
@@ -1189,15 +1217,12 @@
         $('#side-menu-open').click(function(){
             $('.side-menu-content-wide').show('slide', 100);
             $('.side-menu-content-thin').hide();
-
         });
         $('#side-menu-close').click(function(){
             $('.side-menu-content-wide').hide('slide', 100, function(){
                 $('.side-menu-content-thin').show();
             });
-
         });
-
         $('.side-menu-content-wide').hide();
         $( "#dictionary").focus();
 
@@ -1717,14 +1742,9 @@
         <div id="finish_tagging_data" data-collection_id="" data-collection_name=""></div>
         <form>
             <fieldset>
-                <div class="final_tags_hcenterbox">
-
-                    <div class="final_tags_vcenterbox">
-                        <div id="final_tags">
-                            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
-                                <div class="fa fa-3x fa-spinner fa-spin"></div>
-                            </div>
-                        </div>
+                <div id="final_tags">
+                    <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                        <div class="fa fa-3x fa-spinner fa-spin"></div>
                     </div>
                 </div>
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
