@@ -411,6 +411,10 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     background-color: #d17f04;
 }
 
+.panel-group {
+    padding-bottom: 5px;
+}
+
 /*.panel-group .panel-footer{*/
 /*background-color: rgba(183, 199, 215, 0.25);*/
 
@@ -437,6 +441,10 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 
 .btn{
     margin-top: 5px;
+}
+
+#image-taggin-form > ul > li > .btn{
+    margin-top: 0px;
 }
 
 body {
@@ -542,7 +550,7 @@ a:hover#save_image.btn.btn-default.save_image  {
 }
 
 .prev_next_pager {
-    padding-top: 15px;
+    padding-bottom: 5px;
 }
 
 .category-answer {

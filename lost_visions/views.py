@@ -66,7 +66,7 @@ def get_alternative_tags(request):
             try:
                 alternative_words = db_tools.list_wordnet_links(user_tag['synset'].replace(' ', '_'))[::-1]
                 # print 'alt_words: ' + str(alternative_words)
-                alternative_words.append([user_tag['tag'], [0, 0]])
+                alternative_words.append([user_tag['tag'], [0, 0], user_tag['synset']])
 
                 for index, weighted_word in enumerate(alternative_words):
                     tag = {}
@@ -86,14 +86,19 @@ def get_alternative_tags(request):
                     #     print e3
                     #     pass
 
-                    tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
+                    received_tag_order = clean(str(user_tag['tag_order']), strip=True)
+                    if len(received_tag_order) != 9:
+                        tag_order = str((int(received_tag_order) + 1) * 100)
 
-                    tag_hyp_dist = int(weighted_word[1][0]) + 1
-                    tag_syn_val = int(weighted_word[1][1]) + 1
-                    tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+                        tag_hyp_dist = int(weighted_word[1][0]) + 1
+                        tag_syn_val = int(weighted_word[1][1]) + 1
+                        tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+
+                    else:
+                        tag_order = received_tag_order
 
                     # print 'tag_order_weighted: ' + tag_order
-                    tag['tag_order'] = tag_order
+                    tag['tag_order'] = str(tag_order)
                     response_data.append(tag)
             except Exception as e2:
                 print 'alt tag exception e2: ' + str(e2)

@@ -144,17 +144,17 @@
 
 
     function get_alt_tags(callback) {
-{#        alert(document.getElementById("tag_info").value);#}
+        {#        alert(document.getElementById("tag_info").value);#}
         $.ajax({
             type: "POST",
             url: "{% url 'image.alt_tags' %}",
             data: {
                 csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-{#                tag_info: document.getElementById("tag_info").value#}
+                {#                tag_info: document.getElementById("tag_info").value#}
                 tag_info: JSON.stringify(all_tags)
             },
             success: function(data) {
-{#                alert(document.getElementById("tag_info").value);#}
+                {#                alert(document.getElementById("tag_info").value);#}
 
                 {#                    console.log(data);#}
                 callback(data);
@@ -194,6 +194,13 @@
     var current_question_pane = 1;
     $(document).ready(function () {
 
+        function replace_finished_tag_div(div_string) {
+            var final_tags_div = $('#final_tags').css('width', window_width);
+            final_tags_div.empty();
+            final_tags_div.append($(div_string));
+
+        }
+
         var finish_tagging_dialog_form = null;
         function setup_finish_dialog() {
 
@@ -215,14 +222,17 @@
                     Cancel: function() {
                         console.log('on close:');
                         console.log(all_tags);
-{#                        alert(all_tags);#}
+                        {#                        alert(all_tags);#}
                         finish_tagging_dialog_form.dialog( "close");
-{#                        setup_finish_dialog();#}
+                        {#                        setup_finish_dialog();#}
                     }
                 },
                 open : function() {
-                    console.log('on open:');
-                    console.log(all_tags);
+
+                    var spinner = '<div style="margin: 0 auto; text-align: center; margin-top: 20px">' +
+                            '<div class="fa fa-3x fa-spinner fa-spin"></div>' +
+                            '</div>';
+                    replace_finished_tag_div(spinner);
 
                     get_alt_tags(function(data) {
                         var data_string = JSON.stringify(data);
@@ -257,8 +267,9 @@
                                 $(this).remove();
                                 var remove_uid = $(this).data('uid');
 
-                                alert(remove_uid);
+                                {#                                alert(remove_uid);#}
                                 delete all_tags[remove_uid];
+                                {#                                alert(JSON.stringify(all_tags));#}
                                 {#                            TODO an attempt at flashy stuff #}
                                 {#                            $(this).toggle('scale', {}, 600, function(){});#}
                             }).tooltip();
@@ -398,6 +409,7 @@
 
         $( "#dictionary" ).autocomplete({
             source: "{% url 'find.word' %}",
+            position: { my: "left top", at: "left bottom", collision: "flip" },
             minLength: 3,
             select: function( event, ui ) {
                 {#                console.log( ui.item ?#}
@@ -1343,6 +1355,19 @@
     <div class="row" style="margin: 0 auto; width: 90%">
         <div class="title-logo col-md-12">
             <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_TagImages.png" %}" style="min-height: 53px"/>
+            <ul class="social-panel">
+                {% if user.is_authenticated %}
+
+                {% else %}
+                    <div class="bs-component">
+                        <div class="alert alert-dismissable alert-info">
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                            You are not logged in. You can do more if you sign up!
+                        </div>
+                        <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
+                    </div>
+                {% endif %}
+            </ul>
         </div>
     </div>
 
@@ -1563,22 +1588,33 @@
     <div class="col-xs-12 col-sm-5">
 
         <div id="right-main">
-            {% if user.is_authenticated %}
 
-            {% else %}
-                <div class="bs-component">
-                    <div class="alert alert-dismissable alert-info">
-                        <button type="button" class="close" data-dismiss="alert">×</button>
-                        You are not logged in. You can do more if you sign up!
-                    </div>
-                    <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
-                </div>
-            {% endif %}
 
             <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
                 {{ tag_form.non_field_errors }}
                 <input type="hidden" name="image_id" value="{{ image_id }}" />
                 <input type="hidden" id = 'tag_info' name="tag_info" value="" />
+
+                <ul class="pager prev_next_pager">
+                    <li style="float: left">
+                        <div data-toggle="tooltip" data-placement="top"
+                             title="Previous Question" data-original-title="Previous"
+                             id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div> Back</div>
+                    </li>
+                    <li style="float: left">
+                        <div data-toggle="tooltip" data-placement="top"
+                             title="Next Question" data-original-title="Next"
+                             id="question-accordion-next" class="btn btn-success">Next <div class="fa fa-2x fa-angle-double-right"></div></div>
+                    </li>
+                    <li style="float: right">
+                        <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
+                             title="Finish Tagging" data-original-title="Finish"
+                                {#                                type="submit" #}
+                             class="btn btn-success">Finish Tagging this Illustration<div class="fa fa-2x fa-check"></div>
+                        </div>
+                    </li>
+                </ul>
+
 
                 <div class="question-frame">
                     <div data-step="4" data-intro="These are the tagging options" data-position="left">
@@ -1663,32 +1699,12 @@
                     </div>
                 </div>
 
-
-                <ul class="pager prev_next_pager">
-                    <li style="float: left">
-                        <div data-toggle="tooltip" data-placement="top"
-                             title="Previous Question" data-original-title="Previous"
-                             id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div> Back</div>
-                    </li>
-                    <li style="float: left">
-                        <div data-toggle="tooltip" data-placement="top"
-                             title="Next Question" data-original-title="Next"
-                             id="question-accordion-next" class="btn btn-success">Next <div class="fa fa-2x fa-angle-double-right"></div></div>
-                    </li>
-                    <li style="float: right">
-                        <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
-                             title="Finish Tagging" data-original-title="Finish"
-                                {#                                type="submit" #}
-                             class="btn btn-success">Finish Tagging this Illustration<div class="fa fa-2x fa-check"></div>
-                        </div>
-                    </li>
-                </ul>
-                {#                    <button type="submit" class="btn btn-success"><div class="fa fa-2x fa-check"></div></button>#}
                 <div class="navbar-right">
                     <div id="load_new_image" class="btn btn-success">
                         <a href="{% url 'image.random' %}">Skip this Illustration</a>
                     </div>
                 </div>
+
             </form>
         </div>
 
