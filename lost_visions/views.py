@@ -81,7 +81,7 @@ def get_alternative_tags(request):
                     # try:
                     # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
                     # date_object = parser.parse()
-                    tag['timestamp'] = str(user_tag['datetime'])
+                    tag['timestamp'] = str(user_tag['timestamp'])
                     # except Exception as e3:
                     #     print e3
                     #     pass
@@ -144,43 +144,53 @@ def image_tags(request):
             tag_info = request.POST['tag_info']
             tags_xy = ast.literal_eval(tag_info)
 
+            print pprint.pformat(tags_xy)
+
             for user_tag in tags_xy:
                 try:
-                    alternative_words = db_tools.list_wordnet_links(user_tag['synset'])[::-1]
-                    alternative_words.append([user_tag['tag'], [0, 0]])
+                    # alternative_words = db_tools.list_wordnet_links(user_tag['synset'])[::-1]
+                    # alternative_words = []
+                    # alternative_words.append([user_tag['tag'], [0, 0]])
 
-                    for index, weighted_word in enumerate(alternative_words):
-                        tag = models.Tag()
-                        word = weighted_word[0]
-                        print word
-                        tag.tag = clean(word, strip=True)
-                        tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
-                        tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
-                        # try:
-                        # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
-                        date_object = parser.parse(str(user_tag['datetime']))
-                        tag.timestamp = date_object
-                        # except Exception as e3:
-                        #     print e3
-                        #     pass
+                    # for index, weighted_word in enumerate(alternative_words):
+                    tag = models.Tag()
+                    # word = weighted_word[0]
 
-                        tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
+                    word = clean(user_tag['tag'], strip=True)
 
-                        print tag_order
+                    print word
+                    tag.tag = word
+                    tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
+                    tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
+                    # try:
+                    # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
+                    date_object = parser.parse(str(user_tag['timestamp']))
+                    tag.timestamp = date_object
+                    # except Exception as e3:
+                    #     print e3
+                    #     pass
 
-                        tag_hyp_dist = int(weighted_word[1][0]) + 1
-                        tag_syn_val = int(weighted_word[1][1]) + 1
-                        tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+                    # tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
 
-                        print tag_order
-                        tag.tag_order = tag_order
+                    received_tag_order = clean(str(user_tag['tag_order']), strip=True)
+                    if len(received_tag_order) <= 9:
+                        tag_order = str((int(received_tag_order) + 1) * 100) + '100100'
 
-                        if image and request_user:
-                            tag.image = image
-                            tag.user = request_user
-                        tag.save()
-                except:
-                    pass
+                        # tag_hyp_dist = int(weighted_word[1][0]) + 1
+                        # tag_syn_val = int(weighted_word[1][1]) + 1
+                        # tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+
+                    else:
+                        tag_order = received_tag_order
+                    tag.tag_order = str(tag_order)
+
+                    if image and request_user:
+                        tag.image = image
+                        tag.user = request_user
+                    tag.save()
+                except Exception as e43533:
+                    print 'ahhhh'
+                    print e43533
 
         image.views_completed += 1
         image.save()

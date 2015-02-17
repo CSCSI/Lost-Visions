@@ -110,7 +110,7 @@
                 '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';
 
         var d = new Date();
-        var datetime = d.toISOString();
+        var timestamp = d.toISOString();
         var tag_uid = get_next_id();
         all_tags[tag_uid] = {
             tag: tag_string,
@@ -120,7 +120,7 @@
             y_percent: hightlighted_y_percent,
             x_pixel: highlighted_x_pixel,
             y_pixel: highlighted_y_pixel,
-            datetime: datetime,
+            timestamp: timestamp,
             tag_order: tag_uid
         };
         console.log('add_tag_button');
@@ -251,7 +251,7 @@
                                 synset: user_tags[tag_index]['synset'],
                                 x_percent: user_tags[tag_index]['x_percent'],
                                 y_percent: user_tags[tag_index]['y_percent'],
-                                datetime: user_tags[tag_index]['timestamp'],
+                                timestamp: user_tags[tag_index]['timestamp'],
                                 tag_order: user_tags[tag_index]['tag_order']
                             };
 
