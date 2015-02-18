@@ -258,7 +258,12 @@
                             var tag_string = user_tags[tag_index]['tag'];
                             var id = 'id_' + tag_string;
 
-                            var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                            var btn_class = 'btn-success'
+                            if (user_tags[tag_index]['tag_order'].slice(-6) == '100100') {
+                                btn_class = 'btn-default';
+                            }
+
+                            var $button_toggle = '<div class="btn ' + btn_class + ' tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
                                     + 'data-uid="' + tag_uid + '" '
                                     + 'id="' + id + '" '
                                     + 'name="' + tag_string +'">'  + tag_string + '</div>';
@@ -273,6 +278,8 @@
                                 {#                            TODO an attempt at flashy stuff #}
                                 {#                            $(this).toggle('scale', {}, 600, function(){});#}
                             }).tooltip();
+
+
                             final_tags_div.append(button_toggle_component);
                         }
                     });
@@ -973,8 +980,8 @@
                     var input_box = $('#' + $(this).data('action_name'));
                     console.log(input_box);
                     populate_categories(cat_id, null, input_box.val());
-
-                    alert(input_box.val() + ' ' + cat_id);
+                    add_tag_button(input_box.val(), '');
+{#                    alert(input_box.val() + ' ' + cat_id);#}
                 }
 
                 else if ($(this).data('action_name') == 'map') {
