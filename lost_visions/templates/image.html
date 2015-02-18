@@ -247,8 +247,7 @@
                     replace_finished_tag_div(spinner);
 
                     get_alt_tags(function(data) {
-                        var data_string = JSON.stringify(data);
-                        document.getElementById("tag_info").value = data_string;
+
 
                         var user_tags = data;
 
@@ -293,6 +292,7 @@
                                 {#                            $(this).toggle('scale', {}, 600, function(){});#}
                             }).tooltip();
 
+                            document.getElementById("tag_info").value = JSON.stringify(all_tags);
 
                             final_tags_div.append(button_toggle_component);
                         }
