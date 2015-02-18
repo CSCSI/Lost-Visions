@@ -1197,6 +1197,8 @@
 
         $(".rota").click(function() {
             var photo = $("#photo");
+            var photo_zoom = $("#zoom-photo");
+
             var turn_degs = $(this).data('degs');
 
             if (turn_degs == 'reset') {
@@ -1211,6 +1213,7 @@
             console.log(photo.width());
 
             photo.rotate( {animateTo: degs}, 'abs' );
+            photo_zoom.rotate( {animateTo: degs}, 'abs' );
 
             degs = degs%360;
 
@@ -1741,7 +1744,7 @@
     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <img id='zoom-photo' src="{{ image.flickr_original_source }}" style='width: auto; height:75%; margin: 0 auto'>
+                <img id='zoom-photo' src="{{ image.flickr_original_source }}" style='max-width: 100%; max-height: 100%; margin: 0 auto'>
             </div>
         </div>
     </div>
