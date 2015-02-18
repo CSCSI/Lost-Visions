@@ -325,7 +325,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 }
 
 .side-menu {
-    z-index: 100;
+    z-index: 5000;
     /*height: 200px;*/
     position: absolute;
     left: 0px;
@@ -373,7 +373,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 }
 
 .ui-front {
-    z-index: 1001 !important;
+    z-index: 5000 !important;
 }
 .ui-widget-overlay {
     background: none repeat scroll 0 0 #000000 !important;
