@@ -53,7 +53,7 @@ def home(request):
 def get_alternative_tags(request):
     tag_info = request.POST['tag_info']
     response_data = []
-    print tag_info
+    # print tag_info
 
     try:
         tags_xy = ast.literal_eval(tag_info)
@@ -87,8 +87,8 @@ def get_alternative_tags(request):
                     #     pass
 
                     received_tag_order = clean(str(user_tag['tag_order']), strip=True)
-                    if len(received_tag_order) != 9:
-                        tag_order = str((int(received_tag_order) + 1) * 100)
+                    if len(received_tag_order) < 9:
+                        tag_order = str(int(received_tag_order) * 100)
 
                         tag_hyp_dist = int(weighted_word[1][0]) + 1
                         tag_syn_val = int(weighted_word[1][1]) + 1
@@ -123,8 +123,8 @@ def image_tags(request):
     print request.get_full_path()
 
     if request.method == 'POST':
-        print request.POST
-        print request.user
+        # print request.POST
+        # print request.user
 
         image = models.Image.objects.get(flickr_id=request.POST['image_id'])
         request_user = get_request_user(request)
@@ -144,9 +144,10 @@ def image_tags(request):
             tag_info = request.POST['tag_info']
             tags_xy = ast.literal_eval(tag_info)
 
-            print pprint.pformat(tags_xy)
+            # print pprint.pformat(tags_xy)
 
-            for user_tag in tags_xy:
+            for tag_index in tags_xy:
+                user_tag = tags_xy[tag_index]
                 try:
                     # alternative_words = db_tools.list_wordnet_links(user_tag['synset'])[::-1]
                     # alternative_words = []
@@ -173,8 +174,8 @@ def image_tags(request):
                     # tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
 
                     received_tag_order = clean(str(user_tag['tag_order']), strip=True)
-                    if len(received_tag_order) <= 9:
-                        tag_order = str((int(received_tag_order) + 1) * 100) + '100100'
+                    if len(received_tag_order) < 9:
+                        tag_order = str(int(received_tag_order) * 100) + '100100'
 
                         # tag_hyp_dist = int(weighted_word[1][0]) + 1
                         # tag_syn_val = int(weighted_word[1][1]) + 1
@@ -820,7 +821,7 @@ def map(request, image_id):
 
 def coords_save(request):
     # print image_id
-    print request.POST
+    # print request.POST
 
     # print request.POST['north_east_x']
     # print request.POST['north_east_y']
@@ -977,17 +978,17 @@ category_manager = CategoryManager()
 # category_manager above stores the category "tree"
 # not really a tree, as linkages can go between anything and anything
 def image_category(request):
-    print request.POST
+    # print request.POST
 
     # get the ID for the category just clicked
     # if no cat_id then default to root ID of -1
     cat_id = request.POST.get('category_id', '-1')
 
-    request_user = get_request_user(request)
+    # request_user = get_request_user(request)
     try:
-        #
+    #     #
         image_id = request.POST.get('image_id', None)
-        image_model = models.Image.objects.get(flickr_id=request.POST['image_id'])
+        # image_model = models.Image.objects.get(flickr_id=request.POST['image_id'])
         if image_id is not None:
 
             # TODO this is messy
@@ -998,25 +999,27 @@ def image_category(request):
             # Get the category name for the id
             # name is returned if available and should_save is True
             # this is the word which gets saved as a tag
-            category_name = category_manager.get_tag_for_category_id(cat_id)
-            if category_name is not None:
-                tag = models.Tag()
-                tag.tag = category_name
-                tag.image = image_model
-                tag.user = request_user
-                tag.timestamp = datetime.now(tzlocal())
-                tag.tag_order = 0
-                tag.save()
 
-        text_entry = request.POST.get('text_entry', '')
-        if len(text_entry):
-            tag = models.Tag()
-            tag.tag = text_entry
-            tag.image = image_model
-            tag.user = request_user
-            tag.timestamp = datetime.now(tzlocal())
-            tag.tag_order = 0
-            tag.save()
+            # category_name = category_manager.get_tag_for_category_id(cat_id)
+
+            # if category_name is not None:
+                # tag = models.Tag()
+                # tag.tag = category_name
+                # tag.image = image_model
+                # tag.user = request_user
+                # tag.timestamp = datetime.now(tzlocal())
+                # tag.tag_order = 0
+                # tag.save()
+
+        # text_entry = request.POST.get('text_entry', '')
+        # if len(text_entry):
+        #     tag = models.Tag()
+        #     tag.tag = text_entry
+        #     tag.image = image_model
+        #     tag.user = request_user
+        #     tag.timestamp = datetime.now(tzlocal())
+        #     tag.tag_order = 0
+        #     tag.save()
 
     except Exception as e:
         print e

@@ -141,7 +141,7 @@ class CategoryManager():
         # self.categories[302] = Category('302', 'group', 'Group?', ICON_URL + 'lv-rect-station.png') \
         #     .set_question('Are there any named historical figures?').set_answers([321, 322])
         self.categories[303] = Category('303', 'portrait', '', PORTRAIT_BUTTON_IMAGE_URL)\
-            .set_answers([304, 305]).set_save('portrait.n.2')
+            .set_answers([304, 305]).set_synset('portrait.n.2')
         self.categories[304] = Category('304', "dont_know", "Don't know", ICON_URL + 'cross.png').set_save(False)
         self.categories[305] = Category('305', 'named_person', "Save", ICON_URL + 'tick.png').set_action('person_name_entry')
 

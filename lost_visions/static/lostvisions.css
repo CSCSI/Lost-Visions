@@ -222,8 +222,8 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 /*home page*/
 .base-container {
     padding-top: 38px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 5%;
+    padding-right: 5%;
 }
 
 .title-header {
@@ -447,6 +447,10 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     margin-top: 0px;
 }
 
+.alert-info {
+    margin-bottom: 0;
+}
+
 body {
     /*background-color: #a8a4a3;*/
     margin-left: auto;
@@ -489,6 +493,10 @@ a#save_image.btn.btn-default.save_image  {
 
 a:hover#save_image.btn.btn-default.save_image  {
     background-image: linear-gradient(#D92432, #e32537 40%, #ff263b);
+}
+
+.btn-surround {
+    border: outset 4px;
 }
 
 .remove_button {

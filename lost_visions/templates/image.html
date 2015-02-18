@@ -178,7 +178,7 @@
         );
     }
 
-    var uid = 0;
+    var uid = 1;
     function get_next_id() {
         return uid++;
     }
@@ -193,6 +193,18 @@
 
     var current_question_pane = 1;
     $(document).ready(function () {
+
+        {#        FINDME all_tags is the js object listing tags #}
+        {#        FINDME tag_info is the hidden input element #}
+        {#        FINDME final_tags is the div element in the submit dialog containing tag buttons#}
+
+        $( "#final_tags" ).change(function() {
+            alert( "Handler for .change() on final_tags called." );
+        });
+
+        $( "#tag_info" ).change(function() {
+            alert( "Handler for .change() on tag_info called." );
+        });
 
         function replace_finished_tag_div(div_string) {
             var final_tags_div = $('#final_tags').css('width', window_width);
@@ -213,7 +225,7 @@
                 width: window_width * 0.5,
                 modal: true,
                 buttons: {
-                    "Save Image": function() {
+                    "Save Illustraton Tags": function() {
 
                         finish_tagging_dialog_form.dialog( "close" );
                         $('#image-taggin-form').submit();
@@ -260,7 +272,7 @@
 
                             var btn_class = 'btn-success'
                             if (user_tags[tag_index]['tag_order'].slice(-6) == '100100') {
-                                btn_class = 'btn-default';
+                                btn_class = 'btn-success btn-surround';
                             }
 
                             var $button_toggle = '<div class="btn ' + btn_class + ' tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
@@ -274,6 +286,8 @@
 
                                 {#                                alert(remove_uid);#}
                                 delete all_tags[remove_uid];
+                                document.getElementById("tag_info").value = JSON.stringify(all_tags);
+
                                 {#                                alert(JSON.stringify(all_tags));#}
                                 {#                            TODO an attempt at flashy stuff #}
                                 {#                            $(this).toggle('scale', {}, 600, function(){});#}
@@ -332,6 +346,9 @@
                 $(div_name).hide('slide', 500, function() {
 
                     current_question_pane += 1;
+                    if (current_question_pane == 2){
+                        setTimeout("$('.form-control').focus()", 500);
+                    }
                     $('#question_number_' + current_question_pane).show('blind', 500, function() {
                         scroll_to_top(tidy_masonry());
                     });
@@ -981,7 +998,7 @@
                     console.log(input_box);
                     populate_categories(cat_id, null, input_box.val());
                     add_tag_button(input_box.val(), '');
-{#                    alert(input_box.val() + ' ' + cat_id);#}
+                    {#                    alert(input_box.val() + ' ' + cat_id);#}
                 }
 
                 else if ($(this).data('action_name') == 'map') {
@@ -1115,7 +1132,7 @@
         img.onload = function(){
 
             var windowHeight = $(window).height() * 0.8;
-            var maxWindowWidth = $(window).width() * (6/12);
+            var maxWindowWidth = $(window).width() * (5/12);
 
             var scale = img.naturalHeight / windowHeight;
             canvas.width = img.naturalWidth / scale;

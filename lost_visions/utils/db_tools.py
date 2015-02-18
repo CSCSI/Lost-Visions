@@ -502,7 +502,7 @@ def list_wordnet_links(tag_synset_id):
         synset, synset_list = get_hypernyms(word_synset, initial_list, loop)
         return synset_list
     except Exception as e:
-        print 'list_wordnet_links: ' + str(e)
+        print 'list_wordnet_links: ' + tag_synset_id + ' ' + str(e)
         return initial_list
 
 # we stop looking upwards for parent words once we reach these pretty useless tags
