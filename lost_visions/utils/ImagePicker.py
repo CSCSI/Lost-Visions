@@ -79,6 +79,24 @@ class ImagePicker():
         tagged_images = models.Tag.objects.filter(tag__iexact=tag).order_by().values_list('image__flickr_id', flat=True).distinct()
         return tagged_images
 
+    def get_tagged_images_for_tags_again(self, tag_array, and_or='or', number=None):
+
+        regex_string = r"{0}"
+
+        all_results = SearchQuerySet()
+        ors = []
+
+        for tag in tag_array:
+            regex_format = regex_string.format(tag)
+
+            ors.append(SQ(tag=Raw(regex_format + '*')))
+
+        all_results = all_results.filter(reduce(operator.or_, ors))
+
+        print all_results.query
+        return list(set(all_results))
+
+
     def get_tagged_images_for_tags(self, tag_array, and_or='or', number=None):
 
         # only interested in images where all tags are present
