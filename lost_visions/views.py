@@ -1751,32 +1751,32 @@ def similar_images(request, image_id):
 
     powerset_image_data = []
 
-    tags_power_set = []
+    # tags_power_set = []
 
-    largest_set = {}
-    largest_tag_set = []
+    # largest_set = {}
+    # largest_tag_set = []
 
-    # TODO get top 4 most used tags and only powerset those
-    for a_set in powerset_generator(list(set(first_order_tags[:4]))):
-        print a_set
-
-        if len(a_set) > 0:
-            tags_power_set.append(a_set)
-
-            image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set, and_or='and', number=10), request)
-
-            if image_id in image_data:
-                image_data.pop(image_id)
-
-            powerset_image_data.append({
-                'image_tags': a_set,
-                'image_data': image_data,
-                'tag_powerset_size': len(a_set)
-            })
-
-            if len(image_data) > len(largest_set):
-                largest_set = image_data
-                largest_tag_set = a_set
+    # # TODO get top 4 most used tags and only powerset those
+    # for a_set in powerset_generator(list(set(first_order_tags[:4]))):
+    #     print a_set
+    #
+    #     if len(a_set) > 0:
+    #         tags_power_set.append(a_set)
+    #
+    #         image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set, and_or='and', number=10), request)
+    #
+    #         if image_id in image_data:
+    #             image_data.pop(image_id)
+    #
+    #         powerset_image_data.append({
+    #             'image_tags': a_set,
+    #             'image_data': image_data,
+    #             'tag_powerset_size': len(a_set)
+    #         })
+    #
+    #         if len(image_data) > len(largest_set):
+    #             largest_set = image_data
+    #             largest_tag_set = a_set
 
     # for img_dat in powerset_image_data:
     #     print '\n'
@@ -1808,15 +1808,23 @@ def similar_images(request, image_id):
         else:
             machine_matched_ids.append(machine_matched.image_a_flickr_id)
 
+    sorted_id_list = img_pick.get_similar_images_with_tags(image_id)
+    unsorted_image_data = get_image_data_from_array(sorted_id_list, request)
+
+    largest_set = []
+
+    for similar_id in sorted_id_list:
+        largest_set.append(unsorted_image_data[similar_id])
+
     return_data = {
         'book_images': book_images,
         'image_sets': powerset_image_data,
-        'largest_set': largest_set,
+        # 'largest_set': largest_set,
+        'largest_set':  largest_set,
         'largest_set_size': len(largest_set),
-        'largest_tag_set': largest_tag_set,
+        # 'largest_tag_set': largest_tag_set,
         'machine_matches': get_image_data_from_array(machine_matched_ids, request)
     }
-
     return HttpResponse(json.dumps(return_data),
                         content_type="application/json")
 
