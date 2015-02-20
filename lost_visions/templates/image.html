@@ -347,7 +347,7 @@
 
                     current_question_pane += 1;
                     if (current_question_pane == 2){
-                        setTimeout("$('.form-control').focus()", 500);
+                        setTimeout("$('#dictionary').focus()", 500);
                     }
                     $('#question_number_' + current_question_pane).show('blind', 500, function() {
                         scroll_to_top(tidy_masonry());
@@ -494,9 +494,9 @@
         }).focus(function(e){
             {#            image_clicked()#}
         }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-            return $( "<li>" )
-                    .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
-                    .appendTo( ul );
+            return $( "<li>").css('word-wrap', 'normal')
+                    .append( '<a style="word-wrap: normal;"><strong>' + item.label + "</strong><br>" + item.desc + "</a>" )
+                    .appendTo( ul);
         };
 
         {#        function image_clicked(){#}

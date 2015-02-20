@@ -79,6 +79,20 @@ class ImagePicker():
         tagged_images = models.Tag.objects.filter(tag__iexact=tag).order_by().values_list('image__flickr_id', flat=True).distinct()
         return tagged_images
 
+    def get_tags_for_image(self, flickr_id):
+        all_results = SearchQuerySet()
+        all_results = all_results.filter(SQ(flickr_id=flickr_id))
+
+        tags = []
+        for res in all_results:
+            # print flickr_id
+            # print pprint.pformat(res.__dict__)
+            # print type(res)
+            # print res.tag
+            if res.tag is not None:
+                tags.append(res.tag)
+        return tags
+
     def get_tagged_images_for_tags_again(self, tag_array, and_or='or', number=None):
 
         regex_string = r"{0}"

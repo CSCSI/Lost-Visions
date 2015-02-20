@@ -36,7 +36,7 @@ def get_next_image_id():
         print e
         pass
 
-    if image_id is None:
+    if image_id is None or len(image_id) == 0:
         return get_next_image_id()
     else:
         return image_id
