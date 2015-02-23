@@ -30,9 +30,25 @@
 
     var font_size = getDefaultFontSize()[1];
 
+    var tidy_ittr = 0;
+    var tidy_masonry_interval = setInterval(do_tidy, 1500);
+
     function tidy_masonry() {
-        setTimeout("$('#category-container').masonry()", 1500);
+        {#        setTimeout("$('#category-container').masonry()", 1500);#}
+
+        tidy_masonry_interval = setInterval(do_tidy, 1500);
+
+        {#        $('#category-container').masonry();#}
+    }
+
+    function do_tidy() {
+        tidy_ittr ++;
         $('#category-container').masonry();
+
+        if (tidy_ittr > 10) {
+            tidy_ittr = 0;
+            clearInterval(tidy_masonry_interval);
+        }
     }
 
     function get_similar_images(image_id) {
@@ -888,8 +904,9 @@
                         }
                     }
                     enable_category_click();
-                    setInterval("$('#category-container').masonry()", 500);
-                    category_container.masonry();
+                    tidy_masonry();
+                    {#                    setInterval("$('#category-container').masonry()", 500);#}
+                    {#                    category_container.masonry();#}
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
@@ -1290,7 +1307,7 @@
                     <div class="side-menu-content-thin-body">
                         <ul class="side-menu-list">
                             <li>
-                                <a data-toggle="tooltip" data-placement="top"
+                                <a data-toggle="tooltip" data-placement="right"
                                    title="Rotate illustration left" data-original-title="Rotate Left"
                                    class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-rotate-left"></div></a>
                             </li>

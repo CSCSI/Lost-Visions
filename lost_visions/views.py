@@ -51,7 +51,11 @@ def home(request):
 
 @requires_csrf_token
 def get_alternative_tags(request):
-    tag_info = request.POST['tag_info']
+    if request.method == 'POST':
+        tag_info = request.POST['tag_info']
+    else:
+        tag_info = request.GET['tag_info']
+
     response_data = []
     # print tag_info
 
@@ -248,7 +252,10 @@ def image(request, image_id):
     # image_model = models.Image.objects.get(flickr_id=image_id)
 
     image_models = get_image_data_with_location([image_id])
-    image_info = db_tools.get_image_info(image_models[0])
+    try:
+        image_info = db_tools.get_image_info(image_models[0])
+    except IndexError:
+        return render(request, 'error.html')
 
     if image_info is None:
         image_info = dict()
@@ -1703,12 +1710,24 @@ def exhibition(request, collection_id):
     mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
     mapped_images_array = []
     for image in mapped_images:
+        # print pprint.pformat(image.__dict__)
+
         image_dict = dict()
         image_dict['flickr_id'] = image.image.flickr_id
         image_dict['title'] = image.image.title
         image_dict['page'] = image.image.page.lstrip('0')
         # image_dict['url'] = image.image.flickr_small_source
-        image_dict['url'] = db_tools.get_image_info(image.image)['imageurl']
+        try:
+            image_model = get_image_data_with_location([image.image.flickr_id])[0]
+
+            image_info = db_tools.get_image_info(image_model)
+
+            if image_info is None:
+                image_info = dict()
+            else:
+                image_dict['url'] = sanitise_image_info(image_info, request)['imageurl']
+        except Exception as e69362:
+            print 'e69362' + str(e69362)
 
         try:
             image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
@@ -1717,6 +1736,7 @@ def exhibition(request, collection_id):
             print e
 
         mapped_images_array.append(image_dict)
+        print pprint.pformat(image_dict)
 
     collection_data['images'] = mapped_images_array
     collection_data['collection_name'] = collection_model.name
@@ -1920,3 +1940,7 @@ def mario_find(request, flickr_id):
 
     # return_data = serializers.serialize('json', results)
     return HttpResponse(json.dumps(stuff, indent=4), content_type="application/json")
+
+
+def help(request):
+    return render_to_response('help.html')

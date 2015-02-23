@@ -52,7 +52,12 @@ def get_info_from_image_model(image_model):
 
     if image_info['flickr_url'] == '':
         image_info['flickr_url'] = image_model.flickr_original_source
-    image_info['location'] = image_model.location
+
+    try:
+       image_info['location'] = image_model.location
+       print 'IMAGE HAS A LOCATION???'
+    except:
+        print 'NO IDEA HOW THIS EVER WORKED'
     return image_info
 
 
@@ -508,6 +513,7 @@ def list_wordnet_links(tag_synset_id):
 # we stop looking upwards for parent words once we reach these pretty useless tags
 useless_words = ['artifact', 'being', 'abstraction', 'state',
                  'part', 'thing', 'entity', 'event', 'device', 'stuff',
+                 'physical entity', 'physical object', 'object', 'creation',
                  'representational process', 'percept', 'organism', 'representation']
 
 

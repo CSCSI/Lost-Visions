@@ -13,6 +13,7 @@ urlpatterns = patterns('',
                        url(r'^software', 'lost_visions.views.software', name='software'),
                        url(r'^education', 'lost_visions.views.education', name='education'),
                        url(r'^stats', 'lost_visions.views.stats', name='stats'),
+                       url(r'^help', 'lost_visions.views.help', name='help'),
 
                        url(r'^mario/(?P<flickr_id>\d+)', 'lost_visions.views.mario_find', name='mario'),
 

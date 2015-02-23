@@ -36,6 +36,16 @@ LITERATURE_BUTTON_IMAGE_URL = MIKEY_URL + "literature.jpg"
 YES_BUTTON_URL = MIKEY_URL + "yes button.jpg"
 NO_BUTTON_URL = MIKEY_URL + "No button.jpg"
 
+ARCHAEOLOGICAL_BUTTON_URL = MIKEY_URL + "archaeological.jpg"
+ARCHITECTURAL_BUTTON_URL = MIKEY_URL + "architecturaldrawing.jpg"
+BOTANICAL_BUTTON_URL = MIKEY_URL + "botanical.jpg"
+BYNAME_BUTTON_URL = MIKEY_URL + "byname.jpg"
+ENGINEERING_BUTTON_URL = MIKEY_URL + "engineering.jpg"
+GEOLOGICAL_BUTTON_URL = MIKEY_URL + "geological.jpg"
+MEDICAL_BUTTON_URL = MIKEY_URL + "medical.jpg"
+ON_A_MAP_BUTTON_URL = MIKEY_URL + "onamap.jpg"
+ZOOLOGICAL_BUTTON_URL = MIKEY_URL + "zoological.jpg"
+NONE_OF_THESE_BUTTON_URL = MIKEY_URL + "noneofthesenew.jpg"
 
 class Category():
     def __init__(self, category_id, name, text, img):
@@ -165,7 +175,7 @@ class CategoryManager():
         self.categories[404] = Category('404', 'coat_of_arms', 'Coat of Arms?', ICON_URL + 'coat_of_arms.jpg')\
             .set_synset('coat of arms.n.1')
         self.categories[405] = Category('405', 'decorative letter', 'Decorative Letter?', ICON_URL + 'letter.jpg')
-        self.categories[406] = Category('406', 'no', 'None of These', NO_BUTTON_URL).set_save(False)
+        self.categories[406] = Category('406', 'no', '', NONE_OF_THESE_BUTTON_URL).set_save(False)
 
         self.categories[500] = Category('500', 'title_page', '', TITLE_PAGE_BUTTON_IMAGE_URL).set_synset('title page.n.1')
 
@@ -179,22 +189,22 @@ class CategoryManager():
         self.categories[800] = Category('800', 'scientific_drawing', '', SCIENTIFIC_BUTTON_IMAGE_URL) \
             .set_question('Is the Diagram ...').set_synset('diagram.n.1') \
             .set_answers([801, 802, 803, 804, 805, 806, 807, 808])
-        self.categories[801] = Category('801', 'Geological', 'Geological?', ICON_URL + 'lv-rect-station.png') \
+        self.categories[801] = Category('801', 'Geological', 'Geological?', GEOLOGICAL_BUTTON_URL) \
             .set_question('Does the Diagram describe a named location?').set_answers([810, 1])
         self.categories[810] = Category('810', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False).set_answers([1000])
 
-        self.categories[802] = Category('802', 'Medical', 'Medical?', ICON_URL + 'lv-rect-station.png')
-        self.categories[803] = Category('803', 'Engineering', 'Engineering?', ICON_URL + 'lv-rect-station.png')
-        self.categories[804] = Category('804', 'Botanical', 'Botanical?', ICON_URL + 'lv-rect-station.png')
-        self.categories[805] = Category('805', 'Zoological', 'Zoological?', ICON_URL + 'lv-rect-station.png')
-        self.categories[806] = Category('806', 'Archaeological', 'Archaeological?', ICON_URL + 'lv-rect-station.png') \
+        self.categories[802] = Category('802', 'Medical', 'Medical?', MEDICAL_BUTTON_URL)
+        self.categories[803] = Category('803', 'Engineering', 'Engineering?', ENGINEERING_BUTTON_URL)
+        self.categories[804] = Category('804', 'Botanical', 'Botanical?', BOTANICAL_BUTTON_URL)
+        self.categories[805] = Category('805', 'Zoological', 'Zoological?', ZOOLOGICAL_BUTTON_URL)
+        self.categories[806] = Category('806', 'Archaeological', 'Archaeological?', ARCHAEOLOGICAL_BUTTON_URL) \
             .set_question('Is the archaeological image of a named location?').set_answers([816, 1])
         self.categories[816] = Category('810', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False).set_answers([1000])
 
-        self.categories[807] = Category('807', 'architectural', 'Architectural Drawing?', ICON_URL + 'schematic.jpg') \
+        self.categories[807] = Category('807', 'architectural', 'Architectural Drawing?', ARCHITECTURAL_BUTTON_URL) \
             .set_question('Is the architectural drawing of a named location?').set_answers([817, 1])
         self.categories[817] = Category('810', 'yes', 'Yes', YES_BUTTON_URL).set_save(False).set_answers([1000])
-        self.categories[808] = Category('808', 'no', 'None of These', NO_BUTTON_URL).set_save(False)
+        self.categories[808] = Category('808', 'no', 'None of These', NONE_OF_THESE_BUTTON_URL).set_save(False)
 
         # self.categories[900] = Category('900', 'music', 'Musical Score?', ICON_URL + 'music.jpg')
 
@@ -210,7 +220,7 @@ class CategoryManager():
 
         self.categories[1001] = Category('1001', 'Name', 'By Name?', ICON_URL + 'lv-rect-station.png')\
             .set_action('gazetteer').set_save(False).set_answers([1003, 1004])
-        self.categories[1002] = Category('1002', 'Map', 'On a map?', ICON_URL + 'map.jpg')\
+        self.categories[1002] = Category('1002', 'Map', 'On a map?', ON_A_MAP_BUTTON_URL)\
             .set_save(False).set_action('map').set_answers([1004])
         self.categories[1003] = Category('1003', 'save', 'Save', ICON_URL + 'tick.png').set_save(False)
         self.categories[1004] = Category('1004', 'back', 'Back', ICON_URL + 'cross.png').set_save(False)

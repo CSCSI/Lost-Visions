@@ -13,6 +13,17 @@ a{
     font-weight: 200;
 }
 
+a.anchor{
+    display: block; position: relative; top: -45px; visibility: hidden;
+}
+
+.help_image {
+    margin: 0 auto;
+    max-width: 50%;
+    max-height: 380px;
+    text-align: center;
+}
+
 h2 {
     font-weight: bold;
     color: #A0A2A6;
@@ -25,6 +36,11 @@ h3 {
     /*color: #A0A2A6;*/
     font-size: 18px;
     margin: 5px;
+    text-decoration: underline;
+}
+
+h5 {
+    text-align: center;
 }
 
 html, body {

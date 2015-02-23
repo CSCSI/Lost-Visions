@@ -55,12 +55,12 @@
 
     {#    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud-1.0.4.min.js"></script>#}
     {#    <link rel="stylesheet" type="text/css" href="{% static "//cdnjs.cloudflare.com/ajax/libs/jqcloud/1.0.4/jqcloud.css" %}" />#}
-{#    <script type="text/javascript" src="{% static "vakata-jstree-480a265/dist/jstree.js" %}"></script>#}
+    {#    <script type="text/javascript" src="{% static "vakata-jstree-480a265/dist/jstree.js" %}"></script>#}
 
     {#    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/intro.js/0.5.0/intro.js"></script>#}
     <script type="text/javascript" src="{% static "intro.js/intro.js" %}"></script>
 
-{#    <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>#}
+    {#    <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>#}
 
 
     <style>
@@ -74,8 +74,8 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     {#    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"></script>#}
 
-{#        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>#}
-        <script src="{% static "bootstrap-sass-master/assets/javascripts/bootstrap.js" %}"></script>
+    {#        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>#}
+    <script src="{% static "bootstrap-sass-master/assets/javascripts/bootstrap.js" %}"></script>
 
 
     {#    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>#}
@@ -184,11 +184,11 @@
             return false;
         });
 
-{#        old search features, now advanced search used #}
-{#        $('#search_box').change(function () {#}
-{#            $('#search_form').attr('action',#}
-{#                    '{% url 'do_search' 'abcde'%}'.replace('abcde', $('#search_box').val().replace(' ', '+')));#}
-{#        });#}
+        {#        old search features, now advanced search used #}
+        {#        $('#search_box').change(function () {#}
+        {#            $('#search_form').attr('action',#}
+        {#                    '{% url 'do_search' 'abcde'%}'.replace('abcde', $('#search_box').val().replace(' ', '+')));#}
+        {#        });#}
 
         $("[data-toggle='tooltip']").tooltip({'placement': 'right'});
 
@@ -288,6 +288,11 @@
                             </li>
                             <li class="divider"></li>
                             <li>
+                                <a class="btn btn-block" href="{% url 'help' %}">Help</a>
+                            </li>
+                            <li class="divider"></li>
+
+                            <li>
                                 <a class="btn btn-info btn-xs" id="teach_me" data-toggle="tooltip" data-placement="left"
                                    title="Teach me about this page" data-original-title="Teach Me">[?]</a>
                             </li>
@@ -298,6 +303,7 @@
 
                 <form class="navbar-form navbar-right" id='search_form'
                       action='{% url 'do_advanced_search' %}' method="get" role="search" method="post">{% csrf_token %}
+                    <input type="hidden" value="on" id="alternative_search" name="alternative_search">
                     <div class="form-group">
                         <input type="text" class="form-control quick-search-field fa" data-toggle="tooltip"
                                data-placement="left" title="Perform Quick Search" data-original-title="Quick Search"
@@ -311,7 +317,7 @@
 
     </div>
 
-{#container#}
+    {#container#}
 
     <div class=" base-container">
 

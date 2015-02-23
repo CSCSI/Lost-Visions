@@ -102,7 +102,10 @@ class ImagePicker():
 
             ors.append(SQ(tag=Raw(regex_format + '*')))
 
-        all_results = all_results.filter(reduce(operator.or_, ors))
+        if len(ors) > 0:
+            all_results = all_results.filter(reduce(operator.or_, ors))
+        else:
+            raise Exception('No tags to filter images for')
 
         print all_results.query
         return list(set(all_results))
@@ -486,8 +489,11 @@ class ImagePicker():
         print pprint.pformat(to_search)
 
         # im = ImagePicker()
-        res = self.get_tagged_images_for_tags_again(to_search)
-
+        res = []
+        try:
+            res = self.get_tagged_images_for_tags_again(to_search)
+        except:
+            pass
 
         to_join = []
 

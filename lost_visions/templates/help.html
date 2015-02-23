@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <p><a class="anchor" name="top"></a></p>
+    <h3>
+        Contents
+    </h3>
+    <ul>
+        <li><a href="#tagging">Tagging an Illustration</a></li>
+        <li><a href="#search">Searching</a></li>
+        <li><a href="#advanced_search">Advanced Searching</a></li>
+        <li><a href="#collection">Creating a Collection</a></li>
+        <li><a href="#exhibition">Creating an Exhibition</a></li>
+    </ul>
+
+
+    <p><a class="anchor" name="tagging"></a></p>
+    <h3>Tagging an Illustration</h3>
+    <h5>Click to save the Illustration</h5>
+    <p>
+        {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
+    </p>
+    <a href="#top">Back to Top</a>
+    <br><br><br><br>
+
+    <p><a class="anchor" name="search"></a></p>
+    <h3>Searching</h3>
+    <h5>Click to save the Illustration</h5>
+    <p>
+        {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
+    </p>
+    <a href="#top">Back to Top</a>
+    <br><br><br><br>
+
+
+    <p><a class="anchor" name="advanced_search"></a></p>
+    <h3>Advanced Searching</h3>
+    <h5>Click to save the Illustration</h5>
+    <p>
+        {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
+    </p>
+    <a href="#top">Back to Top</a>
+    <br><br><br><br>
+
+
+    <p><a class="anchor" name="collection"></a></p>
+    <h3>Creating a Collection</h3>
+    <ul>
+        <li>
+            <h5>Click to save the Illustration</h5>
+            <p>
+                <img class="help_image" src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">
+            </p>
+        </li>
+        <li>
+            <h5>Select the collection you wish to add this illustration to.</h5>
+            <h5>To create a new collection, select "NEW COLLECTION". You will be prompted to name this new collection</h5>
+            <p>
+                <img class="help_image" src="{% static "media/images/help/02_select_collection.png" %}">
+            </p>
+        </li>
+        <li>
+            <h5>If you selected "NEW COLLECTION", enter a name here. Otherwise skip this.</h5>
+            <p>
+                <img class="help_image" src="{% static "media/images/help/03_name_collection.png" %}">
+            </p>
+        </li>
+        <li>
+            <h5>The illustration will be saved to the collection you selected or created.</h5>
+            <h5>To view it, navigate to your user profile page via "My Account" -> "Profile" on the Navigation Toolbar</h5>
+            <p>
+                <img class="help_image" src="{% static "media/images/help/04_save_success.png" %}">
+            </p>
+        </li>
+    </ul>
+    <a href="#top">Back to Top</a>
+    <br><br><br><br>
+
+    <p><a class="anchor" name="exhibition"></a></p>
+    <h3>Creating an Exhibition</h3>
+    <h5>Navigate to your user profile page, by selecting My Account -> Profile on the Navigation Toolbar</h5>
+    <p>
+        <img class="help_image" src="{% static "media/images/help/05_Collections_page.png" %}">
+    </p>
+    <h5>Scroll down to see all your personal collections (see the "Creating a Collection" help chapter)</h5>
+    <h5>Here you can see options to edit each collection, download it, show it's Exhibition Page, or share it.</h5>
+    <h5>There is also the option to remove individual illustration, or add captions to an illustration.</h5>
+    <p>
+        <img class="help_image" src="{% static "media/images/help/06_collection_buttons.png" %}">
+    </p>
+    <h5>Clicking the "Edit Caption" button shown opens a dialog box to add a caption for an image.</h5>
+    <h5>This will be visible in the Exhbition Page</h5>
+    <p>
+        <img class="help_image" src="{% static "media/images/help/07_caption_edit.png" %}">
+    </p>
+    <h5>Clicking the "Show Exhibition" button opens a new page with a scrolling marquee of all images in the collection</h5>
+    <h5>This page is public, and the link from the address bar in your browser can be shared.</h5>
+    <p>
+        <img class="help_image" src="{% static "media/images/help/08_exhibition.png" %}">
+    </p>
+    <a href="#top">Back to Top</a>
+
+{% endblock %}
