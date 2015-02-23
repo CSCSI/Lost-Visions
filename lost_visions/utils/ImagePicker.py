@@ -587,7 +587,7 @@ class ImagePicker():
         for final_found in sorted_discovered:
             finals.append(final_found['flickr_id'])
 
-        return finals
+        return finals[:30]
 
 
 class Request():

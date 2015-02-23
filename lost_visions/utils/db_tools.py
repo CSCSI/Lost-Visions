@@ -513,7 +513,7 @@ def list_wordnet_links(tag_synset_id):
 # we stop looking upwards for parent words once we reach these pretty useless tags
 useless_words = ['artifact', 'being', 'abstraction', 'state',
                  'part', 'thing', 'entity', 'event', 'device', 'stuff',
-                 'physical entity', 'physical object', 'object', 'creation',
+                 'physical entity', 'physical object', 'object', 'creation', 'homo',
                  'representational process', 'percept', 'organism', 'representation']
 
 

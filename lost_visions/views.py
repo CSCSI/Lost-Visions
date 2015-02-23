@@ -16,6 +16,7 @@ from dateutil import parser
 from dateutil.tz import tzlocal
 from django.contrib import auth
 from django.core import serializers
+from django.core.mail.message import EmailMessage, EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
 from django.http import HttpResponse, Http404
@@ -27,6 +28,7 @@ import itertools
 from pygeoip import GeoIP
 from crowdsource import settings
 from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size
+from crowdsource.settings import ADMIN_EMAIL_ADDRESSES
 from lost_visions import forms, models
 from ipware.ip import get_ip
 from bleach import clean
@@ -995,7 +997,7 @@ def image_category(request):
 
     # request_user = get_request_user(request)
     try:
-    #     #
+        #     #
         image_id = request.POST.get('image_id', None)
         # image_model = models.Image.objects.get(flickr_id=request.POST['image_id'])
         if image_id is not None:
@@ -1012,23 +1014,23 @@ def image_category(request):
             # category_name = category_manager.get_tag_for_category_id(cat_id)
 
             # if category_name is not None:
-                # tag = models.Tag()
-                # tag.tag = category_name
-                # tag.image = image_model
-                # tag.user = request_user
-                # tag.timestamp = datetime.now(tzlocal())
-                # tag.tag_order = 0
-                # tag.save()
+            # tag = models.Tag()
+            # tag.tag = category_name
+            # tag.image = image_model
+            # tag.user = request_user
+            # tag.timestamp = datetime.now(tzlocal())
+            # tag.tag_order = 0
+            # tag.save()
 
-        # text_entry = request.POST.get('text_entry', '')
-        # if len(text_entry):
-        #     tag = models.Tag()
-        #     tag.tag = text_entry
-        #     tag.image = image_model
-        #     tag.user = request_user
-        #     tag.timestamp = datetime.now(tzlocal())
-        #     tag.tag_order = 0
-        #     tag.save()
+            # text_entry = request.POST.get('text_entry', '')
+            # if len(text_entry):
+            #     tag = models.Tag()
+            #     tag.tag = text_entry
+            #     tag.image = image_model
+            #     tag.user = request_user
+            #     tag.timestamp = datetime.now(tzlocal())
+            #     tag.tag_order = 0
+            #     tag.save()
 
     except Exception as e:
         print e
@@ -1108,7 +1110,7 @@ def do_advanced_search(request):
                 all_image_ids += result + ','
             readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
 
-        # tk.time_now('done search')
+            # tk.time_now('done search')
     else:
         all_results_haystack = im.advanced_haystack_search(request.GET).load_all()
 
@@ -1135,31 +1137,31 @@ def do_advanced_search(request):
         result_count = len(to_join)
 
         # for o in all_results[:5000]:
-            # if type(o) == Image:
-            #     # print 'image\n'
-            #     total_results += 1
-            #     all_image_ids += o.flickr_id + ','
-            #
-            # if type(o) == Tag:
-            #     # print 'tag\n'
-            #     total_results += 1
-            #     all_image_ids += o.image.flickr_id + ','
-            #
-            # if type(o) == ImageText:
-            #     # print 'text\n'
-            #     total_results += 1
-            #     all_image_ids += o.image.flickr_id + ','
+        # if type(o) == Image:
+        #     # print 'image\n'
+        #     total_results += 1
+        #     all_image_ids += o.flickr_id + ','
+        #
+        # if type(o) == Tag:
+        #     # print 'tag\n'
+        #     total_results += 1
+        #     all_image_ids += o.image.flickr_id + ','
+        #
+        # if type(o) == ImageText:
+        #     # print 'text\n'
+        #     total_results += 1
+        #     all_image_ids += o.image.flickr_id + ','
 
         # tk.time_now('pulled image_ids')
 
         if result_count > 5000:
-#            too_many = True
+            #            too_many = True
             readable_query += 'Please add more detail to the query. '
             readable_query += 'Only returning first 5000 images of (' + str(result_count) + ' found)'
         else:
             readable_query += '(' + str(result_count) + ' found)'
 
-        # tk.time_now('done alt search')
+            # tk.time_now('done alt search')
     results['advanced'] = []
 
     response_data = {'results': results, 'size': total_results, 'search_string': keywords}
@@ -1928,15 +1930,15 @@ def mario_find(request, flickr_id):
                 for tag in mario_models.Tags.objects.filter(tagid=tag_relation.tagid):
                     stuff['tags'].append(tag.tag)
 
-            # tag2profile_ids = mario_models.Tag2Profile.objects.filter(profileid=result)
-            #
-            # print tag2profile_ids.__dict__
-            #
-            # for tag_id in tag2profile_ids:
-            #     print tag_id
-            #     tag = mario_models.Tags.objects.filter(tagid=tag_id.tagid)
-            #
-            #     stuff['tags'].append(tag)
+                    # tag2profile_ids = mario_models.Tag2Profile.objects.filter(profileid=result)
+                    #
+                    # print tag2profile_ids.__dict__
+                    #
+                    # for tag_id in tag2profile_ids:
+                    #     print tag_id
+                    #     tag = mario_models.Tags.objects.filter(tagid=tag_id.tagid)
+                    #
+                    #     stuff['tags'].append(tag)
 
     # return_data = serializers.serialize('json', results)
     return HttpResponse(json.dumps(stuff, indent=4), content_type="application/json")
@@ -1944,3 +1946,47 @@ def mario_find(request, flickr_id):
 
 def help(request):
     return render_to_response('help.html')
+
+@requires_csrf_token
+def request_public_exhibition(request):
+    if request.user.is_authenticated():
+
+        print request.POST
+
+        collection_name = request.POST.get('collection_name', '*UNKNOWN*')
+        collection_id = request.POST.get('collection_id', '*UNKNOWN*')
+
+        email_text = 'To Lost Visions/ Illustration Archive Administrator\n\n'
+        email_text += 'User ' + get_request_user(request).username.username + \
+                      ' has requested that a collection named *' + collection_name + \
+                      '* with collection ID *' + collection_id + '* be made into a Public Exhibition.\n\n'
+        email_text += 'Click <here> to accept.\n\n'
+        email_text += 'Thanks.\n\nThis is an automated message, please do not reply.'
+        email_text += '\n\nLost Visions/ Illustration Archive, 2015'
+
+        html_text = '<strong>To Lost Visions/ Illustration Archive Administrator</strong><br><br>'
+        html_text += '<p>User ' + get_request_user(request).username.username + \
+                     ' has requested that a collection named *' + collection_name + \
+                     '* with collection ID *' + collection_id + '* be made into a Public Exhibition.</p><br>'
+        html_text += '<p>Click <a href="lost-visions.cf.ac.uk' + reverse('exhibition', kwargs={'collection_id': collection_id}) +\
+                     '">Here</a> to review it.</p><br>'
+        html_text += '<p>Click <a href="lost-visions.cf.ac.uk' + reverse('accept_public_exhibition', kwargs={'collection_id': collection_id}) +\
+                     '">Here</a> to accept.</p><br>'
+        html_text += '<p>Thanks.</p><p>This is an automated message, please do not reply.</p>'
+        html_text += '<br><p>Lost Visions/ Illustration Archive, 2015<p>'
+
+        email = EmailMultiAlternatives('Request for Public Exhibition', email_text, to=ADMIN_EMAIL_ADDRESSES)
+        email.attach_alternative(html_text, "text/html")
+        res = email.send()
+        return HttpResponse(json.dumps({'success': res}, indent=4), content_type="application/json")
+
+
+def accept_public_exhibition(request, collection_id):
+    if request.user.is_authenticated():
+        if get_request_user(request).username.username == 'davejones':
+            msg = 'OK added ' + str(collection_id)
+        else:
+            msg = 'not davejones'
+    else:
+        msg = 'Not authed'
+    return render(request, 'accept_public_exhibition.html', {'msg': msg}, context_instance=RequestContext(request))

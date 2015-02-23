@@ -998,10 +998,28 @@
 
                             }
                         }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                            var li_text = "<a>";
+                            li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";
+                            li_text += "<br>" + item.properties.featuretype + "<br>";
+
+                            if (item.properties.adminlevel1) {
+                                li_text += "" + item.properties.adminlevel1 + ", ";
+                            }
+                            if (item.properties.adminlevel2) {
+                                li_text += "" + item.properties.adminlevel2 + ", ";
+                            }
+                            if (item.properties.adminlevel3) {
+                                li_text += "" + item.properties.adminlevel3 + ", ";
+                            }
+                            if (item.properties.adminlevel4) {
+                                li_text += "" + item.properties.adminlevel4 + "";
+                            }
+                            li_text += "<br>";
+
+                            li_text += "(" + item.properties.centroid + ")</a>";
+
                             return $( "<li>" )
-                                    .append( "<a><strong>" + item.properties.name + " - " + item.properties.country +
-                                            "</strong><br>" + item.properties.featuretype
-                                            + "<br>" + item.properties.centroid + "</a>" )
+                                    .append( li_text )
                                     .appendTo( ul );
                         };
                     });

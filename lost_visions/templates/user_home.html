@@ -128,6 +128,13 @@
 
         });
 
+        $('.request_public_exhibition').click(function(){
+            var collection_name = $(this).data().collection_name;
+            var collection_id = $(this).data().collection_id;
+
+            request_collection_be_public(collection_name, collection_id);
+        });
+
         var edit_collection_dialog = $( "#edit_collection_dialog_form" ).dialog({
             autoOpen: false,
             height: 300,
@@ -235,6 +242,25 @@
             }
         });
 
+        function request_collection_be_public(collection_name, collection_id) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'request_public_exhibition' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    collection_name: collection_name,
+                    collection_id: collection_id
+                },
+                success: function(data) {
+                    var ok = data['success'];
+                    alert("Thank you. A request has been sent to the administrator : " + collection_name + ' ' + collection_id);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+
     });
     $(window).load(function(){
         $('.js-masonry').masonry();
@@ -295,31 +321,35 @@
             </div>
 
             {% for k, b in users_collections.items %}
-                                <div class="col-md-12">
+                <div class="col-md-12">
 
-                <h3>{{ b.collection_name }}</h3>
+                    <h3>{{ b.collection_name }}</h3>
 
-                <div style="margin-left: 15px">
-                    <div class="row">
-                        <div id="edit_collection_{{ k }}"
-                             data-collection_id="{{ k }}"
-                             data-collection_name="{{ b.collection_name }}"
-                             class="btn btn-default edit_collection">Edit Collection</div>
+                    <div style="margin-left: 15px">
+                        <div class="row">
+                            <div id="edit_collection_{{ k }}"
+                                 data-collection_id="{{ k }}"
+                                 data-collection_name="{{ b.collection_name }}"
+                                 class="btn btn-default edit_collection">Edit Collection</div>
 
-                        <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
-                             class="btn btn-default dl_collection">Download Collection</div>
+                            <div id="download_collection{{ k }}" data-collection_id="{{ k }}"
+                                 class="btn btn-default dl_collection">Download Collection</div>
 
-                        <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
-                    </div>
-                    <div class="row">
-                        <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
+                            <a href="{% url 'exhibition' k %}" target="_blank" class="btn btn-default">Show Exhibition</a>
 
-                        <div class="btn"  style="padding: 10px; margin-top: 10px">
-                            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
-                            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
+                            <div id="request_public_exhibition{{ k }}" data-collection_id="{{ k }}"
+                                 data-collection_name="{{ b.collection_name }}"
+                                 class="btn btn-default request_public_exhibition">Request Public Exhibition</div>
                         </div>
-                                                </div>
+                        <div class="row">
+                            <div id="share_all" data-collection_id="{{ k }}" class="btn btn-warning share_all">Share</div>
+
+                            <div class="btn"  style="padding: 10px; margin-top: 10px">
+                                <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ k }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
+                                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+                            </div>
+                        </div>
                     </div>
 
 

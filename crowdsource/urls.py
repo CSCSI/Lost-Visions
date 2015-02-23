@@ -21,12 +21,15 @@ urlpatterns = patterns('',
                        url(r'^do_login', 'lost_visions.views.do_login', name='login.do_login'),
 
                        url(r'^logout', 'lost_visions.views.logout', name='logout'),
+                       url(r'^request_public_exhibition', 'lost_visions.views.request_public_exhibition', name='request_public_exhibition'),
                        url(r'^user_dl_all', 'lost_visions.views.user_dl_all', name='user_dl_all'),
                        url(r'^download_collection', 'lost_visions.views.download_collection', name='dl_collection'),
                        url(r'^manage_collection', 'lost_visions.views.manage_collection', name='manage_collection'),
 
                        url(r'^user_profile', 'lost_visions.views.user_home', name='user_profile_home'),
                        url(r'^exhibition/(?P<collection_id>\d+)', 'lost_visions.views.exhibition', name='exhibition'),
+                       url(r'^accept_public_exhibition/(?P<collection_id>\d+)',
+                           'lost_visions.views.accept_public_exhibition', name='accept_public_exhibition'),
                        url(r'^tweet_card', 'lost_visions.views.tweet_card', name='tweet_card'),
 
                        url(r'^save_image', 'lost_visions.views.save_image', name='user_profile.save_image'),
