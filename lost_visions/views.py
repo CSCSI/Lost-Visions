@@ -1124,7 +1124,7 @@ def do_advanced_search(request):
             # print x.flickr_id
             # print pprint.pformat(x.__dict__.get('flickr_id'))
             # all_image_ids += x.flickr_id + ','
-            if type(x.flickr_id) is not NoneType:
+            if type(x) is not NoneType:
                 to_join.append(x.flickr_id)
 
         # all_results = [x.object for x in all_results_haystack]
@@ -1945,7 +1945,7 @@ def mario_find(request, flickr_id):
 
 
 def help(request):
-    return render_to_response('help.html')
+    return render(request, 'help.html', {}, context_instance=RequestContext(request))
 
 @requires_csrf_token
 def request_public_exhibition(request):

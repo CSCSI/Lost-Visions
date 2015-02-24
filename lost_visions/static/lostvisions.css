@@ -41,7 +41,7 @@ h3 {
 
 .text-over-image {
     position: relative;
-    float: left;
+    /*float: left;*/
     clear: none;
     overflow: hidden;
 }
@@ -62,6 +62,13 @@ h3 {
     font-size: 3vw;
     color: #ffffff;
 }
+
+@media all and (max-width: 999px) and (min-width: 50px) {
+.text-over-image .over-text{
+    font-size: 8vw;
+  }
+}
+
 
 h5 {
     text-align: center;

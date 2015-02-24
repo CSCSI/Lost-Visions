@@ -181,7 +181,10 @@
                             $('#grid-result-container').masonry();
                         }
 
-                        jq_elem.append($remove_button).append($save_button);
+                        jq_elem.append($remove_button);
+                        {% if user.is_authenticated %}
+                            jq_elem.append($save_button);
+                        {% endif %}
 
                         $remove_button.hide();
                         $save_button.hide();
@@ -211,7 +214,7 @@
         });
     }
 
-        function search_ids(ids){
+    function search_ids(ids){
 
         $.ajax({
             type: "POST",
@@ -307,9 +310,9 @@
             }
         });
 
-{#        console.log($('#advanced-search-form').serializeArray());#}
+        {#        console.log($('#advanced-search-form').serializeArray());#}
 
-{#        search_ids([])#}
+        {#        search_ids([])#}
     });
     $(window).load(function(){
 
