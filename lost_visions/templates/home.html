@@ -141,7 +141,7 @@
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4">
-                <a target="_blank" href="{% url 'image.random' %}">
+                <a href="{% url 'image.random' %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/new_design/LostVisions_TagIllustrations.png" %}"/>
                 </a>
             </div>
@@ -153,12 +153,12 @@
         </div>
         <div class="home-lower-imagebar row">
             <div class="home-lower-imagebar-image-container col-md-4">
-                <a target="_blank" href="{% url 'education' %}">
+                <a href="{% url 'education' %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/new_design/LostVisions_TeacherResources.png" %}"/>
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
-                <a href="http://lostvisions.weebly.com/">
+                <a href="{% url 'public_exhibition' %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/Exhibition3.jpg" %}"/>
                     <p class="over-text">Exhibitions</p>
                 </a>

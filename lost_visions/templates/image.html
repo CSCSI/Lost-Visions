@@ -1002,20 +1002,26 @@
                             li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";
                             li_text += "<br>" + item.properties.featuretype + "<br>";
 
+                            var need_br = false;
                             if (item.properties.adminlevel1) {
+                                need_br = true;
                                 li_text += "" + item.properties.adminlevel1 + ", ";
                             }
                             if (item.properties.adminlevel2) {
+                                need_br = true;
                                 li_text += "" + item.properties.adminlevel2 + ", ";
                             }
                             if (item.properties.adminlevel3) {
+                                need_br = true;
                                 li_text += "" + item.properties.adminlevel3 + ", ";
                             }
                             if (item.properties.adminlevel4) {
+                                need_br = true;
                                 li_text += "" + item.properties.adminlevel4 + "";
                             }
-                            li_text += "<br>";
-
+                            if (need_br) {
+                                li_text += "<br>";
+                            }
                             li_text += "(" + item.properties.centroid + ")</a>";
 
                             return $( "<li>" )

@@ -1968,9 +1968,9 @@ def request_public_exhibition(request):
         html_text += '<p>User ' + get_request_user(request).username.username + \
                      ' has requested that a collection named *' + collection_name + \
                      '* with collection ID *' + collection_id + '* be made into a Public Exhibition.</p><br>'
-        html_text += '<p>Click <a href="lost-visions.cf.ac.uk' + reverse('exhibition', kwargs={'collection_id': collection_id}) +\
+        html_text += '<p>Click <a href="lost-visions.cf.ac.uk' + reverse('exhibition', kwargs={'collection_id': collection_id}) + \
                      '">Here</a> to review it.</p><br>'
-        html_text += '<p>Click <a href="lost-visions.cf.ac.uk' + reverse('accept_public_exhibition', kwargs={'collection_id': collection_id}) +\
+        html_text += '<p>Click <a href="lost-visions.cf.ac.uk' + reverse('accept_public_exhibition', kwargs={'collection_id': collection_id}) + \
                      '">Here</a> to accept.</p><br>'
         html_text += '<p>Thanks.</p><p>This is an automated message, please do not reply.</p>'
         html_text += '<br><p>Lost Visions/ Illustration Archive, 2015<p>'
@@ -1985,8 +1985,105 @@ def accept_public_exhibition(request, collection_id):
     if request.user.is_authenticated():
         if get_request_user(request).username.username == 'davejones':
             msg = 'OK added ' + str(collection_id)
+
+            # This needs explanation
+            #             We're going to copy/ clone the users existing collection and give this clone to the admin user
+
+            # Get the admin user by name
+            # TODO dont use name, thats stupid
+            admin_user = models.User.objects.get(username='davejones')
+            admin_user = models.LostVisionUser.objects.get(username=admin_user)
+
+            # Get the user collection we're going to clone
+            old_collection_model = models.ImageCollection.objects.get(id=collection_id)
+
+            # Create a new Image collection with the admin user as the owner
+            # Give it the same name as the original
+            new_collection_model = models.ImageCollection()
+
+            new_collection_name = old_collection_model.name + \
+                                  ' Created by ' + old_collection_model.user.username.username
+            new_collection_model.name = new_collection_name
+            new_collection_model.user = admin_user
+            new_collection_model.save()
+
+            # Create all new Image mappings the same as the previous ones
+            # add them to the new collection
+            image_mappings = models.ImageMapping.objects.filter(collection=old_collection_model)
+            for old_mapping in image_mappings:
+
+                new_mapping = models.ImageMapping()
+                new_mapping.image = old_mapping.image
+                new_mapping.collection = new_collection_model
+                new_mapping.save()
+
+                # Take all the captions from the previous collection too
+                # save them to the new mapping for each image
+                old_mapping_captions = models.SavedImageCaption.objects.filter(image_mapping=old_mapping)
+                for old_caption in old_mapping_captions:
+                    new_caption = models.SavedImageCaption()
+                    new_caption.caption = old_caption.caption
+                    new_caption.image_mapping = new_mapping
+                    new_caption.save()
+
+            # Create a publicExhibition object with the new collection
+            # Store a reference to the previous collection the user created
+            # save it
+            new_public_exhibition = models.PublicExhibition()
+            new_public_exhibition.collection = new_collection_model
+            new_public_exhibition.user_collection = old_collection_model
+            new_public_exhibition.save()
+
         else:
             msg = 'not davejones'
     else:
         msg = 'Not authed'
     return render(request, 'accept_public_exhibition.html', {'msg': msg}, context_instance=RequestContext(request))
+
+
+def public_exhibition(request):
+    exhibition_models = models.PublicExhibition.objects.all().filter(visible=True).order_by('-timestamp')
+
+    recent_exhibition_model = exhibition_models[0]
+    collection_model = recent_exhibition_model.collection
+    collection_data = dict()
+
+    mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
+    mapped_images_array = []
+    for image in mapped_images:
+        # print pprint.pformat(image.__dict__)
+
+        image_dict = dict()
+        image_dict['flickr_id'] = image.image.flickr_id
+        image_dict['title'] = image.image.title
+        image_dict['page'] = image.image.page.lstrip('0')
+        # image_dict['url'] = image.image.flickr_small_source
+        try:
+            image_model = get_image_data_with_location([image.image.flickr_id])[0]
+
+            image_info = db_tools.get_image_info(image_model)
+
+            if image_info is None:
+                image_info = dict()
+            else:
+                image_dict['url'] = sanitise_image_info(image_info, request)['imageurl']
+        except Exception as e69362:
+            print 'e69362' + str(e69362)
+
+        try:
+            image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
+            image_dict['caption'] = image_mapping_caption.caption
+        except Exception as e:
+            print e
+
+        mapped_images_array.append(image_dict)
+        print pprint.pformat(image_dict)
+
+    collection_data['images'] = mapped_images_array
+    collection_data['collection_name'] = collection_model.name
+
+    return_object = {'collection_id': collection_model.id,
+                     'collection_data': collection_data,
+                     'date': recent_exhibition_model.timestamp,
+                     'collection_creator': collection_model.user.username}
+    return render(request, 'public_exhibition.html', return_object, context_instance=RequestContext(request))
