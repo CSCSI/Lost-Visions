@@ -30,6 +30,8 @@ urlpatterns = patterns('',
                        url(r'^exhibition/(?P<collection_id>\d+)', 'lost_visions.views.exhibition', name='exhibition'),
                        url(r'^accept_public_exhibition/(?P<collection_id>\d+)',
                            'lost_visions.views.accept_public_exhibition', name='accept_public_exhibition'),
+                                              url(r'^tweet_card', 'lost_visions.views.tweet_card', name='tweet_card'),
+                       url(r'^exhibition', 'lost_visions.views.public_exhibition', name='public_exhibition'),
                        url(r'^tweet_card', 'lost_visions.views.tweet_card', name='tweet_card'),
 
                        url(r'^save_image', 'lost_visions.views.save_image', name='user_profile.save_image'),

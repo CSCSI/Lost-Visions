@@ -286,5 +286,12 @@ class MachineMatching(models.Model):
     timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
+class PublicExhibition(models.Model):
+    user_collection = models.ForeignKey(ImageCollection, blank=True, related_name='original_collection')
+    collection = models.ForeignKey(ImageCollection, blank=True, related_name='admins_collection')
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+    comment = models.TextField()
+    visible = models.BooleanField(default=True)
+
 # watson.register(Image)
 # watson.register(ImageText)
