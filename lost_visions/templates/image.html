@@ -1000,7 +1000,12 @@
                         }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
                             var li_text = "<a>";
                             li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";
-                            li_text += "<br>" + item.properties.featuretype + "<br>";
+                            li_text += "<br>";
+                            if (item.properties.featuretype && item.properties.featuretype != 'Undefined') {
+                                li_text += item.properties.featuretype;
+                                                            li_text +=  "<br>";
+
+                            }
 
                             if (item.properties.adminlevel1) {
                                 li_text += "" + item.properties.adminlevel1 + ", ";
