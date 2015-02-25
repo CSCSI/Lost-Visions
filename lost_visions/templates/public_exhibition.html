@@ -3,59 +3,87 @@
 
 {% block content %}
 
+
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
         $(document).ready(function () {
             $('#carousel-exhibition').carousel();
-            $("#carousel-exhibition").height($(window).height() * 0.8).css({'margin': '0 auto'});
-            $(".carousel-exhibition-item").height($(window).height() * 0.8).css({'margin': '0 auto'});
+            $("#carousel-exhibition").height($(window).height() * 0.6).css({'margin': '0 auto'});
+            $(".carousel-exhibition-item").height($(window).height() * 0.6).css({'margin': '0 auto'});
             {#            var carousel = $(".home-carousel");#}
             {#            carousel.css({'max-height': carousel.height()});#}
+
+            $('.slider-for').slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: false,
+                fade: true,
+                asNavFor: '.slider-nav'
+            });
+            $('.slider-nav').slick({
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                asNavFor: '.slider-for',
+                                dots: true,
+                centerMode: true,
+                focusOnSelect: true
+            });
         });
 
     </script>
 
     <div class="home-content-main container">
-        <h3>{{ collection_data.collection_name }} - Created by {{ collection_creator }} - {{ collection_data.images|length }} images</h3>
+        <h3 style="text-align: center">{{ collection_data.collection_name }} - {{ collection_data.images|length }} images</h3>
+
         <div class="row">
+            <div class="slider-for">
+                {% for image in collection_data.images %}
+                    <div class="{% if forloop.first %} active{% endif %}">
 
-            <div id="carousel-exhibition" class="carousel slide carousel-exhibition" data-ride="carousel">
-                <!-- Indicators -->
-                <ol class="carousel-indicators">
-                    <li data-target="#carousel-exhibition" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel-exhibition" data-slide-to="1"></li>
-                    <li data-target="#carousel-exhibition" data-slide-to="2"></li>
-                </ol>
+                        <table>
+                            <col width="80%">
+                            <col width="20%">
+                            <tr>
+                                <th>
+                                    <img src="{{ image.url }}" class="carousel-exhibition-item">
+                                </th>
+                                <td>
+                                    {{ image.title }}
+                                    {% if image.caption %}
+                                        <br>
+                                        <span style="color: white; background-color: #A365BA; text-align: center; text-wrap: normal">
+                                            {{ image.caption }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
 
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner carousel-exhibition-inner">
+                        {#                        <img src="{{ image.url }}" class="carousel-exhibition-item">#}
+                        {#                        <div class="" style="text-align: center">#}
+                        {#                            {{ image.title }}#}
+                        {#                            {% if image.caption %}#}
+                        {#                            <br>#}
+                        {#                            <span style="color: white; background-color: #A365BA; text-align: center">{{ image.caption }}</span>#}
+                        {#                            {% endif %}#}
+                        {#                        </div>#}
 
-                    {% for image in collection_data.images %}
-
-                        <div class="item{% if forloop.first %} active{% endif %} carousel-exhibition-item">
-                            <img src="{{ image.url }}" alt="fire">
-                            <div class="carousel-caption carousel-exhibition-caption">
-                                {{ image.title }}
-                                <br>
-                                <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>
-                            </div>
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-                <!-- Controls -->
-                <a class="left carousel-control" href="#carousel-exhibition" data-slide="prev">
-                    {#                    <span class="glyphicon glyphicon-chevron-left"></span>#}
-                </a>
-                <a class="right carousel-control" href="#carousel-exhibition" data-slide="next">
-                    {#                    <span class="glyphicon glyphicon-chevron-right"></span>#}
-                </a>
+                    </div>
+                {% endfor %}
             </div>
-
+            <div class="slider-nav">
+                {% for image in collection_data.images %}
+                    <div class="{% if forloop.first %} active{% endif %}">
+                        <img src="{{ image.url }}" style="height: 100px; max-width: 100px">
+                        {#                        <div class="">#}
+                        {#                            <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>#}
+                        {#                        </div>#}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-    <h3>This Exhibition has been public since : {{ date }}</h3>
 
+        <h3>This Exhibition has been public since : {{ date }}</h3>
+        <h3>Collection originally created by {{ collection_creator }} </h3>
     </div>
 
 {% endblock %}

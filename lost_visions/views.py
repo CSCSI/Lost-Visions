@@ -2002,7 +2002,7 @@ def accept_public_exhibition(request, collection_id):
             new_collection_model = models.ImageCollection()
 
             new_collection_name = old_collection_model.name + \
-                                  ' Created by ' + old_collection_model.user.username.username
+                                  '. Created by ' + old_collection_model.user.username.username
             new_collection_model.name = new_collection_name
             new_collection_model.user = admin_user
             new_collection_model.save()
@@ -2085,5 +2085,5 @@ def public_exhibition(request):
     return_object = {'collection_id': collection_model.id,
                      'collection_data': collection_data,
                      'date': recent_exhibition_model.timestamp,
-                     'collection_creator': collection_model.user.username}
+                     'collection_creator': recent_exhibition_model.user_collection.user.username}
     return render(request, 'public_exhibition.html', return_object, context_instance=RequestContext(request))
