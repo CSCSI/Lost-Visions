@@ -1754,92 +1754,54 @@ def exhibition(request, collection_id):
 
 
 def similar_images(request, image_id):
-    img_pick = ImagePicker()
-
-    tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id)
-    # .values_list(['tag', 'tag_order'])
-
-    # print tags_for_image
-
-    first_order_tags = []
-    for t in tags_for_image:
-        try:
-            tag_order = str(t.tag_order)[3:6]
-            if tag_order == '100' or t.tag_order < 100:
-                first_order_tags.append(str(t.tag))
-        except:
-            pass
-
-    # print first_order_tags
-
+    error = ''
+    book_images = []
     powerset_image_data = []
-
-    # tags_power_set = []
-
-    # largest_set = {}
-    # largest_tag_set = []
-
-    # # TODO get top 4 most used tags and only powerset those
-    # for a_set in powerset_generator(list(set(first_order_tags[:4]))):
-    #     print a_set
-    #
-    #     if len(a_set) > 0:
-    #         tags_power_set.append(a_set)
-    #
-    #         image_data = get_image_data_from_array(img_pick.get_tagged_images_for_tags(a_set, and_or='and', number=10), request)
-    #
-    #         if image_id in image_data:
-    #             image_data.pop(image_id)
-    #
-    #         powerset_image_data.append({
-    #             'image_tags': a_set,
-    #             'image_data': image_data,
-    #             'tag_powerset_size': len(a_set)
-    #         })
-    #
-    #         if len(image_data) > len(largest_set):
-    #             largest_set = image_data
-    #             largest_tag_set = a_set
-
-    # for img_dat in powerset_image_data:
-    #     print '\n'
-    #     # img_pick.pprint_object(img_dat)
-    #     print 'number of tags used ' + str(img_dat['tag_powerset_size'])
-    #     print img_dat['image_tags']
-    #     print 'number of similar images ' + str(len(img_dat['image_data']))
-    #     print '\n'
-
-
-
-    book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
-    # print book_id
-    flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
-                               .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)
-    # print flickr_ids_from_book
-    book_images = get_image_data_from_array(flickr_ids_from_book, request)
-
-    #TODO optimise
-    image_object = models.Image.objects.get(flickr_id=image_id)
-    image_matches = models.MachineMatching.objects.filter(Q(metric='CV_COMP_CORREL')) \
-                        .filter(Q(image_a=image_object) | Q(image_b=image_object)).order_by('-metric_value')[:20]
-
+    largest_set = []
     machine_matched_ids = []
 
-    for machine_matched in image_matches:
-        if machine_matched.image_a.flickr_id == image_object.flickr_id:
-            machine_matched_ids.append(machine_matched.image_b_flickr_id)
-        else:
-            machine_matched_ids.append(machine_matched.image_a_flickr_id)
+    try:
+        img_pick = ImagePicker()
 
-    sorted_id_list = img_pick.get_similar_images_with_tags(image_id)
-    unsorted_image_data = get_image_data_from_array(sorted_id_list, request)
+        tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id)
 
-    largest_set = []
+        first_order_tags = []
+        for t in tags_for_image:
+            try:
+                tag_order = str(t.tag_order)[3:6]
+                if tag_order == '100' or t.tag_order < 100:
+                    first_order_tags.append(str(t.tag))
+            except:
+                pass
 
-    for similar_id in sorted_id_list:
-        largest_set.append(unsorted_image_data[similar_id])
+        book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
+        # print book_id
+        flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
+                                   .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)
+        # print flickr_ids_from_book
+        book_images = get_image_data_from_array(flickr_ids_from_book, request)
+
+        #TODO optimise
+        image_object = models.Image.objects.get(flickr_id=image_id)
+        image_matches = models.MachineMatching.objects.filter(Q(metric='CV_COMP_CORREL')) \
+                            .filter(Q(image_a=image_object) | Q(image_b=image_object)).order_by('-metric_value')[:20]
+
+        for machine_matched in image_matches:
+            if machine_matched.image_a.flickr_id == image_object.flickr_id:
+                machine_matched_ids.append(machine_matched.image_b_flickr_id)
+            else:
+                machine_matched_ids.append(machine_matched.image_a_flickr_id)
+
+        sorted_id_list = img_pick.get_similar_images_with_tags(image_id)
+        unsorted_image_data = get_image_data_from_array(sorted_id_list, request)
+
+        for similar_id in sorted_id_list:
+            largest_set.append(unsorted_image_data[similar_id])
+    except Exception as e456738:
+        error = str(e456738)
 
     return_data = {
+        'error': error,
         'book_images': book_images,
         'image_sets': powerset_image_data,
         # 'largest_set': largest_set,
@@ -1848,8 +1810,7 @@ def similar_images(request, image_id):
         # 'largest_tag_set': largest_tag_set,
         'machine_matches': get_image_data_from_array(machine_matched_ids, request)
     }
-    return HttpResponse(json.dumps(return_data),
-                        content_type="application/json")
+    return HttpResponse(json.dumps(return_data), content_type="application/json")
 
 
 def powerset_generator(i):

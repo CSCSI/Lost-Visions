@@ -26,7 +26,7 @@
                 slidesToShow: 4,
                 slidesToScroll: 1,
                 asNavFor: '.slider-for',
-{#                                dots: true,#}
+                {#                                dots: true,#}
                 centerMode: true,
                 focusOnSelect: true
             });
@@ -47,7 +47,9 @@
                             <col width="20%">
                             <tr>
                                 <th>
-                                    <img data-lazy="{{ image.url }}" class="carousel-exhibition-item">
+                                    <a href="{% url 'image' image.flickr_id %}" target="_blank">
+                                        <img data-lazy="{{ image.url }}" class="carousel-exhibition-item">
+                                    </a>
                                 </th>
                                 <td>
                                     {{ image.title }}
