@@ -3,7 +3,7 @@ import json
 import logging
 import os
 import pprint
-from random import randint
+from random import randint, sample
 import re
 from types import NoneType
 import urllib
@@ -25,6 +25,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import requires_csrf_token
 import itertools
+import operator
 from pygeoip import GeoIP
 from crowdsource import settings
 from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size
@@ -1975,7 +1976,7 @@ def request_public_exhibition(request):
         html_text += '<p>Thanks.</p><p>This is an automated message, please do not reply.</p>'
         html_text += '<br><p>Lost Visions/ Illustration Archive, 2015<p>'
 
-        email = EmailMultiAlternatives('Request for Public Exhibition', email_text, to=ADMIN_EMAIL_ADDRESSES)
+        email = EmailMultiAlternatives('Request for Public Exhibition ' + collection_name + ' ' + collection_id, email_text, to=ADMIN_EMAIL_ADDRESSES)
         email.attach_alternative(html_text, "text/html")
         res = email.send()
         return HttpResponse(json.dumps({'success': res}, indent=4), content_type="application/json")
@@ -2087,3 +2088,48 @@ def public_exhibition(request):
                      'date': recent_exhibition_model.timestamp,
                      'collection_creator': recent_exhibition_model.user_collection.user.username}
     return render(request, 'public_exhibition.html', return_object, context_instance=RequestContext(request))
+
+
+def random_search(request):
+
+    results = dict()
+    results['advanced'] = dict()
+
+    number_of_results_int = 200
+
+    number_of_images = models.Image.objects.count()
+    rand_image_pk = randint(1, number_of_images)
+    random_array = sample(range(0, number_of_images), number_of_results_int)
+
+
+    ors = []
+    for id in random_array:
+        ors.append(Q(id=id))
+
+    all_results = models.Image.objects.filter(reduce(operator.or_, ors)).values_list('flickr_id', flat=True)
+
+    to_join = []
+    for result in all_results:
+        to_join.append(result)
+
+    all_image_ids = ','.join(to_join)
+    total_results = len(all_results)
+
+    results['advanced'] = []
+
+    response_data = {'results': results, 'size': total_results}
+
+    user_collections = []
+    if request.user.is_authenticated():
+        collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
+        for model in collection_models:
+            user_collections.append({'name': model.name,
+                                     'id': str(model.id)})
+
+    return render(request, 'random_search_results.html',
+                  {'results': response_data,
+                   'query_array': request.GET,
+                   'all_image_ids': all_image_ids,
+                   'number_to_show': 30,
+                   'user_collections': user_collections},
+                  context_instance=RequestContext(request))

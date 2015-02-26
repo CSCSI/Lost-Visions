@@ -55,9 +55,9 @@ def get_info_from_image_model(image_model):
 
     try:
        image_info['location'] = image_model.location
-       print 'IMAGE HAS A LOCATION???'
+       # print 'IMAGE HAS A LOCATION???'
     except:
-        print 'NO IDEA HOW THIS EVER WORKED'
+        pass
     return image_info
 
 

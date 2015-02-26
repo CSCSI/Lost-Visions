@@ -27,7 +27,7 @@ def get_image_data_with_location(id_list):
 
     where += ');'
 
-    print 'getting image data from list::' + str(trimmed_id_list)
+    # print 'getting image data from list::' + str(trimmed_id_list)
     if len(trimmed_id_list) > 0:
         # image_data = models.Image.objects.filter(reduce(operator.or_, q_or_objects))
         # print image_data.query

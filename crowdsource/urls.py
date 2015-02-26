@@ -40,6 +40,8 @@ urlpatterns = patterns('',
                        url(r'^signup', 'lost_visions.views.signup', name='signup'),
                        url(r'^do_signup', 'lost_visions.views.do_signup', name='signup.do_signup'),
 
+                       url(r'^random', 'lost_visions.views.random_search', name='random'),
+
                        url(r'^image/coords/(?P<image_id>\d+)', 'lost_visions.views.coords', name='image.coords'),
                        url(r'^image/coords_save', 'lost_visions.views.coords_save', name='image.coords_save'),
 

@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+
+    var all_image_ids = "{{ all_image_ids }}";
+    var all_image_ids_list = all_image_ids.split(',');
+    var start_id_index = 0;
+    var end_id_index = {{ number_to_show }};
+    var images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
+
+    function read_next_batch(){
+
+        if (end_id_index > (all_image_ids_list.length + {{ number_to_show }})){
+            alert('All images from the search have now been loaded.');
+        } else {
+            images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
+            load_more(images_to_load.join(','));
+
+            start_id_index = end_id_index;
+            end_id_index += {{ number_to_show }};
+        }
+
+    }
+
+    function set_sizes(){
+
+        $('#grid-result-container').find('.adv_item').each(function(i,elem){
+            var $this_jq = $(this);
+
+            var adv_item_img = $this_jq.find('img').get(0);
+            $(adv_item_img).load(function(){
+                var width = adv_item_img.naturalWidth;
+                var height = adv_item_img.naturalHeight;
+
+                var ratio = width / height;
+                {#                console.log($this_jq);#}
+                {#                console.log(this);#}
+                {#                console.log(width + '--' + height + '--' + ratio);#}
+
+                if (ratio > 2 && ratio < 3) {
+                    $this_jq.addClass('adv_landscape_2');
+                }  else if (ratio >= 3) {
+                    $this_jq.addClass('adv_landscape_3');
+                }else if (ratio < 1 && ratio > 0.5) {
+                    $this_jq.addClass('adv_portrait_2');
+                }  else if (ratio <= 0.5 && ratio > 0.25) {
+                    $this_jq.addClass('adv_portrait_3');
+                }    else if (ratio <= 0.25) {
+                    $this_jq.addClass('adv_portrait_4');
+                } else {
+                    if (width > 800){
+                        $this_jq.addClass('adv_square_large');
+                    } else {
+                        $this_jq.addClass('adv_square');
+                    }
+                }
+
+            });
+
+        });
+    }
+
+    function saveImageToCollection(collection_name, image_id) {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'user_profile.new_collection' %}",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                collection_name: collection_name,
+                image_id: image_id
+            },
+            success: function(data) {
+                var ok = data['success'];
+                alert("Added Image to Favourites : " + collection_name);
+
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+            }
+        });
+    }
+
+    function load_more(ids){
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'get_image_data' %}",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                image_ids: ids
+            },
+            success: function(data) {
+                {#                    console.log(data);#}
+
+                var view_toggle_btn = $('#view_toggle');
+                if (view_toggle_btn.data("view") == "list") {
+
+                    var table = $('#results_table');
+
+                    for (var image_id in data) {
+                        {#                            console.log(image_id);#}
+
+                        var image_data = data[image_id];
+
+                        var row = '<tr>'
+                                + '<td>' +
+                                '<a href="' + image_data['link'] + '" target="_blank">' +
+                                '<img src="' + image_data['img_small']  + '"' +
+                                'style="max-height: 80px; width:auto; max-width: 100%; display: block; margin: 0 auto">' +
+                                '</a>'
+                                + '</td>'
+                                + '<td>' + image_data['author'] + '</td>'
+                                + '<td>' + image_data['date'] + '</td>'
+                                + '<td>' + image_data['page'] + '</td>'
+
+                                + '<td><a href="{% url 'do_advanced_search' %}'
+                                + '?book_id=' + image_data['book_id']
+                                + '&csrfmiddlewaretoken={{ csrf_token }}"'
+                                +  ' target="_blank">'
+                                + image_data['title']  +
+                                '</a></td>'
+                                + '</tr>';
+
+                        table.append($(row));
+                    }
+
+                } else if (view_toggle_btn.data("view") == "gallery") {
+                    $('#results_table').empty();
+
+                    var result_container = $('#grid-result-container').masonry({
+                        columnWidth: 30,
+                        itemSelector: '.adv_item'
+                    });
+
+                    var elems = [];
+                    for (var image_id in data) {
+                        var image_data = data[image_id];
+
+                        var item_css = 'adv_item';
+
+                        var elem_text = '<div class="' +
+                                item_css +
+                                '" id="adv_item_' + image_id + '" ' +
+                                'data-id="' + image_id + '">' +
+                                '<div class="panel adv_item_panel" style="margin:auto 0">' +
+                                '<a href="' + image_data['link'] + '" target="_blank">' +
+                                '<img class="adv_img"' +
+                                ' src="' + image_data['img_small']  + '" style="width:100%; height:auto;">' +
+                                '</a>' +
+                                '</div>' +
+                                '</div>';
+                        {#                            console.log(elem_text);#}
+                        var jq_elem = $($.parseHTML(elem_text));
+
+                        var $save_button = $('<div id="hide-button-' + image_id + '" ' +
+                                'class="btn btn-default btn-xs save_image_float_button" ' +
+                                ">" +
+                                "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}' style='max-height: 27px'>" +
+                                "</div>").click(function(){
+
+                            var btn_parent_image_id = $(this).parent().data('id');
+
+                            $('#save_image_dialog_form').data('image_id', btn_parent_image_id).dialog("open");
+
+                        });
+
+                        var $remove_button = $("<div id='hide-button-" + image_id + "' " +
+                                "class='btn btn-primary btn-xs remove_button' " +
+                                ">Hide</div>").click(function(){
+
+                            var image_cell = $(this).parent();
+                            image_cell.hide('scale',{ percent: 0 }, 1000, removeImageCell(image_cell));
+                        });
+
+                        function removeImageCell(image_cell){
+                            image_cell.remove();
+                            $('#grid-result-container').masonry();
+                        }
+
+                        jq_elem.append($remove_button);
+                        {% if user.is_authenticated %}
+                            jq_elem.append($save_button);
+                        {% endif %}
+
+                        $remove_button.hide();
+                        $save_button.hide();
+
+                        jq_elem.hover(function(){
+                            $(this).find('[id^=hide-button]').show();
+                        }, function(){
+                            $(this).find('[id^=hide-button]').hide();
+                        });
+                        {#                        var elem = jq_elem.append($remove_button).get(0);#}
+                        var elem = jq_elem.get(0);
+
+                        elems.push( elem );
+
+                    }
+                    // append elements to container
+                    result_container.append( elems).masonry('appended', elems );
+
+                    result_container.masonry();
+                    setInterval("$('#grid-result-container').masonry()", 2000);
+                    set_sizes();
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert("Problem requesting Image: "+errorThrown+xhr.status+xhr.responseText);
+            }
+        });
+    }
+
+    function search_ids(ids){
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'get_image_data' %}",
+            data: $('#advanced-search-form').serializeArray(),
+            success: function(data) {
+
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                alert("Problem requesting Image: "+errorThrown+xhr.status+xhr.responseText);
+            }
+        });
+    }
+
+    $(document).ready(function(){
+
+        var view_toggle_btn = $('#view_toggle');
+
+        if($.cookie("lv_results_view_layout")) {
+            var view = $.cookie("lv_results_view_layout");
+            if (view == "gallery") {
+                view_toggle_btn.data("view", "gallery");
+                view_toggle_btn.text("List view");
+            } else if (view == "list") {
+                view_toggle_btn.data("view", "list");
+                view_toggle_btn.text("Gallery view");
+            }
+        }
+
+        view_toggle_btn.click(function(){
+            if (view_toggle_btn.data("view") == "list") {
+                view_toggle_btn.data("view", "gallery");
+                view_toggle_btn.text("Gallery View");
+                $.cookie("lv_results_view_layout", "gallery", {expires: 365, path: '/'});
+                {#                location.reload();#}
+
+                {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
+            } else if (view_toggle_btn.data("view") == "gallery") {
+                view_toggle_btn.data("view", "list");
+                view_toggle_btn.text("List view");
+                {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
+                $.cookie("lv_results_view_layout", "list", {expires: 365, path: '/'});
+                {#                location.reload();#}
+
+            }
+            start_id_index = 0;
+            end_id_index = {{ number_to_show }};
+            $('#results_table').empty();
+            $('#grid-result-container').empty();
+
+            read_next_batch();
+        });
+
+        $('#load_more').click(function(){
+            read_next_batch()
+        });
+        read_next_batch();
+
+        $('#grid-result-container').ready(function(){
+            set_sizes();
+        });
+
+        var save_image_dialog_form = $( "#save_image_dialog_form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Save Image": function() {
+                    var image_id = $(this).data('image_id');
+
+                    var e = document.getElementById("user_collection_select");
+                    var collection_id = e.options[e.selectedIndex].value;
+
+                    console.log(image_id + ' ' + collection_id);
+
+                    saveImageToCollection(collection_id, image_id);
+
+                    save_image_dialog_form.dialog( "close" );
+                },
+                Cancel: function() {
+                    save_image_dialog_form.dialog( "close" );
+                }
+            },
+            open : function() {
+                var name = $(this).data('name');
+                var id = $(this).data('id');
+                $('#edit_image_caption_field').val(name);
+            },
+            close: function() {
+                {#                form[ 0 ].reset();#}
+                {#                allFields.removeClass( "ui-state-error" );#}
+            }
+        });
+
+        {#        console.log($('#advanced-search-form').serializeArray());#}
+
+        {#        search_ids([])#}
+    });
+    $(window).load(function(){
+
+
+    });
+    </script>
+    <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
+
+    <h3 style="text-align: center">Totally random selection of illustrations</h3>
+    <div id="results-parent-container">
+        <div id="grid-result-container"></div>
+        <div id="result-container">
+
+            <div id="results_table_div" class="bs-example table-responsive">
+                <table class="table table-striped table-hover" id="results_table">
+                    <tbody>
+                    <tr>
+                        <th>
+                            Illustration
+                        </th>
+                        <th>
+                            Author
+                        </th>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Page
+                        </th>
+                        <th>
+                            Title
+                        </th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>
+
+    <div id="save_image_dialog_form" title="Save Image to Collecton">
+        <p class="validateTips">Save Image to Collecton</p>
+        <div id="save_image_data" data-collection_id="" data-collection_name=""></div>
+        <form>
+            <fieldset>
+                <select id="user_collection_select">
+                    {% for option in user_collections %}
+                        <option id="{{ option.id }}" value="{{ option.name }}">
+                            {{ option.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
+
+{% endblock %}
