@@ -531,7 +531,7 @@ class ImagePicker():
                         'tags': matched2
                     })
 
-        sorted_tag_matches = sorted(discovered, key=lambda image: image['matches'], reverse=True)[:30]
+        sorted_tag_matches = sorted(discovered, key=lambda image: image['matches'], reverse=True)[:15]
 
         print '\nFOUND MATCHES\n'
         print pprint.pformat(sorted_tag_matches)
