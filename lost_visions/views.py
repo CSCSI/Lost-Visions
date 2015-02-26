@@ -1814,7 +1814,7 @@ def similar_images(request, image_id):
     book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
     # print book_id
     flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
-                               .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)[:20]
+                               .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)
     # print flickr_ids_from_book
     book_images = get_image_data_from_array(flickr_ids_from_book, request)
 

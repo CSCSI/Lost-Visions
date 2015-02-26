@@ -13,6 +13,9 @@
             {#            carousel.css({'max-height': carousel.height()});#}
 
             $('.slider-for').slick({
+                lazyLoad: 'ondemand',
+                autoplay: true,
+                autoplaySpeed: 4000,
                 slidesToShow: 1,
                 slidesToScroll: 1,
                 arrows: false,
@@ -20,10 +23,10 @@
                 asNavFor: '.slider-nav'
             });
             $('.slider-nav').slick({
-                slidesToShow: 3,
+                slidesToShow: 4,
                 slidesToScroll: 1,
                 asNavFor: '.slider-for',
-                                dots: true,
+{#                                dots: true,#}
                 centerMode: true,
                 focusOnSelect: true
             });
@@ -44,7 +47,7 @@
                             <col width="20%">
                             <tr>
                                 <th>
-                                    <img src="{{ image.url }}" class="carousel-exhibition-item">
+                                    <img data-lazy="{{ image.url }}" class="carousel-exhibition-item">
                                 </th>
                                 <td>
                                     {{ image.title }}
