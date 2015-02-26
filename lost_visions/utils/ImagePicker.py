@@ -531,7 +531,7 @@ class ImagePicker():
                         'tags': matched2
                     })
 
-        sorted_tag_matches = sorted(discovered, key=lambda image: image['matches'], reverse=True)
+        sorted_tag_matches = sorted(discovered, key=lambda image: image['matches'], reverse=True)[:30]
 
         print '\nFOUND MATCHES\n'
         print pprint.pformat(sorted_tag_matches)
@@ -587,7 +587,7 @@ class ImagePicker():
         for final_found in sorted_discovered:
             finals.append(final_found['flickr_id'])
 
-        return finals[:30]
+        return finals
 
 
 class Request():
