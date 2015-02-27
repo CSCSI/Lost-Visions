@@ -10,14 +10,13 @@ import urllib
 import urllib2
 import zipfile
 from BeautifulSoup import BeautifulSoup
-from datetime import datetime
 import StringIO
 from dateutil import parser
-from dateutil.tz import tzlocal
 from django.contrib import auth
 from django.core import serializers
-from django.core.mail.message import EmailMessage, EmailMultiAlternatives
+from django.core.mail.message import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
+from django.db import connection
 from django.db.models import Q, Count
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
@@ -38,7 +37,6 @@ logger = logging.getLogger('lost_visions')
 from lost_visions.utils import db_tools
 from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_from_array, get_image_data_with_location
 from lost_visions.utils.ImagePicker import ImagePicker
-# from lost_visions.utils.TimeKeeper import TimeKeeper
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
 from lost_visions.utils.flickr import getImageTags
 from PIL import Image
@@ -1760,56 +1758,81 @@ def similar_images(request, image_id):
     largest_set = []
     machine_matched_ids = []
 
+    db_count = len(connection.queries)
+    # try:
+
+    img_pick = ImagePicker()
+
+    book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
+    # print book_id
+
+    book_id_query_count = len(connection.queries)
+    flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
+        .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)
+    # print flickr_ids_from_book
+
+    book_images_query_count = len(connection.queries)
+    book_images = get_image_data_from_array(flickr_ids_from_book, request)
+
     try:
-        img_pick = ImagePicker()
-
-        tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id)
-
-        first_order_tags = []
-        for t in tags_for_image:
-            try:
-                tag_order = str(t.tag_order)[3:6]
-                if tag_order == '100' or t.tag_order < 100:
-                    first_order_tags.append(str(t.tag))
-            except:
-                pass
-
-        book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
-        # print book_id
-        flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
-                                   .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)
-        # print flickr_ids_from_book
-        book_images = get_image_data_from_array(flickr_ids_from_book, request)
-
         #TODO optimise
         image_object = models.Image.objects.get(flickr_id=image_id)
+        image_object_flickr_id = image_object.flickr_id
         image_matches = models.MachineMatching.objects.filter(Q(metric='CV_COMP_CORREL')) \
-                            .filter(Q(image_a=image_object) | Q(image_b=image_object)).order_by('-metric_value')[:20]
+                            .filter(Q(image_a=image_object) | Q(image_b=image_object)) \
+                            .values_list('image_a__flickr_id', 'image_b__flickr_id') \
+                            .order_by('-metric_value')[:20]
+        # print image_matches.query
+    except Exception as e0293:
+        print 'machine match : ' + str(e0293)
 
-        for machine_matched in image_matches:
-            if machine_matched.image_a.flickr_id == image_object.flickr_id:
-                machine_matched_ids.append(machine_matched.image_b_flickr_id)
-            else:
-                machine_matched_ids.append(machine_matched.image_a_flickr_id)
+    # print 'mm : ' + pprint.pformat(image_matches)
 
-        sorted_id_list = img_pick.get_similar_images_with_tags(image_id)
-        unsorted_image_data = get_image_data_from_array(sorted_id_list, request)
+    for machine_matched in image_matches:
+        if machine_matched[0] == image_object_flickr_id:
+            machine_matched_ids.append(machine_matched[1])
+        else:
+            machine_matched_ids.append(machine_matched[0])
 
-        for similar_id in sorted_id_list:
-            largest_set.append(unsorted_image_data[similar_id])
-    except Exception as e456738:
-        error = str(e456738)
+    machine_match_query_count = len(connection.queries)
+    sorted_id_list = img_pick.get_similar_images_with_tags(image_id)
 
-    return_data = {
-        'error': error,
-        'book_images': book_images,
-        'image_sets': powerset_image_data,
-        # 'largest_set': largest_set,
-        'largest_set':  largest_set,
-        'largest_set_size': len(largest_set),
-        # 'largest_tag_set': largest_tag_set,
-        'machine_matches': get_image_data_from_array(machine_matched_ids, request)
+    similar_image_query_count = len(connection.queries)
+    unsorted_image_data = get_image_data_from_array(sorted_id_list, request)
+
+    similar_image_info_query_count = len(connection.queries)
+
+    for similar_id in sorted_id_list:
+        largest_set.append(unsorted_image_data[similar_id])
+
+    # except Exception as e456738:
+    #     error = str(e456738)
+    #     print 'an error : ' + error
+
+    end_query_count = len(connection.queries)
+
+    db_counts = [('db_count', db_count),
+                 ('book_id_query_count', book_id_query_count),
+                 ('book_images_query_count', book_images_query_count),
+                 ('machine_match_query_count', machine_match_query_count),
+                 ('similar_image_query_count', similar_image_query_count),
+                 ('similar_image_info_query_count', similar_image_info_query_count),
+                 ('end_query_count', end_query_count)]
+
+
+    return_data = {'db_counts': db_counts,
+                   'error': error,
+                   'book_images': book_images,
+                   'image_sets': powerset_image_data,
+                   # 'largest_set': largest_set,
+                   'largest_set': largest_set,
+                   'largest_set_size': len(largest_set),
+                   # 'largest_tag_set': largest_tag_set,
+                   'machine_matches': get_image_data_from_array(machine_matched_ids, request)
     }
+
+    print pprint.pformat(return_data)
+
     return HttpResponse(json.dumps(return_data), content_type="application/json")
 
 
