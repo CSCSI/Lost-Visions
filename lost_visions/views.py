@@ -33,6 +33,8 @@ from lost_visions import forms, models
 from ipware.ip import get_ip
 from bleach import clean
 from lost_visions.categories import CategoryManager
+from lost_visions.utils.rubbish.images_for_books import get_book_images
+
 logger = logging.getLogger('lost_visions')
 from lost_visions.utils import db_tools
 from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_from_array, get_image_data_with_location
@@ -1767,12 +1769,14 @@ def similar_images(request, image_id):
     # print book_id
 
     book_id_query_count = len(connection.queries)
-    flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
-        .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)
-    # print flickr_ids_from_book
+    # flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
+    #     .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)
+    # # print flickr_ids_from_book
+    #
+    # book_images = get_image_data_from_array(flickr_ids_from_book, request)
 
+    book_images = get_book_images(book_id)
     book_images_query_count = len(connection.queries)
-    book_images = get_image_data_from_array(flickr_ids_from_book, request)
 
     try:
         #TODO optimise
@@ -1831,7 +1835,7 @@ def similar_images(request, image_id):
                    'machine_matches': get_image_data_from_array(machine_matched_ids, request)
     }
 
-    print pprint.pformat(return_data)
+    # print pprint.pformat(return_data)
 
     return HttpResponse(json.dumps(return_data), content_type="application/json")
 

@@ -462,7 +462,7 @@ class ImagePicker():
 
         tags_for_image = sorted(tags_for_image, key=lambda image: image['tag_order'])
 
-        print pprint.pformat(tags_for_image)
+        # print pprint.pformat(tags_for_image)
 
         weighted_tags_for_alpha_image = {}
 
@@ -486,7 +486,7 @@ class ImagePicker():
             if ' ' not in tag:
                 to_search.append(tag)
 
-        print pprint.pformat(to_search)
+        # print pprint.pformat(to_search)
 
         # im = ImagePicker()
         res = []
