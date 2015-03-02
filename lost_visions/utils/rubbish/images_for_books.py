@@ -77,12 +77,13 @@ def get_image_data_for_array(image_data):
 
             if os.access(image_path, os.R_OK):
                 c['imageurl'] = c['arcca_url']
+                c['img'] = c['imageurl']
 
-                small_image_path = image_path.replace(recorded_image_root, resized_start) + '.thumb.jpg'
-                if os.access(small_image_path, os.R_OK):
+            small_image_path = image_path.replace(recorded_image_root, resized_start) + '.thumb.jpg'
+            if os.access(small_image_path, os.R_OK):
 
-                    small_image_web_path = small_image_path.replace(resized_start, web_server_start_resized)
-                    c['img_small'] = small_image_web_path
+                small_image_web_path = small_image_path.replace(resized_start, web_server_start_resized)
+                c['img_small'] = small_image_web_path
 
             else:
                 not_found = True
