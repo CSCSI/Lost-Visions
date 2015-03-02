@@ -21,7 +21,7 @@ def get_book_images(book_id):
             'im."flickr_original_height", im."flickr_original_width" ' \
             'from "image" as im left outer join lost_visions_imagelocation as il ' \
             'on im.book_identifier = il.book_id and im.volume = il.volume and ' \
-            'im.page = il.page and im.image_idx = il.idx where im.book_identifier == %s'
+            'im.page = il.page and im.image_idx = il.idx where im.book_identifier = %s'
 
     fast_image_data = models.Image.objects.db_manager('default').raw(query, [str(book_id)])
 
