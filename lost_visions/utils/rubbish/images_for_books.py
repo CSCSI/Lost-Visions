@@ -1,13 +1,10 @@
 import os
-import pprint
-from django.core.urlresolvers import reverse
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 from crowdsource.settings import recorded_image_root, resized_start, web_server_start_resized, bl_image_root
 from lost_visions import models
 from lost_visions.utils.db_tools import find_image
 
 __author__ = 'ubuntu'
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 
 
 def get_book_images(book_id):
@@ -48,7 +45,7 @@ def get_image_data_for_array(image_data):
              'flickr_original_width': a.flickr_original_width.strip(),
              'flickr_original': a.flickr_original_source,
              'date': a.date,
-             'link': reverse('image', kwargs={'image_id': int(a.flickr_id)})
+             # 'link': reverse('image', kwargs={'image_id': int(a.flickr_id)})
         }
 
         #     db_tools.get_image_info

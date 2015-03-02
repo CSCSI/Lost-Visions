@@ -1,6 +1,4 @@
 import os
-import pprint
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 import requests
 import json

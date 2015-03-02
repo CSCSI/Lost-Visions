@@ -1809,7 +1809,9 @@ def similar_images(request, image_id):
     similar_image_info_query_count = len(connection.queries)
 
     for similar_id in sorted_id_list:
-        largest_set.append(unsorted_image_data[similar_id])
+        image_to_sort = unsorted_image_data[similar_id]
+        image_to_sort['link'] = reverse('image', kwargs={'image_id': int(similar_id)})
+        largest_set.append(image_to_sort)
 
     # except Exception as e456738:
     #     error = str(e456738)
