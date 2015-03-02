@@ -1775,7 +1775,8 @@ def similar_images(request, image_id):
     #
     # book_images = get_image_data_from_array(flickr_ids_from_book, request)
 
-    book_images = get_book_images(book_id)
+    book_images = get_book_images(book_id[0]['book_identifier'])
+    book_image_count = len(book_images)
     book_images_query_count = len(connection.queries)
 
     try:
@@ -1803,6 +1804,7 @@ def similar_images(request, image_id):
 
     similar_image_query_count = len(connection.queries)
     unsorted_image_data = get_image_data_from_array(sorted_id_list, request)
+    # unsorted_image_data = get_image_data_with_location(sorted_id_list)
 
     similar_image_info_query_count = len(connection.queries)
 
@@ -1827,6 +1829,7 @@ def similar_images(request, image_id):
     return_data = {'db_counts': db_counts,
                    'error': error,
                    'book_images': book_images,
+                   'book_image_count': book_image_count,
                    'image_sets': powerset_image_data,
                    # 'largest_set': largest_set,
                    'largest_set': largest_set,

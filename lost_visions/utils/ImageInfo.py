@@ -69,11 +69,11 @@ def get_image_data_from_array(id_list, request):
                     print 'before get_image_info : ' + str(len(connection.queries))
 
                     image_info = db_tools.get_image_info(result)
-                    print pprint.pformat(image_info)
+                    # print pprint.pformat(image_info)
                     print 'after get_image_info before sanitise_image_info : ' + str(len(connection.queries))
 
                     image_info = sanitise_image_info(image_info, request)
-                    print pprint.pformat(image_info)
+                    # print pprint.pformat(image_info)
                     print 'after sanitise_image_info: ' + str(len(connection.queries))
 
                     tag_result['img'] = image_info['imageurl']
