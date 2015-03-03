@@ -380,14 +380,14 @@
         $('.js-masonry').masonry();
 
         $('#collapse_cloud').accordion({
-            active: false,
+            active: 0,
             collapsible: true,
             heightStyle: "content"
 
         });
 
         $('#collapse_metadata').accordion({
-            active: false,
+            active: 0,
             collapsible: true,
             heightStyle: "content"
         });
@@ -1003,7 +1003,7 @@
                             li_text += "<br>";
                             if (item.properties.featuretype && item.properties.featuretype != 'Undefined') {
                                 li_text += item.properties.featuretype;
-                                                            li_text +=  "<br>";
+                                li_text +=  "<br>";
 
                             }
 
@@ -1501,22 +1501,6 @@
 
     {#    <div id="map_btn" class="btn btn-default">MAP STUFF</div>#}
 
-    <div data-toggle="tooltip" data-placement="top"
-         title="Tags previously added for this Illustration" data-original-title="Image Tags"
-         id="collapse_cloud" class="panel-group"
-         data-step="2" data-intro="This is the tag cloud for the Illustration.\n Previous Illustration taggers may have added the same tag as you, <br>which helps us raise it's relevance in search results"
-         data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Cloud of Tags
-            </h4>
-        </div>
-
-        <div class="panel-body">
-            <div id="tag_cloud" class="container-fluid" style="height: 200px; width:auto">
-            </div>
-        </div>
-    </div>
 
 
     <div data-toggle="tooltip" data-placement="top"
@@ -1578,6 +1562,75 @@
     </div>
 
 
+
+
+    <div data-toggle="tooltip" data-placement="top"
+         title="Similar Illustration" data-original-title="Similar Images"
+         id="collapse_similars" class="panel-group"
+         data-step="5" data-intro='These are potentially similar Illustration' data-position="right">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Similar Illustrations
+            </h4>
+        </div>
+        <div id="similars" class="similar-images">
+            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                <div class="fa fa-3x fa-spinner fa-spin"></div>
+            </div>
+        </div>
+    </div>
+
+
+    {#    <div data-toggle="tooltip" data-placement="top"#}
+    {#         title="Machine Matched Images" data-original-title="Similar Images"#}
+    {#         id="collapse_machine_matched" class="panel-group"#}
+    {#         data-step="6" data-intro='These are potentially similar images' data-position="right">#}
+    {#        <div class="panel-heading">#}
+    {#            <h4 class="panel-title">#}
+    {#                Machine Matched Illustrations#}
+    {#            </h4>#}
+    {#        </div>#}
+    {#        <div id="machine_matched_images" class="similar-images">#}
+    {#            <div style="margin: 0 auto; text-align: center; margin-top: 20px">#}
+    {#                <div class="fa fa-3x fa-spinner fa-spin"></div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+
+    <div data-toggle="tooltip" data-placement="top"
+         title="Book Illustration" data-original-title="Book Illustrations"
+         id="collapse_book_images" class="panel-group"
+         data-step="6" data-intro='These are Illustration from this book' data-position="right">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Other Illustrations from this Book
+            </h4>
+        </div>
+        <div id="book_images" class="similar-images">
+            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                <div class="fa fa-3x fa-spinner fa-spin"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div data-toggle="tooltip" data-placement="top"
+         title="Tags previously added for this Illustration" data-original-title="Image Tags"
+         id="collapse_cloud" class="panel-group"
+         data-step="2" data-intro="This is the tag cloud for the Illustration.\n Previous Illustration taggers may have added the same tag as you, <br>which helps us raise it's relevance in search results"
+         data-position="right">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                Cloud of Tags
+            </h4>
+        </div>
+
+        <div class="panel-body">
+            <div id="tag_cloud" class="container-fluid" style="height: 200px; width:auto">
+            </div>
+        </div>
+    </div>
+
     <div data-toggle="tooltip" data-placement="top"
          title="User Generated Descriptions" data-original-title="Descriptions"
          id="collapse_descriptions" class="panel-group"
@@ -1605,56 +1658,6 @@
         </div>
     </div>
 
-    <div data-toggle="tooltip" data-placement="top"
-         title="Similar Illustration" data-original-title="Similar Images"
-         id="collapse_similars" class="panel-group"
-         data-step="5" data-intro='These are potentially similar Illustration' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Similar Illustrations
-            </h4>
-        </div>
-        <div id="similars" class="similar-images">
-            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
-                <div class="fa fa-3x fa-spinner fa-spin"></div>
-            </div>
-        </div>
-    </div>
-
-
-    <div data-toggle="tooltip" data-placement="top"
-         title="Machine Matched Images" data-original-title="Similar Images"
-         id="collapse_machine_matched" class="panel-group"
-         data-step="6" data-intro='These are potentially similar images' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Machine Matched Illustrations
-            </h4>
-        </div>
-        <div id="machine_matched_images" class="similar-images">
-            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
-                <div class="fa fa-3x fa-spinner fa-spin"></div>
-            </div>
-        </div>
-    </div>
-
-    <div data-toggle="tooltip" data-placement="top"
-         title="Book Illustration" data-original-title="Book Illustrations"
-         id="collapse_book_images" class="panel-group"
-         data-step="6" data-intro='These are Illustration from this book' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Other Illustrations from this Book
-            </h4>
-        </div>
-        <div id="book_images" class="similar-images">
-            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
-                <div class="fa fa-3x fa-spinner fa-spin"></div>
-            </div>
-        </div>
-    </div>
-
-
     </div><!--/span-->
 
 
@@ -1677,7 +1680,7 @@
                     <li style="float: left">
                         <div data-toggle="tooltip" data-placement="top"
                              title="Next Question" data-original-title="Next"
-                             id="question-accordion-next" class="btn btn-success">Next <div class="fa fa-2x fa-angle-double-right"></div></div>
+                             id="question-accordion-next" class="btn btn-success">Next Question<div class="fa fa-2x fa-angle-double-right"></div></div>
                     </li>
                     <li style="float: right">
                         <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"

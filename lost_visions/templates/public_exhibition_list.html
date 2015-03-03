@@ -9,23 +9,40 @@
     <a href="{% url 'public_exhibition' %}">
         <div class="btn btn-success">Latest Exhibition</div>
     </a>
-<hr>
-    <table>
-        {% for ex in results %}
 
+    <hr>
+
+    <div class="bs-example table-responsive">
+        <table class="table table-striped table-hover ">
+            <tbody>
             <tr>
-                 <td>
-                    <img src="{{ ex.img_info.img_small }}">
-                </td>
-                <td>
-                    {{ ex.name }}
-                </td>
-                <td>
-                    {{ ex.timestamp }}
-                </td>
+                <td></td>
+                <th>Collection Name</th>
+                <th>Date created</th>
+                <td></td>
             </tr>
+            {% for ex in results %}
 
-        {% endfor %}
-    </table>
+                <tr>
+                    <td>
+                        <img src="{{ ex.img_info.img_small }}" style="max-height: 150px">
+                    </td>
+                    <td>
+                        {{ ex.name }}
+                    </td>
+                    <td>
+                        {{ ex.timestamp }}
+                    </td>
+                    <td>
+                        <a href="{% url 'exhibition' ex.collection_id %}">
+                            <div class="btn btn-success">View Exhibition</div>
+                        </a>
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}

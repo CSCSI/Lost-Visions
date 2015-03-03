@@ -2143,6 +2143,7 @@ def public_exhibition_list(request):
             'timestamp': str(ex.timestamp),
             'id': ex.id,
             'name': ex.collection.name,
+            'collection_id': ex.collection.id,
             'img_info': image_info[0]
         })
 
