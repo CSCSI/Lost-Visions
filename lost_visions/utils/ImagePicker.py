@@ -434,7 +434,6 @@ class ImagePicker():
         print all_results.query
         return all_results
 
-
     # A method to find the overall tag weight for a tag
     # taking into account the tag order, for multiple taggers
     def get_tag_order_weight(self, tag_orders, tag):
@@ -464,7 +463,6 @@ class ImagePicker():
 
         # print tag, tag_order, user_order, hypernym_order, synonym_order, tag_weight
         return tag_weight_total
-
 
     # A giant method to find all the images similar to "Image Alpha" based on it's tags
     def get_similar_images_with_tags(self, id_alpha):
@@ -502,7 +500,7 @@ class ImagePicker():
                 weighted_tag['weight'] = self.get_tag_order_weight(tag_orders, alpha_tag['tag'])
                 weighted_tags_for_alpha_image[alpha_tag['tag']] = weighted_tag
 
-        print 'weighted alpha tags : ' + pprint.pformat(weighted_tags_for_alpha_image)
+        # print 'weighted alpha tags : ' + pprint.pformat(weighted_tags_for_alpha_image)
 
         to_search = []
 
@@ -512,7 +510,7 @@ class ImagePicker():
             if ' ' not in tag:
                 to_search.append(tag)
 
-        print pprint.pformat(to_search)
+        # print pprint.pformat(to_search)
 
         # im = ImagePicker()
         images_with_tag = []
@@ -561,13 +559,13 @@ class ImagePicker():
         # Assuming that number of matching tags is most relevent here, to cut down on processing
         sorted_tag_matches = sorted(discovered, key=lambda image: image['matches'], reverse=True)[:15]
 
-        print '\nFOUND MATCHES\n'
-        print pprint.pformat(sorted_tag_matches)
+        # print '\nFOUND MATCHES\n'
+        # print pprint.pformat(sorted_tag_matches)
 
         # Now we need the weighted sums for all these matching-images tag-orders
         for tag_set in sorted_tag_matches:
-            print '\n'
-            print pprint.pformat(tag_set)
+            # print '\n'
+            # print pprint.pformat(tag_set)
 
             weighted_tag_sum = 0
 
@@ -578,8 +576,8 @@ class ImagePicker():
                 # TODO do this in the DB hit above?
                 tag = models.Tag.objects.filter(image__flickr_id=tag_set['flickr_id']).filter(tag=image_tag)
                 for tag_orders in tag:
-                    print image_tag
-                    print tag_orders.tag_order
+                    # print image_tag
+                    # print tag_orders.tag_order
                     tags_for_found_image.append({
                         'tag': image_tag,
                         'tag_order': tag_orders.tag_order
@@ -615,13 +613,13 @@ class ImagePicker():
 
             print pprint.pformat(weighted_tags_for_found_image)
 
-        print '\nFOUND MATCHES\n'
-        print pprint.pformat(sorted_tag_matches)
+        # print '\nFOUND MATCHES\n'
+        # print pprint.pformat(sorted_tag_matches)
 
         # Sort by overall calculated weight
-        print '\nWEIGHTED DISCOVERIES\n'
+        # print '\nWEIGHTED DISCOVERIES\n'
         sorted_discovered = sorted(sorted_tag_matches, key=lambda image: image['weighted_importance'], reverse=True)
-        print pprint.pformat(sorted_discovered)
+        # print pprint.pformat(sorted_discovered)
 
         # Bin all that info and just return a list of flickr_IDs
         # Shame, this is probably decent stuff.

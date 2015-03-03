@@ -1746,7 +1746,9 @@ def exhibition(request, collection_id):
 
     return_object = {'collection_id': collection_id,
                      'collection_data': collection_data,
-                     'collection_creator': collection_model.user.username}
+                     'collection_creator': collection_model.user.username,
+                     'date': collection_model.timestamp,
+                     }
 
     print return_object
 
@@ -2037,11 +2039,20 @@ def accept_public_exhibition(request, collection_id):
     return render(request, 'accept_public_exhibition.html', {'msg': msg}, context_instance=RequestContext(request))
 
 
-def public_exhibition(request):
-    exhibition_models = models.PublicExhibition.objects.all().filter(visible=True).order_by('-timestamp')
+def public_exhibition_specific(request, exhibition_id):
+    exhibition_model = models.PublicExhibition.objects.all().filter(visible=True).get(id=exhibition_id)
+    return get_public_exhibition_data(request, exhibition_model)
 
+
+def latest_public_exhibition(request):
+    exhibition_models = models.PublicExhibition.objects.all().filter(visible=True).order_by('-timestamp')
     recent_exhibition_model = exhibition_models[0]
-    collection_model = recent_exhibition_model.collection
+    return get_public_exhibition_data(request, recent_exhibition_model)
+
+
+def get_public_exhibition_data(request, exhibition_model):
+
+    collection_model = exhibition_model.collection
     collection_data = dict()
 
     mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
@@ -2073,15 +2084,15 @@ def public_exhibition(request):
             print e
 
         mapped_images_array.append(image_dict)
-        print pprint.pformat(image_dict)
+        # print pprint.pformat(image_dict)
 
     collection_data['images'] = mapped_images_array
     collection_data['collection_name'] = collection_model.name
 
     return_object = {'collection_id': collection_model.id,
                      'collection_data': collection_data,
-                     'date': recent_exhibition_model.timestamp,
-                     'collection_creator': recent_exhibition_model.user_collection.user.username}
+                     'date': exhibition_model.timestamp,
+                     'collection_creator': exhibition_model.user_collection.user.username}
     return render(request, 'public_exhibition.html', return_object, context_instance=RequestContext(request))
 
 
