@@ -30,6 +30,29 @@ def get_book_images(book_id):
 
     return get_image_data_for_array(fast_image_data)
 
+
+def get_images_for_flickr_id(flickr_id):
+
+    # print type(book_id), book_id
+
+    query = 'SELECT il."location", im."id", im."views_begun", im."views_completed", ' \
+            'im."volume", im."publisher", im."title", im."first_author", im."BL_DLS_ID", ' \
+            'im."pubplace", im."book_identifier", im."ARK_id_of_book", im."date", im."flickr_url", ' \
+            'im."image_idx", im."page", im."flickr_id", im."flickr_small_source", ' \
+            'im."flickr_small_height", im."flickr_small_width", im."flickr_medium_source", ' \
+            'im."flickr_medium_height", im."flickr_medium_width", im."flickr_large_source", ' \
+            'im."flickr_large_height", im."flickr_large_width", im."flickr_original_source", ' \
+            'im."flickr_original_height", im."flickr_original_width" ' \
+            'from "image" as im left outer join lost_visions_imagelocation as il ' \
+            'on im.book_identifier = il.book_id and im.volume = il.volume and ' \
+            'im.page = il.page and im.image_idx = il.idx where im.flickr_id = %s'
+
+    fast_image_data = models.Image.objects.db_manager('default').raw(query, [str(flickr_id)])
+
+    # print fast_image_data.query
+
+    return get_image_data_for_array(fast_image_data)
+
 def get_image_data_for_array(image_data):
 
     b = []

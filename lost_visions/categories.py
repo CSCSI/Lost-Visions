@@ -47,6 +47,11 @@ ON_A_MAP_BUTTON_URL = MIKEY_URL + "onamap.jpg"
 ZOOLOGICAL_BUTTON_URL = MIKEY_URL + "zoological.jpg"
 NONE_OF_THESE_BUTTON_URL = MIKEY_URL + "noneofthesenew.jpg"
 
+NOVEL_BUTTON_URL = MIKEY_URL + "a novel.jpg"
+PLAY_BUTTON_URL = MIKEY_URL + "A play.jpg"
+POEM_BUTTON_URL = MIKEY_URL + "poem1.jpg"
+
+
 class Category():
     def __init__(self, category_id, name, text, img):
         self.img = img
@@ -228,9 +233,9 @@ class CategoryManager():
         self.categories[1100] = Category('1100', 'literature', '', LITERATURE_BUTTON_IMAGE_URL) \
             .set_save(False).set_synset('illustration.n.1')\
             .set_question('Does this Illustrate?').set_answers([1101, 1102, 1103, 406])
-        self.categories[1101] = Category('1101', 'poem', 'a Poem', ICON_URL + 'lv-rect-station.png')
-        self.categories[1102] = Category('1102', 'play', 'a Play', ICON_URL + 'lv-rect-station.png')
-        self.categories[1103] = Category('1103', 'novel', 'a Novel', ICON_URL + 'lv-rect-station.png')
+        self.categories[1101] = Category('1101', 'poem', 'a Poem', POEM_BUTTON_URL)
+        self.categories[1102] = Category('1102', 'play', 'a Play', PLAY_BUTTON_URL)
+        self.categories[1103] = Category('1103', 'novel', 'a Novel', NOVEL_BUTTON_URL)
 
     def get_tag_for_category_id(self, category_id):
         try:

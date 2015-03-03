@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <h1>
+        List of Exhibitions
+    </h1>
+
+    <a href="{% url 'public_exhibition' %}">
+        <div class="btn btn-success">Latest Exhibition</div>
+    </a>
+<hr>
+    <table>
+        {% for ex in results %}
+
+            <tr>
+                 <td>
+                    <img src="{{ ex.img_info.img_small }}">
+                </td>
+                <td>
+                    {{ ex.name }}
+                </td>
+                <td>
+                    {{ ex.timestamp }}
+                </td>
+            </tr>
+
+        {% endfor %}
+    </table>
+
+{% endblock %}

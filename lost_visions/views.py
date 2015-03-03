@@ -33,7 +33,7 @@ from lost_visions import forms, models
 from ipware.ip import get_ip
 from bleach import clean
 from lost_visions.categories import CategoryManager
-from lost_visions.utils.rubbish.images_for_books import get_book_images
+from lost_visions.utils.rubbish.images_for_books import get_book_images, get_images_for_flickr_id
 
 logger = logging.getLogger('lost_visions')
 from lost_visions.utils import db_tools
@@ -2128,3 +2128,25 @@ def random_search(request):
                    'number_to_show': 30,
                    'user_collections': user_collections},
                   context_instance=RequestContext(request))
+
+
+def public_exhibition_list(request):
+
+    response_data = []
+
+    exhibition_models = models.PublicExhibition.objects.all().filter(visible=True).order_by('-timestamp')
+
+    for ex in exhibition_models:
+        image_info = get_images_for_flickr_id(int(ex.collection.imagemapping_set.all()[0].image.flickr_id))
+
+        response_data.append({
+            'timestamp': str(ex.timestamp),
+            'id': ex.id,
+            'name': ex.collection.name,
+            'img_info': image_info[0]
+        })
+
+    return render(request, 'public_exhibition_list.html',
+                  {'results': response_data},
+                  context_instance=RequestContext(request))
+
