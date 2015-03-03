@@ -1,6 +1,7 @@
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
-from crowdsource.settings import recorded_image_root, resized_start, web_server_start_resized, bl_image_root
+from crowdsource.settings import recorded_image_root, resized_start, web_server_start_resized, bl_image_root, \
+    web_server_start
 from lost_visions import models
 from lost_visions.utils.db_tools import find_image
 
@@ -64,38 +65,49 @@ def get_image_data_for_array(image_data):
             # try:
             # actually checks to see if the image is there....
 
-        arcca_image = find_image(c)
+        # arcca_image = find_image(c)
 
-        c['arcca_url'] = ''
-        not_found = False
+        # c['arcca_url'] = ''
+        img_not_found = False
+        img_small_not_found = False
+        location_not_found = False
 
-        if arcca_image:
-            c['arcca_url'] = arcca_image
+        c['image_area'] = int(c['flickr_original_height']) * int(c['flickr_original_width'])
+
+        if a.location:
+            print a.location
+            c['arcca_url'] = a.location
 
             image_path = a.location
             image_path = image_path.replace(recorded_image_root, bl_image_root)
+            image_path.replace(bl_image_root, web_server_start)
 
             if os.access(image_path, os.R_OK):
-                c['imageurl'] = c['arcca_url']
-                c['img'] = c['imageurl']
+                c['imageurl'] = a.location
+                c['img'] = image_path
+            else:
+                img_not_found = True
 
-            small_image_path = image_path.replace(recorded_image_root, resized_start) + '.thumb.jpg'
+            small_image_path = a.location.replace(recorded_image_root, resized_start) + '.thumb.jpg'
             if os.access(small_image_path, os.R_OK):
 
                 small_image_web_path = small_image_path.replace(resized_start, web_server_start_resized)
                 c['img_small'] = small_image_web_path
 
             else:
-                not_found = True
-        else:
-            not_found = True
+                img_small_not_found = True
 
-        if not_found:
+            # b.append(c)
+
+        else:
+            location_not_found = True
+
+        if img_not_found or location_not_found:
             c['imageurl'] = c['flickr_url']
             c['img'] = a.flickr_original_source
-            c['img_small'] = a.flickr_small_source
 
-        c['image_area'] = int(c['flickr_original_height']) * int(c['flickr_original_width'])
+        if img_small_not_found or location_not_found:
+            c['img_small'] = a.flickr_small_source
 
         b.append(c)
 

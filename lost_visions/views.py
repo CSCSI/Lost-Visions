@@ -1776,6 +1776,8 @@ def similar_images(request, image_id):
     # book_images = get_image_data_from_array(flickr_ids_from_book, request)
 
     book_images = get_book_images(book_id[0]['book_identifier'])
+    for book_image in book_images:
+        book_image['link'] = reverse('image', kwargs={'image_id': int(book_image['flickr_id'])})
     book_image_count = len(book_images)
     book_images_query_count = len(connection.queries)
 
