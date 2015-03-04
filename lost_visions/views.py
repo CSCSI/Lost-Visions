@@ -1645,6 +1645,7 @@ def page_turner(request, book_id, page, volume):
 
     archive = find_zip(book_id, volume)
     pages = []
+    flickr_id = None
     if archive is not None:
         for page_name in archive.namelist():
             page_number_found = page_name.split('_')[-1]
@@ -1652,6 +1653,9 @@ def page_turner(request, book_id, page, volume):
 
             found = False
             for book_image in image_data:
+                if book_image.page == page and book_image.volume == volume:
+                    flickr_id = book_image.flickr_id
+
                 if int(book_image.page) == int(page_number_found):
                     found = True
                     pages.append({
@@ -1680,7 +1684,9 @@ def page_turner(request, book_id, page, volume):
         'prev': str(prev).zfill(6),
         'next': str(next_page).zfill(6),
         'split_pre': page_short + ':-1',
-        'split_post': page_short + ':+1'
+        'split_post': page_short + ':+1',
+        'flickr_id': flickr_id,
+        # 'link': reverse('image', kwargs={'image_id': flickr_id})
     }
 
     if len(page_detail) > 1:
