@@ -27,6 +27,7 @@ class ImageIndex(indexes.SearchIndex, indexes.Indexable):
 class TagIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     tag = indexes.CharField(model_attr='tag')
+    tag_order = indexes.CharField(model_attr='tag_order')
     flickr_id = indexes.CharField(model_attr='image__flickr_id')
 
     def get_model(self):

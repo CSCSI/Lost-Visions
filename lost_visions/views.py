@@ -1763,7 +1763,6 @@ def similar_images(request, image_id):
     machine_matched_ids = []
 
     db_count = len(connection.queries)
-    # try:
 
     img_pick = ImagePicker()
 
@@ -1783,6 +1782,7 @@ def similar_images(request, image_id):
     book_image_count = len(book_images)
     book_images_query_count = len(connection.queries)
 
+    machine_matches = []
     try:
         #TODO optimise
         image_object = models.Image.objects.get(flickr_id=image_id)
@@ -1792,16 +1792,17 @@ def similar_images(request, image_id):
                             .values_list('image_a__flickr_id', 'image_b__flickr_id') \
                             .order_by('-metric_value')[:20]
         # print image_matches.query
+
+        for machine_matched in image_matches:
+            if machine_matched[0] == image_object_flickr_id:
+                machine_matched_ids.append(machine_matched[1])
+            else:
+                machine_matched_ids.append(machine_matched[0])
+
+        if len(machine_matched_ids) > 0:
+            machine_matches = get_image_data_from_array(machine_matched_ids, request)
     except Exception as e0293:
         print 'machine match : ' + str(e0293)
-
-    # print 'mm : ' + pprint.pformat(image_matches)
-
-    for machine_matched in image_matches:
-        if machine_matched[0] == image_object_flickr_id:
-            machine_matched_ids.append(machine_matched[1])
-        else:
-            machine_matched_ids.append(machine_matched[0])
 
     machine_match_query_count = len(connection.queries)
     sorted_id_list = img_pick.get_similar_images_with_tags(image_id)
@@ -1817,10 +1818,6 @@ def similar_images(request, image_id):
         image_to_sort['link'] = reverse('image', kwargs={'image_id': int(similar_id)})
         largest_set.append(image_to_sort)
 
-    # except Exception as e456738:
-    #     error = str(e456738)
-    #     print 'an error : ' + error
-
     end_query_count = len(connection.queries)
 
     db_counts = [('db_count', db_count),
@@ -1833,20 +1830,19 @@ def similar_images(request, image_id):
 
 
     return_data = {'db_counts': db_counts,
+                   'similars_id_list': sorted_id_list,
                    'error': error,
                    'book_images': book_images,
                    'book_image_count': book_image_count,
                    'image_sets': powerset_image_data,
-                   # 'largest_set': largest_set,
                    'largest_set': largest_set,
                    'largest_set_size': len(largest_set),
-                   # 'largest_tag_set': largest_tag_set,
-                   'machine_matches': get_image_data_from_array(machine_matched_ids, request)
+                   'machine_matches': machine_matches
     }
 
     # print pprint.pformat(return_data)
 
-    return HttpResponse(json.dumps(return_data), content_type="application/json")
+    return HttpResponse(json.dumps(return_data, indent=4), content_type="application/json")
 
 
 def powerset_generator(i):

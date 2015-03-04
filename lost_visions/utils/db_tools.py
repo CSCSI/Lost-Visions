@@ -41,21 +41,24 @@ def get_next_image_id():
 
 
 def get_info_from_image_model(image_model):
-    image_json = serializers.serialize("json", [image_model, ])
-    image_object = json.loads(image_json)
-    image_info = image_object[0]['fields']
-
-    image_info['flickr_url'] = image_model.flickr_medium_source
-    image_info['flickr_original'] = image_model.flickr_original_source
-
-    if image_info['flickr_url'] == '':
-        image_info['flickr_url'] = image_model.flickr_original_source
-
     try:
-       image_info['location'] = image_model.location
-       # print 'IMAGE HAS A LOCATION???'
-    except:
-        pass
+        image_json = serializers.serialize("json", [image_model, ])
+        image_object = json.loads(image_json)
+        image_info = image_object[0]['fields']
+
+        image_info['flickr_url'] = image_model.flickr_medium_source
+        image_info['flickr_original'] = image_model.flickr_original_source
+
+        if image_info['flickr_url'] == '':
+            image_info['flickr_url'] = image_model.flickr_original_source
+
+        try:
+           image_info['location'] = image_model.location
+           # print 'IMAGE HAS A LOCATION???'
+        except:
+            print 'no location'
+    except Exception as e7682:
+        print 'e7682' + str(e7682)
     return image_info
 
 
@@ -259,6 +262,7 @@ def get_image_info(image_model):
         try:
             arcca_image = find_image(image_info)
         except:
+            print 'error db.find_image'
             arcca_image == None
 
         image_info['arcca_url'] = ''

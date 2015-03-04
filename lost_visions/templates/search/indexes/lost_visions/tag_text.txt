@@ -1,2 +1,3 @@
 {{ object.tag }}
+{{ object.tag_order }}
 {{ object.image.flickr_id }}

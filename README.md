@@ -11,6 +11,7 @@ pip install pysolr
 yum install libxslt-devel
 pip install lxml --update
 
+schema.xml should copied into solr conf
 
 #in python
 import nltk

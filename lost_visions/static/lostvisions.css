@@ -853,6 +853,7 @@ a:hover#save_image.btn.btn-default.save_image  {
 #similars_list li a img {
     height: inherit;
     max-height: 180px;
+    max-width: 540px;
     padding: 10px 10px;
     border: 2px double transparent;
 }

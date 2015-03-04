@@ -81,6 +81,7 @@ class ImagePicker():
         all_results = all_results.filter(SQ(flickr_id=flickr_id))
 
         tags = []
+        tag_with_order = []
         for res in all_results:
             # print flickr_id
             # print pprint.pformat(res.__dict__)
@@ -88,7 +89,8 @@ class ImagePicker():
             # print res.tag
             if res.tag is not None:
                 tags.append(res.tag)
-        return tags
+                tag_with_order.append([res.tag, res.tag_order])
+        return tags, tag_with_order
 
     def get_tagged_images_for_tags_again(self, tag_array, and_or='or', number=None):
 
@@ -110,7 +112,6 @@ class ImagePicker():
 
         print all_results.query
         return list(set(all_results))
-
 
     def get_tagged_images_for_tags(self, tag_array, and_or='or', number=None):
 
@@ -442,6 +443,7 @@ class ImagePicker():
         # For each tag order in the list, add up the total weight for this tag
         for tag_order in tag_orders:
             if len(tag_order) < 9:
+                print tag_order + ' becomes 100100100'
                 # Some tags have the old system of 0, 1, 2, 3...
                 # assume they are equally important "first order" tags
                 tag_order = '100100100'
@@ -476,7 +478,7 @@ class ImagePicker():
         # ie 100100100 < 200300400 < 300400200
         tags_for_image = sorted(tags_for_image, key=lambda image: image['tag_order'])
 
-        print 'alpha tags : ' + pprint.pformat(tags_for_image)
+        # print 'alpha tags : ' + pprint.pformat(tags_for_image)
 
         weighted_tags_for_alpha_image = {}
 
@@ -500,7 +502,7 @@ class ImagePicker():
                 weighted_tag['weight'] = self.get_tag_order_weight(tag_orders, alpha_tag['tag'])
                 weighted_tags_for_alpha_image[alpha_tag['tag']] = weighted_tag
 
-        # print 'weighted alpha tags : ' + pprint.pformat(weighted_tags_for_alpha_image)
+        print 'weighted alpha tags : ' + pprint.pformat(weighted_tags_for_alpha_image)
 
         to_search = []
 
@@ -530,6 +532,8 @@ class ImagePicker():
             count += 1
             count2 = 0
             matched2 = []
+            all_tags_for_image = []
+            matched2_with_order = []
 
             # Haystack can be weird,
             # so we need to check this item has a flickr_id, isn't the alpha image, and isn't a repeat
@@ -537,13 +541,24 @@ class ImagePicker():
                 to_join.append(x.flickr_id)
 
                 # Get all the tags for this image
-                tags_for_image2 = self.get_tags_for_image(x.flickr_id)
+                tags_for_image2, tags_with_order = self.get_tags_for_image(x.flickr_id)
 
+                print 'tags_with_order : ' + str(tags_with_order)
                 # Count the number of tags which are matched between this image and the alpha image
                 for tag2 in tags_for_image2:
+                    all_tags_for_image.append(tag2)
                     if tag2 in to_search and tag2 not in matched2:
                         count2 += 1
                         matched2.append(tag2)
+
+                #         Try and store the tag_orders at the same time
+                for tag2 in tags_with_order:
+                    if tag2[0] in to_search and tag2[0] not in matched2_with_order:
+                        count2 += 1
+                        matched2_with_order.append({
+                            'tag': tag2[0],
+                            'tag_order': tag2[1]
+                        })
 
                 #         This could be tweaked to ensure at least 2-3 matching tags
                 if count2 > 0:
@@ -552,7 +567,9 @@ class ImagePicker():
                     discovered.append({
                         'flickr_id': x.flickr_id,
                         'matches': count2,
-                        'tags': matched2
+                        'tags': matched2,
+                        'all_tags': all_tags_for_image,
+                        'all_tags_with_order': matched2_with_order
                     })
 
         # Sort by the number of matches
@@ -569,23 +586,34 @@ class ImagePicker():
 
             weighted_tag_sum = 0
 
-            tags_for_found_image = []
 
-            for image_tag in tag_set['tags']:
-                # Get all the tags from the image, with tag orders
-                # TODO do this in the DB hit above?
-                tag = models.Tag.objects.filter(image__flickr_id=tag_set['flickr_id']).filter(tag=image_tag)
-                for tag_orders in tag:
-                    # print image_tag
-                    # print tag_orders.tag_order
-                    tags_for_found_image.append({
-                        'tag': image_tag,
-                        'tag_order': tag_orders.tag_order
-                    })
+
+
+            # tags_for_found_image = []
+            #
+            # for image_tag in tag_set['tags']:
+            #     # Get all the tags from the image, with tag orders
+            #     # TODO do this in the DB hit above?
+            #     tag = models.Tag.objects.filter(image__flickr_id=tag_set['flickr_id']).filter(tag=image_tag)
+            #     for tag_orders in tag:
+            #         # print image_tag
+            #         # print tag_orders.tag_order
+            #         tags_for_found_image.append({
+            #             'tag': image_tag,
+            #             'tag_order': tag_orders.tag_order
+            #         })
+
+
+
+
 
             # Organise the weights of the tags
             weighted_tags_for_found_image = {}
-            for image_tag in tags_for_found_image:
+
+            # TODO does this make things better?
+            # for image_tag in tags_for_found_image:
+            for image_tag in tag_set['all_tags_with_order']:
+
                 if weighted_tags_for_found_image.get(image_tag['tag'], None) is None:
                     weighted_tag = {}
                     tag_orders = []
@@ -611,7 +639,7 @@ class ImagePicker():
                     discovered_image['weighted_importance'] = weighted_tag_sum
                     discovered_image['weighted_tags'] = weighted_tags_for_found_image
 
-            print pprint.pformat(weighted_tags_for_found_image)
+                    # print pprint.pformat(weighted_tags_for_found_image)
 
         # print '\nFOUND MATCHES\n'
         # print pprint.pformat(sorted_tag_matches)
@@ -619,13 +647,14 @@ class ImagePicker():
         # Sort by overall calculated weight
         # print '\nWEIGHTED DISCOVERIES\n'
         sorted_discovered = sorted(sorted_tag_matches, key=lambda image: image['weighted_importance'], reverse=True)
-        # print pprint.pformat(sorted_discovered)
+        print pprint.pformat(sorted_discovered)
 
         # Bin all that info and just return a list of flickr_IDs
         # Shame, this is probably decent stuff.
         finals = []
         for final_found in sorted_discovered:
             finals.append(final_found['flickr_id'])
+            print final_found['flickr_id'], final_found['weighted_importance']
 
         return finals
 
@@ -636,7 +665,3 @@ class Request():
             # 'author': 'BETTANY',
             'keyword': 'tree water'
         }
-
-
-
-

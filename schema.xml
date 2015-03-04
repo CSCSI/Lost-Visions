@@ -216,6 +216,8 @@
         <!-- tags and captions and descriptions -->
         <field name="tag" type="text_en" indexed="true" stored="true" multiValued="false" />
 
+        <field name="tag_order" type="text_en" indexed="true" stored="true" multiValued="false" />
+
         <field name="caption" type="text_en" indexed="true" stored="true" multiValued="false" />
 
         <field name="description" type="text_en" indexed="true" stored="true" multiValued="false" />

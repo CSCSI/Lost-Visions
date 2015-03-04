@@ -48,16 +48,16 @@ def get_image_data_with_location(id_list):
 
         return fast_image_data
     else:
-        return Exception('No valid IDs given')
+        raise Exception('No valid IDs given')
 
 
 def get_image_data_from_array(id_list, request):
     tag_results_dict = dict()
 
     try:
-        print 'data from array : ' + str(len(connection.queries))
+        # print 'data from array : ' + str(len(connection.queries))
         fast_image_data = get_image_data_with_location(id_list)
-        print 'after get_image_data_with_location : ' + str(len(connection.queries))
+        # print 'after get_image_data_with_location : ' + str(len(connection.queries))
         # print pprint.pformat(fast_image_data)
 
         for result in fast_image_data:
@@ -66,15 +66,15 @@ def get_image_data_from_array(id_list, request):
                 tag_result['title'] = result.title
 
                 try:
-                    print 'before get_image_info : ' + str(len(connection.queries))
+                    # print 'before get_image_info : ' + str(len(connection.queries))
 
                     image_info = db_tools.get_image_info(result)
                     # print pprint.pformat(image_info)
-                    print 'after get_image_info before sanitise_image_info : ' + str(len(connection.queries))
+                    # print 'after get_image_info before sanitise_image_info : ' + str(len(connection.queries))
 
                     image_info = sanitise_image_info(image_info, request)
                     # print pprint.pformat(image_info)
-                    print 'after sanitise_image_info: ' + str(len(connection.queries))
+                    # print 'after sanitise_image_info: ' + str(len(connection.queries))
 
                     tag_result['img'] = image_info['imageurl']
                 except Exception as e5:
