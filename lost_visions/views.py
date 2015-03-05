@@ -161,42 +161,43 @@ def image_tags(request):
                         # alternative_words = []
                         # alternative_words.append([user_tag['tag'], [0, 0]])
 
-                        # for index, weighted_word in enumerate(alternative_words):
-                        tag = models.Tag()
-                        # word = weighted_word[0]
-
                         word = clean(user_tag['tag'], strip=True)
 
-                        print word
-                        tag.tag = word
-                        tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
-                        tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
-                        # try:
-                        # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
-                        date_object = parser.parse(str(user_tag['timestamp']))
-                        tag.timestamp = date_object
-                        # except Exception as e3:
-                        #     print e3
-                        #     pass
+                        if len(word) > 0:
+                            # for index, weighted_word in enumerate(alternative_words):
+                            tag = models.Tag()
+                            # word = weighted_word[0]
 
-                        # tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
+                            print word
+                            tag.tag = word
+                            tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
+                            tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
+                            # try:
+                            # date_object = datetime.strptime(str(user_tag['datetime']), '%Y-%m-%dT%H:%M:%S.%f')
+                            date_object = parser.parse(str(user_tag['timestamp']))
+                            tag.timestamp = date_object
+                            # except Exception as e3:
+                            #     print e3
+                            #     pass
 
-                        received_tag_order = clean(str(user_tag['tag_order']), strip=True)
-                        if len(received_tag_order) < 9:
-                            tag_order = str(int(received_tag_order) * 100) + '100100'
+                            # tag_order = str((int(clean(str(user_tag['tag_order']), strip=True)) + 1) * 100)
 
-                            # tag_hyp_dist = int(weighted_word[1][0]) + 1
-                            # tag_syn_val = int(weighted_word[1][1]) + 1
-                            # tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
+                            received_tag_order = clean(str(user_tag['tag_order']), strip=True)
+                            if len(received_tag_order) < 9:
+                                tag_order = str(int(received_tag_order) * 100) + '100100'
 
-                        else:
-                            tag_order = received_tag_order
-                        tag.tag_order = str(tag_order)
+                                # tag_hyp_dist = int(weighted_word[1][0]) + 1
+                                # tag_syn_val = int(weighted_word[1][1]) + 1
+                                # tag_order += str(tag_hyp_dist * 100) + str(tag_syn_val * 100)
 
-                        if image and request_user:
-                            tag.image = image
-                            tag.user = request_user
-                        tag.save()
+                            else:
+                                tag_order = received_tag_order
+                            tag.tag_order = str(tag_order)
+
+                            if image and request_user:
+                                tag.image = image
+                                tag.user = request_user
+                            tag.save()
                     except Exception as e43533:
                         print 'ahhhh'
                         print e43533
@@ -1634,18 +1635,22 @@ def page_turner(request, book_id, page, volume):
     page_long = page_detail[0]
     page_short = str(int(page_long))
 
-    print book_id
-    print page_detail
-    print page_long
-    print page_short
-    print volume
+    # print book_id
+    # print page_detail
+    # print page_long
+    # print page_short
+    # print volume
 
     image_data = models.Image.objects.filter(book_identifier=book_id)
+    flickr_ids = models.Image.objects.filter(book_identifier=book_id, page=page, volume=volume).values_list('flickr_id', flat=True)
+    if len(flickr_ids):
+        flickr_id = flickr_ids[0]
+
     title = image_data[0].title
 
     archive = find_zip(book_id, volume)
     pages = []
-    flickr_id = None
+    # flickr_id = None
     if archive is not None:
         for page_name in archive.namelist():
             page_number_found = page_name.split('_')[-1]
@@ -1653,8 +1658,8 @@ def page_turner(request, book_id, page, volume):
 
             found = False
             for book_image in image_data:
-                if book_image.page == page and book_image.volume == volume:
-                    flickr_id = book_image.flickr_id
+                # if book_image.page == page and book_image.volume == volume:
+                #     flickr_id = book_image.flickr_id
 
                 if int(book_image.page) == int(page_number_found):
                     found = True

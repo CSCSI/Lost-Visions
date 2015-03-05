@@ -101,16 +101,17 @@ class ImagePicker():
         ors = []
 
         for tag in tag_array:
-            regex_format = regex_string.format(tag)
+            if len(tag.strip()):
+                regex_format = regex_string.format(tag)
 
-            ors.append(SQ(tag=Raw(regex_format + '*')))
+                ors.append(SQ(tag=Raw(regex_format + '*')))
 
         if len(ors) > 0:
             all_results = all_results.filter(reduce(operator.or_, ors))
         else:
             raise Exception('No tags to filter images for')
 
-        print all_results.query
+        # print all_results.query
         return list(set(all_results))
 
     def get_tagged_images_for_tags(self, tag_array, and_or='or', number=None):
@@ -252,17 +253,17 @@ class ImagePicker():
 
         print request.GET
 
-        keywords = request.GET.get('keyword', '')
-        keywords = keywords.split(' ')
+        keywords = request.GET.get('keyword', '').strip()
+        keywords = [x.strip() for x in keywords.split(' ')]
 
-        year = request.GET.get('year', '')
-        author = request.GET.get('author', '')
-        illustrator = request.GET.get('illustrator', '')
-        number_of_results = request.GET.get('num_results', '')
-        book_id = request.GET.get('book_id', '')
-        publisher = request.GET.get('publisher', '')
-        publishing_place = request.GET.get('publishing_place', '')
-        title = request.GET.get('title', '')
+        year = request.GET.get('year', '').strip()
+        author = request.GET.get('author', '').strip()
+        illustrator = request.GET.get('illustrator', '').strip()
+        number_of_results = request.GET.get('num_results', '').strip()
+        book_id = request.GET.get('book_id', '').strip()
+        publisher = request.GET.get('publisher', '').strip()
+        publishing_place = request.GET.get('publishing_place', '').strip()
+        title = request.GET.get('title', '').strip()
 
         tag_keywords_only = request.GET.get('tag_keywords_only', False)
 
@@ -284,7 +285,7 @@ class ImagePicker():
             # filtered = True
             # readable_query += ' with title ' + title
 
-        if len(illustrator):
+        if len(illustrator.strip()):
             q_or_objects = []
             for illustrator_book_id in models.BookIllustrator.objects \
                     .filter(name__iregex=regex_string.format(illustrator)).values_list('book_id', flat=True).distinct():
@@ -316,7 +317,8 @@ class ImagePicker():
         if similar_tags:
             similar_words = []
             for word in keywords:
-                similar_words.extend(self.get_similar_word_array(word))
+                if len(word):
+                    similar_words.extend(self.get_similar_word_array(word))
             keywords = similar_words
 
         print '*' + str(keywords) + '*'
@@ -353,17 +355,17 @@ class ImagePicker():
 
         print query_items
 
-        keywords = query_items.get('keyword', '')
-        keywords = keywords.split(' ')
+        keywords = query_items.get('keyword', '').strip()
+        keywords = [x.strip() for x in keywords.split(' ')]
 
-        year = query_items.get('year', '')
-        author = query_items.get('author', '')
-        illustrator = query_items.get('illustrator', '')
-        number_of_results = query_items.get('num_results', '')
-        book_id = query_items.get('book_id', '')
-        publisher = query_items.get('publisher', '')
-        publishing_place = query_items.get('publishing_place', '')
-        title = query_items.get('title', '')
+        year = query_items.get('year', '').strip()
+        author = query_items.get('author', '').strip()
+        illustrator = query_items.get('illustrator', '').strip()
+        number_of_results = query_items.get('num_results', '').strip()
+        book_id = query_items.get('book_id', '').strip()
+        publisher = query_items.get('publisher', '').strip()
+        publishing_place = query_items.get('publishing_place', '').strip()
+        title = query_items.get('title', '').strip()
 
         tag_keywords_only = query_items.get('tag_keywords_only', False)
 
@@ -403,7 +405,8 @@ class ImagePicker():
         if similar_tags:
             similar_words = []
             for word in keywords:
-                similar_words.extend(self.get_similar_word_array(word))
+                if len(word):
+                    similar_words.extend(self.get_similar_word_array(word))
             keywords = similar_words
 
         for word in keywords:
@@ -484,25 +487,27 @@ class ImagePicker():
 
         # For each tag in the alpha set, look through the set and grab all tag orders
         for alpha_tag in tags_for_image:
-            # Only record if we haven't already seen this tag
-            if weighted_tags_for_alpha_image.get(alpha_tag['tag'], None) is None:
-                weighted_tag = {}
-                tag_orders = []
+            # Don't search for blank tags
+            if len(alpha_tag['tag']):
+                # Only record if we haven't already seen this tag
+                if weighted_tags_for_alpha_image.get(alpha_tag['tag'], None) is None:
+                    weighted_tag = {}
+                    tag_orders = []
 
-                # We have an unseen tag from the alpha image
-                # check through all tags and see if it appears again
-                # append all tag orders to a list
-                for alpha_tag2 in tags_for_image:
-                    if alpha_tag2['tag'] == alpha_tag['tag']:
-                        tag_orders.append(str(alpha_tag2['tag_order']))
+                    # We have an unseen tag from the alpha image
+                    # check through all tags and see if it appears again
+                    # append all tag orders to a list
+                    for alpha_tag2 in tags_for_image:
+                        if alpha_tag2['tag'] == alpha_tag['tag']:
+                            tag_orders.append(str(alpha_tag2['tag_order']))
 
-                # For alpha tag we record a list of tag orders
-                # and the "weight" of this tag overall
-                weighted_tag['tag_orders'] = tag_orders
-                weighted_tag['weight'] = self.get_tag_order_weight(tag_orders, alpha_tag['tag'])
-                weighted_tags_for_alpha_image[alpha_tag['tag']] = weighted_tag
+                    # For alpha tag we record a list of tag orders
+                    # and the "weight" of this tag overall
+                    weighted_tag['tag_orders'] = tag_orders
+                    weighted_tag['weight'] = self.get_tag_order_weight(tag_orders, alpha_tag['tag'])
+                    weighted_tags_for_alpha_image[alpha_tag['tag']] = weighted_tag
 
-        print 'weighted alpha tags : ' + pprint.pformat(weighted_tags_for_alpha_image)
+        # print 'weighted alpha tags : ' + pprint.pformat(weighted_tags_for_alpha_image)
 
         to_search = []
 
@@ -543,7 +548,7 @@ class ImagePicker():
                 # Get all the tags for this image
                 tags_for_image2, tags_with_order = self.get_tags_for_image(x.flickr_id)
 
-                print 'tags_with_order : ' + str(tags_with_order)
+                # print 'tags_with_order : ' + str(tags_with_order)
                 # Count the number of tags which are matched between this image and the alpha image
                 for tag2 in tags_for_image2:
                     all_tags_for_image.append(tag2)
@@ -647,14 +652,14 @@ class ImagePicker():
         # Sort by overall calculated weight
         # print '\nWEIGHTED DISCOVERIES\n'
         sorted_discovered = sorted(sorted_tag_matches, key=lambda image: image['weighted_importance'], reverse=True)
-        print pprint.pformat(sorted_discovered)
+        # print pprint.pformat(sorted_discovered)
 
         # Bin all that info and just return a list of flickr_IDs
         # Shame, this is probably decent stuff.
         finals = []
         for final_found in sorted_discovered:
             finals.append(final_found['flickr_id'])
-            print final_found['flickr_id'], final_found['weighted_importance']
+            # print final_found['flickr_id'], final_found['weighted_importance']
 
         return finals
 

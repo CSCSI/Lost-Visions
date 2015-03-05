@@ -333,7 +333,29 @@
             });
         });
 
+        $('#share_dialogue').dialog({
+            autoOpen: false,
+            width: $(window).width() * 0.7,
+            show: {
+                effect: "blind",
+                duration: 500
+            },
+            hide: {
+                effect: "blind",
+                duration: 500
+            }
+        });
 
+        $('#share').click(function(){
+            var collection_id = $(this).data('collection_id');
+            var link = '{% url 'dl_collection' %}?' +
+                    'collection_id=' + collection_id;
+            $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
+            {#                $('#edit_collection_dialog_form').dialog("open");#}
+            $('#share_dialogue').dialog("open");
+
+            {#                window.open("{% url 'tweet_card' %}", '_blank');#}
+        });
 
         $('#image-taggin-form').bind("keyup keypress", function(e) {
             var code = e.keyCode || e.which;
@@ -1361,6 +1383,11 @@
                                         ><div class="fa fa-book"></div></a>
                             </li>
                             <li>
+                                <a id="share" data-toggle="tooltip" data-placement="top"
+                                   title="Share" data-original-title="Share"
+                                   class="btn btn-success side-menu-btn"><i class="fa fa-share-alt"></i></a>
+                            </li>
+                            <li>
                                 <a data-toggle="tooltip" data-placement="top"
                                    title="Download illustration" data-original-title="Download"
                                    class="btn btn-success side-menu-btn" target="_blank"
@@ -1408,8 +1435,8 @@
                             </li>
                             <li>
                                 <div style="margin-top: 5px">
-                                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>
-                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                                    {#                                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>#}
+                                    {#                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
                                 </div>
                             </li>
                             {% if user.is_authenticated %}
@@ -1889,6 +1916,15 @@
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
             </fieldset>
         </form>
+    </div>
+
+    <div id="share_dialogue" title="Share Image">
+        Share this URL : <br>
+        <a target="_blank" id="share_image_ref" href="{% url 'image' image_id %}">http://lost-visions.cf.ac.uk{% url 'image' image_id %}</a>
+        <br><br>
+        <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
     </div>
 
 {% endblock %}
