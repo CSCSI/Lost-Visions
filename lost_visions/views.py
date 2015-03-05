@@ -1643,6 +1643,7 @@ def page_turner(request, book_id, page, volume):
 
     image_data = models.Image.objects.filter(book_identifier=book_id)
     flickr_ids = models.Image.objects.filter(book_identifier=book_id, page=page, volume=volume).values_list('flickr_id', flat=True)
+    flickr_id = ''
     if len(flickr_ids):
         flickr_id = flickr_ids[0]
 
@@ -1650,7 +1651,6 @@ def page_turner(request, book_id, page, volume):
 
     archive = find_zip(book_id, volume)
     pages = []
-    # flickr_id = None
     if archive is not None:
         for page_name in archive.namelist():
             page_number_found = page_name.split('_')[-1]

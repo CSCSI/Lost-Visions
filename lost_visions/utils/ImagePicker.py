@@ -376,10 +376,10 @@ class ImagePicker():
             all_results = all_results.filter((SQ(date__startswith=decade)))
 
         if len(author):
-            all_results = all_results.filter(SQ(first_author=Raw(author + '*')))
+            all_results = all_results.filter(SQ(first_author=Raw('*' + author + '*')))
 
         if len(title):
-            all_results = all_results.filter(SQ(title=Raw(title + '*')))
+            all_results = all_results.filter(SQ(title=Raw('*' + title + '*')))
 
         if len(illustrator):
             q_or_objects = []
@@ -395,11 +395,11 @@ class ImagePicker():
             all_results = all_results.filter(book_identifier=book_id)
 
         if len(publisher):
-            all_results = all_results.filter(SQ(publisher=Raw(publisher + '*')))
+            all_results = all_results.filter(SQ(publisher=Raw('*' + publisher + '*')))
             filtered = True
 
         if len(publishing_place):
-            all_results = all_results.filter(SQ(pubplace=Raw(publishing_place + '*')))
+            all_results = all_results.filter(SQ(pubplace=Raw('*' + publishing_place + '*')))
             filtered = True
 
         if similar_tags:
@@ -413,20 +413,20 @@ class ImagePicker():
             if len(word):
                 regex_format = regex_string.format(word)
                 ors = [
-                    SQ(tag=Raw(regex_format + '*')),
-                    SQ(caption=Raw(regex_format + '*')),
-                    SQ(description=Raw(regex_format + '*')),
+                    SQ(tag=Raw('*' + regex_format + '*')),
+                    SQ(caption=Raw('*' + regex_format + '*')),
+                    SQ(description=Raw('*' + regex_format + '*')),
                     ]
 
                 if not tag_keywords_only:
                     ors += [
-                        SQ(first_author=Raw(regex_format + '*')),
+                        SQ(first_author=Raw('*' + regex_format + '*')),
                         SQ(date__contains=regex_format),
                         # SQ(title__contains=regex_format),
-                        SQ(title=Raw(regex_format + '*')),
+                        SQ(title=Raw('*' + regex_format + '*')),
 
-                        SQ(publisher=Raw(regex_format + '*')),
-                        SQ(pubplace=Raw(regex_format + '*')),
+                        SQ(publisher=Raw('*' + regex_format + '*')),
+                        SQ(pubplace=Raw('*' + regex_format + '*')),
 
                         ]
 
