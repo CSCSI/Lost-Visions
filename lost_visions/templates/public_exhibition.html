@@ -6,16 +6,18 @@
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
         $(document).ready(function () {
-{#            $('#carousel-exhibition').carousel();#}
-{#            $("#carousel-exhibition").height($(window).height() * 0.6).css({'margin': '0 auto'});#}
-            $(".carousel-exhibition-item").height($(window).height() * 0.6).css({'margin': '0 auto'});
+            {#            $('#carousel-exhibition').carousel();#}
+            {#            $("#carousel-exhibition").height($(window).height() * 0.6).css({'margin': '0 auto'});#}
+            $(".carousel-exhibition-item").css({'margin': '0 auto', 'height': ($(window).height() * 0.6), 'width': '100%'});
+            $(".slick_container_nav").css({'margin': '0 auto', 'height': ($(window).height() * 0.1)});
+
             {#            var carousel = $(".home-carousel");#}
             {#            carousel.css({'max-height': carousel.height()});#}
 
             $('.slider-for').slick({
                 lazyLoad: 'ondemand',
                 autoplay: true,
-                autoplaySpeed: 4000,
+                autoplaySpeed: 2000,
                 slidesToShow: 1,
                 slidesToScroll: 1,
                 arrows: false,
@@ -34,61 +36,79 @@
 
     </script>
 
-    <div class="home-content-main container">
-        <h3 style="text-align: center">{{ collection_data.collection_name }} - {{ collection_data.images|length }} images</h3>
+    {#    <div class="home-content-main container">#}
+    <h3 style="text-align: center">{{ collection_data.collection_name }} - {{ collection_data.images|length }} images</h3>
 
-        <div class="row">
-            <div class="slider-for">
-                {% for image in collection_data.images %}
-                    <div class="{% if forloop.first %} active{% endif %}">
+    <div class="row">
+        <div class="slider-for">
+            {% for image in collection_data.images %}
+                <div class="{% if forloop.first %} active{% endif %}">
 
-                        <table>
-                            <col width="80%">
-                            <col width="20%">
-                            <tr>
-                                <th>
-                                    <a href="{% url 'image' image.flickr_id %}" target="_blank">
-                                        <img data-lazy="{{ image.url }}" class="carousel-exhibition-item">
+                    <table style="width: 100%">
+                        {#                            <col width="80%">#}
+                        {#                            <col width="20%">#}
+                        <tr>
+                            <th>
+                                <div id="slick_container" class="slick_container carousel-exhibition-item" style="width: 100%; display: table">
+                                    <a href="{% url 'image' image.flickr_id %}" target="_blank" style="display: table-cell; vertical-align: middle">
+                                        <img style="max-width: 100%; height: inherit; margin: auto" data-lazy="{{ image.url }}">
                                     </a>
-                                </th>
-                                <td>
-                                    {{ image.title }}
-                                    {% if image.caption %}
-                                        <br>
-                                        <span style="color: white; background-color: #A365BA; text-align: center; text-wrap: normal">
+                                </div>
+                            </th>
+                            {#                                <td>#}
+                            {#                                    {{ image.title }}#}
+                            {#                                    {% if image.caption %}#}
+                            {#                                        <br>#}
+                            {#                                        <span style="color: white; background-color: #A365BA; text-align: center; text-wrap: normal">#}
+                            {#                                            {{ image.caption }}#}
+                            {#                                        </span>#}
+                            {#                                    {% endif %}#}
+                            {#                                </td>#}
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">
+                                {{ image.title }}
+                                {% if image.caption %}
+                                    <br>
+                                    <span style="color: white; background-color: #A365BA; text-align: center; text-wrap: normal">
                                             {{ image.caption }}
                                         </span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        </table>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
 
-                        {#                        <img src="{{ image.url }}" class="carousel-exhibition-item">#}
-                        {#                        <div class="" style="text-align: center">#}
-                        {#                            {{ image.title }}#}
-                        {#                            {% if image.caption %}#}
-                        {#                            <br>#}
-                        {#                            <span style="color: white; background-color: #A365BA; text-align: center">{{ image.caption }}</span>#}
-                        {#                            {% endif %}#}
-                        {#                        </div>#}
+                    {#                                                <img src="{{ image.url }}" class="carousel-exhibition-item">#}
+                    {#                                                <div class="" style="text-align: center">#}
+                    {#                                                    {{ image.title }}#}
+                    {#                                                    {% if image.caption %}#}
+                    {#                                                    <br>#}
+                    {#                                                    <span style="color: white; background-color: #A365BA; text-align: center">{{ image.caption }}</span>#}
+                    {#                                                    {% endif %}#}
+                    {#                                                </div>#}
 
-                    </div>
-                {% endfor %}
-            </div>
-            <div class="slider-nav">
-                {% for image in collection_data.images %}
-                    <div class="{% if forloop.first %} active{% endif %}">
-                        <img src="{{ image.url }}" style="height: 100px; max-width: 100px">
-                        {#                        <div class="">#}
-                        {#                            <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>#}
-                        {#                        </div>#}
-                    </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
 
-        <h3>This Exhibition has been public since : {{ date }}</h3>
-        <h3>Collection originally created by {{ collection_creator }} </h3>
+        <div class="slider-nav">
+            {% for image in collection_data.images %}
+                <div class="{% if forloop.first %} active{% endif %}">
+                    <div id="slick_container_nav" class="slick_container_nav" style="display: table">
+                        <div style="display: table-cell; vertical-align: middle">
+                            <img src="{{ image.url }}" style="max-height: 100px; max-width: 200px">
+                            {#                        <div class="">#}
+                            {#                            <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>#}
+                            {#                        </div>#}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
+
+    <h3>This Exhibition has been public since : {{ date }}</h3>
+    <h3>Collection originally created by {{ collection_creator }} </h3>
+    {#    </div>#}
 
 {% endblock %}

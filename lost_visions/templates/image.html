@@ -1222,9 +1222,9 @@
 
             ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 
-            $(".photo_background").height(windowHeight).css({'width': canvas.width, 'margin': '0 auto'});
+            $(".photo_background").height(windowHeight).css({'width': canvas.width, 'margin': '0 auto', 'height': canvas.height + 80});
 
-            $(".photo-jumbotron").css({'margin': '0 auto', 'width': canvas.width + 80});
+            $(".photo-jumbotron").css({'margin': '0 auto', 'width': canvas.width + 80, 'height': canvas.height + 80});
 
 
             {#            var divSizes = getPhotoDivSizes(img.naturalWidth, img.naturalHeight);#}
