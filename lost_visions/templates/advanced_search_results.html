@@ -18,6 +18,7 @@
             alert('All images from the search have now been loaded.');
         } else {
             images_to_load = all_image_ids_list.slice(start_id_index, end_id_index);
+            console.log(start_id_index + ' ' + end_id_index + ' ' + all_image_ids_list.length + ' ' + images_to_load);
             load_more(images_to_load.join(','));
 
             start_id_index = end_id_index;

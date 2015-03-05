@@ -410,27 +410,41 @@ class ImagePicker():
             keywords = similar_words
 
         for word in keywords:
+            # if len(word):
+            #     regex_format = regex_string.format(word)
+            #     ors = [
+            #         SQ(tag=Raw('*' + regex_format + '*')),
+            #         SQ(caption=Raw('*' + regex_format + '*')),
+            #         SQ(description=Raw('*' + regex_format + '*')),
+            #         ]
+            #
+            #     if not tag_keywords_only:
+            #         ors += [
+            #             SQ(first_author=Raw('*' + regex_format + '*')),
+            #             SQ(date__contains=regex_format),
+            #             # SQ(title__contains=regex_format),
+            #             SQ(title=Raw('*' + regex_format + '*')),
+            #
+            #             SQ(publisher=Raw('*' + regex_format + '*')),
+            #             SQ(pubplace=Raw('*' + regex_format + '*')),
+            #
+            #             ]
+            #
+            #     all_results = all_results.filter(reduce(operator.or_, ors))
+
             if len(word):
                 regex_format = regex_string.format(word)
-                ors = [
-                    SQ(tag=Raw('*' + regex_format + '*')),
-                    SQ(caption=Raw('*' + regex_format + '*')),
-                    SQ(description=Raw('*' + regex_format + '*')),
-                    ]
+
+                all_results = all_results.filter_or(tag__icontains=word)
+                all_results = all_results.filter_or(caption__icontains=word)
+                all_results = all_results.filter_or(description__icontains=word)
 
                 if not tag_keywords_only:
-                    ors += [
-                        SQ(first_author=Raw('*' + regex_format + '*')),
-                        SQ(date__contains=regex_format),
-                        # SQ(title__contains=regex_format),
-                        SQ(title=Raw('*' + regex_format + '*')),
-
-                        SQ(publisher=Raw('*' + regex_format + '*')),
-                        SQ(pubplace=Raw('*' + regex_format + '*')),
-
-                        ]
-
-                all_results = all_results.filter(reduce(operator.or_, ors))
+                    all_results = all_results.filter_or(first_author__icontains=word)
+                    all_results = all_results.filter_or(date__icontains=word)
+                    all_results = all_results.filter_or(title__icontains=word)
+                    all_results = all_results.filter_or(publisher__icontains=word)
+                    all_results = all_results.filter_or(pubplace__icontains=word)
 
         # all_results_list = all_results.values_list('fields__flickr_id', flat=True)
 
@@ -446,7 +460,7 @@ class ImagePicker():
         # For each tag order in the list, add up the total weight for this tag
         for tag_order in tag_orders:
             if len(tag_order) < 9:
-                print tag_order + ' becomes 100100100'
+                # print tag_order + ' becomes 100100100'
                 # Some tags have the old system of 0, 1, 2, 3...
                 # assume they are equally important "first order" tags
                 tag_order = '100100100'

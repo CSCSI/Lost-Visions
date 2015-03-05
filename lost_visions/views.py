@@ -1126,7 +1126,7 @@ def do_advanced_search(request):
             # print x.flickr_id
             # print pprint.pformat(x.__dict__.get('flickr_id'))
             # all_image_ids += x.flickr_id + ','
-            if type(x) is not NoneType:
+            if type(x) is not NoneType and x.flickr_id not in to_join:
                 to_join.append(x.flickr_id)
 
         # all_results = [x.object for x in all_results_haystack]
