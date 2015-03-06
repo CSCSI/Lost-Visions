@@ -1,9 +1,12 @@
 import logging
 import os
+import string
 from types import NoneType
 from haystack.backends import SQ
 from haystack.inputs import Raw
 from haystack.query import SearchQuerySet
+import re
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 import pprint
 from crowdsource.settings import db_regex_char
@@ -376,7 +379,11 @@ class ImagePicker():
             all_results = all_results.filter((SQ(date__startswith=decade)))
 
         if len(author):
-            all_results = all_results.filter(SQ(first_author=Raw('*' + author + '*')))
+            author_words = [x.strip() for x in author.split(' ')]
+            for author_word in author_words:
+                re.sub(r'\W+', '', author_word)
+
+                all_results = all_results.filter(first_author__icontains='*' + author_word + '*')
 
         if len(title):
             all_results = all_results.filter(SQ(title=Raw('*' + title + '*')))
