@@ -3,19 +3,30 @@
 
 {% block content %}
 
+    <script src="https://cdn.rawgit.com/GestiXi/image-scale/master/image-scale.min.js"></script>
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
         $(document).ready(function () {
+
+            $("img.scale").load(function(){
+                $(function() {
+                    $(this).imageScale({
+{#                        parent: $('.slick_container')#}
+                    });
+                });
+            });
+
             {#            $('#carousel-exhibition').carousel();#}
             {#            $("#carousel-exhibition").height($(window).height() * 0.6).css({'margin': '0 auto'});#}
+
             $(".carousel-exhibition-item").css({'margin': '0 auto', 'height': ($(window).height() * 0.6), 'width': '100%'});
-            $(".slick_container_nav").css({'margin': '0 auto', 'height': ($(window).height() * 0.1)});
+            {#            $(".slick_container_nav").css({'margin': '0 auto', 'height': ($(window).height() * 0.1)});#}
 
             {#            var carousel = $(".home-carousel");#}
             {#            carousel.css({'max-height': carousel.height()});#}
 
             $('.slider-for').slick({
-                lazyLoad: 'ondemand',
+                {#                lazyLoad: 'progressive',#}
                 autoplay: true,
                 autoplaySpeed: 2000,
                 slidesToShow: 1,
@@ -23,7 +34,21 @@
                 arrows: false,
                 fade: true,
                 asNavFor: '.slider-nav'
+            }).on('afterChange', function(event, slick, currentSlide){
+                console.log(currentSlide);
+
+                console.log(slick.$slides.eq(currentSlide));
+                $(function() {
+
+                    {#body > div.wrapper > div.base-container > div > div.slider-for.slick-initialized.slick-slider > div > div > div.slick-slide.slick-active > table > tbody > tr:nth-child(1) > th > div > a > img#}
+                    var img_dom = $(".slick-slide[data-slick-index="+ currentSlide +"]").find(".scale");
+                    console.log(img_dom);
+                    img_dom.imageScale({
+                        parent: $(".slick-slide[data-slick-index="+ currentSlide +"]").find(".slick_container")
+                    });
+                });
             });
+
             $('.slider-nav').slick({
                 slidesToShow: 4,
                 slidesToScroll: 1,
@@ -31,6 +56,12 @@
                 {#                                dots: true,#}
                 centerMode: true,
                 focusOnSelect: true
+            });
+
+            $(function() {
+                $(".scale").imageScale({
+                    parent: $('.slick_container')
+                });
             });
         });
 
@@ -44,14 +75,23 @@
             {% for image in collection_data.images %}
                 <div class="{% if forloop.first %} active{% endif %}">
 
-                    <table style="width: 100%">
+                    <table style="width: 100%" class="findme">
                         {#                            <col width="80%">#}
                         {#                            <col width="20%">#}
                         <tr>
                             <th>
-                                <div id="slick_container" class="slick_container carousel-exhibition-item" style="width: 100%; display: table">
-                                    <a href="{% url 'image' image.flickr_id %}" target="_blank" style="display: table-cell; vertical-align: middle">
-                                        <img style="max-width: 100%; height: inherit; margin: auto" data-lazy="{{ image.url }}">
+                                <div class="slick_container carousel-exhibition-item"
+                                        {#                                     style="width: 100%; display: table"#}
+                                        >
+                                    <a href="{% url 'image' image.flickr_id %}" target="_blank"
+
+                                            {#                                       style="display: table-cell; vertical-align: middle"#}
+                                            >
+                                        <img
+                                                class="scale" data-scale="best-fit" data-align="center"
+
+                                                {#                                             style="max-width: 100%; height: inherit; margin: auto"#}
+                                                data-lazy="{{ image.url }}">
                                     </a>
                                 </div>
                             </th>

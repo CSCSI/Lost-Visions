@@ -379,14 +379,19 @@ class ImagePicker():
             all_results = all_results.filter((SQ(date__startswith=decade)))
 
         if len(author):
+            # all_results = all_results.filter_or(first_author__icontains='*' + author + '*')
             author_words = [x.strip() for x in author.split(' ')]
             for author_word in author_words:
                 re.sub(r'\W+', '', author_word)
-
                 all_results = all_results.filter(first_author__icontains='*' + author_word + '*')
 
         if len(title):
-            all_results = all_results.filter(SQ(title=Raw('*' + title + '*')))
+            # all_results = all_results.filter_or(title__icontains='*"' + title + '"*')
+            title_words = [x.strip() for x in title.split(' ')]
+            for title_word in title_words:
+                re.sub(r'\W+', '', title_word)
+                all_results = all_results.filter(title__icontains='*' + title_word + '*')
+            # all_results = all_results.filter(SQ(title=Raw('*' + title + '*')))
 
         if len(illustrator):
             q_or_objects = []
@@ -402,12 +407,18 @@ class ImagePicker():
             all_results = all_results.filter(book_identifier=book_id)
 
         if len(publisher):
-            all_results = all_results.filter(SQ(publisher=Raw('*' + publisher + '*')))
-            filtered = True
+            publisher_words = [x.strip() for x in publisher.split(' ')]
+            for publisher_word in publisher_words:
+                re.sub(r'\W+', '', publisher_word)
+                all_results = all_results.filter(publisher__icontains='*' + publisher_word + '*')
+            # all_results = all_results.filter(SQ(publisher=Raw('*' + publisher + '*')))
 
         if len(publishing_place):
-            all_results = all_results.filter(SQ(pubplace=Raw('*' + publishing_place + '*')))
-            filtered = True
+            publishing_place_words = [x.strip() for x in publishing_place.split(' ')]
+            for publishing_place_word in publishing_place_words:
+                re.sub(r'\W+', '', publishing_place_word)
+                all_results = all_results.filter(pubplace__icontains='*' + publishing_place_word + '*')
+            # all_results = all_results.filter(SQ(pubplace=Raw('*' + publishing_place + '*')))
 
         if similar_tags:
             similar_words = []

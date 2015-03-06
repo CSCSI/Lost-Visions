@@ -13,7 +13,11 @@
 
             $('#collapse_search_filter').accordion({
                 {#                icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },#}
-                active: false,
+                {% if query_array.author|length or query_array.title|length or query_array.publisher|length or query_array.publishing_place|length or query_array.year|length  or query_array.illustrator|length%}
+                    active: 0,
+                {% else %}
+                    active: false,
+                {% endif %}
                 collapsible: true,
                 heightStyle: "content"
 

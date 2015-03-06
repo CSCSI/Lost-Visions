@@ -1122,15 +1122,19 @@ def do_advanced_search(request):
         # print type(all_results_haystack)
 
         to_join = []
-        for x in all_results_haystack[:500]:
-            # print x.flickr_id
-            # print pprint.pformat(x.__dict__.get('flickr_id'))
-            # all_image_ids += x.flickr_id + ','
-            try:
-                if type(x) is not NoneType and x.flickr_id not in to_join:
-                    to_join.append(x.flickr_id)
-            except:
-                pass
+        try:
+            for x in all_results_haystack[:500]:
+                # print x.flickr_id
+                # print pprint.pformat(x.__dict__.get('flickr_id'))
+                # all_image_ids += x.flickr_id + ','
+                try:
+                    if type(x) is not NoneType and x.flickr_id not in to_join:
+                        to_join.append(x.flickr_id)
+                except:
+                    pass
+        except Exception as e23458:
+            print str(e23458)
+            pass
 
         # all_results = [x.object for x in all_results_haystack]
         if len(to_join) > 0:
