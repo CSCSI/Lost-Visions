@@ -717,6 +717,20 @@ a:hover#save_image.btn.btn-default.save_image  {
     color: #ffffff;
 }
 /* Advanced search*/
+
+#ui-accordion-collapse_search_filter-panel-0 {
+    border: 0;
+    border-style: none;
+}
+
+#advanced-search-form > div {
+    padding-bottom: 0;
+}
+
+#collapse_search_filter {
+    padding-bottom: 0;
+}
+
 #advanced-search-form > div > div.panel-body > div > ul > li > button {
     background-color: #4E84B2;
     border-color: #404448;
