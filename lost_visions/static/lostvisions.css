@@ -270,7 +270,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 .base-container {
     padding-top: 38px;
     padding-left: 5%;
-    padding-right: 5%;
+    padding-right: 3%;
 }
 
 .title-header {
@@ -376,8 +376,16 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     color: #ffffff;
 }
 
+/*body > div.wrapper > div.base-container > div.modal.fade.bs-example-modal-lg.in {*/
+    /*z-index: 1005;*/
+/*}*/
+
+.body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top {
+    /*z-index: 1052;*/
+}
+
 .side-menu {
-    z-index: 5000;
+    z-index: 1051;
     /*height: 200px;*/
     position: absolute;
     left: 0px;
@@ -495,7 +503,8 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     margin-top: 5px;
 }
 
-#image-taggin-form > ul > li > .btn{
+#image-taggin-form > table > tbody > tr > td > .btn {
+/*#image-taggin-form > ul > li > .btn{*/
     margin-top: 0px;
 }
 

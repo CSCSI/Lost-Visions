@@ -127,20 +127,23 @@ def get_alternative_tags(request):
 
 @requires_csrf_token
 def image_tags(request):
+    next_action = 'next_image'
     try:
         print request.get_full_path()
 
         if request.method == 'POST':
-            # print request.POST
+            next_action = clean(request.POST.get('stay_or_next_image', 'next_image'), strip=True)
+
+            print pprint.pformat(request.POST)
             # print request.user
 
-            image = models.Image.objects.get(flickr_id=request.POST['image_id'])
+            image_model = models.Image.objects.get(flickr_id=request.POST['image_id'])
             request_user = get_request_user(request)
 
             image_text = models.ImageText()
             image_text.caption = clean(request.POST.get('input_caption', ''), strip=True)
             image_text.description = clean(request.POST['image_description'], strip=True)
-            image_text.image = image
+            image_text.image = image_model
             image_text.user = request_user
 
             if image_text.description == '' and image_text.caption == '':
@@ -194,20 +197,26 @@ def image_tags(request):
                                 tag_order = received_tag_order
                             tag.tag_order = str(tag_order)
 
-                            if image and request_user:
-                                tag.image = image
+                            if image_model and request_user:
+                                tag.image = image_model
                                 tag.user = request_user
                             tag.save()
                     except Exception as e43533:
                         print 'ahhhh'
                         print e43533
 
-            image.views_completed += 1
-            image.save()
+            image_model.views_completed += 1
+            image_model.save()
     except:
         pass
-    return random_image(request)
 
+    image_id = request.POST['image_id']
+
+    print next_action
+    if next_action == 'next_image':
+        return random_image(request)
+    else:
+        return image(request, image_id)
 
 def get_request_user(request):
     try:
@@ -1163,10 +1172,10 @@ def do_advanced_search(request):
 
         # tk.time_now('pulled image_ids')
 
-        if result_count > 5000:
+        if result_count > 499:
             #            too_many = True
             readable_query += 'Please add more detail to the query. '
-            readable_query += 'Only returning first 5000 images of (' + str(result_count) + ' found)'
+            readable_query += 'Only returning first 500 images of (' + str(result_count) + ' found)'
         else:
             readable_query += '(' + str(result_count) + ' found)'
 
@@ -1987,9 +1996,11 @@ def request_public_exhibition(request):
         html_text += '<p>Thanks.</p><p>This is an automated message, please do not reply.</p>'
         html_text += '<br><p>Lost Visions/ Illustration Archive, 2015<p>'
 
-        email = EmailMultiAlternatives('Request for Public Exhibition ' + collection_name + ' ' + collection_id, email_text, to=ADMIN_EMAIL_ADDRESSES)
+        email = EmailMultiAlternatives('Request for Public Exhibition ' + collection_name + ' ' + collection_id,
+                                       email_text, to=ADMIN_EMAIL_ADDRESSES)
         email.attach_alternative(html_text, "text/html")
         res = email.send()
+
         return HttpResponse(json.dumps({'success': res}, indent=4), content_type="application/json")
 
 

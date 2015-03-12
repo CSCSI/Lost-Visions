@@ -241,10 +241,14 @@
                 width: window_width * 0.5,
                 modal: true,
                 buttons: {
-                    "": function() {
+                    "Save, stay on this Illustration": function() {
+                        $('#stay_or_next_image').value = 'stay';
 
+                        finish_tagging_dialog_form.dialog( "close" );
+
+                        $('#image-taggin-form').submit();
                     },
-                    "Save Illustraton Tags": function() {
+                    "Save, move to next Illustration": function() {
 
                         finish_tagging_dialog_form.dialog( "close" );
                         $('#image-taggin-form').submit();
@@ -1378,7 +1382,7 @@
                             <li>
                                 <a data-toggle="tooltip" data-placement="top"
                                    title="View the page this illustration came from" data-original-title="Full Page"
-                                   class="btn btn-success side-menu-btn" target="_blank"
+                                   class="btn btn-info side-menu-btn" target="_blank" style="color: darkgrey"
                                    href="{{ page_turner_url }}"
                                         ><div class="fa fa-book"></div></a>
                             </li>
@@ -1433,12 +1437,6 @@
                                    href="{{ page_turner_url }}"
                                         ><div class="fa fa-2x fa-book"></div></a>
                             </li>
-                            <li>
-                                <div style="margin-top: 5px">
-                                    {#                                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>#}
-                                    {#                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
-                                </div>
-                            </li>
                             {% if user.is_authenticated %}
                                 <li>
                                     <a class="btn btn-default save_image_btn save_image">
@@ -1454,10 +1452,9 @@
         </div>
     </div>
 
-    {#    <div class="container">#}
-    <div class="row" style="margin: 0 auto; width: 90%">
+    <div class="row" style="margin: 0 auto">
         <div class="title-logo col-md-12">
-            <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_TagImages.png" %}" style="min-height: 53px"/>
+            <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_TagImages.png" %}" style="min-height: 53px; max-height: 10%"/>
             <ul class="social-panel">
                 {% if user.is_authenticated %}
 
@@ -1475,6 +1472,10 @@
     </div>
 
     <div class="col-xs-12 col-sm-7">
+
+{#    <div class="btn btn-info" style="width: 100%; text-align: center">#}
+{#        Click here to view entire page#}
+{#    </div>#}
 
     <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
         <div id="photo_background" class="photo_background">
@@ -1698,28 +1699,54 @@
 
             <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
                 {{ tag_form.non_field_errors }}
+                <input type="hidden" id="stay_or_next_image" name="stay_or_next_image" value="next_image" />
                 <input type="hidden" name="image_id" value="{{ image_id }}" />
                 <input type="hidden" id = 'tag_info' name="tag_info" value="" />
 
-                <ul class="pager prev_next_pager">
-                    <li style="float: left">
-                        <div data-toggle="tooltip" data-placement="top"
-                             title="Previous Question" data-original-title="Previous"
-                             id="question-accordion-prev" class="btn btn-success"><div class="fa fa-2x fa-angle-double-left"></div> Back</div>
-                    </li>
-                    <li style="float: left">
-                        <div data-toggle="tooltip" data-placement="top"
-                             title="Next Question" data-original-title="Next"
-                             id="question-accordion-next" class="btn btn-success">Next Question<div class="fa fa-2x fa-angle-double-right"></div></div>
-                    </li>
-                    <li style="float: right">
-                        <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
-                             title="Finish Tagging" data-original-title="Finish"
-                                {#                                type="submit" #}
-                             class="btn btn-success">Finish Tagging this Illustration<div class="fa fa-2x fa-check"></div>
-                        </div>
-                    </li>
-                </ul>
+                <table style="width: 100%">
+                    <tr>
+                        <td style="border-right: 3px solid white">
+                            <div data-toggle="tooltip" data-placement="top"
+                                 title="Previous Question" data-original-title="Previous"
+                                 id="question-accordion-prev" class="btn btn-success" style="width: 100%;">
+                                <div class="fa fa fa-angle-double-left"></div>  Previous Question</div>
+                        </td>
+                        <td>
+                            <div data-toggle="tooltip" data-placement="top"
+                                 title="Next Question" data-original-title="Next"
+                                 id="question-accordion-next" class="btn btn-success" style="width: 100%;">
+                                Next Question  <div class="fa fa fa-angle-double-right"></div></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="border-right: 3px solid white; border-bottom: 3px solid white">
+                            <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
+                                 title="Finish Tagging" data-original-title="Finish"
+                                 class="btn btn-success" style="width: 100%;">
+                                Finish Tagging this Illustration  <div class="fa fa fa-check"></div></div>
+                        </th>
+                    </tr>
+                </table>
+
+                {#                <ul class="pager prev_next_pager">#}
+                {#                    <li style="float: right">#}
+                {#                        <div data-toggle="tooltip" data-placement="top"#}
+                {#                             title="Next Question" data-original-title="Next"#}
+                {#                             id="question-accordion-next" class="btn btn-success">Next Question<div class="fa fa fa-angle-double-right"></div></div>#}
+                {#                    </li>#}
+                {#                    <li style="float: right">#}
+                {#                        <div data-toggle="tooltip" data-placement="top"#}
+                {#                             title="Previous Question" data-original-title="Previous"#}
+                {#                             id="question-accordion-prev" class="btn btn-success"><div class="fa fa fa-angle-double-left"></div> Back</div>#}
+                {#                    </li>#}
+                {#                    <li style="float: right">#}
+                {#                        <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"#}
+                {#                             title="Finish Tagging" data-original-title="Finish"#}
+                {#                                type="submit" #}
+                {#                             class="btn btn-success">Finish Tagging this Illustration<div class="fa fa fa-check"></div>#}
+                {#                        </div>#}
+                {#                    </li>#}
+                {#                </ul>#}
 
 
                 <div class="question-frame">
@@ -1806,9 +1833,11 @@
                 </div>
 
                 <div class="navbar-right">
-                    <div id="load_new_image" class="btn btn-success">
-                        <a href="{% url 'image.random' %}">Skip this Illustration</a>
-                    </div>
+                    <a href="{% url 'image.random' %}">
+                        <div id="load_new_image" class="btn btn-success">
+                            Skip this Illustration
+                        </div>
+                    </a>
                 </div>
 
             </form>
