@@ -1345,12 +1345,12 @@
 
     </script>
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@Lost_Visions">
-<meta name="twitter:creator" content="@Lost_Visions">
-<meta name="twitter:title" content="Illustration Archive from Lost Visions">
-<meta name="twitter:description" content="{{ formatted_info.Title }}">
-<meta name="twitter:image:src" content="{{ image.imageurl }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@Lost_Visions">
+    <meta name="twitter:creator" content="@Lost_Visions">
+    <meta name="twitter:title" content="Illustration Archive from Lost Visions">
+    <meta name="twitter:description" content="{{ formatted_info.Title }}">
+    <meta name="twitter:image:src" content="{{ image.img_small }}">
 
     <div class="side-menu">
         {% url 'page_turner' book_id=book_id page=page volume=volume as page_turner_url  %}
@@ -1479,9 +1479,9 @@
 
     <div class="col-xs-12 col-sm-7">
 
-{#    <div class="btn btn-info" style="width: 100%; text-align: center">#}
-{#        Click here to view entire page#}
-{#    </div>#}
+    {#    <div class="btn btn-info" style="width: 100%; text-align: center">#}
+    {#        Click here to view entire page#}
+    {#    </div>#}
 
     <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
         <div id="photo_background" class="photo_background">
@@ -1550,51 +1550,63 @@
             </h4>
         </div>
         <div class="panel-body">
-            <div class="bs-example table-responsive">
-                <table class="table table-striped table-hover ">
-                    <tbody>
-                    <tr><th>Permanent link</th><td><a href="{{ this_url }}" >{{ this_url }}</a></td></tr>
-                    {#                        <tr><th>Download Image</th><td>#}
-                    {#                            {% if image.arcca == True %}#}
-                    {#                                <a href="{% static image.imageurl %}" target="_blank" download>Download</a><br>#}
-                    {#                                <a href="{% static image.imageurl %}" target="_blank">New Tab</a>#}
-                    {#                            {% else %}#}
-                    {#                                <a href="{{ image.flickr_url }}" target="_blank">From Flickr</a><br>#}
-                    {#                            {% endif %}#}
-                    {##}
-                    {#                        </td></tr>#}
-                    {#                <tr>#}
-                    {#                    <th>Full page</th>#}
-                    {#                    <td><a target="_blank" href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Click here</a></td>#}
-                    {#                </tr>#}
-                    {% for mykey,value in formatted_info.items %}
-                        {% if mykey == 'Title' %}
-                            <tr><th>{{ mykey }}</th>
-                                <td class="metadata-cell">
-                                    <a href="{% url 'do_advanced_search' %}?book_id={{ book_id }}&csrfmiddlewaretoken={{ csrf_token }}" target="_blank">{{ value }}</a>
-                                </td>
-                            </tr>
-                        {% elif mykey != 'tags' and mykey != 'Book ID' and mykey != 'Identifier'%}
-                            <tr><th>{{ mykey }}</th><td class="metadata-cell">
-                                {% if value == '' %}UNKNOWN{% else %}{{ value }}{% endif %}
-                            </td></tr>
-                        {% endif %}
-                    {% endfor %}
-                    </tbody>
-                </table>
-                {% for linked in linked_images %}
-                    <div class="bs-example table-responsive">
-                        <table class="table table-striped table-hover ">
-                            <tbody>
-                            {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
-                            <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
-                            <tr><th>Info</th><td>{{ linked.info }}</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                {% endfor %}
-            </div>
+            <div itemscope itemtype="http://schema.org/Book">
 
+                <div class="bs-example table-responsive">
+                    <table class="table table-striped table-hover ">
+                        <tbody>
+                        <tr>
+                            <th>Author</th>
+                            <td itemprop="author">{{ formatted_info.Author }}</td>
+                        </tr>
+                        <tr>
+                            <th>Title</th>
+                            <td class="metadata-cell" itemprop="name">
+                                <a href="{% url 'do_advanced_search' %}?book_id={{ book_id }}&csrfmiddlewaretoken={{ csrf_token }}" target="_blank">{{ formatted_info.Title }}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Publisher</th>
+                            <td itemprop="publisher">
+                                {% if formatted_info.Publisher == '' %}UNKNOWN{% else %}{{ formatted_info.Publisher }}{% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Place of Publication</th>
+                            <td itemprop="datePublished">{{ formatted_info.Place_of_Publication }}</td>
+                        </tr>
+                        <tr>
+                            <th>Page</th>
+                            <td>{{ formatted_info.Page }}</td>
+                        </tr>
+                        <tr>
+                            <th>Volume</th>
+                            <td itemprop="volumeNumber">{{ formatted_info.Volume }}</td>
+                        </tr>
+                        <tr>
+                            <th>Shelfmark</th>
+                            <td>{{ formatted_info.Shelfmark }}</td>
+                        </tr>
+                        <tr>
+                            <th>Permanent Link</th>
+                            <td><a href="{{ this_url }}" >{{ this_url }}</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {% for linked in linked_images %}
+                        <div class="bs-example table-responsive">
+                            <table class="table table-striped table-hover ">
+                                <tbody>
+                                {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
+                                <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
+                                <tr><th>Info</th><td>{{ linked.info }}</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
         </div>
     </div>
 

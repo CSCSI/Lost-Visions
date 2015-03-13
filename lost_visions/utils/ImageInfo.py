@@ -125,6 +125,18 @@ def get_image_data_from_array(id_list, request):
                 tag_result['author'] = result.first_author
                 tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
 
+                # tag_result['Issuance'] = result.issuance
+                tag_result['Date of Publication'] = result.date
+                tag_result['Title'] = result.title
+                tag_result['Volume'] = result.volume
+                tag_result['Author'] = result.first_author
+                tag_result['Book ID'] = result.book_identifier
+                tag_result['Place of Publication'] = result.pubplace
+                tag_result['Publisher'] = result.publisher
+                tag_result['Shelfmark'] = result.BL_DLS_ID
+                tag_result['Page'] = result.page.lstrip('0')
+                tag_result['Identifier'] = result.flickr_id
+
                 tag_results_dict[result.flickr_id] = tag_result
             except Exception as e88:
                 print 'error 3455##' + str(e88)

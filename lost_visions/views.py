@@ -39,7 +39,7 @@ logger = logging.getLogger('lost_visions')
 from lost_visions.utils import db_tools
 from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_from_array, get_image_data_with_location
 from lost_visions.utils.ImagePicker import ImagePicker
-from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file
+from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file, get_thumbnail_image
 from lost_visions.utils.flickr import getImageTags
 from PIL import Image
 from lost_visions import mario_models
@@ -264,16 +264,22 @@ def image(request, image_id):
     image_id = clean(image_id, strip=True)
     # image_model = models.Image.objects.get(flickr_id=image_id)
 
-    image_models = get_image_data_with_location([image_id])
-    try:
-        image_info = db_tools.get_image_info(image_models[0])
-    except IndexError:
-        return render(request, 'error.html')
+    image_info = get_image_data_from_array([image_id], request)[image_id]
 
-    if image_info is None:
-        image_info = dict()
-    else:
-        image_info = sanitise_image_info(image_info, request)
+    print pprint.pformat(image_info)
+
+    # image_models = get_image_data_with_location([image_id])
+    # try:
+    #     image_info = db_tools.get_image_info(image_models[0])
+    #     # image_info['img_small'] = get_thumbnail_image(image_models[0])
+    #
+    # except IndexError:
+    #     return render(request, 'error.html')
+    #
+    # if image_info is None:
+    #     image_info = dict()
+    # else:
+    #     image_info = sanitise_image_info(image_info, request)
 
 
     # image_info['image_area'] = int(image_info['flickr_original_height']) * int(image_info['flickr_original_width'])
@@ -291,15 +297,17 @@ def image(request, image_id):
     #     image_info['imageurl'] = image_info['arcca_url']
 
     formatted_info = dict()
-    formatted_info['Issuance'] = image_info.get('Issuance', "")
+    # formatted_info['Issuance'] = image_info.get('Issuance', "")
     formatted_info['Date of Publication'] = image_info.get('date', "")
+    formatted_info['Date_of_Publication'] = image_info.get('date', "")
     formatted_info['Title'] = image_info.get('title', "")
-    formatted_info['Volume'] = image_info.get('volume', "")
-    formatted_info['Author'] = image_info.get('first_author', "")
-    formatted_info['Book ID'] = image_info.get('book_identifier', "")
-    formatted_info['Place of Publication'] = image_info.get('pubplace', "")
-    formatted_info['Publisher'] = image_info.get('publisher', "")
-    formatted_info['Shelfmark'] = image_info.get('BL_DLS_ID', "")
+    formatted_info['Volume'] = image_info.get('Volume', "")
+    formatted_info['Author'] = image_info.get('Author', "")
+    formatted_info['Book ID'] = image_info.get('Book ID', "")
+    formatted_info['Place of Publication'] = image_info.get('Place of Publication', "")
+    formatted_info['Place_of_Publication'] = image_info.get('Place of Publication', "")
+    formatted_info['Publisher'] = image_info.get('Publisher', "")
+    formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
     formatted_info['Page'] = image_info.get('page', "").lstrip('0')
     formatted_info['Identifier'] = image_info.get('flickr_id', "")
 
@@ -352,6 +360,7 @@ def image(request, image_id):
     ney = 52.49006473014369
     nex = -2.1805146484375
 
+    image_info['imageurl'] = image_info.get('img', '')
     return render(request, 'image.html',
                   {'image': image_info,
                    'book_id': image_info.get('book_identifier', ""),
