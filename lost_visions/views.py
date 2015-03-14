@@ -363,7 +363,7 @@ def image(request, image_id):
     image_info['imageurl'] = image_info.get('img', '')
     return render(request, 'image.html',
                   {'image': image_info,
-                   'book_id': image_info.get('book_identifier', ""),
+                   'book_id': image_info.get('book_id', ""),
                    'volume': image_info.get('volume', ""),
                    'page': image_info.get('page', ""),
                    'formatted_info': formatted_info,

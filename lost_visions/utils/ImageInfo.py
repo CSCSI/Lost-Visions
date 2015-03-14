@@ -122,6 +122,7 @@ def get_image_data_from_array(id_list, request):
                 tag_result['date'] = result.date
                 tag_result['page'] = result.page.lstrip('0')
                 tag_result['book_id'] = result.book_identifier
+                tag_result['volume'] = result.volume
                 tag_result['author'] = result.first_author
                 tag_result['link'] = reverse('image', kwargs={'image_id': int(result.flickr_id)})
 
