@@ -11,7 +11,10 @@ import urllib2
 import zipfile
 from BeautifulSoup import BeautifulSoup
 import StringIO
+import time
+from datetime import datetime
 from dateutil import parser
+from dateutil.relativedelta import relativedelta
 from django.contrib import auth
 from django.core import serializers
 from django.core.mail.message import EmailMultiAlternatives
@@ -22,6 +25,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import requires_csrf_token
 import itertools
 import operator
@@ -34,7 +38,7 @@ from ipware.ip import get_ip
 from bleach import clean
 from lost_visions.categories import CategoryManager
 from lost_visions.utils.rubbish.images_for_books import get_book_images, get_images_for_flickr_id
-
+from django.utils import timezone
 logger = logging.getLogger('lost_visions')
 from lost_visions.utils import db_tools
 from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_from_array, get_image_data_with_location
@@ -217,6 +221,7 @@ def image_tags(request):
         return random_image(request)
     else:
         return image(request, image_id)
+
 
 def get_request_user(request):
     try:
@@ -1495,6 +1500,67 @@ def download_collection(request):
 
     return resp
     # return redirect('user_profile_home')
+
+
+def get_api_key(request):
+    request_user = get_request_user(request)
+    apikey = get_random_string(length=64)
+    valid_to = datetime.today() + relativedelta(months=1)
+
+    api_model = models.APIkey()
+    api_model.api_key = apikey
+    api_model.user = request_user
+    api_model.valid_to = valid_to
+    api_model.save()
+
+    return HttpResponse(json.dumps({
+        'user': request_user.username.username,
+        'api_key': apikey,
+        'valid_till': valid_to.strftime('%Y-%m-%d %H:%M:%S %Z')}, indent=4), content_type="application/json")
+
+
+def is_valid_api_key(request):
+
+    apikey = request.GET.get('api_key', '')
+    request_user = get_request_user(request)
+
+    anon_user = models.User.objects.get(username='Anon_y_mouse')
+    anon_lv_model = models.LostVisionUser.objects.get(username=anon_user)
+
+    return_object = {}
+    return_object['user'] = request_user.username.username,
+    return_object['api_key'] = apikey,
+    return_object['success'] = False
+
+
+    if apikey is not '':
+
+        # request_user = get_request_user(request)
+
+        if request_user is not anon_lv_model:
+            print 'legit user'
+
+            users_api_key = models.APIkey.objects.filter(user=request_user).get(api_key=apikey)
+
+            today = datetime.today().replace(tzinfo=timezone.utc)
+            valid_to = users_api_key.valid_to
+
+            return_object['valid_till'] = valid_to.strftime('%Y-%m-%d %H:%M:%S %Z')
+
+            success = valid_to > today
+            time_remaining = str(valid_to - today)
+
+            return_object['time_remaining'] = time_remaining
+
+            return_object['success'] = success
+
+        else:
+            print 'user is the anon user'
+
+    else:
+        print 'no api key given'
+
+    return HttpResponse(json.dumps(return_object, indent=4), content_type="application/json")
 
 
 def new_collection(request):

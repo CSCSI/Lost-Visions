@@ -41,6 +41,8 @@ urlpatterns = patterns('',
 
                        url(r'^save_image', 'lost_visions.views.save_image', name='user_profile.save_image'),
                        url(r'^new_collection', 'lost_visions.views.new_collection', name='user_profile.new_collection'),
+                       url(r'^get_api_key', 'lost_visions.views.get_api_key', name='user_profile.get_api_key'),
+                       url(r'^is_api_key_valid', 'lost_visions.views.is_valid_api_key', name='user_profile.valid_api_key'),
 
                        url(r'^signup', 'lost_visions.views.signup', name='signup'),
                        url(r'^do_signup', 'lost_visions.views.do_signup', name='signup.do_signup'),

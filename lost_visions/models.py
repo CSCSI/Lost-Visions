@@ -293,5 +293,13 @@ class PublicExhibition(models.Model):
     comment = models.TextField()
     visible = models.BooleanField(default=True)
 
+
+class APIkey(models.Model):
+    valid_from = models.DateTimeField(auto_now=True, blank=True, null=True)
+    valid_to = models.DateTimeField(blank=True, null=True)
+    api_key = models.TextField()
+    user = models.ForeignKey(LostVisionUser, blank=True)
+    enabled = models.BooleanField(default=True)
+
 # watson.register(Image)
 # watson.register(ImageText)
