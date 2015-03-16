@@ -238,7 +238,32 @@
                 <ul class="nav navbar-nav">
                     <li><a href="{% url 'home' %}">Home</a></li>
 
-                    <li><a href="{% url 'image.random' %}">Tag Illustrations</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
+                        <ul class="dropdown-menu social-buttons">
+                            <li>
+                                <a class="btn btn-block" href="{% url 'about_us' %}">About Us</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'software' %}">Software</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'stats' %}">Tagging Stats</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'help' %}">Help</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-info btn-xs" id="teach_me" data-toggle="tooltip" data-placement="left"
+                                   title="Teach me about this page" data-original-title="Teach Me">[?]</a>
+                            </li>
+                        </ul>
+
+                    </li>
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account{% if user.is_authenticated %} ({{ user }}){% endif %}<b class="caret"></b></a>
@@ -256,11 +281,7 @@
                                     <a class="btn btn-block" href="{% url 'account_login' %}">Login</a>
                                 </li>
                             {% endif %}
-                            <li class="divider"></li>
 
-                            <li>
-                                <a class="btn btn-block" href="{% url 'software' %}">Software</a>
-                            </li>
                             {#                            <li class="divider"></li>#}
                             {#                            <li>#}
                             {#                                <a class="btn btn-block btn-social" href="http://lostvisions.weebly.com/" target="_blank">Our Blog</a>#}
@@ -278,30 +299,21 @@
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <div class="fa fa-cog"></div><b class="caret"></b>
+                            <div class="fa fa-cog"></div>
+                            Tools
+                            <b class="caret"></b>
                         </a>
-
                         <ul class="dropdown-menu social-buttons">
+                            <li>
+                                <a class="btn btn-block" href="{% url 'image.random' %}">Tag Illustrations</a>
+                            </li>
+                            <li class="divider"></li>
                             <li>
                                 <a class="btn btn-block" href="{% url 'search_advanced' %}">Advanced Search</a>
                             </li>
                             <li class="divider"></li>
                             <li>
                                 <a class="btn btn-block" href="{% url 'random' %}">Random Images</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a class="btn btn-block" href="{% url 'stats' %}">Tagging Stats</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a class="btn btn-block" href="{% url 'help' %}">Help</a>
-                            </li>
-                            <li class="divider"></li>
-
-                            <li>
-                                <a class="btn btn-info btn-xs" id="teach_me" data-toggle="tooltip" data-placement="left"
-                                   title="Teach me about this page" data-original-title="Teach Me">[?]</a>
                             </li>
                         </ul>
                     </li>

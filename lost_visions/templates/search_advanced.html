@@ -132,30 +132,30 @@
                         .appendTo( ul );
             };
 
-            $( "#publishing_place" ).autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{% url 'data.autocomplete' %}",
-                        dataType: "json",
-                        data: {
-                            term : request.term,
-                            data_object : "publishing_place"
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function( event, ui ) {
-
-
-                }
-            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-                return $( "<li>" )
-                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
-                        .appendTo( ul );
-            };
+            {#            $( "#publishing_place" ).autocomplete({#}
+            {#                source: function(request, response) {#}
+            {#                    $.ajax({#}
+            {#                        url: "{% url 'data.autocomplete' %}",#}
+            {#                        dataType: "json",#}
+            {#                        data: {#}
+            {#                            term : request.term,#}
+            {#                            data_object : "publishing_place"#}
+            {#                        },#}
+            {#                        success: function(data) {#}
+            {#                            response(data);#}
+            {#                        }#}
+            {#                    });#}
+            {#                },#}
+            {#                minLength: 3,#}
+            {#                select: function( event, ui ) {#}
+            {##}
+            {##}
+            {#                }#}
+            {#            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {#}
+            {#                return $( "<li>" )#}
+            {#                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )#}
+            {#                        .appendTo( ul );#}
+            {#            };#}
 
             $( "#publisher" ).autocomplete({
                 source: function(request, response) {
@@ -213,17 +213,12 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="ui-widget" name="tag_keywords_only" data-toggle="tooltip" data-placement="left"
-                             title="Limit search to Tags, without Title, Author etc"
-                             data-original-title="Tags only">
-                            <label class="'control-label" for="tag_keywords_only">Only search tags: </label>
-                            <input type="checkbox" class="'form-control" id="tag_keywords_only">
-                        </div>
+
                     </div>
                     <div class="col-md-3">
                         <ul class="pager prev_next_pager" style="padding: 0">
                             <li style="float: right">
-                                <button type="submit" class="btn btn-success btn-sm">Search</button>
+                                <button type="submit" class="btn btn-success btn-sm adv_search_btn">Search</button>
                             </li>
                         </ul>
                     </div>
@@ -253,16 +248,20 @@
                                 {#                        <label class="'control-label" for="tag_keywords_only">Only search tags: </label>#}
                                 {#                        <input type="checkbox" class="'form-control" id="tag_keywords_only" name="tag_keywords_only">#}
                                 {#                    </div>#}
-
                                 <div class="ui-widget">
-                                    <label class="'control-label" for="author">Author: </label>
-                                    <input class="'form-control" id="author" name="author" value="{{ query_array.author }}">
+                                    <label class="'control-label" for="title">Book Title: </label>
+                                    <input class="'form-control" id="title" name="title" value="{{ query_array.title }}">
                                 </div>
 
                                 <div class="ui-widget">
                                     <label class="'control-label" for="illustrator">Illustrator: </label>
                                     <input class="'form-control" id="illustrator" name="illustrator"
                                            value="{{ query_array.illustrator }}">
+                                </div>
+
+                                <div class="ui-widget">
+                                    <label class="'control-label" for="author">Author: </label>
+                                    <input class="'form-control" id="author" name="author" value="{{ query_array.author }}">
                                 </div>
 
                                 <div class="ui-widget">
@@ -278,9 +277,12 @@
 
                             </div>
                             <div class="col-md-6">
-                                <div class="ui-widget">
-                                    <label class="'control-label" for="title">Title: </label>
-                                    <input class="'form-control" id="title" name="title" value="{{ query_array.title }}">
+
+                                <div class="ui-widget" name="tag_keywords_only" data-toggle="tooltip" data-placement="left"
+                                     title="Limit search to Tags, without Title, Author etc"
+                                     data-original-title="Tags only">
+                                    <label class="'control-label" for="tag_keywords_only">Only search tags: </label>
+                                    <input type="checkbox" class="'form-control" id="tag_keywords_only">
                                 </div>
 
                                 <div class="ui-widget">
@@ -298,16 +300,29 @@
                                     <select class="'form-control" id="year" name="year" ></select>
                                 </div>
 
-                                <div class="ui-widget">
-                                    <label class="'control-label" for="num_results">Number of Results: </label>
-                                    <input class="'form-control" id="num_results" name="num_results" value="50">
-                                </div>
+                                {#                                <div class="ui-widget">#}
+                                {#                                    <label class="'control-label" for="num_results">Number of Results: </label>#}
+                                {#                                    <input class="'form-control" id="num_results" name="num_results" value="50">#}
+                                {#                                </div>#}
 
                                 <div class="ui-widget" style="text-align-last: right">
                                     <label class="'control-label" for="alternative_search">Alternative Search: </label>
                                     <input checked type="checkbox" class="'form-control" id="alternative_search" name="alternative_search">
                                 </div>
+
+
+                                <div class="ui-widget" style="text-align-last: right">
+                                    <button style="float: right" type="submit" class="btn btn-success btn-sm adv_search_btn">Search</button>
+                                </div>
+
                             </div>
+                            {#                            <div class="col-md-2">#}
+                            {#                                <ul class="pager prev_next_pager" style="padding: 0">#}
+                            {#                                    <li style="float: right">#}
+                            {#                                        <button type="submit" class="btn btn-success btn-sm adv_search_btn">Search</button>#}
+                            {#                                    </li>#}
+                            {#                                </ul>#}
+                            {#                            </div>#}
                         </div>
                     </div>
                 </div>

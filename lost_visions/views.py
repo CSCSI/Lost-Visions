@@ -23,7 +23,6 @@ from django.db import connection
 from django.db.models import Q, Count
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
-from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import requires_csrf_token
@@ -1802,9 +1801,9 @@ def page_turner(request, book_id, page, volume):
 
     return render(request, 'page_turner.html', render_details)
 
-
+@requires_csrf_token
 def software(request):
-    return render_to_response('software.html')
+    return render(request, 'software.html', {})
 
 
 def exhibition(request, collection_id):
@@ -1986,7 +1985,7 @@ def image_data(request, image_id):
 
 
 def education(request):
-    return render_to_response('education.html')
+    return render(request, 'education.html', {})
 
 
 def mario_find(request, flickr_id):

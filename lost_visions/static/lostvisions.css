@@ -64,9 +64,9 @@ h3 {
 }
 
 @media all and (max-width: 999px) and (min-width: 50px) {
-.text-over-image .over-text{
-    font-size: 8vw;
-  }
+    .text-over-image .over-text{
+        font-size: 8vw;
+    }
 }
 
 
@@ -377,7 +377,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 }
 
 /*body > div.wrapper > div.base-container > div.modal.fade.bs-example-modal-lg.in {*/
-    /*z-index: 1005;*/
+/*z-index: 1005;*/
 /*}*/
 
 .body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top {
@@ -504,7 +504,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 }
 
 #image-taggin-form > table > tbody > tr > td > .btn {
-/*#image-taggin-form > ul > li > .btn{*/
+    /*#image-taggin-form > ul > li > .btn{*/
     margin-top: 0px;
 }
 
@@ -740,12 +740,22 @@ a:hover#save_image.btn.btn-default.save_image  {
     padding-bottom: 0;
 }
 
-#advanced-search-form > div > div.panel-body > div > ul > li > button {
+/*#advanced-search-form > div > div.panel-body > div > ul > li > button {*/
+    /*background-color: #4E84B2;*/
+    /*border-color: #404448;*/
+/*}*/
+
+/*#advanced-search-form > div > div.panel-body > div > ul > li > button:hover {*/
+    /*background-color: #417690;*/
+    /*border-color: #404448;*/
+/*}*/
+
+.adv_search_btn {
     background-color: #4E84B2;
     border-color: #404448;
 }
 
-#advanced-search-form > div > div.panel-body > div > ul > li > button:hover {
+.adv_search_btn:hover {
     background-color: #417690;
     border-color: #404448;
 }
