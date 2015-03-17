@@ -1,51 +1,39 @@
 {% extends "base.html" %}
-
+{% load staticfiles %}
 
 {% block content %}
     <div class="panel panel-default">
 
         <div class="panel">
-            <div class="panel-heading">
-{#                <div class="lv-title" style="color: #2e4052">#}
-                    <h2>&#10087;Lost Visions: Retrieving the Visual Element of Printed Books from the Nineteenth Century
-                    </h2>
-{#            </div>#}
+            <div class="panel-heading" style="color: #ffffff">
+                &#10087;Lost Visions: Retrieving the Visual Element of Printed Books from the Nineteenth Century
             </div>
             <div class="panel-body">
                 <h4>
-                    <p>
-                        <i>‘Lost Visions: Retrieving the Visual Element of Printed Books from the Nineteenth Century’</i> is one of 21 exciting and innovative new projects funded by the Arts and Humanities Research Council. Each project will exploit the potential of digital technologies to transform research in the arts and humanities and to ensure that it is at the forefront of tackling crucial issues such as intellectual property, cultural memory and identity, and communication and creativity in a digital age. Led by Professor Julia Thomas, from Cardiff University’s School of English, Communication and Philosophy, and in collaboration with Cardiff’s School of Computer Sciences & Informatics, Lost Visions will develop new methods to enable the general public to search online for over a million book illustrations taken from a dataset held by the British Library. The result of Thomas’s and her team’s work will be the world’s biggest searchable archive of book illustrations.
-
+                    <p style="font-style: italic">
+                        Welcome to The Illustration Archive. The Archive was created on the ‘Lost Visions’ project, funded by the Arts and Humanities Research Council (2014-15), and was the result of collaboration between humanities specialists and computer scientists at Cardiff University. Having developed an earlier online illustration resource, The Database of Mid-Victorian Illustration (www.dmvi.org.uk), the objective of Lost Visions was to make more historic illustrations than ever before available to the public in a searchable form.
                     </p>
                 </h4>
                 <hr>
-
-                <hr>
-
                 <p>
-                    The starting point for the Lost Visions project was the realisation that whilst books are being digitised on an unprecedented scale, illustrations and other important visual material are frequently omitted from this process.  In cases where the illustrations have been digitised, they are often of such a low quality and lacking the metadata required to make them searchable. In a very real sense these illustrations, which are a significant aspect of our cultural heritage and play a crucial role in how we understand visual culture today, are lost. The provision of metadata for over a million illustrations from the eighteenth to the twentieth century will allow these illustrations to be searched for and retrieved in a web-based interface that will be free and accessible to the public. Furthermore, the scale and scope of the project means that Illustration Studies, as an academic discipline, will have a resource which will enable researchers to identify how, for example, illustration changes over time, how certain images are re-used in different contexts, and how texts may shift from being illustrated initially, to losing their illustrations at a later date or vice-versa.
-                </p>
+                    Our motivation came from the fact that, despite their cultural importance, the images that adorned eighteenth and nineteenth century books have largely disappeared from view. Publishers rarely print Victorian novels with the images with which they originally appeared, while in museums and galleries, illustrations are low on the list of exhibition and conservation priorities. In a digital age, illustrations have fared no better. Although digital projects have potentially made these images available, they are not marked up or ‘tagged’ in a way that allows them to be found.                </p>
                 <p>
-                    Lost Visions will revolutionise how illustration is understood and the importance accorded to it.
+                    The Illustration Archive attempts to remedy this by making available and fully searchable over a million illustrations from works of literature, philosophy, history and geography that are in the British Library’s collection and were scanned by Microsoft. The Archive is intended to be a voyage of visual discovery. While developing the archive, the team came across beautifully-coloured landscapes, meticulously-engraved portraits and crudely-rendered advertisements. There is an illustration here for every occasion. They are just waiting to be rediscovered.…
                 </p>
             </div>
         </div>
 
-        <div class="panel-heading"><h3>ENCAP</h3></div>
+        <div class="panel-heading"><h3>School of English, Communication and Philosophy, Cardiff University</h3></div>
         <div class="panel-body">
             <div class="col-lg-12">
                 <h4>
                     <p>Julia Thomas</p>
                 </h4>
                 <div class="col-xs-12 col-sm-4">
-                    <img src="http://www.cf.ac.uk/encap/images/thomas-julia-web.jpg" style="width: 125px">
+                    <img src="{% static "media/images/about_us/thomas-julia-web.jpg" %}" style="width: 125px">
                 </div>
                 <div class="col-xs-12 col-sm-8">
-                    <h4>Research Interests</h4>
-                    <p>
-                    </p>
-
-                    <h4>University Profile</h4>
+                    <h4>University webpage</h4>
                     <p>
                         <a href="http://www.cf.ac.uk/encap/contactsandpeople/profiles/thomas-julia.html" target="_blank">Here</a>
                     </p>
@@ -60,12 +48,9 @@
                     <img src="http://www.cf.ac.uk/encap/images/skilton-david-web.jpg" style="width: 125px">
                 </div>
                 <div class="col-xs-12 col-sm-8">
-                    <h4>Research Interests</h4>
+                    <h4>University webpage</h4>
                     <p>
-                    </p>
-                    <h4>University Profile</h4>
-                    <p>
-                        <a href="http://www.cf.ac.uk/encap/contactsandpeople/profiles/skilton-david.html" target="_blank">Here</a>
+                        <a href="{% static "media/images/about_us/skilton-david-web.jpg" %}" target="_blank">Here</a>
                     </p>
                 </div>
             </div>
@@ -75,13 +60,10 @@
                     <p>Nicola Lloyd</p>
                 </h4>
                 <div class="col-xs-12 col-sm-4">
-                    <img src="" style="width: 125px">
+                    <img src="{% static "media/images/about_us/Nicky.jpg" %}" style="width: 125px">
                 </div>
                 <div class="col-xs-12 col-sm-8">
-                    <h4>Research Interests</h4>
-                    <p>
-                    </p>
-                    <h4>University Profile</h4>
+                    <h4>University webpage</h4>
                     <p>
                         <a href="http://www.cardiff.ac.uk/encap/degreeprogrammes/postgraduateresearch/currentphdtopics/pgstudents/lloyd.html" target="_blank">Here</a>
                     </p>
@@ -91,20 +73,17 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading"><h3>COMSCI</h3></div>
+        <div class="panel-heading"><h3>School of Computer Science and Informatics, Cardiff University</h3></div>
         <div class="panel-body">
             <div class="col-lg-12">
                 <h4>
                     <p>Omer Rana</p>
                 </h4>
                 <div class="col-xs-12 col-sm-4">
-                    <img src="http://users.cs.cf.ac.uk/O.F.Rana/o.f.rana.jpg" style="width: 125px">
+                    <img src="{% static "media/images/about_us/o.f.rana.jpg" %}" style="width: 125px">
                 </div>
                 <div class="col-xs-12 col-sm-8">
-                    <h4>Research Interests</h4>
-                    <p>
-                    </p>
-                    <h4>University Profile</h4>
+                    <h4>University webpage</h4>
                     <p>
                         <a href="https://www.cs.cf.ac.uk/contactsandpeople/staffpage.php?emailname=O.F.Rana" target="_blank">Here</a>
                     </p>
@@ -116,13 +95,10 @@
                     <p>Paul Rosin</p>
                 </h4>
                 <div class="col-xs-12 col-sm-4">
-                    <img src="http://www.cs.cf.ac.uk/contactsandpeople/staff/paul.rosin.jpg" style="width: 125px">
+                    <img src="{% static "media/images/about_us/paul.rosin.jpg" %}" style="width: 125px">
                 </div>
                 <div class="col-xs-12 col-sm-8">
-                    <h4>Research Interests</h4>
-                    <p>
-                    </p>
-                    <h4>University Profile</h4>
+                    <h4>University webpage</h4>
                     <p>
                         <a href="http://www.cs.cf.ac.uk/contactsandpeople/staffpage.php?emailname=paul.rosin" target="_blank">Here</a>
                     </p>
@@ -136,14 +112,14 @@
                     </p>
                 </h4>
                 <div class="col-xs-12 col-sm-4">
-                    <img src="http://wiserd.ac.uk/files/cache/6b3a17cd6e698e98fb1a01894542c989_f596.jpg" style="width: 125px">
+                    <img src="{% static "media/images/about_us/i.harvey.jpg" %}" style="width: 125px">
                 </div>
                 <div class="col-xs-12 col-sm-8">
                     <h4>Research Interests</h4>
                     <p>
                         Research interests include interoperability of experimental and production data and computing resources, utilising scalable computing infrastructures such as Cloud and Grid Computing environments, and development of tools useful to the research community.
                     </p>
-                    <h4>University Profile</h4>
+                    <h4>University webpage</h4>
                     <p>
                         <a href="" target="_blank">Here</a>
                     </p>
@@ -153,22 +129,20 @@
     </div>
 
     <div class="panel panel-default">
-        <div class="panel-heading"><h3>ARCCA</h3></div>
+        <div class="panel-heading"><h3>Advanced Research Computing@Cardiff</h3></div>
         <div class="panel-body">
             <div class="col-lg-12">
                 <h4>
-                    <p>Wayne Lawrence</p>
+                    <p>ARCCA</p>
                 </h4>
                 <div class="col-xs-12 col-sm-4">
                     <img src="" style="width: 125px">
                 </div>
                 <div class="col-xs-12 col-sm-8">
-                    <h4>Research Interests</h4>
+                    <h4>University webpage</h4>
                     <p>
-                    </p>
-                    <h4>LinkedIn Profile</h4>
-                    <p>
-                        <a href="http://uk.linkedin.com/pub/wayne-lawrence/8/534/335" target="_blank">Here</a>
+                        {#                                                                                <a href="http://uk.linkedin.com/pub/wayne-lawrence/8/534/335" target="_blank">Here</a>#}
+                        <a href="http://www.cardiff.ac.uk/arcca/" target="_blank">Here</a>
                     </p>
                 </div>
             </div>
