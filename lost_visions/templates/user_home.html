@@ -74,6 +74,20 @@
             $set_caption_button.hide();
         });
 
+        $('#request_api_key').click(function(){
+            $.ajax({
+                type: "GET",
+                url: "{% url 'user_profile.get_api_key' %}",
+                data: {},
+                success: function(data) {
+                    var ok = data['success'];
+                    prompt("API Key requested : ", data['api_key']);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with requesting API key: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        });
 
         $('#download_all').click(function(){
             var dl_link = '{% url 'user_dl_all' %}' +
@@ -160,7 +174,9 @@
                             {#                            alert('Renamed collection ' + name + ' to ' + new_collection_name);#}
                             location.reload();
                         },
-                        error: function(xhr, textStatus, errorThrown) {}
+                        error: function(xhr, textStatus, errorThrown) {
+                            alert('An error occured. Please check you are still logged in');
+                        }
                     });
                 },
                 "Delete collection": function() {
@@ -180,7 +196,9 @@
                             alert('Deleted collection ' + name);
                             location.reload();
                         },
-                        error: function(xhr, textStatus, errorThrown) {}
+                        error: function(xhr, textStatus, errorThrown) {
+                            alert('An error occured. Please check you are still logged in');
+                        }
                     });                    },
                 Cancel: function() {
                     edit_collection_dialog.dialog( "close" );
@@ -224,7 +242,9 @@
                             {#                            alert('Added caption ' + new_caption + ' to image ' + image_id);#}
                             location.reload();
                         },
-                        error: function(xhr, textStatus, errorThrown) {}
+                        error: function(xhr, textStatus, errorThrown) {
+                            alert('An error occured. Please check you are still logged in');
+                        }
                     });
                 },
                 Cancel: function() {
@@ -256,6 +276,7 @@
                     alert("Thank you. A request has been sent to the administrator : " + collection_name + ' ' + collection_id);
                 },
                 error: function(xhr, textStatus, errorThrown) {
+                    alert('An error occured. Please check you are still logged in');
                     console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
                 }
             });
@@ -385,6 +406,9 @@
         </div>
 
         {#        </div>#}
+        <hr>
+        <div id="request_api_key" class="btn btn-primary" style="display: block; margin: 0 auto">Request API key</div>
+
     </div>
     {#    {{ users_collections }}#}
     <div id="edit_collection_dialog_form" title="Edit this collection">
@@ -406,8 +430,9 @@
         <div id="edit_image_caption_data" data-collection_id="" data-collection_name=""></div>
         <form>
             <fieldset>
-                <label for="edit_image_caption_field">New Name</label>
-                <input type="text" name="edit_image_caption_field" id="edit_image_caption_field" value="" class="text ui-widget-content ui-corner-all">
+                <label for="edit_image_caption_field">New Caption</label>
+                <textarea name="edit_image_caption_field" id="edit_image_caption_field"
+                          class="text ui-widget-content ui-corner-all"></textarea>
 
                 <!-- Allow form submission with keyboard without duplicating the dialog button -->
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">

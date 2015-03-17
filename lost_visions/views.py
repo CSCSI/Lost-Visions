@@ -1513,10 +1513,27 @@ def get_api_key(request):
     api_model.save()
 
     return HttpResponse(json.dumps({
-        'user': request_user.username.username,
-        'api_key': apikey,
-        'valid_till': valid_to.strftime('%Y-%m-%d %H:%M:%S %Z')}, indent=4), content_type="application/json")
+                                       'user': request_user.username.username,
+                                       'api_key': apikey,
+                                       'valid_till': valid_to.strftime('%Y-%m-%d %H:%M:%S %Z')}, indent=4), content_type="application/json")
 
+
+def auth_api_key(api_key):
+    try:
+        users_api_key = models.APIkey.objects.get(api_key=api_key)
+        user_model = users_api_key.user
+        today = datetime.today().replace(tzinfo=timezone.utc)
+        valid_to = users_api_key.valid_to
+
+        success = valid_to > today
+        time_remaining = str(valid_to - today)
+        valid_till = valid_to.strftime('%Y-%m-%d %H:%M:%S %Z')
+
+        return success, time_remaining, valid_till, None, user_model
+
+    except Exception as e83274:
+        success = False
+        return success, None, None, str(e83274), None
 
 def is_valid_api_key(request):
 
@@ -1539,19 +1556,14 @@ def is_valid_api_key(request):
         if request_user is not anon_lv_model:
             print 'legit user'
 
-            users_api_key = models.APIkey.objects.filter(user=request_user).get(api_key=apikey)
-
-            today = datetime.today().replace(tzinfo=timezone.utc)
-            valid_to = users_api_key.valid_to
-
-            return_object['valid_till'] = valid_to.strftime('%Y-%m-%d %H:%M:%S %Z')
-
-            success = valid_to > today
-            time_remaining = str(valid_to - today)
-
-            return_object['time_remaining'] = time_remaining
+            success, time_remaining, valid_till, error, user = auth_api_key(apikey)
 
             return_object['success'] = success
+            if success:
+                return_object['valid_till'] = valid_till
+                return_object['time_remaining'] = time_remaining
+            else:
+                return_object['error'] = error
 
         else:
             print 'user is the anon user'
@@ -1611,24 +1623,120 @@ def tweet_card(request):
 
 
 def manage_collection(request):
-    if request.user.is_authenticated():
+    action = ''
+    col_id = ''
+    image_collection_name = ''
+    api_key = ''
+    api_key_user = None
+
+    if request.method == "POST":
         action = request.POST.get('action', '')
         col_id = request.POST.get('collection_id', '')
+        image_collection_name = request.POST.get('collection_name', '')
+        api_key = request.POST.get('api_key', '')
+
+    if request.method == "GET":
+        action = request.GET.get('action', '')
+        col_id = request.GET.get('collection_id', '')
+        image_collection_name = request.GET.get('collection_name', '')
+        api_key = request.GET.get('api_key', '')
+
+    query_response = {}
+    errors = []
+
+    api_key_authd = False
+    if api_key is not '':
+        api_key_authd, time_remaining, valid_till, error, api_key_user = auth_api_key(api_key)
+        query_response['api_key_given'] = api_key
+        query_response['api_key_authd'] = api_key_authd
+
+        if api_key_authd:
+            query_response['api_key_valid_till'] = valid_till
+            query_response['api_key_time_remaining'] = time_remaining
+        else:
+            errors.append(error)
+
+    if request.user.is_authenticated() or api_key_authd:
+        collection_creating_user = None
+        if api_key_authd:
+            collection_creating_user = api_key_user
+        else:
+            collection_creating_user = get_request_user(request)
+
+        if action == 'save_new_collection':
+            ids = request.GET.get('image_ids', '')
+            id_list = ids.split(',')
+            id_list = [f_id for f_id in id_list if len(f_id)]
+            query_response['image_ids_received'] = id_list
+
+            if len(id_list):
+
+                image_collection = models.ImageCollection()
+                image_collection.user = collection_creating_user
+                image_collection.name = image_collection_name
+
+                if not len(image_collection_name):
+                    errors.append('No name given for collection, continuing anyway')
+                else:
+                    query_response['collection_name_received'] = image_collection_name
+
+                added_ids = []
+                mappings_to_save = []
+                for image_id in id_list:
+                    try:
+                        image_model = models.Image.objects.get(flickr_id=image_id)
+                        new_mapping = models.ImageMapping()
+                        new_mapping.image = image_model
+
+                        added_ids.append(image_id)
+                        mappings_to_save.append(new_mapping)
+                    except Exception as e424253:
+                        errors.append('Error adding image ' + str(image_id) + ' : ' + str(e424253))
+
+                query_response['ids_added'] = added_ids
+                if len(added_ids):
+                    query_response['success'] = True
+
+                    try:
+                        image_collection.save()
+                    except Exception as e923:
+                        errors.append(str(e923))
+
+                    for mapping in mappings_to_save:
+                        try:
+                            mapping.collection = image_collection
+                            mapping.save()
+                        except Exception as e242:
+                            errors.append(str(e242))
+                else:
+                    errors.append('Added zero images to collection. Collection not saved')
+                    query_response['success'] = False
+
+            else:
+                errors.append('No IDs given, will not create empty collection')
+
         if action == 'delete':
             print 'deleting collection ' + str(col_id)
             image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
             image_collection.delete()
+            query_response['success'] = True
 
         if action == 'rename':
-            name = request.POST.get('collection_name', '')
-            print 'renaming ' + str(col_id) + ' to ' + str(name)
+            # name = request.POST.get('collection_name', '')
+            print 'renaming ' + str(col_id) + ' to ' + str(image_collection_name)
             image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
-            image_collection.name = name
+            image_collection.name = image_collection_name
             image_collection.save()
+            query_response['success'] = True
 
         if action == 'set_image_caption':
-            image_id = request.POST.get('image_id', '')
-            new_caption = request.POST.get('new_caption', '')
+            if request.method == "POST":
+                image_id = request.POST.get('image_id', '')
+                new_caption = request.POST.get('new_caption', '')
+            if request.method == "GET":
+                image_id = request.GET.get('image_id', '')
+                new_caption = request.GET.get('new_caption', '')
+
             image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
 
             image_model = models.Image.objects.get(flickr_id=image_id)
@@ -1638,11 +1746,14 @@ def manage_collection(request):
 
             mapping_caption.caption = new_caption
             mapping_caption.save()
+            query_response['success'] = True
 
-    query_response = {
-        'success': True,
-        }
-    return HttpResponse(json.dumps(query_response), content_type="application/json")
+    else:
+        query_response['success'] = False
+
+    query_response['errors'] = errors
+
+    return HttpResponse(json.dumps(query_response, indent=4), content_type="application/json")
 
 
 def get_zip_path(root_folder, book_id, volume='0'):
