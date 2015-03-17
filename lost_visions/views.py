@@ -1642,7 +1642,7 @@ def manage_collection(request):
         col_id = request.GET.get('collection_id', '')
         image_collection_name = request.GET.get('collection_name', '')
         api_key = request.GET.get('api_key', '')
-        ids = request.POST.get('image_ids', '')
+        ids = request.GET.get('image_ids', '')
 
 
     query_response = {}
