@@ -25,7 +25,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.utils.crypto import get_random_string
-from django.views.decorators.csrf import requires_csrf_token
+from django.views.decorators.csrf import requires_csrf_token, csrf_exempt
 import itertools
 import operator
 from pygeoip import GeoIP
@@ -1621,7 +1621,7 @@ def tweet_card(request):
                    'tweet_user': user},
                   context_instance=RequestContext(request))
 
-
+@csrf_exempt
 def manage_collection(request):
     action = ''
     col_id = ''
