@@ -1628,18 +1628,22 @@ def manage_collection(request):
     image_collection_name = ''
     api_key = ''
     api_key_user = None
+    ids = ''
 
     if request.method == "POST":
         action = request.POST.get('action', '')
         col_id = request.POST.get('collection_id', '')
         image_collection_name = request.POST.get('collection_name', '')
         api_key = request.POST.get('api_key', '')
+        ids = request.POST.get('image_ids', '')
 
     if request.method == "GET":
         action = request.GET.get('action', '')
         col_id = request.GET.get('collection_id', '')
         image_collection_name = request.GET.get('collection_name', '')
         api_key = request.GET.get('api_key', '')
+        ids = request.POST.get('image_ids', '')
+
 
     query_response = {}
     errors = []
@@ -1664,7 +1668,6 @@ def manage_collection(request):
             collection_creating_user = get_request_user(request)
 
         if action == 'save_new_collection':
-            ids = request.GET.get('image_ids', '')
             id_list = ids.split(',')
             id_list = [f_id for f_id in id_list if len(f_id)]
             query_response['image_ids_received'] = id_list
