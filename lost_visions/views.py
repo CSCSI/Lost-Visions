@@ -1535,6 +1535,7 @@ def auth_api_key(api_key):
         success = False
         return success, None, None, str(e83274), None
 
+
 def is_valid_api_key(request):
 
     apikey = request.GET.get('api_key', '')
@@ -1547,7 +1548,6 @@ def is_valid_api_key(request):
     return_object['user'] = request_user.username.username,
     return_object['api_key'] = apikey,
     return_object['success'] = False
-
 
     if apikey is not '':
 
@@ -1621,6 +1621,50 @@ def tweet_card(request):
                    'tweet_user': user},
                   context_instance=RequestContext(request))
 
+
+def add_images_to_collection(id_list, image_collection, query_response=None, errors=None):
+    if query_response is None:
+        query_response = {}
+    if errors is None:
+        errors = []
+
+    added_ids = []
+    image_models_to_save = []
+    for image_id in id_list:
+        try:
+            image_model = models.Image.objects.get(flickr_id=image_id)
+            added_ids.append(image_id)
+            image_models_to_save.append(image_model)
+        except Exception as e424253:
+            errors.append('Error adding image ' + str(image_id) + ' : ' + str(e424253))
+
+    query_response['ids_added'] = added_ids
+    if len(added_ids):
+        query_response['success'] = True
+
+        try:
+            if not image_collection.pk:
+                image_collection.save()
+        except Exception as e923:
+            errors.append(str(e923))
+
+        for image_model in image_models_to_save:
+            try:
+                # new_mapping = models.ImageMapping()
+                # new_mapping.image = image_model
+                # new_mapping.collection = image_collection
+                #
+                new_mapping = models.ImageMapping.objects.get_or_create(image=image_model, collection=image_collection)
+                # new_mapping.save()
+            except Exception as e242:
+                errors.append('Issue with Mapping ' + str(image_model.flickr_id) + ' : ' + str(e242))
+    else:
+        errors.append('Added zero images to collection. Collection not saved')
+        query_response['success'] = False
+
+    return query_response, errors
+
+
 @csrf_exempt
 def manage_collection(request):
     action = ''
@@ -1644,6 +1688,8 @@ def manage_collection(request):
         api_key = request.GET.get('api_key', '')
         ids = request.GET.get('image_ids', '')
 
+    id_list = ids.split(',')
+    id_list = [f_id for f_id in id_list if len(f_id)]
 
     query_response = {}
     errors = []
@@ -1668,8 +1714,7 @@ def manage_collection(request):
             collection_creating_user = get_request_user(request)
 
         if action == 'save_new_collection':
-            id_list = ids.split(',')
-            id_list = [f_id for f_id in id_list if len(f_id)]
+
             query_response['image_ids_received'] = id_list
 
             if len(id_list):
@@ -1683,40 +1728,56 @@ def manage_collection(request):
                 else:
                     query_response['collection_name_received'] = image_collection_name
 
-                added_ids = []
-                mappings_to_save = []
-                for image_id in id_list:
-                    try:
-                        image_model = models.Image.objects.get(flickr_id=image_id)
-                        new_mapping = models.ImageMapping()
-                        new_mapping.image = image_model
+                query_response, errors = add_images_to_collection(id_list, image_collection, query_response, errors)
 
-                        added_ids.append(image_id)
-                        mappings_to_save.append(new_mapping)
-                    except Exception as e424253:
-                        errors.append('Error adding image ' + str(image_id) + ' : ' + str(e424253))
-
-                query_response['ids_added'] = added_ids
-                if len(added_ids):
-                    query_response['success'] = True
-
-                    try:
-                        image_collection.save()
-                    except Exception as e923:
-                        errors.append(str(e923))
-
-                    for mapping in mappings_to_save:
-                        try:
-                            mapping.collection = image_collection
-                            mapping.save()
-                        except Exception as e242:
-                            errors.append(str(e242))
-                else:
-                    errors.append('Added zero images to collection. Collection not saved')
-                    query_response['success'] = False
+                query_response['collection_id_saved'] = image_collection.id
+                # added_ids = []
+                # mappings_to_save = []
+                # for image_id in id_list:
+                #     try:
+                #         image_model = models.Image.objects.get(flickr_id=image_id)
+                #         new_mapping = models.ImageMapping()
+                #         new_mapping.image = image_model
+                #
+                #         added_ids.append(image_id)
+                #         mappings_to_save.append(new_mapping)
+                #     except Exception as e424253:
+                #         errors.append('Error adding image ' + str(image_id) + ' : ' + str(e424253))
+                #
+                # query_response['ids_added'] = added_ids
+                # if len(added_ids):
+                #     query_response['success'] = True
+                #
+                #     try:
+                #         image_collection.save()
+                #     except Exception as e923:
+                #         errors.append(str(e923))
+                #
+                #     for mapping in mappings_to_save:
+                #         try:
+                #             mapping.collection = image_collection
+                #             mapping.save()
+                #         except Exception as e242:
+                #             errors.append(str(e242))
+                # else:
+                #     errors.append('Added zero images to collection. Collection not saved')
+                #     query_response['success'] = False
 
             else:
                 errors.append('No IDs given, will not create empty collection')
+
+        if action == 'add_to_collection':
+            query_response['image_ids_received'] = id_list
+            query_response['collection_id_received'] = col_id
+
+            image_collection = models.ImageCollection.objects.get(id=col_id)
+            if image_collection.user == api_key_user:
+                query_response, errors = add_images_to_collection(id_list, image_collection, query_response, errors)
+                query_response['collection_id_saved'] = image_collection.id
+                query_response['success'] = True
+            else:
+                query_response['success'] = False
+                errors.append('Collection not owned by user with this API key')
 
         if action == 'delete':
             print 'deleting collection ' + str(col_id)
