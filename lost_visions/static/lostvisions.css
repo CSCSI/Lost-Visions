@@ -339,11 +339,11 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     color: #ffffff;
 
     line-height: 120%;
-    text-shadow:
-        -1px -1px 0 #000,
-        1px -1px 0 #000,
-        -1px 1px 0 #000,
-        1px 1px 0 #000;
+    /*text-shadow:*/
+        /*-1px -1px 0 #000,*/
+        /*1px -1px 0 #000,*/
+        /*-1px 1px 0 #000,*/
+        /*1px 1px 0 #000;*/
 }
 
 @media all and (max-width: 999px) and (min-width: 50px) {
