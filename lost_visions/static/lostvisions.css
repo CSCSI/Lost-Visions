@@ -331,7 +331,7 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     display: block;
     position: absolute;
     width: 100%;
-    top: 55%;
+    top: 40%;
     left: 0%;
     z-index: 2;
     text-align: center;
@@ -339,11 +339,15 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     color: #ffffff;
 
     line-height: 120%;
-    /*text-shadow:*/
-        /*-1px -1px 0 #000,*/
-        /*1px -1px 0 #000,*/
-        /*-1px 1px 0 #000,*/
-        /*1px 1px 0 #000;*/
+
+}
+
+.text_shadow {
+    text-shadow:
+        -1px -1px 1px grey,
+        1px -1px 1px grey,
+        -1px 1px 1px grey,
+        1px 1px 1px grey;
 }
 
 @media all and (max-width: 999px) and (min-width: 50px) {

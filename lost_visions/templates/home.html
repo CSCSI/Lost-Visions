@@ -69,12 +69,13 @@
             </div>
         </div>
         <div class="row">
-            <div id="carousel-example-generic" class="carousel slide home-carousel span12" data-ride="carousel">
+            <div id="carousel" class="carousel slide home-carousel span12" data-ride="carousel">
                 <!-- Indicators -->
                 <ol class="carousel-indicators">
-                    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-                    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                    <li data-target="#carousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#carousel" data-slide-to="1"></li>
+                    <li data-target="#carousel" data-slide-to="2"></li>
+                    <li data-target="#carousel" data-slide-to="3"></li>
                 </ol>
 
                 <!-- Wrapper for slides -->
@@ -133,10 +134,10 @@
                 </div>
 
                 <!-- Controls -->
-                <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                <a class="left carousel-control" href="#carousel" data-slide="prev">
                     {#                    <span class="glyphicon glyphicon-chevron-left"></span>#}
                 </a>
-                <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                <a class="right carousel-control" href="#carousel" data-slide="next">
                     {#                    <span class="glyphicon glyphicon-chevron-right"></span>#}
                 </a>
             </div>
@@ -147,37 +148,37 @@
                 <a href="{% url "search_advanced" %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/home/search.jpg" %}"/>
                     <div class="home-lower-imagebar-image-overlay"></div>
-                    <p class="over-text">Search</p>
+                    <p class="over-text text_shadow">Search</p>
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a href="{% url 'image.random' %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/Tag Illustrations.jpg" %}"/>
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/tag_images.png" %}"/>
                     <div class="home-lower-imagebar-image-overlay"></div>
-                    <p class="over-text">Tag Illustrations</p>
+                    <p class="over-text text_shadow">Tag Illustrations</p>
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a target="_blank" href="{% url 'random' %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/home/browse.jpg" %}"/>
                     <div class="home-lower-imagebar-image-overlay"></div>
-                    <p class="over-text">Random Search</p>
+                    <p class="over-text text_shadow">Random Search</p>
                 </a>
             </div>
         </div>
         <div class="home-lower-imagebar row">
             <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a href="{% url 'education' %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/LostVisions_InTheClassroom.png" %}"/>
-                    {#                    <div class="home-lower-imagebar-image-overlay"></div>#}
-                    {#                    <p class="over-text">Teaching Resources</p>#}
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/classroom-2.png" %}"/>
+{#                                        <div class="home-lower-imagebar-image-overlay"></div>#}
+                                        <p class="over-text text_shadow">Teaching Resources</p>
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a href="{% url 'public_exhibition_list' %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/home/Exhibition3.jpg" %}"/>
                     {#                                       <div class="home-lower-imagebar-image-overlay"></div>#}
-                    <p class="over-text">Exhibitions</p>
+                    <p class="over-text text_shadow">Exhibitions</p>
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
@@ -186,9 +187,9 @@
                 {% else %}
                 {% url 'account_login' %}
                 {% endif %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/My Archive.jpg" %}"/>
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/my_archive.png" %}"/>
                     <div class="home-lower-imagebar-image-overlay"></div>
-                    <p class="over-text">My Archive</p>
+                    <p class="over-text text_shadow">My Archive</p>
                 </a>
             </div>
         </div>
