@@ -976,6 +976,13 @@ def user_home(request):
             collection_data = {}
             mapped_images = models.ImageMapping.objects.filter(collection=c)
             mapped_images_array = []
+
+
+            mapped_image_ids = []
+            for mapped_image in mapped_images:
+                mapped_image_ids.append(mapped_image.image.flickr_id)
+            all_image_data = get_image_data_from_array(mapped_image_ids, request)
+
             for image in mapped_images:
                 image_dict = dict()
                 image_dict['flickr_id'] = image.image.flickr_id
@@ -986,12 +993,17 @@ def user_home(request):
                 try:
                     image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
                     image_dict['caption'] = image_mapping_caption.caption
+
+                    # image_captions[image.image.flickr_id] = image_mapping_caption.caption
+
+                    all_image_data.get(image.image.flickr_id)['caption'] = image_mapping_caption.caption
                 except Exception as e:
                     print e
 
                 mapped_images_array.append(image_dict)
 
             collection_data['images'] = mapped_images_array
+            collection_data['images_with_locations'] = all_image_data
             collection_data['collection_name'] = c.name
 
             users_collections.update({str(c.id): collection_data})
@@ -2331,6 +2343,8 @@ def get_public_exhibition_data(request, exhibition_model):
 
     mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
     mapped_images_array = []
+
+
     for image in mapped_images:
         # print pprint.pformat(image.__dict__)
 
@@ -2341,13 +2355,12 @@ def get_public_exhibition_data(request, exhibition_model):
         # image_dict['url'] = image.image.flickr_small_source
         try:
             image_model = get_image_data_with_location([image.image.flickr_id])[0]
-
             image_info = db_tools.get_image_info(image_model)
-
             if image_info is None:
                 image_info = dict()
             else:
                 image_dict['url'] = sanitise_image_info(image_info, request)['imageurl']
+
         except Exception as e69362:
             print 'e69362' + str(e69362)
 

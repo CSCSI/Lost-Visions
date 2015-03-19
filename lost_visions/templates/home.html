@@ -33,7 +33,7 @@
     <div class="home-content-main container">
         <div class="row">
             <div class="title-logo col-md-12">
-                <img src="{% static "media/images/new_design/IllustrationArchive_FinalHeader_HomePage.png" %}"/>
+                <img src="{% static "media/images/logos/IllustrationArchiveLogo.jpg" %}" style="padding-top: 20px"/>
                 <ul class="social-panel">
                     <li class="social-item">
                         <a href="">
@@ -62,7 +62,7 @@
                     </li>
                     <li class="social-item">
                         <a href="https://github.com/CSCSI/Lost-Visions" target="_blank">
-                        <img src="{% static "media/images/icon/LV_SocialIcon_Github.png" %}" style="height: 100%"/>
+                            <img src="{% static "media/images/icon/LV_SocialIcon_Github.png" %}" style="height: 100%"/>
                         </a>
                     </li>
                 </ul>
@@ -135,41 +135,52 @@
         </div>
 
         <div class="home-lower-imagebar row">
-            <div class="home-lower-imagebar-image-container col-md-4">
+            <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a href="{% url "search_advanced" %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/LostVisions_Search.png" %}"/>
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/search.jpg" %}"/>
+                    <div class="home-lower-imagebar-image-overlay"></div>
+                    <p class="over-text">Search</p>
                 </a>
             </div>
-            <div class="home-lower-imagebar-image-container col-md-4">
+            <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a href="{% url 'image.random' %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/new_design/LostVisions_TagIllustrations.png" %}"/>
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/Tag Illustrations.jpg" %}"/>
+                    <div class="home-lower-imagebar-image-overlay"></div>
+                    <p class="over-text">Tag Illustrations</p>
                 </a>
             </div>
-            <div class="home-lower-imagebar-image-container col-md-4">
-                <a target="_blank" href="{% url 'about_us' %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/LostVisions_About.png" %}"/>
+            <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
+                <a target="_blank" href="{% url 'random' %}">
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/browse.jpg" %}"/>
+                    <div class="home-lower-imagebar-image-overlay"></div>
+                    <p class="over-text">Random Search</p>
                 </a>
             </div>
         </div>
         <div class="home-lower-imagebar row">
-            <div class="home-lower-imagebar-image-container col-md-4">
+            <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a href="{% url 'education' %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/new_design/LostVisions_TeacherResources.png" %}"/>
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/TeacherResources.jpg" %}"/>
+                    <div class="home-lower-imagebar-image-overlay"></div>
+                    <p class="over-text">Teaching Resources</p>
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a href="{% url 'public_exhibition_list' %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/Exhibition3.jpg" %}"/>
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/Exhibition3.jpg" %}"/>
+                    {#                                       <div class="home-lower-imagebar-image-overlay"></div>#}
                     <p class="over-text">Exhibitions</p>
                 </a>
             </div>
-            <div class="home-lower-imagebar-image-container col-md-4">
+            <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
                 <a target="_blank" href="{% if user.is_authenticated %}
                 {% url "user_profile_home" %}
                 {% else %}
                 {% url 'account_login' %}
                 {% endif %}">
-                    <img class="home-lower-imagebar-image" src="{% static "media/images/LostVisions_MyArchive.png" %}"/>
+                    <img class="home-lower-imagebar-image" src="{% static "media/images/home/My Archive.jpg" %}"/>
+                    <div class="home-lower-imagebar-image-overlay"></div>
+                    <p class="over-text">My Archive</p>
                 </a>
             </div>
         </div>

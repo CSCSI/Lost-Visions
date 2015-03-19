@@ -39,35 +39,7 @@ h3 {
     text-decoration: underline;
 }
 
-.text-over-image {
-    position: relative;
-    /*float: left;*/
-    clear: none;
-    overflow: hidden;
-}
 
-.text-over-image img {
-    position: relative;
-    z-index: 1;
-}
-
-.text-over-image .over-text {
-    display: block;
-    position: absolute;
-    width: 100%;
-    top: 40%;
-    left: 0%;
-    z-index: 2;
-    text-align: center;
-    font-size: 3vw;
-    color: #ffffff;
-}
-
-@media all and (max-width: 999px) and (min-width: 50px) {
-    .text-over-image .over-text{
-        font-size: 8vw;
-    }
-}
 
 
 h5 {
@@ -330,6 +302,54 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     padding: 5px;
     padding-top: 30px;
     width: 100%;
+
+    /*opacity: 1.65;*/
+}
+
+.home-lower-imagebar-image-overlay {
+    position:relative;
+    top:0px;
+    width: 100%;
+    height: inherit;
+    color: darkgrey;
+    opacity: 0.65;
+}
+
+.text-over-image {
+    position: relative;
+    /*float: left;*/
+    clear: none;
+    overflow: hidden;
+}
+
+.text-over-image img {
+    position: relative;
+    z-index: 1;
+}
+
+.text-over-image .over-text {
+    display: block;
+    position: absolute;
+    width: 100%;
+    top: 55%;
+    left: 0%;
+    z-index: 2;
+    text-align: center;
+    font-size: 3vw;
+    color: #ffffff;
+
+    line-height: 120%;
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+}
+
+@media all and (max-width: 999px) and (min-width: 50px) {
+    .text-over-image .over-text{
+        font-size: 8vw;
+    }
 }
 
 /*tagging page*/
@@ -741,13 +761,13 @@ a:hover#save_image.btn.btn-default.save_image  {
 }
 
 /*#advanced-search-form > div > div.panel-body > div > ul > li > button {*/
-    /*background-color: #4E84B2;*/
-    /*border-color: #404448;*/
+/*background-color: #4E84B2;*/
+/*border-color: #404448;*/
 /*}*/
 
 /*#advanced-search-form > div > div.panel-body > div > ul > li > button:hover {*/
-    /*background-color: #417690;*/
-    /*border-color: #404448;*/
+/*background-color: #417690;*/
+/*border-color: #404448;*/
 /*}*/
 
 .adv_search_btn {
