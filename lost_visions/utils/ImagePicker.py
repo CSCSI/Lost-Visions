@@ -394,14 +394,21 @@ class ImagePicker():
             # all_results = all_results.filter(SQ(title=Raw('*' + title + '*')))
 
         if len(illustrator):
-            q_or_objects = []
-            for illustrator_book_id in models.BookIllustrator.objects \
-                    .filter(name__contains=regex_string.format(illustrator)).values_list('book_id', flat=True).distinct():
-                if illustrator_book_id:
-                    q_or_objects.append(SQ(book_identifier=str(illustrator_book_id)))
+            # all_results = all_results.filter_or(first_author__icontains='*' + author + '*')
+            illustrator_words = [x.strip() for x in illustrator.split(' ')]
+            for illustrator_word in illustrator_words:
+                re.sub(r'\W+', '', illustrator_word)
+                all_results = all_results.filter(title__icontains='*' + illustrator_word + '*')
 
-            if len(q_or_objects) > 0:
-                all_results = all_results.filter(reduce(operator.or_, q_or_objects))
+
+            # q_or_objects = []
+            # for illustrator_book_id in models.BookIllustrator.objects \
+            #         .filter(name__contains=regex_string.format(illustrator)).values_list('book_id', flat=True).distinct():
+            #     if illustrator_book_id:
+            #         q_or_objects.append(SQ(book_identifier=str(illustrator_book_id)))
+
+            # if len(q_or_objects) > 0:
+            #     all_results = all_results.filter(reduce(operator.or_, q_or_objects))
 
         if len(book_id):
             all_results = all_results.filter(book_identifier=book_id)
