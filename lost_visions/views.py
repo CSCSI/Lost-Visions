@@ -974,7 +974,7 @@ def user_home(request):
         for c in collection_models:
 
             collection_data = {}
-            mapped_images = models.ImageMapping.objects.filter(collection=c)
+            mapped_images = models.ImageMapping.objects.filter(collection=c)[:15]
             mapped_images_array = []
 
 
@@ -983,7 +983,7 @@ def user_home(request):
                 mapped_image_ids.append(mapped_image.image.flickr_id)
             all_image_data = get_image_data_from_array(mapped_image_ids, request)
 
-            for image in mapped_images[:15]:
+            for image in mapped_images:
                 image_dict = dict()
                 image_dict['flickr_id'] = image.image.flickr_id
                 image_dict['title'] = image.image.title
