@@ -75,7 +75,7 @@
                     <li data-target="#carousel" data-slide-to="0" class="active"></li>
                     <li data-target="#carousel" data-slide-to="1"></li>
                     <li data-target="#carousel" data-slide-to="2"></li>
-                    <li data-target="#carousel" data-slide-to="3"></li>
+{#                    <li data-target="#carousel" data-slide-to="3"></li>#}
                 </ol>
 
                 <!-- Wrapper for slides -->
@@ -100,13 +100,13 @@
                             <div class="carousel-caption"></div>
                         </a>
                     </div>
-
-                    <div class="item">
-                        <a href="{% url 'image.random' %}">
-                            <img src="{% static "media/images/home/The Travellers.jpg" %}">
-                            <div class="carousel-caption"></div>
-                        </a>
-                    </div>
+{##}
+{#                    <div class="item">#}
+{#                        <a href="{% url 'image.random' %}">#}
+{#                            <img src="{% static "media/images/home/The Travellers.jpg" %}">#}
+{#                            <div class="carousel-caption"></div>#}
+{#                        </a>#}
+{#                    </div>#}
 
                     {#                    <div class="item">#}
                     {#                        <img src="{% static "media/images/2434490_orig.jpg" %}" alt="fire">#}
@@ -162,7 +162,7 @@
                 <a target="_blank" href="{% url 'random' %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/home/browse.jpg" %}"/>
                     <div class="home-lower-imagebar-image-overlay"></div>
-                    <p class="over-text text_shadow">Random Search</p>
+                    <p class="over-text text_shadow">Browse Illustrations</p>
                 </a>
             </div>
         </div>
@@ -171,7 +171,7 @@
                 <a href="{% url 'education' %}">
                     <img class="home-lower-imagebar-image" src="{% static "media/images/home/classroom-2.png" %}"/>
 {#                                        <div class="home-lower-imagebar-image-overlay"></div>#}
-                                        <p class="over-text text_shadow">Teaching Resources</p>
+                                        <p class="over-text text_shadow">In the Classroom</p>
                 </a>
             </div>
             <div class="home-lower-imagebar-image-container col-md-4 text-over-image">
