@@ -983,7 +983,7 @@ def user_home(request):
                 mapped_image_ids.append(mapped_image.image.flickr_id)
             all_image_data = get_image_data_from_array(mapped_image_ids, request)
 
-            for image in mapped_images:
+            for image in mapped_images[:15]:
                 image_dict = dict()
                 image_dict['flickr_id'] = image.image.flickr_id
                 image_dict['title'] = image.image.title
