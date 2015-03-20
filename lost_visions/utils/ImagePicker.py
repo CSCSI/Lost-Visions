@@ -357,6 +357,7 @@ class ImagePicker():
         regex_string = r"{0}"
 
         print query_items
+        logger.debug(query_items)
 
         keywords = query_items.get('keyword', '').strip()
         keywords = [x.strip() for x in keywords.split(' ')]
@@ -399,7 +400,6 @@ class ImagePicker():
             for illustrator_word in illustrator_words:
                 re.sub(r'\W+', '', illustrator_word)
                 all_results = all_results.filter(title__icontains='*' + illustrator_word + '*')
-
 
             # q_or_objects = []
             # for illustrator_book_id in models.BookIllustrator.objects \
