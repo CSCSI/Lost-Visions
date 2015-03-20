@@ -356,8 +356,8 @@ class ImagePicker():
 
         regex_string = r"{0}"
 
-        print query_items
-        logger.debug(query_items)
+        # print query_items
+        # logger.debug(query_items)
 
         keywords = query_items.get('keyword', '').strip()
         keywords = [x.strip() for x in keywords.split(' ')]

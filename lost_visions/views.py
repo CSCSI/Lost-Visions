@@ -1150,6 +1150,9 @@ def do_advanced_search(request):
     else:
         all_results_haystack = im.advanced_haystack_search(request.GET).load_all()
 
+        user = get_request_user(request)
+        logger.debug(str(user.username.username) + " : " + pprint.pformat(request.GET))
+
         # tk.time_now('search done, begin sort')
 
         # print all_results_haystack

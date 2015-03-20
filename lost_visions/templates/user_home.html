@@ -7,7 +7,14 @@
 
 
     $(document).ready(function(){
-        $('.js-masonry').masonry();
+
+        $("img").one("load", function() {
+                    $('.js-masonry').masonry();
+
+            // do stuff
+        }).each(function() {
+            if(this.complete) $(this).load();
+        });
 
         $('.bl_item').each( function( index, element ){
 
@@ -283,9 +290,9 @@
         }
 
     });
-    $(window).load(function(){
-        $('.js-masonry').masonry();
-    });
+{#    $(window).load(function(){#}
+{#        $('.js-masonry').masonry();#}
+{#    });#}
 
 
     </script>
@@ -386,9 +393,6 @@
                                     </a>
                                     <div class="panel-footer">
                                         {{ d.caption }}
-                                        {#                            Image ID : {{ d.flickr_id }}#}
-                                        {#                            <br>#}
-                                        {#                            Page : {{ d.page }}#}
                                     </div>
                                 </div>
                             </div>
@@ -411,7 +415,7 @@
 
         <hr>
 
-{#    {{ users_collections }}#}
+        {#    {{ users_collections }}#}
 
     </div>
     {#    {{ users_collections }}#}
