@@ -981,11 +981,11 @@ def user_home(request):
             mapped_images_size = mapped_images.count()
 
             mapped_image_ids = []
-            for mapped_image in mapped_images[:15]:
+            for mapped_image in mapped_images[:2]:
                 mapped_image_ids.append(mapped_image.image.flickr_id)
             all_image_data = get_image_data_from_array(mapped_image_ids, request)
 
-            for image in mapped_images[:15]:
+            for image in mapped_images[:2]:
                 image_dict = dict()
                 image_dict['flickr_id'] = image.image.flickr_id
                 image_dict['title'] = image.image.title
@@ -996,8 +996,6 @@ def user_home(request):
                     image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
                     image_dict['caption'] = image_mapping_caption.caption
 
-                    # image_captions[image.image.flickr_id] = image_mapping_caption.caption
-
                     all_image_data.get(image.image.flickr_id)['caption'] = image_mapping_caption.caption
                 except Exception as e:
                     print e
@@ -1006,7 +1004,8 @@ def user_home(request):
 
             collection_data['restricted_size'] = mapped_images_size > 15
             collection_data['images'] = mapped_images_array
-            collection_data['images_with_locations'] = all_image_data
+            collection_data['collection_size'] = mapped_images_size
+            # collection_data['images_with_locations'] = all_image_data
             collection_data['collection_name'] = c.name
 
             users_collections.update({str(c.id): collection_data})
@@ -2471,8 +2470,9 @@ def view_collection(request, collection_id, page):
 
     collection_model = models.ImageCollection.objects.get(id=collection_id, user=get_request_user(request))
     results = {}
+    mapped_images = collection_model.imagemapping_set.all()
 
-    mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
+    # mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
     mapped_images_full_count = mapped_images.count()
 
     images_per_page = 30

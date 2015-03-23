@@ -345,7 +345,7 @@
         <div class="row">
             {#            <div class="col-md-12">#}
             <div class="col-md-12">
-                <h3>Your Saved Images :</h3>
+                <h3>Your Saved Illustration Collections :</h3>
             </div>
 
             <div id="results_table_div" class="bs-example table-responsive">
@@ -358,7 +358,7 @@
                             <td colspan="4">
                                 <div class="col-md-12">
 
-                                    <h3>{{ b.collection_name }} - {{ b.images|length }} Illustrations</h3>
+                                    <h3>{{ b.collection_name }} - {{ b.collection_size }} Illustrations</h3>
 
                                     <div style="margin-left: 15px">
                                         <div class="row">
@@ -432,9 +432,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <hr>
-
 
         </div>
 
