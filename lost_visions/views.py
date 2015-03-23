@@ -2468,7 +2468,9 @@ def public_exhibition_list(request):
 
 def view_collection(request, collection_id, page):
 
-    collection_model = models.ImageCollection.objects.get(id=collection_id, user=get_request_user(request))
+    # collection_model = models.ImageCollection.objects.get(id=collection_id, user=get_request_user(request))
+
+    collection_model = models.ImageCollection.objects.get(id=collection_id)
     results = {}
     mapped_images = collection_model.imagemapping_set.all()
 
