@@ -25,6 +25,8 @@ urlpatterns = patterns('',
                        url(r'^user_dl_all', 'lost_visions.views.user_dl_all', name='user_dl_all'),
                        url(r'^download_collection', 'lost_visions.views.download_collection', name='dl_collection'),
                        url(r'^manage_collection', 'lost_visions.views.manage_collection', name='manage_collection'),
+                       url(r'^view_collection/(?P<collection_id>\d+)/(?P<page>\d+)',
+                           'lost_visions.views.view_collection', name='view_collection'),
 
                        url(r'^user_profile', 'lost_visions.views.user_home', name='user_profile_home'),
                        url(r'^exhibition/(?P<collection_id>\d+)', 'lost_visions.views.exhibition', name='exhibition'),

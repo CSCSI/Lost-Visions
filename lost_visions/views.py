@@ -23,6 +23,7 @@ from django.db import connection
 from django.db.models import Q, Count
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import requires_csrf_token, csrf_exempt
@@ -974,16 +975,17 @@ def user_home(request):
         for c in collection_models:
 
             collection_data = {}
-            mapped_images = models.ImageMapping.objects.filter(collection=c)[:15]
+            mapped_images = models.ImageMapping.objects.filter(collection=c)
             mapped_images_array = []
 
+            mapped_images_size = mapped_images.count()
 
             mapped_image_ids = []
-            for mapped_image in mapped_images:
+            for mapped_image in mapped_images[:15]:
                 mapped_image_ids.append(mapped_image.image.flickr_id)
             all_image_data = get_image_data_from_array(mapped_image_ids, request)
 
-            for image in mapped_images:
+            for image in mapped_images[:15]:
                 image_dict = dict()
                 image_dict['flickr_id'] = image.image.flickr_id
                 image_dict['title'] = image.image.title
@@ -1002,11 +1004,14 @@ def user_home(request):
 
                 mapped_images_array.append(image_dict)
 
+            collection_data['restricted_size'] = mapped_images_size > 15
             collection_data['images'] = mapped_images_array
             collection_data['images_with_locations'] = all_image_data
             collection_data['collection_name'] = c.name
 
             users_collections.update({str(c.id): collection_data})
+
+
         return render(request,
                       'user_home.html',
                       {'images': saved_images_dict,
@@ -1467,6 +1472,7 @@ def download_collection(request):
     for image_id in image_ids:
         image_model = models.Image.objects.get(flickr_id=image_id)
         image_info = db_tools.get_image_info(image_model)
+        image_info = sanitise_image_info(image_info, request)
 
         if image_info:
             filenames[image_id] = (image_info['imageurl'])
@@ -1503,6 +1509,9 @@ def download_collection(request):
 
         # Add file, at correct path
         zf.write(fpath, zip_path)
+
+        json_path = os.path.join(zip_subdir, str(image_id) + '.json')
+        zf.writestr(json_path, json.dumps(get_image_data_dict(image_id), indent=4))
 
     # Must close zip for all contents to be written
     zf.close()
@@ -2141,7 +2150,7 @@ def powerset_generator(i):
         yield subset
 
 
-def image_data(request, image_id):
+def get_image_data_dict(image_id):
     image_data_model = models.Image.objects.get(flickr_id=image_id)
     serialized_image_model = serializers.serialize('json', [image_data_model])
 
@@ -2171,6 +2180,11 @@ def image_data(request, image_id):
         'image_location': json.loads(serialized_location_model),
         'matches': json.loads(serialized_matches_model)
     }
+    return return_data
+
+
+def image_data(request, image_id):
+    return_data = get_image_data_dict(image_id)
     return HttpResponse(json.dumps(return_data, indent=4), content_type="application/json")
 
 
@@ -2450,5 +2464,48 @@ def public_exhibition_list(request):
 
     return render(request, 'public_exhibition_list.html',
                   {'results': response_data},
+                  context_instance=RequestContext(request))
+
+
+def view_collection(request, collection_id, page):
+
+    collection_model = models.ImageCollection.objects.get(id=collection_id, user=get_request_user(request))
+    results = {}
+
+    mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
+    mapped_images_full_count = mapped_images.count()
+
+    images_per_page = 30
+    total_number_of_pages = (mapped_images_full_count // images_per_page) + 1
+
+    page = int(page)
+    if page < 1:
+        page = 1
+    if page > total_number_of_pages:
+        page = total_number_of_pages
+
+    images_start = (page-1) * images_per_page
+    images_end = page * images_per_page
+
+    image_ids = []
+    for image_map in mapped_images[images_start: images_end]:
+        image_ids.append(image_map.image.flickr_id)
+
+    all_image_ids = ','.join(image_ids)
+
+    results['advanced'] = []
+
+    response_data = {'results': results,
+                     'pages': range(1, total_number_of_pages),
+                     'this_page': page,
+                     'size': mapped_images_full_count}
+
+    return render(request, 'view_collection.html',
+                  {'results': response_data,
+                   'query_array': request.GET,
+                   'all_image_ids': all_image_ids,
+                   'number_to_show': 30,
+                   'collection_name': collection_model.name,
+                   'collection_id': collection_model.id},
                   context_instance=RequestContext(request))
 
