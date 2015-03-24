@@ -314,13 +314,15 @@
         {#        console.log($('#advanced-search-form').serializeArray());#}
 
         {#        search_ids([])#}
-    });
-    $(window).load(function(){
 
-
+        $('.collection_row').css('cursor', 'pointer').on("click", function() {
+            if($(this).data('href') !== undefined){
+                document.location = $(this).data('href');
+            }
+        });
     });
+
     </script>
-    <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
     <br>
     {% if results.results.collections|length > 0 %}
         <h3>User created collections</h3>
@@ -334,7 +336,7 @@
                     <th>Created by</th>
                 </tr>
                 {% for c in results.results.collections %}
-                    <tr>
+                    <tr class="collection_row" data-href="{% url 'view_collection' c.collection_id 1 %}">
                         <th>
                             <img src="{{ c.image_url }}"
                                  style="max-height: 80px; width:auto; max-width: 100%; display: block; margin: 0 auto">
@@ -356,7 +358,8 @@
     {% endif %}
 
     {#    {{ results.results.collections }}#}
-
+    <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
+    <br>
     {#    <h3>{{ query }}</h3>#}
     <h3>Illustrations found</h3>
 
