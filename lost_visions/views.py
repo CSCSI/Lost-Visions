@@ -2508,6 +2508,7 @@ def view_collection(request, collection_id, page):
                    'all_image_ids': all_image_ids,
                    'number_to_show': 30,
                    'collection_name': collection_model.name,
-                   'collection_id': collection_model.id},
+                   'collection_id': collection_model.id,
+                   'collection_creator': str(collection_model.user.username.username)},
                   context_instance=RequestContext(request))
 

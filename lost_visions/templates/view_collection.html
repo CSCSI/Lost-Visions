@@ -573,18 +573,19 @@
     </script>
     <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
 
+
+
+    <h1 style="text-align: center">{{ collection_name }}</h1>
+    <h3 style="text-align: center">Collection created by {{ collection_creator }}</h3>
+    <h2 style="text-align: center">{{ results.size }} Illustrations</h2>
+
     {% if results.pages|length > 1 %}
-    <p style="text-align: center">
+    <p style="text-align: left">
         Pages : {% for p in results.pages %}
         <a href="{% url 'view_collection' collection_id p %}"> {{ p }} </a>
     {% endfor %}
     </p>
     {% endif %}
-
-    <h3 style="text-align: center">Viewing collection : {{ collection_name }}</h3>
-    <h3 style="text-align: center">Collection contains {{ results.size }} illustrations</h3>
-
-
 
     <div style="margin-left: 15px">
         <div class="row">
