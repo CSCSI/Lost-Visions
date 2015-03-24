@@ -602,12 +602,12 @@ a:hover#save_image.btn.btn-default.save_image  {
     position: absolute;
     right:7px;
     top:2em;
-    background: #910000;
-    background-image: linear-gradient(#D92432, #e32537 40%, #ff263b);
+    /*background: #910000;*/
+    /*background-image: linear-gradient(#D92432, #e32537 40%, #ff263b);*/
 }
 
 .save_image_float_button:hover  {
-    background-image: linear-gradient(#910000, #ac0000 60%, #e20000);
+    /*background-image: linear-gradient(#910000, #ac0000 60%, #e20000);*/
 }
 
 .save_image_float_button:hover .save_menu {

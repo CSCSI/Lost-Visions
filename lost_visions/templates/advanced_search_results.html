@@ -158,9 +158,10 @@
                         var jq_elem = $($.parseHTML(elem_text));
 
                         var $save_button = $('<div id="hide-button-' + image_id + '" ' +
-                                'class="btn btn-default btn-xs save_image_float_button" ' +
-                                ">" +
-                                "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}' style='max-height: 27px'>" +
+                                'class="btn btn-primary btn-xs save_image_float_button">' +
+
+{#                                "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}'" +" style='max-height: 27px'>" +#}
+                               "<div class='fa fa-2x fa-heart'>" +
                                 "</div>").click(function(){
 
                             var btn_parent_image_id = $(this).parent().data('id');
