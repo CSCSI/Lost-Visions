@@ -1225,7 +1225,8 @@ def do_advanced_search(request):
         for model in collection_models:
             user_collections.append({'name': model.name,
                                      'id': str(model.id)})
-    # Get
+
+    # Get collections
     found_collection_models = im.find_collections(request.GET)
     found_collections = []
     if found_collection_models.count() > 0:
@@ -2522,6 +2523,16 @@ def view_collection(request, collection_id, page):
 
     results['advanced'] = []
 
+    mode = 'not_logged_in'
+
+    if not request.user.is_authenticated():
+        mode = 'not_logged_in'
+    else:
+        if collection_model.user == get_request_user(request):
+            mode = 'owner'
+        else:
+            mode = 'logged in, not owner'
+
     response_data = {'results': results,
                      'pages': range(1, total_number_of_pages +1),
                      'this_page': page,
@@ -2529,6 +2540,7 @@ def view_collection(request, collection_id, page):
 
     return render(request, 'view_collection.html',
                   {'results': response_data,
+                   'mode': mode,
                    'query_array': request.GET,
                    'all_image_ids': all_image_ids,
                    'number_to_show': 30,

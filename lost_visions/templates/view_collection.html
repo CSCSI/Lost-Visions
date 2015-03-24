@@ -131,7 +131,7 @@
                                 ' src="' + image_data['img_small']  + '" style="width:100%; height:auto;">' +
                                 '</a>' +
                                 '</div>' +
-{#                                '<div class="panel-footer">This is a caption</div>' +#}
+                                {#                                '<div class="panel-footer">This is a caption</div>' +#}
                                 '</div>';
                         {#                            console.log(elem_text);#}
                         var jq_elem = $($.parseHTML(elem_text));
@@ -261,8 +261,10 @@
                 {#            $(this).append($remove_button);#}
                 {#            $(this).append($set_caption_button);#}
 
-{#                $(this).find('[id^=remove-button]').show();#}
-{#                $(this).find('[id^=caption-button]').show();#}
+                {% if mode == 'owner' %}
+                    $(this).find('[id^=remove-button]').show();
+                    $(this).find('[id^=caption-button]').show();
+                {% endif %}
 
                 {#            $remove_button.show();#}
                 {#            $set_caption_button.show();#}
@@ -574,7 +576,7 @@
     </script>
     <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
 
-
+{#    {{ mode }}#}
 
     <h1 style="text-align: center">{{ collection_name }}</h1>
     <h3 style="text-align: center">Collection created by {{ collection_creator }}</h3>
@@ -584,19 +586,24 @@
 
     <div style="margin-left: 15px">
         <div class="row">
-            <div id="edit_collection_{{ collection_id }}"
-                 data-collection_id="{{ collection_id }}"
-                 data-collection_name="{{ collection_name }}"
-                 class="btn btn-default edit_collection">Edit Collection</div>
+
+            {% if mode == 'owner' %}
+                <div id="edit_collection_{{ collection_id }}"
+                     data-collection_id="{{ collection_id }}"
+                     data-collection_name="{{ collection_name }}"
+                     class="btn btn-default edit_collection">Edit Collection</div>
+            {% endif %}
 
             <div id="download_collection{{ k }}" data-collection_id="{{ collection_id }}"
                  class="btn btn-default dl_collection">Download Collection</div>
 
             <a href="{% url 'exhibition' collection_id %}" target="_blank" class="btn btn-default">Show Exhibition</a>
 
-            <div id="request_public_exhibition{{ collection_id }}" data-collection_id="{{ collection_id }}"
-                 data-collection_name="{{ collection_name }}"
-                 class="btn btn-default request_public_exhibition">Request Public Exhibition</div>
+            {% if mode == 'owner' %}
+                <div id="request_public_exhibition{{ collection_id }}" data-collection_id="{{ collection_id }}"
+                     data-collection_name="{{ collection_name }}"
+                     class="btn btn-default request_public_exhibition">Request Public Exhibition</div>
+            {% endif %}
 
         </div>
         <div class="row">
@@ -640,15 +647,15 @@
         </div>
     </div>
 
-        {% if results.pages|length > 1 %}
-    <p style="text-align: left">
-        Pages : {% for p in results.pages %}
-        <a href="{% url 'view_collection' collection_id p %}"> {{ p }} </a>
-    {% endfor %}
-    </p>
+    {% if results.pages|length > 1 %}
+        <p style="text-align: left">
+            Pages : {% for p in results.pages %}
+            <a href="{% url 'view_collection' collection_id p %}"> {{ p }} </a>
+        {% endfor %}
+        </p>
     {% endif %}
 
-{#    <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>#}
+    {#    <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>#}
 
     <div id="save_image_dialog_form" title="Save Image to Collecton">
         <p class="validateTips">Save Image to Collecton</p>
