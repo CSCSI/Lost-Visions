@@ -210,6 +210,8 @@
     var current_question_pane = 1;
     $(document).ready(function () {
 
+        $('#question-accordion-prev').hide();
+
         {#        FINDME all_tags is the js object listing tags #}
         {#        FINDME tag_info is the hidden input element #}
         {#        FINDME final_tags is the div element in the submit dialog containing tag buttons#}
@@ -382,6 +384,13 @@
                     });
                 });
             }
+            if (current_question_pane - 1 < 2) {
+                $(this).hide();
+                $('#question-accordion-next').show()
+            }
+            if (current_question_pane - 1 < 4) {
+                $('#question-accordion-next').show()
+            }
         });
 
         $('#question-accordion-next').click(function() {
@@ -398,6 +407,13 @@
                         scroll_to_top(tidy_masonry());
                     });
                 });
+            }
+            if (current_question_pane + 1 > 3) {
+                $(this).hide();
+                $('#question-accordion-prev').show();
+            }
+            if (current_question_pane + 1 > 1) {
+                $('#question-accordion-prev').show();
             }
         });
 
@@ -796,7 +812,7 @@
                 },
                 success: function(data) {
                     var ok = data['success'];
-                    alert("Added Image to Favourites : " + collection_name);
+                    alert("Added Image to Collection : " + collection_name);
 
                 },
                 error: function(xhr, textStatus, errorThrown) {
@@ -1385,13 +1401,13 @@
                                 <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">
                                     <div class="fa fa-search-plus"></div></a>
                             </li>
-                            <li>
-                                <a data-toggle="tooltip" data-placement="top"
-                                   title="View the page this illustration came from" data-original-title="Full Page"
-                                   class="btn btn-info side-menu-btn" target="_blank" style="color: darkgrey"
-                                   href="{{ page_turner_url }}"
-                                        ><div class="fa fa-book"></div></a>
-                            </li>
+                            {#                            <li>#}
+                            {#                                <a data-toggle="tooltip" data-placement="top"#}
+                            {#                                   title="View the page this illustration came from" data-original-title="Full Page"#}
+                            {#                                   class="btn btn-info side-menu-btn" target="_blank" style="color: darkgrey"#}
+                            {#                                   href="{{ page_turner_url }}"#}
+                            {#                                        ><div class="fa fa-book"></div></a>#}
+                            {#                            </li>#}
                             <li>
                                 <a id="share" data-toggle="tooltip" data-placement="top"
                                    title="Share" data-original-title="Share"
@@ -1406,7 +1422,7 @@
                             {% if user.is_authenticated %}
                                 <li>
                                     <div data-toggle="tooltip" data-placement="top"
-                                         title="Add illustration to Favourites" data-original-title="Save"
+                                         title="Add illustration to Collection" data-original-title="Save"
                                          class="btn btn-success side-menu-btn save_image_btn save_image"><div class="fa fa-heart"></div></div>
                                 </li>
                             {% endif %}
@@ -1438,11 +1454,11 @@
                                 <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">
                                     <div class="fa fa-2x fa-search-plus"></div></a>
                             </li>
-                            <li>
-                                <a class="btn btn-success side-menu-btn" target="_blank"
-                                   href="{{ page_turner_url }}"
-                                        ><div class="fa fa-2x fa-book"></div></a>
-                            </li>
+                            {#                            <li>#}
+                            {#                                <a class="btn btn-success side-menu-btn" target="_blank"#}
+                            {#                                   href="{{ page_turner_url }}"#}
+                            {#                                        ><div class="fa fa-2x fa-book"></div></a>#}
+                            {#                            </li>#}
                             {% if user.is_authenticated %}
                                 <li>
                                     <a class="btn btn-default save_image_btn save_image">
@@ -1538,7 +1554,11 @@
 
     {#    <div id="map_btn" class="btn btn-default">MAP STUFF</div>#}
 
-
+    <a target="_blank" href="{{ page_turner_url }}"
+       id="view_full_page" data-toggle="tooltip" data-placement="top"
+       title="View Full Page" data-original-title="View the full page this illustration came form"
+       class="btn btn-success" style="width: 100%;">
+        <div class="fa fa-book"></div>  View Full Page</a>
 
     <div data-toggle="tooltip" data-placement="top"
          title="Information and Metadata for this Illustration" data-original-title="Image Metadata"

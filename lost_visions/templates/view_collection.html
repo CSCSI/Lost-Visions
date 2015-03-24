@@ -579,13 +579,7 @@
     <h3 style="text-align: center">Collection created by {{ collection_creator }}</h3>
     <h2 style="text-align: center">{{ results.size }} Illustrations</h2>
 
-    {% if results.pages|length > 1 %}
-    <p style="text-align: left">
-        Pages : {% for p in results.pages %}
-        <a href="{% url 'view_collection' collection_id p %}"> {{ p }} </a>
-    {% endfor %}
-    </p>
-    {% endif %}
+
 
     <div style="margin-left: 15px">
         <div class="row">
@@ -644,6 +638,14 @@
             </div>
         </div>
     </div>
+
+        {% if results.pages|length > 1 %}
+    <p style="text-align: left">
+        Pages : {% for p in results.pages %}
+        <a href="{% url 'view_collection' collection_id p %}"> {{ p }} </a>
+    {% endfor %}
+    </p>
+    {% endif %}
 
 {#    <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>#}
 
