@@ -702,6 +702,25 @@ class ImagePicker():
 
         return finals
 
+    def find_collections(self, request_get):
+        keywords = request_get.get('keyword', '').strip()
+        keywords = [x.strip() for x in keywords.split(' ')]
+
+        all_results = models.ImageCollection.objects.all()
+
+        ors = []
+        regex_string = r"\b{0}\b".replace("\\b", db_regex_char)
+
+        for word in keywords:
+            if len(word):
+                regex_format = regex_string.format(word)
+                ors.append(Q(name__icontains=word))
+
+        all_results = all_results.filter(reduce(operator.or_, ors))
+        print all_results.query
+
+        return all_results
+
 
 class Request():
     def __init__(self):

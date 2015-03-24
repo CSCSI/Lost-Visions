@@ -321,8 +321,45 @@
     });
     </script>
     <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
+    <br>
+    {% if results.results.collections|length > 0 %}
+        <h3>User created collections</h3>
+        <div id="collection_results" class="bs-example table-responsive">
+            <table class="table table-striped table-hover" id="collection_results">
+                <tbody>
+                <tr>
+                    <th>Example</th>
+                    <th>Name</th>
+                    <th>Contains</th>
+                    <th>Created by</th>
+                </tr>
+                {% for c in results.results.collections %}
+                    <tr>
+                        <th>
+                            <img src="{{ c.image_url }}"
+                                 style="max-height: 80px; width:auto; max-width: 100%; display: block; margin: 0 auto">
+                        </th>
+                        <td>
+                            <span style="text-align: left">{{ c.collection_name }}</span>
+                        </td>
+                        <td>
+                            <span style="text-align: left">{{ c.collection_size }} Illustrations</span>
+                        </td>
+                        <td>
+                            <span style="text-align: right">{{ c.collection_creator }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 
-{#    <h3>{{ query }}</h3>#}
+    {#    {{ results.results.collections }}#}
+
+    {#    <h3>{{ query }}</h3>#}
+    <h3>Illustrations found</h3>
+
     <div id="results-parent-container">
         <div id="grid-result-container"></div>
         <div id="result-container">

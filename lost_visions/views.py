@@ -1099,6 +1099,8 @@ def do_advanced_search(request):
     results['advanced'] = dict()
     total_results = 0
 
+    results['collections'] = []
+
     readable_query = ''
     all_image_ids = ''
 
@@ -1153,6 +1155,7 @@ def do_advanced_search(request):
             # tk.time_now('done search')
     else:
         all_results_haystack = im.advanced_haystack_search(request.GET).load_all()
+
 
         user = get_request_user(request)
         logger.debug(str(user.username.username) + " : " + pprint.pformat(request.GET))
@@ -1222,7 +1225,29 @@ def do_advanced_search(request):
         for model in collection_models:
             user_collections.append({'name': model.name,
                                      'id': str(model.id)})
-    # tk.time_now('got collections')
+    # Get
+    found_collection_models = im.find_collections(request.GET)
+    found_collections = []
+    if found_collection_models.count() > 0:
+        for collection_model in found_collection_models:
+
+            image_mapping_set = collection_model.imagemapping_set.all()
+            if image_mapping_set.count() > 0:
+
+                image_datas = get_image_data_from_array([image_mapping_set[0].image.flickr_id], request)
+                image_url = ''
+                for img_data_id, img_data in image_datas.items():
+                    image_url = img_data['img_small']
+
+                found_collections.append({
+                    'collection_name': collection_model.name,
+                    'collection_size': collection_model.imagemapping_set.all().count(),
+                    'collection_id': collection_model.id,
+                    'collection_creator': collection_model.user.username.username,
+                    'image_url': image_url
+                })
+
+    results['collections'] = found_collections
 
     return render(request, 'advanced_search_results.html',
                   {'results': response_data,
@@ -2498,7 +2523,7 @@ def view_collection(request, collection_id, page):
     results['advanced'] = []
 
     response_data = {'results': results,
-                     'pages': range(1, total_number_of_pages),
+                     'pages': range(1, total_number_of_pages +1),
                      'this_page': page,
                      'size': mapped_images_full_count}
 
