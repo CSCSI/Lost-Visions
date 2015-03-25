@@ -126,8 +126,8 @@ class CategoryManager():
 
     def load_default_categories(self):
 
-        self.categories[0] = Category('0', 'yes', 'Yes', YES_BUTTON_URL).set_save(False)
-        self.categories[1] = Category('1', 'no', 'No', NO_BUTTON_URL).set_save(False)
+        self.categories[0] = Category('0', 'yes', '', YES_BUTTON_URL).set_save(False)
+        self.categories[1] = Category('1', 'no', '', NO_BUTTON_URL).set_save(False)
 
         self.categories[0] = Category('-1', 'root', 'Root', '') \
             .set_question('Is the illustration:') \
@@ -192,24 +192,24 @@ class CategoryManager():
         # self.categories[703] = Category('703', 'mineral', 'Mineral?', ICON_URL + 'lv-rect-station.png')
 
         self.categories[800] = Category('800', 'scientific_drawing', '', SCIENTIFIC_BUTTON_IMAGE_URL) \
-            .set_question('Is the Diagram ...').set_synset('diagram.n.1') \
+            .set_question('Is the illustration ...').set_synset('diagram.n.1') \
             .set_answers([801, 802, 803, 804, 805, 806, 807, 808])
-        self.categories[801] = Category('801', 'Geological', 'Geological?', GEOLOGICAL_BUTTON_URL) \
+        self.categories[801] = Category('801', 'Geological', '', GEOLOGICAL_BUTTON_URL) \
             .set_question('Does the Diagram describe a named location?').set_answers([810, 1])
         self.categories[810] = Category('810', 'yes', 'Yes', YES_BUTTON_URL).set_save(False).set_answers([1000])
 
-        self.categories[802] = Category('802', 'Medical', 'Medical?', MEDICAL_BUTTON_URL)
-        self.categories[803] = Category('803', 'Engineering', 'Engineering?', ENGINEERING_BUTTON_URL)
-        self.categories[804] = Category('804', 'Botanical', 'Botanical?', BOTANICAL_BUTTON_URL)
-        self.categories[805] = Category('805', 'Zoological', 'Zoological?', ZOOLOGICAL_BUTTON_URL)
-        self.categories[806] = Category('806', 'Archaeological', 'Archaeological?', ARCHAEOLOGICAL_BUTTON_URL) \
-            .set_question('Is the archaeological image of a named location?').set_answers([816, 1])
-        self.categories[816] = Category('810', 'yes', 'Yes', ICON_URL + 'tick.png').set_save(False).set_answers([1000])
+        self.categories[802] = Category('802', 'Medical', '', MEDICAL_BUTTON_URL)
+        self.categories[803] = Category('803', 'Engineering', '', ENGINEERING_BUTTON_URL)
+        self.categories[804] = Category('804', 'Botanical', '', BOTANICAL_BUTTON_URL)
+        self.categories[805] = Category('805', 'Zoological', '', ZOOLOGICAL_BUTTON_URL)
+        self.categories[806] = Category('806', 'Archaeological', '', ARCHAEOLOGICAL_BUTTON_URL) \
+            .set_question('Is the archaeological illustration of a named location?').set_answers([816, 1])
+        self.categories[816] = Category('810', 'yes', '', YES_BUTTON_URL).set_save(False).set_answers([1000])
 
-        self.categories[807] = Category('807', 'architectural', 'Architectural Drawing?', ARCHITECTURAL_BUTTON_URL) \
-            .set_question('Is the architectural drawing of a named location?').set_answers([817, 1])
-        self.categories[817] = Category('810', 'yes', 'Yes', YES_BUTTON_URL).set_save(False).set_answers([1000])
-        self.categories[808] = Category('808', 'no', 'None of These', NONE_OF_THESE_BUTTON_URL).set_save(False)
+        self.categories[807] = Category('807', 'architectural', '', ARCHITECTURAL_BUTTON_URL) \
+            .set_question('Is the architectural illustration of a named location?').set_answers([817, 1])
+        self.categories[817] = Category('810', 'yes', '', YES_BUTTON_URL).set_save(False).set_answers([1000])
+        self.categories[808] = Category('808', 'no', '', NONE_OF_THESE_BUTTON_URL).set_save(False)
 
         # self.categories[900] = Category('900', 'music', 'Musical Score?', ICON_URL + 'music.jpg')
 
@@ -232,10 +232,10 @@ class CategoryManager():
 
         self.categories[1100] = Category('1100', 'literature', '', LITERATURE_BUTTON_IMAGE_URL) \
             .set_save(False).set_synset('illustration.n.1')\
-            .set_question('Does this Illustrate?').set_answers([1101, 1102, 1103, 406])
-        self.categories[1101] = Category('1101', 'poem', 'a Poem', POEM_BUTTON_URL)
-        self.categories[1102] = Category('1102', 'play', 'a Play', PLAY_BUTTON_URL)
-        self.categories[1103] = Category('1103', 'novel', 'a Novel', NOVEL_BUTTON_URL)
+            .set_question('Does this illustrate...').set_answers([1101, 1102, 1103, 406])
+        self.categories[1101] = Category('1101', 'poem', '', POEM_BUTTON_URL)
+        self.categories[1102] = Category('1102', 'play', '', PLAY_BUTTON_URL)
+        self.categories[1103] = Category('1103', 'novel', '', NOVEL_BUTTON_URL)
 
     def get_tag_for_category_id(self, category_id):
         try:

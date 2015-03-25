@@ -5,6 +5,8 @@
 {% block content %}
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
 
+    <script src="https://cdn.rawgit.com/GestiXi/image-scale/master/image-scale.min.js"></script>
+
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
 
     $(window).load(function(){
@@ -76,7 +78,7 @@
                 $('#similars').html(similars);
 
                 if (data['largest_set_size'] == "0") {
-                    $('#collapse_similars').accordion({active: false});
+                    $('#collapse_similars').accordion({active: false}).hide();
                 }
 
                 var book_images = '<ul id="book_images_list">';
@@ -210,7 +212,14 @@
     var current_question_pane = 1;
     $(document).ready(function () {
 
-        $('#question-accordion-prev').hide();
+        $('#drag_image_box').draggable();
+        $('#drag_image').resizable({
+            aspectRatio: true,
+            handles: 'ne, se, sw, nw'
+        });
+
+
+        $('#question_prev_cell').hide();
 
         {#        FINDME all_tags is the js object listing tags #}
         {#        FINDME tag_info is the hidden input element #}
@@ -385,11 +394,11 @@
                 });
             }
             if (current_question_pane - 1 < 2) {
-                $(this).hide();
-                $('#question-accordion-next').show()
+                $(this).parent().hide();
+                $('#question_next_cell').show()
             }
             if (current_question_pane - 1 < 4) {
-                $('#question-accordion-next').show()
+                $('#question_next_cell').show()
             }
         });
 
@@ -409,11 +418,11 @@
                 });
             }
             if (current_question_pane + 1 > 3) {
-                $(this).hide();
-                $('#question-accordion-prev').show();
+                $(this).parent().hide();
+                $('#question_prev_cell').show();
             }
             if (current_question_pane + 1 > 1) {
-                $('#question-accordion-prev').show();
+                $('#question_prev_cell').show();
             }
         });
 
@@ -481,6 +490,10 @@
                 tags += ' border-style: double; border: groove';
             }
             tags += '">' + the_tags[tag]['tag'] + '</div>';
+        }
+
+        if (the_tags.length < 1) {
+            $('#collapse_cloud').hide();
         }
 
         $('#tag_cloud').html(tags);
@@ -1495,237 +1508,188 @@
 
     <div class="col-xs-12 col-sm-7">
 
-    {#    <div class="btn btn-info" style="width: 100%; text-align: center">#}
-    {#        Click here to view entire page#}
-    {#    </div>#}
-
-    <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
-        <div id="photo_background" class="photo_background">
-            <canvas id='photo'></canvas>
-            {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
-        </div>
-    </div>
-
-    {#    <div class="panel-footer">#}
-    {#        <ul class="pager">#}
-    {#            <li class="previous">#}
-    {#                <a class="rota btn btn-default" data-degs="-90"><div class="fa fa-rotate-left"></div></a>#}
-    {#            </li>#}
-    {#            <li>#}
-    {#                <a class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-lg">#}
-    {#                    <div class="fa fa-search-plus"></div></a>#}
-    {#            </li>#}
-    {#            <li>#}
-    {#                <a class="btn btn-default" target="_blank"#}
-    {#                   href="{% url 'page_turner' book_id=book_id page=page volume=volume%}">Full Page</a>#}
-    {#            </li>#}
-    {#            <li class="next">#}
-    {#                <a class="rota btn btn-default" data-degs="90"><div class="fa fa-rotate-right"></div></a>#}
-    {#            </li>#}
-    {#        </ul>#}
-    {#                {% if user.is_authenticated %}#}
-    {#                    <ul class="pager">#}
-    {#                        <li>#}
-    {#                            <select id="user_collection_select">#}
-    {#                                {% for option in user_collections %}#}
-    {#                                    <option id="{{ option }}" value="{{ option }}">#}
-    {#                                        {{ option }}#}
-    {#                                    </option>#}
-    {#                                {% endfor %}#}
-    {#                            </select>#}
-    {#                        </li>#}
-    {#                        <li>#}
-    {#                            <a class="btn btn-default save_image" id="save_image">#}
-    {#                                <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">#}
-    {#                            </a>#}
-    {#                        </li>#}
-    {#        #}
-    {#                    </ul>#}
-    {#                {% endif %}#}
-    {##}
-    {#        <ul  class="pager">#}
-    {#            <li>#}
-    {#                <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>#}
-    {#                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>#}
-    {#            </li>#}
-    {#        </ul>#}
-    {#        <div id="output"></div>#}
-    {#    </div>#}
-
-    {#    <div id="map_btn" class="btn btn-default">MAP STUFF</div>#}
-
-    <a target="_blank" href="{{ page_turner_url }}"
-       id="view_full_page" data-toggle="tooltip" data-placement="top"
-       title="View Full Page" data-original-title="View the full page this illustration came form"
-       class="btn btn-success" style="width: 100%;">
-        <div class="fa fa-book"></div>  View Full Page</a>
-
-    <div data-toggle="tooltip" data-placement="top"
-         title="Information and Metadata for this Illustration" data-original-title="Image Metadata"
-         id="collapse_metadata" class="panel-group"
-         data-step="3" data-intro='This is the metadata for the Illustration' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Illustration Information and Metadata
-            </h4>
-        </div>
-        <div class="panel-body">
-            <div itemscope itemtype="http://schema.org/Book">
-
-                <div class="bs-example table-responsive">
-                    <table class="table table-striped table-hover ">
-                        <tbody>
-                        <tr>
-                            <th>Author</th>
-                            <td itemprop="author">{{ formatted_info.Author }}</td>
-                        </tr>
-                        <tr>
-                            <th>Title</th>
-                            <td class="metadata-cell" itemprop="name">
-                                <a href="{% url 'do_advanced_search' %}?book_id={{ book_id }}&csrfmiddlewaretoken={{ csrf_token }}" target="_blank">{{ formatted_info.Title }}</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Publisher</th>
-                            <td itemprop="publisher">
-                                {% if formatted_info.Publisher == '' %}UNKNOWN{% else %}{{ formatted_info.Publisher }}{% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Place of Publication</th>
-                            <td itemprop="datePublished">{{ formatted_info.Place_of_Publication }}</td>
-                        </tr>
-                        <tr>
-                            <th>Page</th>
-                            <td>{{ formatted_info.Page }}</td>
-                        </tr>
-                        <tr>
-                            <th>Volume</th>
-                            <td itemprop="volumeNumber">{{ formatted_info.Volume }}</td>
-                        </tr>
-                        <tr>
-                            <th>Shelfmark</th>
-                            <td>{{ formatted_info.Shelfmark }}</td>
-                        </tr>
-                        <tr>
-                            <th>Permanent Link</th>
-                            <td><a href="{{ this_url }}" >{{ this_url }}</a></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    {% for linked in linked_images %}
-                        <div class="bs-example table-responsive">
-                            <table class="table table-striped table-hover ">
-                                <tbody>
-                                {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
-                                <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
-                                <tr><th>Info</th><td>{{ linked.info }}</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    {% endfor %}
-                </div>
-
+        <div id="photo-jumbotron" class="jumbotron photo-jumbotron" data-step="1" data-intro="This is the image to be tagged." data-position="right">
+            <div id="photo_background" class="photo_background">
+                <canvas id='photo'></canvas>
+                {#            src="{{ image.imageurl }}  style=' min-width:50px; min-height: 50px;width: 100%; height:auto; "#}
             </div>
         </div>
-    </div>
 
 
+        <a target="_blank" href="{{ page_turner_url }}"
+           id="view_full_page" data-toggle="tooltip" data-placement="top"
+           title="View Full Page" data-original-title="View the full page this illustration came form"
+           class="btn btn-success" style="width: 100%;">
+            <div class="fa fa-book"></div>  View Full Page</a>
 
-
-    <div data-toggle="tooltip" data-placement="top"
-         title="Similar Illustration" data-original-title="Similar Images"
-         id="collapse_similars" class="panel-group"
-         data-step="5" data-intro='These are potentially similar Illustration' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Similar Illustrations
-            </h4>
-        </div>
-        <div id="similars" class="similar-images">
-            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
-                <div class="fa fa-3x fa-spinner fa-spin"></div>
+        <div data-toggle="tooltip" data-placement="top"
+             title="Information and Metadata for this Illustration" data-original-title="Image Metadata"
+             id="collapse_metadata" class="panel-group"
+             data-step="3" data-intro='This is the metadata for the Illustration' data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Illustration Information and Metadata
+                </h4>
             </div>
-        </div>
-    </div>
+            <div class="panel-body">
+                <div itemscope itemtype="http://schema.org/Book">
 
-
-    {#    <div data-toggle="tooltip" data-placement="top"#}
-    {#         title="Machine Matched Images" data-original-title="Similar Images"#}
-    {#         id="collapse_machine_matched" class="panel-group"#}
-    {#         data-step="6" data-intro='These are potentially similar images' data-position="right">#}
-    {#        <div class="panel-heading">#}
-    {#            <h4 class="panel-title">#}
-    {#                Machine Matched Illustrations#}
-    {#            </h4>#}
-    {#        </div>#}
-    {#        <div id="machine_matched_images" class="similar-images">#}
-    {#            <div style="margin: 0 auto; text-align: center; margin-top: 20px">#}
-    {#                <div class="fa fa-3x fa-spinner fa-spin"></div>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </div>#}
-
-    <div data-toggle="tooltip" data-placement="top"
-         title="Book Illustration" data-original-title="Book Illustrations"
-         id="collapse_book_images" class="panel-group"
-         data-step="6" data-intro='These are Illustration from this book' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Other Illustrations from this Book
-            </h4>
-        </div>
-        <div id="book_images" class="similar-images">
-            <div style="margin: 0 auto; text-align: center; margin-top: 20px">
-                <div class="fa fa-3x fa-spinner fa-spin"></div>
-            </div>
-        </div>
-    </div>
-
-
-    <div data-toggle="tooltip" data-placement="top"
-         title="Tags previously added for this Illustration" data-original-title="Image Tags"
-         id="collapse_cloud" class="panel-group"
-         data-step="2" data-intro="This is the tag cloud for the Illustration.\n Previous Illustration taggers may have added the same tag as you, <br>which helps us raise it's relevance in search results"
-         data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                Cloud of Tags
-            </h4>
-        </div>
-
-        <div class="panel-body">
-            <div id="tag_cloud" class="container-fluid" style="height: 200px; width:auto">
-            </div>
-        </div>
-    </div>
-
-    <div data-toggle="tooltip" data-placement="top"
-         title="User Generated Descriptions" data-original-title="Descriptions"
-         id="collapse_descriptions" class="panel-group"
-         data-step="4" data-intro='These are user generated descriptions for the Illustration' data-position="right">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                User Descriptions ({{ image_descriptions|length }})
-            </h4>
-        </div>
-
-        <div class="panel-body">
-            <div class="bs-example table-responsive">
-                <table class="table table-striped table-hover ">
-                    <div>
-                        {% for desc in image_descriptions %}
-                            <tr><td>
-                                <div class="fa fa-quote-left" style="float: left"></div>
-                                {{ desc }}
-                                <div class="fa fa-quote-right" style="float: right"></div>
-                            </td></tr>
+                    <div class="bs-example table-responsive">
+                        <table class="table table-striped table-hover ">
+                            <tbody>
+                            <tr>
+                                <th>Author</th>
+                                <td itemprop="author">{{ formatted_info.Author }}</td>
+                            </tr>
+                            <tr>
+                                <th>Title</th>
+                                <td class="metadata-cell" itemprop="name">
+                                    <a href="{% url 'do_advanced_search' %}?book_id={{ book_id }}&csrfmiddlewaretoken={{ csrf_token }}" target="_blank">{{ formatted_info.Title }}</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Publisher</th>
+                                <td itemprop="publisher">
+                                    {% if formatted_info.Publisher == '' %}UNKNOWN{% else %}{{ formatted_info.Publisher }}{% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Place of Publication</th>
+                                <td itemprop="datePublished">{{ formatted_info.Place_of_Publication }}</td>
+                            </tr>
+                            <tr>
+                                <th>Page</th>
+                                <td>{{ formatted_info.Page }}</td>
+                            </tr>
+                            <tr>
+                                <th>Volume</th>
+                                <td itemprop="volumeNumber">{{ formatted_info.Volume }}</td>
+                            </tr>
+                            <tr>
+                                <th>Shelfmark</th>
+                                <td>{{ formatted_info.Shelfmark }}</td>
+                            </tr>
+                            <tr>
+                                <th>Permanent Link</th>
+                                <td><a href="{{ this_url }}" >{{ this_url }}</a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        {% for linked in linked_images %}
+                            <div class="bs-example table-responsive">
+                                <table class="table table-striped table-hover ">
+                                    <tbody>
+                                    {#                    <tr><th>Name</th><td>{{ linked.name }}</td></tr>#}
+                                    <tr><th>Preliminary Sketch</th><td><a href="{{ linked.link }}" target="_blank">{{ linked.name }}</a></td></tr>
+                                    <tr><th>Info</th><td>{{ linked.info }}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         {% endfor %}
                     </div>
-                </table>
+
+                </div>
             </div>
         </div>
-    </div>
+
+
+
+
+        <div data-toggle="tooltip" data-placement="top"
+             title="Similar Illustration" data-original-title="Similar Images"
+             id="collapse_similars" class="panel-group"
+             data-step="5" data-intro='These are potentially similar Illustration' data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Similar Illustrations
+                </h4>
+            </div>
+            <div id="similars" class="similar-images">
+                <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                    <div class="fa fa-3x fa-spinner fa-spin"></div>
+                </div>
+            </div>
+        </div>
+
+
+        {#    <div data-toggle="tooltip" data-placement="top"#}
+        {#         title="Machine Matched Images" data-original-title="Similar Images"#}
+        {#         id="collapse_machine_matched" class="panel-group"#}
+        {#         data-step="6" data-intro='These are potentially similar images' data-position="right">#}
+        {#        <div class="panel-heading">#}
+        {#            <h4 class="panel-title">#}
+        {#                Machine Matched Illustrations#}
+        {#            </h4>#}
+        {#        </div>#}
+        {#        <div id="machine_matched_images" class="similar-images">#}
+        {#            <div style="margin: 0 auto; text-align: center; margin-top: 20px">#}
+        {#                <div class="fa fa-3x fa-spinner fa-spin"></div>#}
+        {#            </div>#}
+        {#        </div>#}
+        {#    </div>#}
+
+        <div data-toggle="tooltip" data-placement="top"
+             title="Book Illustration" data-original-title="Book Illustrations"
+             id="collapse_book_images" class="panel-group"
+             data-step="6" data-intro='These are Illustration from this book' data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Other Illustrations from this Book
+                </h4>
+            </div>
+            <div id="book_images" class="similar-images">
+                <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                    <div class="fa fa-3x fa-spinner fa-spin"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div data-toggle="tooltip" data-placement="top"
+             title="Tags previously added for this Illustration" data-original-title="Image Tags"
+             id="collapse_cloud" class="panel-group"
+             data-step="2" data-intro="This is the tag cloud for the Illustration.\n Previous Illustration taggers may have added the same tag as you, <br>which helps us raise it's relevance in search results"
+             data-position="right">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Cloud of Tags
+                </h4>
+            </div>
+
+            <div class="panel-body">
+                <div id="tag_cloud" class="container-fluid" style="height: 200px; width:auto">
+                </div>
+            </div>
+        </div>
+
+        {% if image_descriptions|length > 0 %}
+            <div data-toggle="tooltip" data-placement="top"
+                 title="User Generated Descriptions" data-original-title="Descriptions"
+                 id="collapse_descriptions" class="panel-group"
+                 data-step="4" data-intro='These are user generated descriptions for the Illustration' data-position="right">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        User Descriptions ({{ image_descriptions|length }})
+                    </h4>
+                </div>
+
+                <div class="panel-body">
+                    <div class="bs-example table-responsive">
+                        <table class="table table-striped table-hover ">
+                            <div>
+                                {% for desc in image_descriptions %}
+                                    <tr><td>
+                                        <div class="fa fa-quote-left" style="float: left"></div>
+                                        {{ desc }}
+                                        <div class="fa fa-quote-right" style="float: right"></div>
+                                    </td></tr>
+                                {% endfor %}
+                            </div>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
     </div><!--/span-->
 
@@ -1741,30 +1705,6 @@
                 <input type="hidden" name="image_id" value="{{ image_id }}" />
                 <input type="hidden" id = 'tag_info' name="tag_info" value="" />
 
-                <table style="width: 100%">
-                    <tr>
-                        <td style="border-right: 3px solid white">
-                            <div data-toggle="tooltip" data-placement="top"
-                                 title="Previous Question" data-original-title="Previous"
-                                 id="question-accordion-prev" class="btn btn-success" style="width: 100%;">
-                                <div class="fa fa fa-angle-double-left"></div>  Previous Question</div>
-                        </td>
-                        <td>
-                            <div data-toggle="tooltip" data-placement="top"
-                                 title="Next Question" data-original-title="Next"
-                                 id="question-accordion-next" class="btn btn-success" style="width: 100%;">
-                                Next Question  <div class="fa fa fa-angle-double-right"></div></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th colspan="2" style="border-right: 3px solid white; border-bottom: 3px solid white">
-                            <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
-                                 title="Finish Tagging" data-original-title="Finish"
-                                 class="btn btn-success" style="width: 100%;">
-                                Finish Tagging this Illustration  <div class="fa fa fa-check"></div></div>
-                        </th>
-                    </tr>
-                </table>
 
                 {#                <ul class="pager prev_next_pager">#}
                 {#                    <li style="float: right">#}
@@ -1816,7 +1756,7 @@
                             {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
                             <div class="panel-body question-panel">
                                 <h2>2/4</h2>
-                                <h3>Objects and Ideas</h3>
+{#                                <h3>Objects and Ideas</h3>#}
 
                                 <p>Are there any other things or ideas in this illustration?</p>
                                 <p>For example:  "bird", "table", "winter", "love"</p>
@@ -1825,8 +1765,7 @@
 
                                 <div class="ui-widget">
                                     <label class="'control-label" for="dictionary">Tags: </label>
-                                    <input
-                                            class="'form-control" id="dictionary">
+                                    <input class="'form-control" id="dictionary">
                                 </div>
                             </div>
                         </div>
@@ -1839,9 +1778,9 @@
                             <div class="panel-body question-panel">
                                 <h2>3/4</h2>
                                 <h3>Caption</h3>
-                                <h4>If the Illustration has a caption, please transcribe it below:’</h4>
+                                <h4>If the illustration has a caption (a title below the image), please transcribe it</h4>
                                 <div id="free_text_caption" >
-                                    <label class="control-label" for="input_caption">Caption</label>
+                                    <label class="control-label" for="input_caption"></label>
                                     <textarea class="form-control" rows="2" id="input_caption" name="input_caption"></textarea>
                                 </div>
                             </div>
@@ -1854,12 +1793,12 @@
                         <div id="collapseFive">
                             <div class="panel-body question-panel">
                                 <h2>4/4</h2>
-                                <h3>Description</h3>
-                                <h4>‘If there is anything else you would like to tell us about this illustration,
+                                <h3>Additional Information</h3>
+                                <h4>If there is anything else you would like to tell us about this illustration,
                                     please enter it below:</h4>
 
                                 <div id="free_text_description" class="row-fluid">
-                                    <label class="'control-label" for="free-text-area">Description</label>
+                                    <label class="'control-label" for="free-text-area"></label>
                                     <textarea name="image_description" class="form-control"
                                               rows="3" id="free-text-area"></textarea>
                                 </div>
@@ -1870,13 +1809,38 @@
                     </div>
                 </div>
 
-                <div class="navbar-right">
-                    <a href="{% url 'image.random' %}">
-                        <div id="load_new_image" class="btn btn-success">
-                            Skip this Illustration
-                        </div>
-                    </a>
-                </div>
+                <table style="width: 100%">
+                    <tr>
+                        <td id="question_prev_cell" style="border-right: 3px solid white">
+                            <div data-toggle="tooltip" data-placement="top"
+                                 title="Previous Question" data-original-title="Previous"
+                                 id="question-accordion-prev" class="btn btn-success" style="width: 100%;">
+                                <div class="fa fa fa-angle-double-left"></div>  Previous Question</div>
+                        </td>
+                        <td id="question_next_cell">
+                            <div data-toggle="tooltip" data-placement="top"
+                                 title="Next Question" data-original-title="Next"
+                                 id="question-accordion-next" class="btn btn-success" style="width: 100%;">
+                                Next Question  <div class="fa fa fa-angle-double-right"></div></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" style="border-right: 3px solid white; border-bottom: 3px solid white">
+                            <div id="tagging-submit-btn" data-toggle="tooltip" data-placement="top"
+                                 title="Finish Tagging" data-original-title="Finish"
+                                 class="btn btn-success" style="width: 100%;">
+                                Finish Tagging this Illustration  <div class="fa fa fa-check"></div></div>
+                        </th>
+                    </tr>
+                </table>
+
+                {#                <div class="navbar-right">#}
+                {#                    <a href="{% url 'image.random' %}">#}
+                {#                        <div id="load_new_image" class="btn btn-success">#}
+                {#                            Skip this Illustration#}
+                {#                        </div>#}
+                {#                    </a>#}
+                {#                </div>#}
 
             </form>
         </div>
@@ -1993,5 +1957,9 @@
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
     </div>
+
+    {#        <div id="drag_image_box" class="drag_image_box" style="">#}
+    {#            <img id="drag_image" class="drag_image" style="" src="{{ image.imageurl }}">#}
+    {#        </div>#}
 
 {% endblock %}

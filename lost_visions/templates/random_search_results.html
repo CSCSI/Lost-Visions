@@ -359,7 +359,7 @@
         <form>
             <fieldset>
                 <select id="user_collection_select">
-                    {% for option in user_collections %}
+                    {% for option in user_collections|dictsort:'name' %}
                         <option id="{{ option.id }}" value="{{ option.name }}">
                             {{ option.name }}
                         </option>

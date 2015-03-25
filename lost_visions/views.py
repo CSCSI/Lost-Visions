@@ -357,6 +357,8 @@ def image(request, image_id):
     for c in collection_models:
         users_collections.add(str(c.name))
     users_collections.add('NEW COLLECTION')
+    users_collections = list(users_collections)
+    users_collections = sorted(users_collections, key=str.lower)
 
     y = 51.49006473014369
     x = -3.1805146484375
@@ -375,7 +377,7 @@ def image(request, image_id):
                    'image_id': image_id,
                    'image_tags': json.dumps(list(tags_for_image)),
                    # 'category_data': category_data,
-                   'user_collections': list(users_collections),
+                   'user_collections': users_collections,
                    'linked_images': linked_image_data,
                    'image_descriptions': image_descs,
 
