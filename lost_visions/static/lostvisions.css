@@ -1042,31 +1042,31 @@ a:hover#save_image.btn.btn-default.save_image  {
     border-color: #A365BA;
 }
 
-.drag_image_box {
-    position: relative;
-    display: -moz-inline-stack;
-    display: inline-block;
-    vertical-align: top;
-    zoom: 1;
-    *display: inline;
+/*.drag_image_box {*/
+    /*position: relative;*/
+    /*display: -moz-inline-stack;*/
+    /*display: inline-block;*/
+    /*vertical-align: top;*/
+    /*zoom: 1;*/
+    /**display: inline;*/
 
-    cursor: hand;
-    cursor: pointer;
-}
+    /*cursor: hand;*/
+    /*cursor: pointer;*/
+/*}*/
 
-.drag_image {
-        width: 100px;
-    border: 2px orange double;
-}
+/*.drag_image {*/
+        /*width: 100px;*/
+    /*border: 2px orange double;*/
+/*}*/
 
-.ui-resizable-handle {
-        background: #f5dc58;
+/*.ui-resizable-handle {*/
+        /*background: #f5dc58;*/
     /*border: 1px solid #FFF;*/
-    width: 19px;
-    height: 19px;
+    /*width: 19px;*/
+    /*height: 19px;*/
 
-    z-index: 2;
-}
+    /*z-index: 2;*/
+/*}*/
 
 /*##################################################*/
 

@@ -516,7 +516,8 @@ def list_wordnet_links(tag_synset_id):
 useless_words = ['artifact', 'being', 'abstraction', 'state',
                  'part', 'thing', 'entity', 'event', 'device', 'stuff',
                  'physical entity', 'physical object', 'object', 'creation', 'homo',
-                 'representational process', 'percept', 'organism', 'representation']
+                 'representational process', 'percept', 'organism', 'representation',
+                 'picture', 'image']
 
 
 def get_hypernyms(synset, synset_list, loop=0):

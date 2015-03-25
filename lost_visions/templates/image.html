@@ -253,7 +253,7 @@
                 modal: true,
                 buttons: {
                     "Save, stay on this Illustration": function() {
-                        $('#stay_or_next_image').value = 'stay';
+                        $('#stay_or_next_image').val('stay');
 
                         finish_tagging_dialog_form.dialog( "close" );
 
@@ -878,6 +878,12 @@
                     image_id: {{ image_id }}
                 },
                 success: function(data) {
+
+                    if (data['root']) {
+                        $('#question_header').show();
+                    } else {
+                        $('#question_header').hide();
+                    }
 
                     {#                    Clear the category container, ready to put new category buttons in #}
                     var category_container = $('#category-container');
@@ -1733,7 +1739,7 @@
                             <div id="collapseOne">
                                 <div class="panel-body question-panel">
                                     <h2>1/4</h2>
-                                    <h3>Types of Illustration</h3>
+                                    <h3 id="question_header">Types of Illustration</h3>
                                     {#                                        <p>Is the illustration:</p>#}
                                     <div id="category-question">{{ category_data.question }}</div>
                                     <div id="add_category_body"></div>
@@ -1756,7 +1762,7 @@
                             {#                                     title="Type a word which describes this image" data-original-title="Tag Box">#}
                             <div class="panel-body question-panel">
                                 <h2>2/4</h2>
-{#                                <h3>Objects and Ideas</h3>#}
+                                {#                                <h3>Objects and Ideas</h3>#}
 
                                 <p>Are there any other things or ideas in this illustration?</p>
                                 <p>For example:  "bird", "table", "winter", "love"</p>

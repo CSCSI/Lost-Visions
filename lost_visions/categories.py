@@ -114,13 +114,13 @@ class CategoryManager():
         self.actions['map'] = Action('map', link=link, type='map')
         self.actions['gazetteer'] = Action('gazetteer', link=link)
         self.actions['person_name_entry'] = Action('person_name_entry',
-                                                   question='Can you name the person?',
+                                                   question='If you can, please name the person',
                                                    type='text_entry')
         self.actions['product_name_entry'] = Action('product_name_entry',
-                                                    question='Can you name the product?',
+                                                    question='If you can, please name the product being advertised',
                                                     type='text_entry')
         self.actions['building_name_entry'] = Action('building_name_entry',
-                                                     question='Can you name the building?',
+                                                     question='If you can, please name the building or type of building',
                                                      type='text_entry')
 
 
@@ -137,17 +137,17 @@ class CategoryManager():
         self.categories[100] = Category('100', 'advert', '', ADVERT_BUTTON_IMAGE_URL) \
             .set_question('Is there a product/brand name?') \
             .set_answers([101, 102]).set_synset('advert.n.1')
-        self.categories[101] = Category('101', 'yes', 'Yes', YES_BUTTON_URL) \
+        self.categories[101] = Category('101', 'yes', '', YES_BUTTON_URL) \
             .set_save(False).set_action('product_name_entry')
-        self.categories[102] = Category('102', 'no', 'No', NO_BUTTON_URL).set_save(False)
+        self.categories[102] = Category('102', 'no', '', NO_BUTTON_URL).set_save(False)
 
         self.categories[200] = Category('200', 'building', '', BUILDING_BUTTON_IMAGE_URL)\
             .set_answers([203, 204]).set_synset('building.n.1')
         # self.categories[201] = Category('201', 'interior', 'Interior?', ICON_URL + 'interior.jpg')
         # self.categories[202] = Category('202', 'exterior', 'Exterior?', ICON_URL + 'exterior.jpg')
-        self.categories[203] = Category('203', 'save', "Save", YES_BUTTON_URL) \
+        self.categories[203] = Category('203', 'save', "", YES_BUTTON_URL) \
             .set_save(False).set_action('building_name_entry')
-        self.categories[204] = Category('204', 'dont_know', "Don't know", NO_BUTTON_URL).set_save(False)
+        self.categories[204] = Category('204', 'dont_know', "", NO_BUTTON_URL).set_save(False)
 
         # self.categories[300] = Category('300', 'people', 'People?', ICON_URL + 'people.jpg') \
         #     .set_question('Is this image of an ...').set_answers([301, 302, 303])
@@ -214,7 +214,7 @@ class CategoryManager():
         # self.categories[900] = Category('900', 'music', 'Musical Score?', ICON_URL + 'music.jpg')
 
         self.categories[600] = Category('600', 'map', '', MAP_BUTTON_IMAGE_URL).set_synset('map.n.1') \
-            .set_question('Can you describe the mapped location..')\
+            .set_question('If you can, please name the mapped location')\
             .set_answers([1001, 1002, 1004]).set_synset('map.n.1')
 
         self.categories[1000] = Category('1000', 'location', '', LOCATION_BUTTON_IMAGE_URL) \
@@ -227,8 +227,8 @@ class CategoryManager():
             .set_action('gazetteer').set_save(False).set_answers([1003, 1004])
         self.categories[1002] = Category('1002', 'Map', 'On a map?', ON_A_MAP_BUTTON_URL)\
             .set_save(False).set_action('map').set_answers([1004])
-        self.categories[1003] = Category('1003', 'save', 'Save', ICON_URL + 'tick.png').set_save(False)
-        self.categories[1004] = Category('1004', 'back', 'Back', NO_BUTTON_URL).set_save(False)
+        self.categories[1003] = Category('1003', 'save', '', ICON_URL + 'tick.png').set_save(False)
+        self.categories[1004] = Category('1004', 'back', '', NO_BUTTON_URL).set_save(False)
 
         self.categories[1100] = Category('1100', 'literature', '', LITERATURE_BUTTON_IMAGE_URL) \
             .set_save(False).set_synset('illustration.n.1')\
@@ -251,13 +251,15 @@ class CategoryManager():
             pass
 
     def get_category_data(self, cat_id):
+        root = False
 
         # If the category doesn't have any children return children for root
         parent_category = self.categories.get(int(cat_id))
         answer_categories = []
         actions = []
-        if parent_category is None or len(parent_category.answer_ids) == 0:
+        if parent_category is None or len(parent_category.answer_ids) == 0 or int(cat_id) == 0:
             parent_category = self.categories.get(0)
+            root = True
 
         # build child categories and actions for the parent category
         for child_id in parent_category.answer_ids:
@@ -292,4 +294,4 @@ class CategoryManager():
                 pass
         # We return the question from the parent category
         # if click Person, and get asked "name the person"
-        return {'question': parent_category.question, 'answers': answer_categories, 'actions': actions}
+        return {'question': parent_category.question, 'answers': answer_categories, 'actions': actions, 'root': root}
