@@ -51,6 +51,11 @@ NOVEL_BUTTON_URL = MIKEY_URL + "a novel.jpg"
 PLAY_BUTTON_URL = MIKEY_URL + "A play.jpg"
 POEM_BUTTON_URL = MIKEY_URL + "poem1.jpg"
 
+BACK_BUTTON_URL = MIKEY_URL + "back.jpg"
+COAT_OF_ARMS_BUTTON_URL = MIKEY_URL + "coatofarms.jpg"
+DECORATIVE_BORDER_BUTTON_URL = MIKEY_URL + "decorative border.jpg"
+DECORATIVE_MOTIF_BUTTON_URL = MIKEY_URL + "decorativeletter.jpg"
+DECORATIVE_LETTER_BUTTON_URL = MIKEY_URL + "decorativemotif.jpg"
 
 class Category():
     def __init__(self, category_id, name, text, img):
@@ -172,14 +177,14 @@ class CategoryManager():
 
         self.categories[400] = Category('400', 'decoration', '', DECORATION_BUTTON_IMAGE_URL) \
             .set_question('Is the decoration a ...').set_answers([401, 403, 404, 405, 406]).set_synset('decoration.n.1')
-        self.categories[401] = Category('401', 'border', 'Decorative Border?', ICON_URL + 'border.jpg')\
+        self.categories[401] = Category('401', 'border', '', DECORATIVE_BORDER_BUTTON_URL)\
             .set_synset('border.n.5')
         # self.categories[402] = Category('402', 'emblem', 'Emblem?', ICON_URL + 'lv-rect-station.png')
-        self.categories[403] = Category('403', 'motif', 'Decorative Motif?', ICON_URL + 'motif.jpg')\
+        self.categories[403] = Category('403', 'motif', '', DECORATIVE_MOTIF_BUTTON_URL)\
             .set_synset('motif.n.1')
-        self.categories[404] = Category('404', 'coat_of_arms', 'Coat of Arms?', ICON_URL + 'coat_of_arms.jpg')\
+        self.categories[404] = Category('404', 'coat_of_arms', '', COAT_OF_ARMS_BUTTON_URL)\
             .set_synset('coat of arms.n.1')
-        self.categories[405] = Category('405', 'decorative letter', 'Decorative Letter?', ICON_URL + 'letter.jpg')
+        self.categories[405] = Category('405', 'decorative letter', '', DECORATIVE_LETTER_BUTTON_URL)
         self.categories[406] = Category('406', 'no', '', NONE_OF_THESE_BUTTON_URL).set_save(False)
 
         self.categories[500] = Category('500', 'title_page', '', TITLE_PAGE_BUTTON_IMAGE_URL).set_synset('title page.n.1')
@@ -228,7 +233,7 @@ class CategoryManager():
         self.categories[1002] = Category('1002', 'Map', 'On a map?', ON_A_MAP_BUTTON_URL)\
             .set_save(False).set_action('map').set_answers([1004])
         self.categories[1003] = Category('1003', 'save', '', ICON_URL + 'tick.png').set_save(False)
-        self.categories[1004] = Category('1004', 'back', '', NO_BUTTON_URL).set_save(False)
+        self.categories[1004] = Category('1004', 'back', '', BACK_BUTTON_URL).set_save(False)
 
         self.categories[1100] = Category('1100', 'literature', '', LITERATURE_BUTTON_IMAGE_URL) \
             .set_save(False).set_synset('illustration.n.1')\

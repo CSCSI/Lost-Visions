@@ -301,12 +301,12 @@ class APIkey(models.Model):
     user = models.ForeignKey(LostVisionUser, blank=True)
     enabled = models.BooleanField(default=True)
 
-#
-# class ImageRotation(models.Model):
-#     timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
-#     image = models.ForeignKey(Image, blank=False)
-#     rotation = models.IntegerField(default=0, blank=True)
-#     user = models.ForeignKey(LostVisionUser, blank=False)
+
+class ImageRotation(models.Model):
+    timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
+    image = models.ForeignKey(Image, blank=False)
+    rotation = models.IntegerField(default=0, blank=True)
+    user = models.ForeignKey(LostVisionUser, blank=False)
 
 
 # watson.register(Image)

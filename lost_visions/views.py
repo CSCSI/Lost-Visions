@@ -208,6 +208,18 @@ def image_tags(request):
                     except Exception as e43533:
                         print 'ahhhh'
                         print e43533
+            try:
+                rotate_degs = int(clean(request.POST.get('save_deg_value', 0)))
+                previous_rotation_count = models.ImageRotation.objects.filter(image=image_model).count()
+
+                if rotate_degs is not 0 or previous_rotation_count > 0:
+                    rotate_model = models.ImageRotation()
+                    rotate_model.rotation = int(rotate_degs)
+                    rotate_model.image = image_model
+                    rotate_model.user = request_user
+                    rotate_model.save()
+            except Exception as e329781:
+                print e329781
 
             image_model.views_completed += 1
             image_model.save()
@@ -220,8 +232,8 @@ def image_tags(request):
     if next_action == 'next_image':
         return random_image(request)
     else:
-        return image(request, image_id)
-
+        # return image(request, image_id)
+        return redirect('image', image_id=image_id)
 
 def get_request_user(request):
     try:
@@ -243,10 +255,10 @@ def is_number(string):
 
 
 def random_image(request):
-    image_id = get_next_image_id()
-    # todo redirect
-    return redirect('image', image_id=image_id)
-    # return image(request, image_id)
+    # image_id = get_next_image_id()
+    # return redirect('image', image_id=image_id)
+    # print pprint.pformat(request.POST)
+    return redirect('image/random')
 
 
 def is_user_tag(tag):
@@ -271,7 +283,7 @@ def image(request, image_id):
 
     image_info = get_image_data_from_array([image_id], request)[image_id]
 
-    print pprint.pformat(image_info)
+    # print pprint.pformat(image_info)
 
     # image_models = get_image_data_with_location([image_id])
     # try:
@@ -367,6 +379,14 @@ def image(request, image_id):
     ney = 52.49006473014369
     nex = -2.1805146484375
 
+    image_model = models.Image.objects.get(flickr_id=image_id)
+    rotate_models = models.ImageRotation.objects.filter(image=image_model).order_by('timestamp')
+
+    rotation = 0
+    if rotate_models.count():
+        rotation = int(rotate_models.reverse()[0].rotation)
+
+
     image_info['imageurl'] = image_info.get('img', '')
     return render(request, 'image.html',
                   {'image': image_info,
@@ -380,6 +400,7 @@ def image(request, image_id):
                    'user_collections': users_collections,
                    'linked_images': linked_image_data,
                    'image_descriptions': image_descs,
+                   'rotation': rotation,
 
                    'x': x,
                    'y': y,
@@ -1537,8 +1558,23 @@ def download_collection(request):
         # Add file, at correct path
         zf.write(fpath, zip_path)
 
+        image_info = get_image_data_dict(image_id)
+
         json_path = os.path.join(zip_subdir, str(image_id) + '.json')
-        zf.writestr(json_path, json.dumps(get_image_data_dict(image_id), indent=4))
+        zf.writestr(json_path, json.dumps(image_info, indent=4))
+
+        chicago_path = os.path.join(zip_subdir, str(image_id) + '-chicago-formatted.txt')
+
+        formatted_data = 'Illustration. '
+        bl_data = image_info['bl_flickr_data']['fields']
+
+        formatted_data += str(bl_data['flickr_original_height']) + ' ' + str(bl_data['flickr_original_height']) + ' px. '
+
+        formatted_data += 'From ' + str(bl_data['title']) + ' ' + str(bl_data['first_author']) + '. '
+
+
+        zf.writestr(chicago_path, formatted_data)
+
 
     # Must close zip for all contents to be written
     zf.close()

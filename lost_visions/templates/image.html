@@ -1327,6 +1327,8 @@
 
             degs = degs%360;
 
+            $('#save_deg_value').val(degs);
+
             console.log(getRotatedSize(degs, photo.width(), photo.height()));
 
             var offset_top = photo.offset().top;
@@ -1374,6 +1376,14 @@
         });
         $('.side-menu-content-wide').hide();
         $( "#dictionary").focus();
+
+        setTimeout(function(){
+            var saved_degs = {{ rotation }};
+            var photo = $("#photo");
+            {#        var photo_zoom = $("#zoom-photo");#}
+            photo.rotate( {animateTo: saved_degs}, 'abs' );
+            {#        photo_zoom.rotate( {animateTo: saved_degs}, 'abs' );#}
+        }, 2000);
 
     });
 
@@ -1707,6 +1717,8 @@
 
             <form action="{% url 'image.tags' %}" id="image-taggin-form" method="post">{% csrf_token %}
                 {{ tag_form.non_field_errors }}
+
+                <input type="hidden" id='save_deg_value' name="save_deg_value" value="" />
                 <input type="hidden" id="stay_or_next_image" name="stay_or_next_image" value="next_image" />
                 <input type="hidden" name="image_id" value="{{ image_id }}" />
                 <input type="hidden" id = 'tag_info' name="tag_info" value="" />
