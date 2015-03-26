@@ -1566,7 +1566,7 @@ def download_collection(request):
         chicago_path = os.path.join(zip_subdir, str(image_id) + '-chicago-formatted.txt')
 
         formatted_data = 'Illustration. '
-        bl_data = image_info['bl_flickr_data']['fields']
+        bl_data = image_info['bl_flickr_data'][0]['fields']
 
         formatted_data += str(bl_data['flickr_original_height']) + ' ' + str(bl_data['flickr_original_height']) + ' px. '
 
