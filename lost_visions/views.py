@@ -255,10 +255,10 @@ def is_number(string):
 
 
 def random_image(request):
-    # image_id = get_next_image_id()
-    # return redirect('image', image_id=image_id)
+    image_id = get_next_image_id()
+    return redirect('image', image_id=image_id)
     # print pprint.pformat(request.POST)
-    return redirect('image/random')
+    # return redirect('image.random')
 
 
 def is_user_tag(tag):
