@@ -1,0 +1,41 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+    <script>
+        $(document).ready(function () {
+            $('.base-container').css({'background-color': 'lightskyblue'});
+
+            var footer_height = $('.sticky-footer').height();
+
+            $('.twitter-timeline').css({'height': $(window).height() - footer_height, 'width': $(window).width()});
+        });
+    </script>
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="{{ tweet_site }}">
+    <meta name="twitter:creator" content="{{ tweet_user }}">
+    <meta name="twitter:title" content="{{ tweet_title }}">
+    <meta name="twitter:description"
+          content="{{ tweet_text }}">
+    <meta name="twitter:image:src"
+          content="{{ tweet_image }}">
+
+    <div style="width: 100%;">
+    <table class="twitter-timeline" style="width: 100%">
+    <tr>
+        <td>
+            <a class="twitter-timeline" href="https://twitter.com/Lost_Visions" data-widget-id="466555873133744128">Tweets by @Lost_Visions</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </td>
+        <td>
+{#            <a class="twitter-timeline" href="https://twitter.com/hashtag/lost_visions" data-widget-id="580758835687788545">#lost_visions Tweets</a>#}
+{#            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>#}
+<a class="twitter-timeline" data-dnt="true" href="https://twitter.com/hashtag/illustrationarchive" data-widget-id="580761732018229250">#illustrationarchive Tweets</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </td>
+    </tr>
+    </table>
+</div>
+{% endblock %}
