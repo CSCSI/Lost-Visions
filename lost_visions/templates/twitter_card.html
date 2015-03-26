@@ -7,7 +7,7 @@
         $(document).ready(function () {
             $('.base-container').css({'background-color': 'lightskyblue'});
 
-            var footer_height = $('.footer-links').height();
+            var footer_height = $('.footer-links').height() + $('#navbar_lv_header').height();
 
             $('.twitter-timeline').css({'height': $(window).height() - footer_height, 'width': $(window).width()});
 
