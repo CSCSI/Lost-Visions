@@ -135,46 +135,49 @@
                                 '</div>';
                         {#                            console.log(elem_text);#}
                         var jq_elem = $($.parseHTML(elem_text));
+                        {% if mode == 'logged_in_not_owner' %}
 
-                        {#                        var $save_button = $('<div id="hide-button-' + image_id + '" ' +#}
-                        {#                                'class="btn btn-default btn-xs save_image_float_button" ' +#}
-                        {#                                ">" +#}
-                        {#                                "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}' style='max-height: 27px'>" +#}
-                        {#                                "</div>").click(function(){#}
-                        {##}
-                        {#                            var btn_parent_image_id = $(this).parent().data('id');#}
-                        {##}
-                        {#                            $('#save_image_dialog_form').data('image_id', btn_parent_image_id).dialog("open");#}
-                        {##}
-                        {#                        });#}
-                        {##}
-                        {#                        var $remove_button = $("<div id='hide-button-" + image_id + "' " +#}
-                        {#                                "class='btn btn-primary btn-xs remove_button' " +#}
-                        {#                                ">Hide</div>").click(function(){#}
-                        {##}
-                        {#                            var image_cell = $(this).parent();#}
-                        {#                            image_cell.hide('scale',{ percent: 0 }, 1000, removeImageCell(image_cell));#}
-                        {#                        });#}
-                        {##}
-                        {#                        function removeImageCell(image_cell){#}
-                        {#                            image_cell.remove();#}
-                        {#                            $('#grid-result-container').masonry();#}
-                        {#                        }#}
-                        {##}
-                        {#                        jq_elem.append($remove_button);#}
-                        {#                        {% if user.is_authenticated %}#}
-                        {#                            jq_elem.append($save_button);#}
-                        {#                        {% endif %}#}
-                        {##}
-                        {#                        $remove_button.hide();#}
-                        {#                        $save_button.hide();#}
-                        {##}
-                        {#                        jq_elem.hover(function(){#}
-                        {#                            $(this).find('[id^=hide-button]').show();#}
-                        {#                        }, function(){#}
-                        {#                            $(this).find('[id^=hide-button]').hide();#}
-                        {#                        });#}
-                        {#                        var elem = jq_elem.append($remove_button).get(0);#}
+                            var $save_button = $('<div id="hide-button-' + image_id + '" ' +
+                                    'class="btn btn-default btn-xs save_image_float_button" ' +
+                                    ">" +
+                                    "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}' style='max-height: 27px'>" +
+                                    "</div>").click(function(){
+
+                                var btn_parent_image_id = $(this).parent().data('id');
+
+                                $('#save_image_dialog_form').data('image_id', btn_parent_image_id).dialog("open");
+
+                            });
+
+                            var $remove_button = $("<div id='hide-button-" + image_id + "' " +
+                                    "class='btn btn-primary btn-xs remove_button' " +
+                                    ">Hide</div>").click(function(){
+
+                                var image_cell = $(this).parent();
+                                image_cell.hide('scale',{ percent: 0 }, 1000, removeImageCell(image_cell));
+                            });
+
+                            function removeImageCell(image_cell){
+                                image_cell.remove();
+                                $('#grid-result-container').masonry();
+                            }
+
+                            jq_elem.append($remove_button);
+                            jq_elem.append($save_button);
+
+                            $remove_button.hide();
+                            $save_button.hide();
+
+                            jq_elem.hover(function(){
+                                $(this).find('[id^=hide-button]').show();
+                            }, function(){
+                                $(this).find('[id^=hide-button]').hide();
+                            });
+                            var elem = jq_elem.append($remove_button).get(0);
+
+                        {% endif %}
+
+
                         var elem = jq_elem.get(0);
 
                         elems.push( elem );
@@ -329,6 +332,26 @@
         $('#grid-result-container').ready(function(){
             set_sizes();
         });
+
+        function saveImageToCollection(collection_name, image_id) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'user_profile.new_collection' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    collection_name: collection_name,
+                    image_id: image_id
+                },
+                success: function(data) {
+                    var ok = data['success'];
+                    alert("Added Image to Favourites : " + collection_name);
+
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
 
         var save_image_dialog_form = $( "#save_image_dialog_form" ).dialog({
             autoOpen: false,
@@ -576,7 +599,7 @@
     </script>
     <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
 
-{#    {{ mode }}#}
+    {#    {{ mode }}#}
 
     <h1 style="text-align: center">{{ collection_name }}</h1>
     <h3 style="text-align: center">Collection created by {{ collection_creator }}</h3>

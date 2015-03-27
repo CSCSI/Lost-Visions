@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+
+    <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+        var tries = 0;
+
+        function check_ready(){
+            $.ajax({
+                type: "GET",
+                url: "{% url 'zip_available' collection_id %}",
+                data: {},
+                success: function(data) {
+
+                    var ready_div = $('#ready');
+                    var triesdiv = $('#countdown');
+
+                    var ok = data['success'];
+                    {#                    alert("Saved success : " + ok);#}
+
+                    if (ok == true){
+                        var ready_ok = '<div><a href="' + data['url'] + '">Click here</div>'
+
+                        ready_div.html(ready_ok);
+                    } else if (ok == 'error') {
+                        var ready_fail = data['error'];
+                         ready_div.html(ready_fail);
+                    } else {
+                        tries += 1;
+                        triesdiv.html('<div>' + tries + '</div>');
+                    }
+
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            setInterval(check_ready(), 10000);
+
+        });
+
+    </script>
+
+    <p>Download will be ready shortly</p>
+
+    <div id="countdown"></div>
+
+    <div id="ready"><div class="fa fa-3x fa-spinner fa-spin"></div>
+    </div>
+
+{% endblock %}

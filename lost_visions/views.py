@@ -25,6 +25,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.templatetags.static import static
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import requires_csrf_token, csrf_exempt
 import itertools
@@ -2570,15 +2571,23 @@ def view_collection(request, collection_id, page):
         if collection_model.user == get_request_user(request):
             mode = 'owner'
         else:
-            mode = 'logged in, not owner'
+            mode = 'logged_in_not_owner'
 
     response_data = {'results': results,
                      'pages': range(1, total_number_of_pages +1),
                      'this_page': page,
                      'size': mapped_images_full_count}
 
+    user_collections = []
+    if request.user.is_authenticated():
+        collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
+        for model in collection_models:
+            user_collections.append({'name': model.name,
+                                     'id': str(model.id)})
+
     return render(request, 'view_collection.html',
                   {'results': response_data,
+                   'user_collections': user_collections,
                    'mode': mode,
                    'query_array': request.GET,
                    'all_image_ids': all_image_ids,
@@ -2588,3 +2597,20 @@ def view_collection(request, collection_id, page):
                    'collection_creator': str(collection_model.user.username.username)},
                   context_instance=RequestContext(request))
 
+
+def download_collection_ready(request):
+
+    collection_id = 1
+
+    return render(request, 'download_collection_ready.html',
+                  {'collection_id': collection_id},
+                  context_instance=RequestContext(request))
+
+
+def zip_available(request, collection_id):
+
+    url = '/file/file.txt'
+
+    return HttpResponse(json.dumps({'success': False,
+                                   'url': static(url)
+                                   }, indent=4), content_type="application/json")
