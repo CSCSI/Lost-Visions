@@ -135,7 +135,7 @@
                                 '</div>';
                         {#                            console.log(elem_text);#}
                         var jq_elem = $($.parseHTML(elem_text));
-                        {% if mode == 'logged_in_not_owner' %}
+                        {% if mode == 'logged_in_not_owner' or mode == 'owner' %}
 
                             var $save_button = $('<div id="hide-button-' + image_id + '" ' +
                                     'class="btn btn-default btn-xs save_image_float_button">' +
@@ -150,7 +150,7 @@
                             });
 
                             var $remove_button = $("<div id='hide-button-" + image_id + "' " +
-                                    "class='btn btn-primary btn-xs remove_button' " +
+                                    "class='btn btn-primary btn-xs hide_button' " +
                                     ">Hide</div>").click(function(){
 
                                 var image_cell = $(this).parent();

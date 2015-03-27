@@ -267,14 +267,6 @@
                             </div>
                             <div class="col-md-6">
 
-                                <div class="ui-widget" data-toggle="tooltip" data-placement="left"
-                                     title="Limit search to Tags, without Title, Author etc"
-                                     data-original-title="Tags only">
-                                    <label class="'control-label" for="tag_keywords_only">Only search tags: </label>
-                                    <input type="checkbox" class="'form-control"
-                                           id="tag_keywords_only" name="tag_keywords_only">
-                                </div>
-
                                 <div class="ui-widget">
                                     <label class="'control-label" for="date_from">Date From: </label>
                                     <select disabled class="'form-control" id="date_from" name="date_from"></select>
@@ -295,18 +287,24 @@
                                 {#                                    <input class="'form-control" id="num_results" name="num_results" value="50">#}
                                 {#                                </div>#}
 
-                                <div class="ui-widget" style="text-align-last: right">
-                                    <label class="'control-label" for="alternative_search">Alternative Search: </label>
-                                    <input checked type="checkbox" class="'form-control" id="alternative_search" name="alternative_search">
-                                </div>
+                                {#                                TODO FINDME alternative search switch#}
+                                {#                                <div class="ui-widget" style="text-align-last: right">#}
+                                {#                                    <label class="'control-label" for="alternative_search">Alternative Search: </label>#}
+                                {#                                    <input checked type="checkbox" class="'form-control" id="alternative_search" name="alternative_search">#}
+                                {#                                </div>#}
 
 
                                 {#                                <div class="ui-widget" style="text-align-last: right">#}
                                 {#                                    <button style="float: right" type="submit" class="btn btn-success btn-sm adv_search_btn">Search</button>#}
                                 {#                                </div>#}
 
-
-
+                                <div class="ui-widget" data-toggle="tooltip" data-placement="left"
+                                     title="Limit search to Tags, without Title, Author etc"
+                                     data-original-title="Tags only">
+                                    <label class="'control-label" for="tag_keywords_only">Only search tags: </label>
+                                    <input type="checkbox" class="'form-control"
+                                           id="tag_keywords_only" name="tag_keywords_only">
+                                </div>
                             </div>
                             <div>
                                 <div class="col-md-6"></div>

@@ -238,6 +238,21 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     margin-top: 30px;
 }
 
+/*education*/
+
+#education {
+    font-family: 'Baskerville Old Face', serif;
+    font-size: 16px;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto
+}
+
+#education > p > span{
+    font-family: 'Baskerville Old Face', serif;
+    font-size: x-large;
+}
+
 /*home page*/
 .base-container {
     padding-top: 38px;
@@ -591,15 +606,21 @@ a:hover#save_image.btn.btn-default.save_image  {
     border: outset 4px;
 }
 
-.remove_button {
+.hide_button {
     position: absolute;
     right:7px;
     top:0px
 }
 
+.remove_button {
+    position: absolute;
+    left:7px;
+    top:0px
+}
+
 .set_caption_button {
     position: absolute;
-    right:7px;
+    left:7px;
     top:2em;
 }
 
