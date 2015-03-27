@@ -138,9 +138,9 @@
                         {% if mode == 'logged_in_not_owner' %}
 
                             var $save_button = $('<div id="hide-button-' + image_id + '" ' +
-                                    'class="btn btn-default btn-xs save_image_float_button" ' +
-                                    ">" +
-                                    "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}' style='max-height: 27px'>" +
+                                    'class="btn btn-default btn-xs save_image_float_button">' +
+                                    {#                                    "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}' style='max-height: 27px'>" +#}
+                                    "<div class='fa fa-2x fa-heart'>" +
                                     "</div>").click(function(){
 
                                 var btn_parent_image_id = $(this).parent().data('id');
@@ -367,9 +367,17 @@
 
                     console.log(image_id + ' ' + collection_id);
 
-                    saveImageToCollection(collection_id, image_id);
+                    if (collection_id == "NEW COLLECTION"){
+                        save_image_dialog_form.dialog("close");
+                        add_collection_dialog.data('image_id', image_id).dialog("open");
 
-                    save_image_dialog_form.dialog( "close" );
+                    } else {
+                        saveImageToCollection(collection_id, image_id);
+                        save_image_dialog_form.dialog( "close" );
+                    }
+
+                    {#                    saveImageToCollection(collection_id, image_id);#}
+
                 },
                 Cancel: function() {
                     save_image_dialog_form.dialog( "close" );
@@ -390,7 +398,31 @@
 
         {#        search_ids([])#}
 
+        function addCollection(image_id){
+            var collection_name = $( "#collection_name").val();
+            saveImageToCollection(collection_name, image_id);
+            add_collection_dialog.dialog( "close" );
+        }
 
+        var add_collection_dialog = $( "#dialog-form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Create a collection": function() {
+                    var image_id_to_add = $(this).data('image_id');
+                    addCollection(image_id_to_add);
+                },
+                Cancel: function() {
+                    add_collection_dialog.dialog( "close" );
+                }
+            },
+            close: function() {
+                {#                form[ 0 ].reset();#}
+                {#                allFields.removeClass( "ui-state-error" );#}
+            }
+        });
 
 
         $("img").one("load", function() {
@@ -731,5 +763,19 @@
         Share this URL : <br>
         <a id="share_collection_ref" href="{% url 'dl_collection' %}">http://lost-visions.cf.ac.uk{% url 'dl_collection' %}</a>
         <br><br>
+    </div>
+
+    <div id="dialog-form" title="Create new collection">
+        <p class="validateTips">Enter name of new Illustration collection</p>
+
+        <form>
+            <fieldset>
+                <label for="collection_name">Name</label>
+                <input type="text" name="collection_name" id="collection_name" value="" class="text ui-widget-content ui-corner-all">
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
     </div>
 {% endblock %}

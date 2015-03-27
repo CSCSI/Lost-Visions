@@ -2584,6 +2584,8 @@ def view_collection(request, collection_id, page):
         for model in collection_models:
             user_collections.append({'name': model.name,
                                      'id': str(model.id)})
+        user_collections.append({'name': 'NEW COLLECTION',
+                                 'id': 0})
 
     return render(request, 'view_collection.html',
                   {'results': response_data,
@@ -2612,5 +2614,5 @@ def zip_available(request, collection_id):
     url = '/file/file.txt'
 
     return HttpResponse(json.dumps({'success': False,
-                                   'url': static(url)
+                                    'url': static(url)
                                    }, indent=4), content_type="application/json")
