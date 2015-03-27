@@ -1539,7 +1539,8 @@ def download_collection(request):
     s = StringIO.StringIO()
 
     # The zip compressor
-    zf = zipfile.ZipFile(s, "w", zipfile.ZIP_DEFLATED)
+    # .ZIP_STORED .ZIP_DEFLATED
+    zf = zipfile.ZipFile(s, "w", zipfile.ZIP_STORED)
 
     for image_id in filenames:
 
