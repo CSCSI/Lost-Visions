@@ -138,7 +138,7 @@
                         {% if mode == 'logged_in_not_owner' or mode == 'owner' %}
 
                             var $save_button = $('<div id="hide-button-' + image_id + '" ' +
-                                    'class="btn btn-default btn-xs save_image_float_button">' +
+                                    'class="btn btn-primary btn-xs save_image_float_button">' +
                                     {#                                    "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}' style='max-height: 27px'>" +#}
                                     "<div class='fa fa-2x fa-heart'>" +
                                     "</div>").click(function(){
@@ -703,9 +703,15 @@
     </div>
 
     {% if results.pages|length > 1 %}
-        <p style="text-align: left">
+        <p style="text-align:right; font-size: x-large">
             Pages : {% for p in results.pages %}
-            <a href="{% url 'view_collection' collection_id p %}"> {{ p }} </a>
+            <a href="{% url 'view_collection' collection_id p %}">
+                {% if results.this_page == p %}
+                    <span style="font-size: xx-large; text-decoration: underline">{{ p }}</span>
+                {% else %}
+                    <span style="font-size: x-large">{{ p }}</span>
+                {% endif %}
+            </a>
         {% endfor %}
         </p>
     {% endif %}
