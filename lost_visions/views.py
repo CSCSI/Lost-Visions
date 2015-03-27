@@ -1563,18 +1563,18 @@ def download_collection(request):
         json_path = os.path.join(zip_subdir, str(image_id) + '.json')
         zf.writestr(json_path, json.dumps(image_info, indent=4))
 
-        chicago_path = os.path.join(zip_subdir, str(image_id) + '-chicago-formatted.txt')
+        try:
+            chicago_path = os.path.join(zip_subdir, str(image_id) + '-chicago-formatted.txt')
 
-        formatted_data = 'Illustration. '
-        bl_data = image_info['bl_flickr_data'][0]['fields']
+            formatted_data = 'Illustration. '
+            bl_data = image_info['bl_flickr_data'][0]['fields']
 
-        formatted_data += str(bl_data['flickr_original_height']) + ' ' + str(bl_data['flickr_original_height']) + ' px. '
+            formatted_data += str(bl_data['flickr_original_height']) + ' ' + str(bl_data['flickr_original_height']) + ' px. '
+            formatted_data += 'From ' + str(bl_data['title']) + ' ' + str(bl_data['first_author']) + '. '
 
-        formatted_data += 'From ' + str(bl_data['title']) + ' ' + str(bl_data['first_author']) + '. '
-
-
-        zf.writestr(chicago_path, formatted_data)
-
+            zf.writestr(chicago_path, formatted_data)
+        except:
+            pass
 
     # Must close zip for all contents to be written
     zf.close()
