@@ -17,13 +17,6 @@ a.anchor{
     display: block; position: relative; top: -45px; visibility: hidden;
 }
 
-.help_image {
-    margin: 0 auto;
-    max-width: 50%;
-    max-height: 380px;
-    text-align: center;
-}
-
 h2 {
     font-weight: bold;
     color: #A0A2A6;
@@ -73,8 +66,11 @@ body > div.container.base-container > div.container > div.col-xs-12.col-sm-7 > d
 }
 
 .sticky-footer, .push {
+    background-color: #ffffff;
     padding-top: 30px;
     height: 8em;
+    z-index: 3000;
+    /*position: relative*/
 }
 /*title bar*/
 
@@ -240,18 +236,45 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
 
 /*education*/
 
-#education {
+.education {
     font-family: 'Baskerville Old Face', serif;
     font-size: 16px;
-    width: 60%;
+    width: 70%;
     margin-left: auto;
     margin-right: auto
 }
 
-#education > p > span{
+.education > p > span{
     font-family: 'Baskerville Old Face', serif;
     font-size: x-large;
 }
+
+/*help*/
+
+.help *{
+
+    /*width: 70%;*/
+    margin-left: auto;
+    margin-right: auto
+}
+
+.help_std_txt {
+        font-family: 'Baskerville Old Face', serif;
+    font-size: 16px;
+}
+
+.help_image {
+    border: 5px double darkgrey;
+    margin: 0 auto;
+    max-width: 90%;
+    max-height: 380px;
+    text-align: center;
+}
+
+.to_top_link {
+    float: right;
+}
+
 
 /*home page*/
 .base-container {

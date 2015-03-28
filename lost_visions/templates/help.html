@@ -2,137 +2,145 @@
 {% load staticfiles %}
 
 {% block content %}
-    <p><a class="anchor" name="top"></a></p>
+            <p class="help_std_txt"><a class="anchor" name="top"></a></p>
+
+    <div style="position: fixed; top: 38px; left: 0;
+    width: 20%; background-color: #d3d3d3; min-height: 100%; padding-top: 2em">
     <h3>
-        Contents
-    </h3>
-    <ul>
-        <li><a href="#tagging">Tagging an Illustration</a></li>
-        <li><a href="#search">Searching</a></li>
-        <li><a href="#advanced_search">Advanced Searching</a></li>
-        <li><a href="#collection">Creating a Collection</a></li>
-        <li><a href="#exhibition">Creating an Exhibition</a></li>
-        <li><a href="#public-exhibition">Requesting an Exhibition be made Public</a></li>
-    </ul>
+            Contents
+        </h3>
+        <ul>
+            <li><a href="#tagging">Tagging an Illustration</a></li>
+            <li><a href="#search">Searching</a></li>
+            <li><a href="#advanced_search">Advanced Searching</a></li>
+            <li><a href="#collection">Creating a Collection</a></li>
+            <li><a href="#exhibition">Creating an Exhibition</a></li>
+            <li><a href="#public-exhibition">Requesting an Exhibition be made Public</a></li>
+        </ul>
+    </div>
+
+    <div class="help" style="margin-left: 20%">
 
 
-    <p><a class="anchor" name="tagging"></a></p>
-    <h3>Tagging an Illustration</h3>
-    <h5>Click to save the Illustration</h5>
-    <p>
-        {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
-    </p>
-    <a href="#top">Back to Top</a>
-    <br><br><br><br>
 
-    <p><a class="anchor" name="search"></a></p>
-    <h3>Searching</h3>
-    <h5>Click to save the Illustration</h5>
-    <p>
-        {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
-    </p>
-    <a href="#top">Back to Top</a>
-    <br><br><br><br>
+        <p class="help_std_txt"><a class="anchor" name="tagging"></a></p>
+        <h3>Tagging an Illustration</h3>
+        <p class="help_std_txt">Click to save the Illustration</p>
+        <p class="help_std_txt">
+            {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
+        </p>
+        <a class="to_top_link" href="#top">Back to Top</a>
+        <br><br><br><br>
 
-
-    <p><a class="anchor" name="advanced_search"></a></p>
-    <h3>Advanced Searching</h3>
-    <h5>Click to save the Illustration</h5>
-    <p>
-        {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
-    </p>
-    <a href="#top">Back to Top</a>
-    <br><br><br><br>
+        <p class="help_std_txt"><a class="anchor" name="search"></a></p>
+        <h3>Searching</h3>
+        <p class="help_std_txt">Click to save the Illustration</p>
+        <p class="help_std_txt">
+            {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
+        </p>
+        <a class="to_top_link" href="#top">Back to Top</a>
+        <br><br><br><br>
 
 
-    <p><a class="anchor" name="collection"></a></p>
-    <h3>Creating a Collection</h3>
-    <ul>
-        <li>
-            <h5>Note: This feature is only available to users who have created an account and are logged in.</h5>
-        </li>
-        <li>
-            <h5>Click to heart button to save the Illustration</h5>
-            <h5>In either the Illustration tagging page..</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">
-            </p>
-            <h5>..Or the Search results page</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/01_2_SAVE_BUTTON.png" %}">
-            </p>
-        </li>
-        <li>
-            <h5>Select the collection you wish to add this illustration to.</h5>
-            <h5>To create a new collection, select "NEW COLLECTION". You will be prompted to name this new collection</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/02_select_collection.png" %}">
-            </p>
-        </li>
-        <li>
-            <h5>If you selected "NEW COLLECTION", enter a name here. Otherwise skip this.</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/03_name_collection.png" %}">
-            </p>
-        </li>
-        <li>
-            <h5>The illustration will be saved to the collection you selected or created.</h5>
-            <h5>To view it, navigate to your user profile page via "My Account" -> "Profile" on the Navigation Toolbar</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/04_save_success.png" %}">
-            </p>
-        </li>
-    </ul>
-    <a href="#top">Back to Top</a>
-    <br><br><br><br>
-
-    <p><a class="anchor" name="exhibition"></a></p>
-    <h3>Creating an Exhibition</h3>
-    <ul>
-        <li>
-            <h5>Note: This feature is only available to users who have created an account and are logged in.</h5>
-        </li>
-        <li>
-            <h5>Navigate to your user profile page, by selecting My Account -> Profile on the Navigation Toolbar</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/05_Collections_page.png" %}">
-            </p>
-        </li>
-        <li>
-            <h5>Scroll down to see all your personal collections (see the "Creating a Collection" help chapter)</h5>
-            <h5>Here you can see options to edit each collection, download it, show its Exhibition Page, or share it.</h5>
-            <h5>There is also the option to remove individual illustration, or add captions to an illustration.</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/06_collection_buttons.png" %}">
-            </p>
-        </li>
-        <li>
-            <h5>Clicking the "Edit Caption" button shown opens a dialog box to add a caption for an image.</h5>
-            <h5>This will be visible in the Exhibition Page</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/07_caption_edit.png" %}">
-            </p>
-        </li>
-        <li>
-            <h5>Clicking the "Show Exhibition" button opens a new page with a scrolling marquee of all images in the collection</h5>
-            <h5>This page is public, and the link from the address bar in your browser can be shared.</h5>
-            <p>
-                <img class="help_image" src="{% static "media/images/help/08_exhibition.png" %}">
-            </p>
-        </li>
-    </ul>
-    <a href="#top">Back to Top</a>
+        <p class="help_std_txt"><a class="anchor" name="advanced_search"></a></p>
+        <h3>Advanced Searching</h3>
+        <p class="help_std_txt">Click to save the Illustration</p>
+        <p class="help_std_txt">
+            {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
+        </p>
+        <a class="to_top_link" href="#top">Back to Top</a>
+        <br><br><br><br>
 
 
-    <p><a class="anchor" name="public-exhibition"></a></p>
-    <h3>Public Exhibitions</h3>
-    <ul>
-        <li>
-            <h5>Navigate to your user profile page, by selecting My Account -> Profile on the Navigation Toolbar</h5>
-            <h5></h5>
-        </li>
-    </ul>
-    <a href="#top">Back to Top</a>
-    <br><br><br><br>
+        <p class="help_std_txt"><a class="anchor" name="collection"></a></p>
+        <h3>Creating a Collection</h3>
+        <ul>
+            <li>
+                <p class="help_std_txt">Note: This feature is only available to users who have created an account and are logged in.</p>
+            </li>
+            <li>
+                <p class="help_std_txt">Click to heart button to save the Illustration</p>
+                <p class="help_std_txt">In either the Illustration tagging page..</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">
+                </p>
+                <p class="help_std_txt">..Or the Search results page</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/01_2_SAVE_BUTTON.png" %}">
+                </p>
+            </li>
+            <li>
+                <p class="help_std_txt">Select the collection you wish to add this illustration to.</p>
+                <p class="help_std_txt">To create a new collection, select "NEW COLLECTION". You will be prompted to name this new collection</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/02_select_collection.png" %}">
+                </p>
+            </li>
+            <li>
+                <p class="help_std_txt">If you selected "NEW COLLECTION", enter a name here. Otherwise skip this.</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/03_name_collection.png" %}">
+                </p>
+            </li>
+            <li>
+                <p class="help_std_txt">The illustration will be saved to the collection you selected or created.</p>
+                <p class="help_std_txt">To view it, navigate to your user profile page via "My Account" -> "Profile" on the Navigation Toolbar</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/04_save_success.png" %}">
+                </p>
+            </li>
+        </ul>
+        <a class="to_top_link" href="#top">Back to Top</a>
+        <br><br><br><br>
 
+        <p class="help_std_txt"><a class="anchor" name="exhibition"></a></p>
+        <h3>Creating an Exhibition</h3>
+        <ul>
+            <li>
+                <p class="help_std_txt">Note: This feature is only available to users who have created an account and are logged in.</p>
+            </li>
+            <li>
+                <p class="help_std_txt">Navigate to your user profile page, by selecting My Account -> Profile on the Navigation Toolbar</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/05_Collections_page.png" %}">
+                </p>
+            </li>
+            <li>
+                <p class="help_std_txt">Scroll down to see all your personal collections (see the "Creating a Collection" help chapter)</p>
+                <p class="help_std_txt">Here you can see options to edit each collection, download it, show its Exhibition Page, or share it.</p>
+                <p class="help_std_txt">There is also the option to remove individual illustration, or add captions to an illustration.</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/06_collection_buttons.png" %}">
+                </p>
+            </li>
+            <li>
+                <p class="help_std_txt">Clicking the "Edit Caption" button shown opens a dialog box to add a caption for an image.</p>
+                <p class="help_std_txt">This will be visible in the Exhibition Page</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/07_caption_edit.png" %}">
+                </p>
+            </li>
+            <li>
+                <p class="help_std_txt">Clicking the "Show Exhibition" button opens a new page with a scrolling marquee of all images in the collection</p>
+                <p class="help_std_txt">This page is public, and the link from the address bar in your browser can be shared.</p>
+                <p class="help_std_txt">
+                    <img class="help_image" src="{% static "media/images/help/08_exhibition.png" %}">
+                </p>
+            </li>
+        </ul>
+        <a class="to_top_link" href="#top">Back to Top</a>
+
+
+        <p class="help_std_txt"><a class="anchor" name="public-exhibition"></a></p>
+        <h3>Public Exhibitions</h3>
+        <ul>
+            <li>
+                <p class="help_std_txt">Navigate to your user profile page, by selecting My Account -> Profile on the Navigation Toolbar</p>
+                <p class="help_std_txt"></p>
+            </li>
+        </ul>
+        <a class="to_top_link" href="#top">Back to Top</a>
+        <br><br><br><br>
+
+    </div>
 {% endblock %}

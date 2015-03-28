@@ -704,7 +704,12 @@ class ImagePicker():
 
     def find_collections(self, request_get):
         keywords = request_get.get('keyword', '').strip()
-        keywords = [x.strip() for x in keywords.split(' ')]
+        keywords = [x.strip() for x in keywords.split(' ') if len(x)]
+
+        print keywords
+
+        if len(keywords) == 0:
+            return models.ImageCollection.objects.none()
 
         all_results = models.ImageCollection.objects.all()
 
