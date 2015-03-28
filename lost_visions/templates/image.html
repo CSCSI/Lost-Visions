@@ -5,16 +5,15 @@
 {% block content %}
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
 
-{#    <script src="https://cdn.rawgit.com/GestiXi/image-scale/master/image-scale.min.js"></script>#}
+    {#    <script src="https://cdn.rawgit.com/GestiXi/image-scale/master/image-scale.min.js"></script>#}
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
 
     $(window).load(function(){
-        $('.js-masonry').masonry();
     });
 
     $(window).resize(function(){
-        $('.js-masonry').masonry();
+        do_tidy();
     });
 
     function getDefaultFontSize(pa){
@@ -36,16 +35,16 @@
     var tidy_masonry_interval = setInterval(do_tidy, 1500);
 
     function tidy_masonry() {
-        {#        setTimeout("$('#category-container').masonry()", 1500);#}
-
         tidy_masonry_interval = setInterval(do_tidy, 1500);
-
-        {#        $('#category-container').masonry();#}
     }
 
     function do_tidy() {
         tidy_ittr ++;
-        $('#category-container').masonry();
+        $('#category-container').masonry({
+            animationOptions: {
+                duration: 50
+            }
+        });
 
         if (tidy_ittr > 10) {
             tidy_ittr = 0;
@@ -382,7 +381,7 @@
 
         get_similar_images({{ image_id }});
 
-        $('#question-accordion-prev').click(function(){
+        function do_previous_question() {
             if (current_question_pane - 1 > 0){
                 var current_div = '#question_number_' + current_question_pane;
                 $(current_div).hide('slide', 500, function(){
@@ -400,9 +399,14 @@
             if (current_question_pane - 1 < 4) {
                 $('#question_next_cell').show()
             }
-        });
 
-        $('#question-accordion-next').click(function() {
+            populate_categories(0, enable_category_click, null);
+
+        }
+
+        $('#question-accordion-prev').click(do_previous_question);
+
+        function do_next_question(){
             if (current_question_pane + 1 < 5) {
                 var div_name = '#question_number_' + current_question_pane;
 
@@ -416,6 +420,8 @@
                         scroll_to_top(tidy_masonry());
                     });
                 });
+            } else {
+                alert(current_question_pane);
             }
             if (current_question_pane + 1 > 3) {
                 $(this).parent().hide();
@@ -424,14 +430,14 @@
             if (current_question_pane + 1 > 1) {
                 $('#question_prev_cell').show();
             }
-        });
+        }
+
+        $('#question-accordion-next').click(do_next_question);
 
         $('#question_number_2').hide();
         $('#question_number_3').hide();
         $('#question_number_4').hide();
         $('#question_number_5').hide();
-
-        $('.js-masonry').masonry();
 
         $('#collapse_cloud').accordion({
             active: 0,
@@ -868,6 +874,8 @@
         });
 
         function populate_categories(cat_id, callback, text) {
+            scroll_to_top(null);
+
             $.ajax({
                 type: "POST",
                 url: "{% url 'image.category' %}",
@@ -878,99 +886,110 @@
                     image_id: {{ image_id }}
                 },
                 success: function(data) {
-
-                    if (data['root']) {
-                        $('#question_header').show();
+                    if(data['next_question'] == true){
+                        do_next_question();
                     } else {
-                        $('#question_header').hide();
-                    }
 
-                    {#                    Clear the category container, ready to put new category buttons in #}
-                    var category_container = $('#category-container');
-                    var masonry_container = category_container.masonry();
-                    masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
-                    var category_extra_div = $('#category-extra').empty();
-
-                    {#                    Get the question for this set of category buttons #}
-                    var question = data['question'];
-                    $('#category-question').html(question);
-
-                    for (var ans in data['answers']) {
-
-                        var classname = 'category-answer';
-                        if (data['answers'][ans].text.length > 5) {
-                            classname = 'category-answer wide';
+                        if (data['root']) {
+                            $('#question_header').show();
+                        } else {
+                            $('#question_header').hide();
                         }
 
-                        var answer = '<div class="' + classname + '" ' +
-                                'data-category_name="' + data['answers'][ans].name + '" ' +
-                                'data-category_synset="' + data['answers'][ans].synset + '" ' +
-                                'data-category_save="' + data['answers'][ans].save + '" ' +
-                                'data-category_id="' + data['answers'][ans].id + '"> \
+                        {#                    Clear the category container, ready to put new category buttons in #}
+                        var category_container = $('#category-container');
+                        var masonry_container = category_container.masonry({
+                            animationOptions: {
+                                duration: 50
+                            }
+                        });
+                        masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
+                        var category_extra_div = $('#category-extra').empty();
+
+                        {#                    Get the question for this set of category buttons #}
+                        var question = data['question'];
+                        $('#category-question').html(question);
+
+                        for (var ans in data['answers']) {
+
+                            var classname = 'category-answer';
+                            if (data['answers'][ans].text.length > 5) {
+                                classname = 'category-answer wide';
+                            }
+
+                            var answer = '<div class="' + classname + '" ' +
+                                    'data-category_name="' + data['answers'][ans].name + '" ' +
+                                    'data-category_synset="' + data['answers'][ans].synset + '" ' +
+                                    'data-category_save="' + data['answers'][ans].save + '" ' +
+                                    'data-category_id="' + data['answers'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
                                     <img src="' + data['answers'][ans].img + '"\
                                          style="width:100%; height: auto;\
                                          margin:0 auto; display:block; border:1px">\
                                 </div>';
-                        if (data['answers'][ans].text != ''){
-                            answer +=    '<div class="panel-footer">\
+                            if (data['answers'][ans].text != ''){
+                                answer +=    '<div class="panel-footer">\
                                     <div class="wrap-text">\
                                         ' + data['answers'][ans].text + '\
                                     </div>\
                                 </div>';
-                        }
-                        answer += '</div>\
+                            }
+                            answer += '</div>\
                         </div>';
 
-                        var elem = $(answer);
-                        masonry_container.append(elem).masonry( 'appended', elem );
-                    }
-
-
-                    for (var ans in data['actions']) {
-
-                        var classname = 'category-answer';
-                        if (data['actions'][ans].text.length > 5) {
-                            classname = 'category-answer wide';
+                            var elem = $(answer);
+                            masonry_container.append(elem).masonry( 'appended', elem );
                         }
 
-                        var answer = '<div class="' + classname + '" data-link="' + data['actions'][ans].link +
-                                '" data-action_name="' + data['actions'][ans].action +
-                                '" data-type="' + data['actions'][ans].type +
-                                '" data-category_id="' + data['actions'][ans].id + '"> \
+
+                        for (var ans in data['actions']) {
+
+                            var classname = 'category-answer';
+                            if (data['actions'][ans].text.length > 5) {
+                                classname = 'category-answer wide';
+                            }
+
+                            var answer = '<div class="' + classname + '" data-link="' + data['actions'][ans].link +
+                                    '" data-action_name="' + data['actions'][ans].action +
+                                    '" data-type="' + data['actions'][ans].type +
+                                    '" data-category_id="' + data['actions'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
                                     <img src="' + data['actions'][ans].img + '"\
                                          style="width:100%; height: auto;\
                                          margin:0 auto; display:block; border:1px">\
-                                </div>\
-                                <div class="panel-footer">\
+                                </div>';
+
+                            if (data['actions'][ans].text != ''){
+                                answer += '<div class="panel-footer">\
                                     <div class="wrap-text">\
                                         ' + data['actions'][ans].text + '\
                                     </div>\
-                                </div>\
-                            </div>\
+                                </div>';
+                            }
+
+                            answer += '</div>\
                         </div>';
 
-                        var action_elem = $(answer);
-                        masonry_container.append(action_elem).masonry( 'appended', action_elem );
+                            var action_elem = $(answer);
+                            masonry_container.append(action_elem).masonry( 'appended', action_elem );
 
-                        if (data['actions'][ans].type == 'text_entry') {
-                            var text_input = '<label class="control-label" for="' + data['actions'][ans].action + '">'
-                                    + data['actions'][ans].question +
-                                    '</label><input class="form-control" id="' + data['actions'][ans].action + '">';
+                            if (data['actions'][ans].type == 'text_entry') {
+                                var text_input = '<label class="control-label" for="' + data['actions'][ans].action + '">'
+                                        + data['actions'][ans].question +
+                                        '</label><input class="form-control" id="' + data['actions'][ans].action + '">';
 
-                            var text_input_elem = $(text_input);
-                            category_extra_div.append(text_input_elem);
+                                var text_input_elem = $(text_input);
+                                category_extra_div.append(text_input_elem);
 
-                            setTimeout("$('.form-control').focus()", 500);
+                                setTimeout("$('.form-control').focus()", 500);
+                            }
                         }
+                        enable_category_click();
+                        tidy_masonry();
+
                     }
-                    enable_category_click();
-                    tidy_masonry();
-                    {#                    setInterval("$('#category-container').masonry()", 500);#}
-                    {#                    category_container.masonry();#}
                 },
                 error: function(xhr, textStatus, errorThrown) {
                     console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
@@ -983,7 +1002,11 @@
 
         function enable_category_click() {
             $('.category-answer').click(function() {
-                var masonry_container = $('#category-container').masonry();
+                var masonry_container = $('#category-container').masonry({
+                    animationOptions: {
+                        duration: 50
+                    }
+                });
                 masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
 
                 if ($(this).data('action_name') == 'gazetteer') {
@@ -1153,19 +1176,19 @@
             }
         });
 
-        $('#accordion').on('show.bs.collapse', function () {
-            if (active) $('#accordion .in').collapse('hide');
-
-        }).on('shown.bs.collapse', function () {
-            $('.js-masonry').masonry();
-
-        }).bind('accordionchange', function(event, ui) {
-            console.log('change scroll to ' + ui.newHeader.offset.top)
-            /* In here, ui.newHeader = the newly active header as a jQ object
-             ui.newContent = the newly active content area */
-            {#            $.scrollTo( ui.newHeader ); // or ui.newContent, if you prefer#}
-            $('html,body').animate({scrollTop: ui.newHeader.offset().top},'slow');
-        });
+        {#        $('#accordion').on('show.bs.collapse', function () {#}
+        {#            if (active) $('#accordion .in').collapse('hide');#}
+        {##}
+        {#        }).on('shown.bs.collapse', function () {#}
+        {#            $('.js-masonry').masonry();#}
+        {##}
+        {#        }).bind('accordionchange', function(event, ui) {#}
+        {#            console.log('change scroll to ' + ui.newHeader.offset.top)#}
+        {#            /* In here, ui.newHeader = the newly active header as a jQ object#}
+        {#             ui.newContent = the newly active content area */#}
+        {#            $.scrollTo( ui.newHeader ); // or ui.newContent, if you prefer#}
+        {#            $('html,body').animate({scrollTop: ui.newHeader.offset().top},'slow');#}
+        {#        });#}
 
         var canvas_object = $('#photo'),
                 canvas = canvas_object.get(0),
