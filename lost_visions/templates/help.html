@@ -2,20 +2,21 @@
 {% load staticfiles %}
 
 {% block content %}
-            <p class="help_std_txt"><a class="anchor" name="top"></a></p>
+    <p class="help_std_txt"><a class="anchor" name="top"></a></p>
 
     <div style="position: fixed; top: 38px; left: 0;
     width: 20%; background-color: #d3d3d3; min-height: 100%; padding-top: 2em">
-    <h3>
+        <h3>
             Contents
         </h3>
+
         <ul>
             <li><a href="#tagging">Tagging an Illustration</a></li>
             <li><a href="#search">Searching</a></li>
             <li><a href="#advanced_search">Advanced Searching</a></li>
             <li><a href="#collection">Creating a Collection</a></li>
+            <li><a href="#collection_management">Collection Management</a></li>
             <li><a href="#exhibition">Creating an Exhibition</a></li>
-            <li><a href="#public-exhibition">Requesting an Exhibition be made Public</a></li>
         </ul>
     </div>
 
@@ -25,29 +26,57 @@
 
         <p class="help_std_txt"><a class="anchor" name="tagging"></a></p>
         <h3>Tagging an Illustration</h3>
-        <p class="help_std_txt">Click to save the Illustration</p>
+        <p class="help_std_txt">The user may consider the illustration, the associated metadata and can view the page from the book this illustration was taken from, and then answer the questions in the right hand pane</p>
         <p class="help_std_txt">
-            {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
+            <img class="help_image" src="{% static "media/images/help/001_tagging_page.png" %}">
+
         </p>
         <a class="to_top_link" href="#top">Back to Top</a>
         <br><br><br><br>
 
         <p class="help_std_txt"><a class="anchor" name="search"></a></p>
         <h3>Searching</h3>
-        <p class="help_std_txt">Click to save the Illustration</p>
-        <p class="help_std_txt">
-            {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
-        </p>
+        <p class="help_std_txt">This is a basic keyword search, where any term entered may appear anywhere in the illustration's descriptions</p>
+        <img class="help_image" src="{% static "media/images/help/search.png" %}">
+
+        <p class="help_std_txt">Information searched within includes:</p>
+        <ul>
+            <li>The book's title</li>
+            <li>The book's (primary) author</li>
+            <li>The book's illustrator(s) (if known and/or recorded)</li>
+            <li>The publisher</li>
+            <li>The place of publishing</li>
+            <li>Any captions recorded by users</li>
+            <li>Any tags added by users</li>
+            <li>Collection titles</li>
+        </ul>
+
         <a class="to_top_link" href="#top">Back to Top</a>
         <br><br><br><br>
 
 
         <p class="help_std_txt"><a class="anchor" name="advanced_search"></a></p>
         <h3>Advanced Searching</h3>
-        <p class="help_std_txt">Click to save the Illustration</p>
-        <p class="help_std_txt">
-            {#        <img src="{% static "media/images/help/01_SAVE_BUTTON.png" %}">#}
-        </p>
+        <p class="help_std_txt">Selecting the arrow below the keyword search expands the advanced search options<p>
+        <img class="help_image" src="{% static "media/images/help/search_adv.png" %}">
+
+        <p class="help_std_txt">Information can be searched within explicit fields:</p>
+        <ul>
+            <li>The book's title</li>
+            <li>The book's (primary) author</li>
+            <li>The book's illustrator(s) (if known and/or recorded)</li>
+            <li>The publisher</li>
+            <li>The place of publishing</li>
+            <li>The date of publishing of this volume (date range or decade)</li>
+        </ul>
+        <p class="help_std_txt">Keyword search can also be performed for all fields, and also includes:</p>
+
+        <ul>
+            <li>Any captions recorded by users</li>
+            <li>Any tags added by users</li>
+            <li>Collection titles</li>
+        </ul>
+
         <a class="to_top_link" href="#top">Back to Top</a>
         <br><br><br><br>
 
@@ -86,10 +115,54 @@
                 <p class="help_std_txt">The illustration will be saved to the collection you selected or created.</p>
                 <p class="help_std_txt">To view it, navigate to your user profile page via "My Account" -> "Profile" on the Navigation Toolbar</p>
                 <p class="help_std_txt">
-                    <img class="help_image" src="{% static "media/images/help/04_save_success.png" %}">
+                    <img class="help_image" src="{% static "media/images/help/04_save_success.png" %}" style="width: 60%">
                 </p>
             </li>
         </ul>
+
+        <a class="to_top_link" href="#top">Back to Top</a>
+        <br><br><br><br>
+
+        <p class="help_std_txt"><a class="anchor" name="collection_management"></a></p>
+        <h3>Collection Management</h3>
+        <p class="help_std_txt">In the "User Profile" page, the following options are available:</p>
+        <img class="help_image" src="{% static "media/images/help/collection_manage.png" %}" style="width: 60%">
+        <br><br>
+        <dl id="collection_management_list">
+            <dt>Edit Collection</dt>
+            <dd>This shows the following menu:</dd>
+            <dd>
+                <img class="help_image" src="{% static "media/images/help/edit_collection.png" %}" style="width: 30%">
+            </dd>
+            <dt>View Collection</dt>
+            <dd>Show the entire collection in thumbnail view, paginated to 30 illustrations per page</dd>
+            <dd>
+                <ul>
+                    <li>
+                        <p class="help_std_txt">Here you can see also see the options to edit each collection, download it, show its Exhibition Page, or share it.</p>
+                    </li>
+                    <li>
+                        <p class="help_std_txt">There is also the option to remove individual illustration, or add captions to an illustration.</p>
+                        <img class="help_image" src="{% static "media/images/help/06_collection_buttons.png" %}" style="width: 40%">
+                    </li>
+                    <li>
+                        <p class="help_std_txt">Clicking the "Edit Caption" button shown opens a dialog box to add a caption for an illustration. This will be visible in the Exhibition Page</p>
+                        <img class="help_image" src="{% static "media/images/help/07_caption_edit.png" %}" style="width: 20%">
+                    </li>
+                </ul>
+            </dd>
+            <dt>Download Collection</dt>
+            <dd>Downloads all the high resolution illustration for this collection, as well as a JSON formatted metadata file and a summary text file for each illustration</dd>
+            <dt>Show Exhibition</dt>
+            <dd>Shows a scrolling exhibition page of each illustration in the collection</dd>
+            <dt>Request Public Exhibition</dt>
+            <dd>Once a collection has been created, the user may request the Illustration Archive display it formally from the <a target="_blank" href="{% url 'public_exhibition_list' %}">Public Exhibition</a> page</dd>
+            <dt>Share</dt>
+            <dd>Displays a shareable url to this collection's exhibition page, to be copied on social media etc.</dd>
+            <dt>Tweet</dt>
+            <dd>Tweets a link to the collection and a link to the downloadable zip file.</dd>
+        </dl>
+
         <a class="to_top_link" href="#top">Back to Top</a>
         <br><br><br><br>
 
@@ -105,42 +178,17 @@
                     <img class="help_image" src="{% static "media/images/help/05_Collections_page.png" %}">
                 </p>
             </li>
+
             <li>
-                <p class="help_std_txt">Scroll down to see all your personal collections (see the "Creating a Collection" help chapter)</p>
-                <p class="help_std_txt">Here you can see options to edit each collection, download it, show its Exhibition Page, or share it.</p>
-                <p class="help_std_txt">There is also the option to remove individual illustration, or add captions to an illustration.</p>
-                <p class="help_std_txt">
-                    <img class="help_image" src="{% static "media/images/help/06_collection_buttons.png" %}">
-                </p>
+                <p class="help_std_txt">Clicking the "Show Exhibition" button opens a new page with a scrolling marquee of all the illustrations in the collection</p>
+                <img class="help_image" src="{% static "media/images/help/08_exhibition.png" %}">
             </li>
             <li>
-                <p class="help_std_txt">Clicking the "Edit Caption" button shown opens a dialog box to add a caption for an image.</p>
-                <p class="help_std_txt">This will be visible in the Exhibition Page</p>
-                <p class="help_std_txt">
-                    <img class="help_image" src="{% static "media/images/help/07_caption_edit.png" %}">
-                </p>
-            </li>
-            <li>
-                <p class="help_std_txt">Clicking the "Show Exhibition" button opens a new page with a scrolling marquee of all images in the collection</p>
                 <p class="help_std_txt">This page is public, and the link from the address bar in your browser can be shared.</p>
-                <p class="help_std_txt">
-                    <img class="help_image" src="{% static "media/images/help/08_exhibition.png" %}">
-                </p>
+
             </li>
         </ul>
         <a class="to_top_link" href="#top">Back to Top</a>
-
-
-        <p class="help_std_txt"><a class="anchor" name="public-exhibition"></a></p>
-        <h3>Public Exhibitions</h3>
-        <ul>
-            <li>
-                <p class="help_std_txt">Navigate to your user profile page, by selecting My Account -> Profile on the Navigation Toolbar</p>
-                <p class="help_std_txt"></p>
-            </li>
-        </ul>
-        <a class="to_top_link" href="#top">Back to Top</a>
-        <br><br><br><br>
 
     </div>
 {% endblock %}

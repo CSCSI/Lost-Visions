@@ -354,7 +354,11 @@
 
                     {% for k, b in users_collections.items %}
                         <tr>
-                            <th>{% with  b.images|first as first_image %}<img src="{{ first_image.url }}" style='width:100%; height:auto;'>{% endwith %}</th>
+                            <th>
+                                {% with  b.images|first as first_image %}
+                                    <img src="{{ first_image.url }}" style='max-width:150px; max-height:150px; width:auto; height:auto;'>
+                                {% endwith %}
+                            </th>
                             <td colspan="4">
                                 <div class="col-md-12">
 

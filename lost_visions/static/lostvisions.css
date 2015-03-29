@@ -267,8 +267,20 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     border: 5px double darkgrey;
     margin: 0 auto;
     max-width: 90%;
-    max-height: 380px;
+    /*max-height: 380px;*/
     text-align: center;
+}
+
+#collection_management_list {
+    list-style-type: circle;
+}
+
+#collection_management_list > dt {
+    margin-left: 20px;
+}
+
+#collection_management_list > dd {
+    margin-left: 40px;
 }
 
 .to_top_link {
