@@ -195,16 +195,16 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': 'debug.log',
+            },
         },
-    },
     'loggers': {
         'lost_visions': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True,
+            },
         },
-    },
-}
+    }
 
 bl_folder = ''
 db_json_location = ''

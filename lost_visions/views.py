@@ -257,7 +257,10 @@ def is_number(string):
 
 def random_image(request):
     image_id = get_next_image_id()
-    return redirect('image', image_id=image_id)
+    try:
+        return redirect('image', image_id=image_id)
+    except:
+        raise Http404
     # print pprint.pformat(request.POST)
     # return redirect('image.random')
 
@@ -278,141 +281,141 @@ def is_user_tag(tag):
 
 @requires_csrf_token
 def image(request, image_id):
+    try:
+        image_id = clean(image_id, strip=True)
+        # image_model = models.Image.objects.get(flickr_id=image_id)
 
-    image_id = clean(image_id, strip=True)
-    # image_model = models.Image.objects.get(flickr_id=image_id)
+        image_info = get_image_data_from_array([image_id], request)[image_id]
 
-    image_info = get_image_data_from_array([image_id], request)[image_id]
+        # print pprint.pformat(image_info)
 
-    # print pprint.pformat(image_info)
+        # image_models = get_image_data_with_location([image_id])
+        # try:
+        #     image_info = db_tools.get_image_info(image_models[0])
+        #     # image_info['img_small'] = get_thumbnail_image(image_models[0])
+        #
+        # except IndexError:
+        #     return render(request, 'error.html')
+        #
+        # if image_info is None:
+        #     image_info = dict()
+        # else:
+        #     image_info = sanitise_image_info(image_info, request)
 
-    # image_models = get_image_data_with_location([image_id])
-    # try:
-    #     image_info = db_tools.get_image_info(image_models[0])
-    #     # image_info['img_small'] = get_thumbnail_image(image_models[0])
-    #
-    # except IndexError:
-    #     return render(request, 'error.html')
-    #
-    # if image_info is None:
-    #     image_info = dict()
-    # else:
-    #     image_info = sanitise_image_info(image_info, request)
+        # image_info['image_area'] = int(image_info['flickr_original_height']) * int(image_info['flickr_original_width'])
+        #
+        # image_info['azure'] = get_tested_azure_url(image_info)
+        #
+        # r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True)
+        # print r
+        # if r.status_code is not requests.codes.ok:
+        #     if image_info['azure']:
+        #         image_info['imageurl'] = image_info['azure']
+        #     else:
+        #         image_info['imageurl'] = image_info['flickr_url']
+        # else:
+        #     image_info['imageurl'] = image_info['arcca_url']
 
+        formatted_info = dict()
+        # formatted_info['Issuance'] = image_info.get('Issuance', "")
+        formatted_info['Date of Publication'] = image_info.get('date', "")
+        formatted_info['Date_of_Publication'] = image_info.get('date', "")
+        formatted_info['Title'] = image_info.get('title', "")
+        formatted_info['Volume'] = image_info.get('Volume', "")
+        formatted_info['Author'] = image_info.get('Author', "")
+        formatted_info['Book ID'] = image_info.get('Book ID', "")
+        formatted_info['Place of Publication'] = image_info.get('Place of Publication', "")
+        formatted_info['Place_of_Publication'] = image_info.get('Place of Publication', "")
+        formatted_info['Publisher'] = image_info.get('Publisher', "")
+        formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
+        formatted_info['Page'] = image_info.get('page', "").lstrip('0')
+        formatted_info['Identifier'] = image_info.get('flickr_id', "")
 
-    # image_info['image_area'] = int(image_info['flickr_original_height']) * int(image_info['flickr_original_width'])
-    #
-    # image_info['azure'] = get_tested_azure_url(image_info)
-    #
-    # r = requests.head(request.build_absolute_uri(static(image_info['arcca_url'])), stream=True)
-    # print r
-    # if r.status_code is not requests.codes.ok:
-    #     if image_info['azure']:
-    #         image_info['imageurl'] = image_info['azure']
-    #     else:
-    #         image_info['imageurl'] = image_info['flickr_url']
-    # else:
-    #     image_info['imageurl'] = image_info['arcca_url']
+        if formatted_info['Book ID'] and formatted_info['Book ID'] != '':
+            illustrator_string = ''
+            illustrators = models.BookIllustrator.objects.filter(book_id=formatted_info['Book ID'])
+            for illustrator in illustrators:
+                illustrator_string += illustrator.name + ' (' + illustrator.technique + '),'
+            if illustrator_string is not '':
+                formatted_info['Illustrator(s) **'] = illustrator_string
+                formatted_info['**'] = 'Data retrieved automatically from Title info, no promises'
 
-    formatted_info = dict()
-    # formatted_info['Issuance'] = image_info.get('Issuance', "")
-    formatted_info['Date of Publication'] = image_info.get('date', "")
-    formatted_info['Date_of_Publication'] = image_info.get('date', "")
-    formatted_info['Title'] = image_info.get('title', "")
-    formatted_info['Volume'] = image_info.get('Volume', "")
-    formatted_info['Author'] = image_info.get('Author', "")
-    formatted_info['Book ID'] = image_info.get('Book ID', "")
-    formatted_info['Place of Publication'] = image_info.get('Place of Publication', "")
-    formatted_info['Place_of_Publication'] = image_info.get('Place of Publication', "")
-    formatted_info['Publisher'] = image_info.get('Publisher', "")
-    formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
-    formatted_info['Page'] = image_info.get('page', "").lstrip('0')
-    formatted_info['Identifier'] = image_info.get('flickr_id', "")
+        linked_images = models.LinkedImage.objects.filter(image__flickr_id=image_id)
+        linked_image_data = []
+        for link_image in linked_images:
+            linked = dict()
+            linked['link'] = STATIC_URL + 'media/linked_images/' + link_image.file_name
+            linked['info'] = link_image.description
+            linked['name'] = link_image.name
+            linked_image_data.append(linked)
 
-    if formatted_info['Book ID'] and formatted_info['Book ID'] != '':
-        illustrator_string = ''
-        illustrators = models.BookIllustrator.objects.filter(book_id=formatted_info['Book ID'])
-        for illustrator in illustrators:
-            illustrator_string += illustrator.name + ' (' + illustrator.technique + '),'
-        if illustrator_string is not '':
-            formatted_info['Illustrator(s) **'] = illustrator_string
-            formatted_info['**'] = 'Data retrieved automatically from Title info, no promises'
+        # print pprint.pformat(image_info)
 
-    linked_images = models.LinkedImage.objects.filter(image__flickr_id=image_id)
-    linked_image_data = []
-    for link_image in linked_images:
-        linked = dict()
-        linked['link'] = STATIC_URL + 'media/linked_images/' + link_image.file_name
-        linked['info'] = link_image.description
-        linked['name'] = link_image.name
-        linked_image_data.append(linked)
+        image_descriptions = models.ImageText.objects.filter(image__flickr_id=image_id)
+        image_descs = []
+        for desc in image_descriptions:
+            if len(desc.description.strip()) > 0:
+                image_descs.append(desc.description)
 
-    # print pprint.pformat(image_info)
+        tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag') \
+            .annotate(uses=Count('tag'))
+        tags_for_image = list(tags_for_image)
 
-    image_descriptions = models.ImageText.objects.filter(image__flickr_id=image_id)
-    image_descs = []
-    for desc in image_descriptions:
-        if len(desc.description.strip()) > 0:
-            image_descs.append(desc.description)
+        if settings.use_flickr:
+            flickr_tags = get_flickr_tags(image_id)
+            for tag in flickr_tags:
+                tags_for_image.append({'tag': flickr_tags[tag], 'uses': 1, 'from_flickr': True})
 
-    tags_for_image = models.Tag.objects.all().filter(image__flickr_id=image_id).values('tag') \
-        .annotate(uses=Count('tag'))
-    tags_for_image = list(tags_for_image)
+        collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
+        users_collections = set()
+        users_collections.add('default')
+        for c in collection_models:
+            users_collections.add(str(c.name))
+        users_collections.add('NEW COLLECTION')
+        users_collections = list(users_collections)
+        users_collections = sorted(users_collections, key=str.lower)
 
-    if settings.use_flickr:
-        flickr_tags = get_flickr_tags(image_id)
-        for tag in flickr_tags:
-            tags_for_image.append({'tag': flickr_tags[tag], 'uses': 1, 'from_flickr': True})
+        y = 51.49006473014369
+        x = -3.1805146484375
+        swy = 50.49006473014369
+        swx = -4.1805146484375
+        ney = 52.49006473014369
+        nex = -2.1805146484375
 
-    collection_models = models.ImageCollection.objects.all().filter(user=get_request_user(request))
-    users_collections = set()
-    users_collections.add('default')
-    for c in collection_models:
-        users_collections.add(str(c.name))
-    users_collections.add('NEW COLLECTION')
-    users_collections = list(users_collections)
-    users_collections = sorted(users_collections, key=str.lower)
+        image_model = models.Image.objects.get(flickr_id=image_id)
+        rotate_models = models.ImageRotation.objects.filter(image=image_model).order_by('timestamp')
 
-    y = 51.49006473014369
-    x = -3.1805146484375
-    swy = 50.49006473014369
-    swx = -4.1805146484375
-    ney = 52.49006473014369
-    nex = -2.1805146484375
-
-    image_model = models.Image.objects.get(flickr_id=image_id)
-    rotate_models = models.ImageRotation.objects.filter(image=image_model).order_by('timestamp')
-
-    rotation = 0
-    if rotate_models.count():
-        rotation = int(rotate_models.reverse()[0].rotation)
+        rotation = 0
+        if rotate_models.count():
+            rotation = int(rotate_models.reverse()[0].rotation)
 
 
-    image_info['imageurl'] = image_info.get('img', '')
-    return render(request, 'image.html',
-                  {'image': image_info,
-                   'book_id': image_info.get('book_id', ""),
-                   'volume': image_info.get('volume', ""),
-                   'page': image_info.get('page', ""),
-                   'formatted_info': formatted_info,
-                   'image_id': image_id,
-                   'image_tags': json.dumps(list(tags_for_image)),
-                   # 'category_data': category_data,
-                   'user_collections': users_collections,
-                   'linked_images': linked_image_data,
-                   'image_descriptions': image_descs,
-                   'rotation': rotation,
+        image_info['imageurl'] = image_info.get('img', '')
+        return render(request, 'image.html',
+                      {'image': image_info,
+                       'book_id': image_info.get('book_id', ""),
+                       'volume': image_info.get('volume', ""),
+                       'page': image_info.get('page', ""),
+                       'formatted_info': formatted_info,
+                       'image_id': image_id,
+                       'image_tags': json.dumps(list(tags_for_image)),
+                       # 'category_data': category_data,
+                       'user_collections': users_collections,
+                       'linked_images': linked_image_data,
+                       'image_descriptions': image_descs,
+                       'rotation': rotation,
 
-                   'x': x,
-                   'y': y,
-                   'ne_x': nex,
-                   'ne_y': ney,
-                   'sw_x': swx,
-                   'sw_y': swy,
+                       'x': x,
+                       'y': y,
+                       'ne_x': nex,
+                       'ne_y': ney,
+                       'sw_x': swx,
+                       'sw_y': swy,
 
-                   'this_url': reverse('image', kwargs={'image_id': image_id})},
-                  context_instance=RequestContext(request))
-
+                       'this_url': reverse('image', kwargs={'image_id': image_id})},
+                      context_instance=RequestContext(request))
+    except:
+        raise Http404
 
 def get_flickr_tags(image_id):
 
