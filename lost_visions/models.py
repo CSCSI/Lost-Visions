@@ -33,9 +33,10 @@ class Book(models.Model):
     first_author = models.CharField(max_length=120L, blank=True)
     BL_DLS_ID = models.CharField(max_length=120L, blank=True)
     pubplace = models.CharField(max_length=120L, blank=True)
-    book_identifier = models.CharField(max_length=120L, blank=True)
+    book_identifier = models.CharField(unique=True, max_length=120L, blank=True)
     ARK_id_of_book = models.CharField(max_length=120L, blank=True)
     date = models.CharField(max_length=120L, blank=True)
+    datetime = models.DateTimeField(blank=True, null=True)
     # author = models.ForeignKey('Person', null=True, blank=True, related_name='author')
     # illustrator = models.ForeignKey('Person', null=True, blank=True, related_name='illustrator')
 

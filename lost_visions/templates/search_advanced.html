@@ -6,182 +6,224 @@
 
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-        var date_from = 1510;
-        var date_to = 1946;
+    var date_from = 1510;
+    var date_to = 1946;
 
-        $(document).ready(function () {
+    $(document).ready(function () {
 
-            $('#collapse_search_filter').accordion({
-                {#                icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },#}
-                {% if query_array.author|length or query_array.title|length or query_array.publisher|length or query_array.publishing_place|length or query_array.year|length  or query_array.illustrator|length%}
-                    active: 0,
-                {% else %}
-                    active: false,
-                {% endif %}
-                collapsible: true,
-                heightStyle: "content"
+        $('#collapse_search_filter').accordion({
+            {#                icons: { "header": "ui-icon-plus", "activeHeader": "ui-icon-minus" },#}
+            {% if query_array.author|length or query_array.title|length or query_array.publisher|length or query_array.publishing_place|length or query_array.year|length  or query_array.illustrator|length or query_array.date_from|length or query_array.date_to|length%}
+                active: 0,
+            {% else %}
+                active: false,
+            {% endif %}
+            collapsible: true,
+            heightStyle: "content"
 
-            });
+        });
 
-            var date_from_selector = $('#date_from');
-            for (var i = date_to; i > date_from; i--)
-            {
-                date_from_selector.append($('<option />').val(i).html(i));
-                $('#date_to').append($('<option />').val(i).html(i));
+        var date_from_selector = $('#date_from');
+        var date_to_selector = $('#date_to');
+
+        var from_selected = false;
+        var to_selected = false;
+        for (var i = date_to; i > date_from; i--)
+        {
+
+            var year_from_item = $('<option />').val(i).html(i);
+            {% if query_array.date_from %}
+                if (i == {{ query_array.date_from }}) {
+                    year_from_item.attr('selected', 'selected');
+                    from_selected = true;
+                }
+            {% endif %}
+            date_from_selector.append(year_from_item);
+
+            var year_to_item = $('<option />').val(i).html(i);
+            {% if query_array.date_to %}
+                if (i == {{ query_array.date_to }}) {
+                    year_to_item.attr('selected', 'selected');
+                    to_selected = true;
+                }
+            {% endif %}
+            date_to_selector.append(year_to_item);
+
+        }
+        var blank_from_item = $('<option />').val('').html('--');
+        var blank_to_item = $('<option />').val('').html('--');
+
+        if(from_selected == false){
+            blank_from_item.attr('selected', 'selected');
+        }
+        if(to_selected == false){
+            blank_to_item.attr('selected', 'selected');
+        }
+        date_from_selector.append(blank_from_item);
+        date_to_selector.append(blank_to_item);
+
+        var year_selector = $('#year');
+        year_selector.append($('<option selected="selected"/>').val('').html('--'));
+        for (var j = 1950; j > date_from; j-=10)
+        {
+            var year_item = $('<option />').val(j).html(j);
+
+            {% if query_array.year %}
+                if (j == {{ query_array.year }}) {
+                    year_item.attr('selected', 'selected');
+                }
+            {% endif %}
+            year_selector.append(year_item);
+
+        }
+
+        date_from_selector.change(function(){
+            {#                var date_to_selector = $('#date_to');#}
+            date_to_selector.empty();
+            date_from = $(this).val();
+            console.log(date_from);
+            console.log(date_to);
+            console.log(date_from == '');
+
+            if (date_from == ''){
+                date_from = 1510;
             }
-
-            var year_selector = $('#year');
-            year_selector.append($('<option selected="selected"/>').val('').html('--'));
-            for (var j = 1950; j > date_from; j-=10)
+            for (var j = date_to; j > date_from; j--)
             {
-                var year_item = $('<option />').val(j).html(j);
+                var year_to_item = $('<option />').val(j).html(j);
+                date_to_selector.append(year_to_item);
+            }
+            date_to_selector.append($('<option />').val('').html('--'));
+        });
 
-                {% if query_array.year %}
-                    if (j == {{ query_array.year }}) {
-                        year_item.attr('selected', 'selected');
+
+        $( "#author" ).autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{% url 'data.autocomplete' %}",
+                    dataType: "json",
+                    data: {
+                        term : request.term,
+                        data_object : "author"
+                    },
+                    success: function(data) {
+                        response(data);
                     }
-                {% endif %}
-                year_selector.append(year_item);
+                });
+            },
+            minLength: 3,
+            select: function( event, ui ) {
+
 
             }
-
-            date_from_selector.change(function(){
-                $('#date_to').empty();
-                date_from = $(this).val();
-                for (var j = date_to; j > date_from; j--)
-                {
-                    $('#date_to').append($('<option />').val(j).html(j));
-                }
-            });
+        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return $( "<li>" )
+                    .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
+                    .appendTo( ul );
+        };
 
 
-            $( "#author" ).autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{% url 'data.autocomplete' %}",
-                        dataType: "json",
-                        data: {
-                            term : request.term,
-                            data_object : "author"
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function( event, ui ) {
+        $( "#illustrator" ).autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{% url 'data.autocomplete' %}",
+                    dataType: "json",
+                    data: {
+                        term : request.term,
+                        data_object : "title"
+                    },
+                    success: function(data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function( event, ui ) {
 
 
-                }
-            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-                return $( "<li>" )
-                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
-                        .appendTo( ul );
-            };
+            }
+        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return $( "<li>" )
+                    .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
+                    .appendTo( ul );
+        };
 
 
-            $( "#illustrator" ).autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{% url 'data.autocomplete' %}",
-                        dataType: "json",
-                        data: {
-                            term : request.term,
-                            data_object : "title"
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function( event, ui ) {
+        $( "#title" ).autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{% url 'data.autocomplete' %}",
+                    dataType: "json",
+                    data: {
+                        term : request.term,
+                        data_object : "title"
+                    },
+                    success: function(data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function( event, ui ) {
 
 
-                }
-            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-                return $( "<li>" )
-                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
-                        .appendTo( ul );
-            };
+            }
+        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return $( "<li>" )
+                    .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
+                    .appendTo( ul );
+        };
+
+        {#            $( "#publishing_place" ).autocomplete({#}
+        {#                source: function(request, response) {#}
+        {#                    $.ajax({#}
+        {#                        url: "{% url 'data.autocomplete' %}",#}
+        {#                        dataType: "json",#}
+        {#                        data: {#}
+        {#                            term : request.term,#}
+        {#                            data_object : "publishing_place"#}
+        {#                        },#}
+        {#                        success: function(data) {#}
+        {#                            response(data);#}
+        {#                        }#}
+        {#                    });#}
+        {#                },#}
+        {#                minLength: 3,#}
+        {#                select: function( event, ui ) {#}
+        {##}
+        {##}
+        {#                }#}
+        {#            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {#}
+        {#                return $( "<li>" )#}
+        {#                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )#}
+        {#                        .appendTo( ul );#}
+        {#            };#}
+
+        $( "#publisher" ).autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{% url 'data.autocomplete' %}",
+                    dataType: "json",
+                    data: {
+                        term : request.term,
+                        data_object : "publisher"
+                    },
+                    success: function(data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function( event, ui ) {
 
 
-            $( "#title" ).autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{% url 'data.autocomplete' %}",
-                        dataType: "json",
-                        data: {
-                            term : request.term,
-                            data_object : "title"
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function( event, ui ) {
-
-
-                }
-            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-                return $( "<li>" )
-                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
-                        .appendTo( ul );
-            };
-
-            {#            $( "#publishing_place" ).autocomplete({#}
-            {#                source: function(request, response) {#}
-            {#                    $.ajax({#}
-            {#                        url: "{% url 'data.autocomplete' %}",#}
-            {#                        dataType: "json",#}
-            {#                        data: {#}
-            {#                            term : request.term,#}
-            {#                            data_object : "publishing_place"#}
-            {#                        },#}
-            {#                        success: function(data) {#}
-            {#                            response(data);#}
-            {#                        }#}
-            {#                    });#}
-            {#                },#}
-            {#                minLength: 3,#}
-            {#                select: function( event, ui ) {#}
-            {##}
-            {##}
-            {#                }#}
-            {#            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {#}
-            {#                return $( "<li>" )#}
-            {#                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )#}
-            {#                        .appendTo( ul );#}
-            {#            };#}
-
-            $( "#publisher" ).autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{% url 'data.autocomplete' %}",
-                        dataType: "json",
-                        data: {
-                            term : request.term,
-                            data_object : "publisher"
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function( event, ui ) {
-
-
-                }
-            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-                return $( "<li>" )
-                        .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
-                        .appendTo( ul );
-            };
-        })
+            }
+        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return $( "<li>" )
+                    .append( "<a><strong>" + item.label + "</strong><br>" + item.desc + "</a>" )
+                    .appendTo( ul );
+        };
+    })
     </script>
     <div class="container home-content-main">
 
@@ -269,12 +311,16 @@
 
                                     <div class="ui-widget">
                                         <label class="'control-label" for="date_from">Date From: </label>
-                                        <select disabled class="'form-control" id="date_from" name="date_from"></select>
+                                        <select
+                                                {#                                                disabled #}
+                                                class="'form-control" id="date_from" name="date_from"></select>
                                     </div>
 
                                     <div class="ui-widget">
                                         <label class="'control-label" for="date_to">Date To: </label>
-                                        <select disabled class="'form-control" id="date_to" name="date_to"></select>
+                                        <select
+                                                {#                                                disabled #}
+                                                class="'form-control" id="date_to" name="date_to"></select>
                                     </div>
 
                                     <div class="ui-widget">

@@ -362,6 +362,9 @@ class ImagePicker():
         keywords = query_items.get('keyword', '').strip()
         keywords = [x.strip() for x in keywords.split(' ')]
 
+        year_from = query_items.get('date_from', '').strip()
+        year_to = query_items.get('date_to', '').strip()
+
         year = query_items.get('year', '').strip()
         author = query_items.get('author', '').strip()
         illustrator = query_items.get('illustrator', '').strip()
@@ -374,6 +377,17 @@ class ImagePicker():
         tag_keywords_only = query_items.get('tag_keywords_only', False)
 
         all_results = SearchQuerySet()
+
+        print year_from, year_to
+        if len(year_from) and year_from is not '--' and len(year_to) and year_to is not '--':
+            date_range = [year_from + '-01-01', year_to + '-12-31']
+            books_in_date_range = models.Book.objects.filter(datetime__range=date_range).values_list('book_identifier', flat=True)
+
+            # print books_in_date_range.query
+            print 'books in range ' + str(books_in_date_range.count())
+
+            ors = [SQ(book_identifier=x) for x in books_in_date_range]
+            all_results = all_results.filter(reduce(operator.or_, ors))
 
         if len(year):
             decade = year[0:3]
