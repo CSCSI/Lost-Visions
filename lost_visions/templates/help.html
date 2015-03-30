@@ -26,7 +26,7 @@
 
         <p class="help_std_txt"><a class="anchor" name="tagging"></a></p>
         <h3>Tagging an Illustration</h3>
-        <p class="help_std_txt">The user may consider the illustration, the associated metadata and can view the page from the book this illustration was taken from, and then answer the questions in the right hand pane</p>
+        <p class="help_std_txt">The user can look at the illustration, the associated metadata and can view the page from the book this illustration was taken from, and then answer the questions in the right hand pane</p>
         <p class="help_std_txt">
             <img class="help_image" src="{% static "media/images/help/001_tagging_page.png" %}">
 
@@ -36,16 +36,16 @@
 
         <p class="help_std_txt"><a class="anchor" name="search"></a></p>
         <h3>Searching</h3>
-        <p class="help_std_txt">This is a basic keyword search, where any term entered may appear anywhere in the illustration's descriptions</p>
+        <p class="help_std_txt">This is a basic keyword search, where any term entered may appear anywhere in the illustration's metadata</p>
         <img class="help_image" src="{% static "media/images/help/search.png" %}">
 
-        <p class="help_std_txt">Information searched within includes:</p>
+        <p class="help_std_txt">Information searched includes:</p>
         <ul>
             <li>The book's title</li>
             <li>The book's (primary) author</li>
             <li>The book's illustrator(s) (if known and/or recorded)</li>
             <li>The publisher</li>
-            <li>The place of publishing</li>
+            <li>The place of publication</li>
             <li>Any captions recorded by users</li>
             <li>Any tags added by users</li>
             <li>Collection titles</li>
@@ -66,8 +66,8 @@
             <li>The book's (primary) author</li>
             <li>The book's illustrator(s) (if known and/or recorded)</li>
             <li>The publisher</li>
-            <li>The place of publishing</li>
-            <li>The date of publishing of this volume (date range or decade)</li>
+            <li>The place of publication</li>
+            <li>The date of publication of this volume (date range or decade)</li>
         </ul>
         <p class="help_std_txt">Keyword search can also be performed for all fields, and also includes:</p>
 
@@ -154,11 +154,11 @@
                 </ul>
             </dd>
             <dt>Download Collection</dt>
-            <dd>Downloads all the high resolution illustration for this collection, as well as a JSON formatted metadata file and a summary text file for each illustration</dd>
+            <dd>Downloads all the high resolution illustrations for this collection, as well as a JSON formatted metadata file and a summary text file for each illustration</dd>
             <dt>Show Exhibition</dt>
             <dd>Shows a scrolling exhibition page of each illustration in the collection</dd>
             <dt>Request Public Exhibition</dt>
-            <dd>Once a collection has been created, the user may request the Illustration Archive display it formally from the <a target="_blank" href="{% url 'public_exhibition_list' %}">Public Exhibition</a> page</dd>
+            <dd>Once a collection has been created, the user may request that the Illustration Archive display it formally from the <a target="_blank" href="{% url 'public_exhibition_list' %}">Public Exhibition</a> page</dd>
             <dt>Share</dt>
             <dd>Displays a shareable url to this collection's exhibition page, to be copied on social media etc.</dd>
             <dt>Tweet</dt>
