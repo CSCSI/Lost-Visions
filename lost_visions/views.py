@@ -1122,6 +1122,9 @@ def do_advanced_search(request):
     keywords = request.GET.get('keyword', '')
     number_of_results = request.GET.get('num_results', '')
 
+    year_from = request.GET.get('date_from', '').strip()
+    year_to = request.GET.get('date_to', '').strip()
+
     results = dict()
     results['advanced'] = dict()
     total_results = 0
@@ -1138,6 +1141,18 @@ def do_advanced_search(request):
         except:
             pass
     readable_query += 'Showing first ' + str(number_of_results_int) + ' results '
+
+    books_in_date_range = []
+    print year_from, year_to
+    if len(year_from) and year_from is not '--' and len(year_to) and year_to is not '--':
+        date_range = [year_from + '-01-01', year_to + '-12-31']
+        books_in_date_range = models.Book.objects.filter(datetime__range=date_range).values_list('book_identifier', flat=True)
+
+        # logger.debug('books in range ' + str(year_from) + ' ' + str(year_to) + ' : ' + str(books_in_date_range.count()))
+        # logger.debug(books_in_date_range)
+        # ors = [SQ(book_identifier=str(x)) for x in books_in_date_range]
+        # if len(ors):
+        #     all_results = all_results.filter(reduce(operator.or_, ors))
 
     im = ImagePicker()
     alternative_search = request.GET.get('alternative_search', '')
@@ -1183,7 +1198,6 @@ def do_advanced_search(request):
     else:
         all_results_haystack = im.advanced_haystack_search(request.GET).load_all()
 
-
         user = get_request_user(request)
         logger.debug(str(user.username.username) + " : " + pprint.pformat(request.GET))
 
@@ -1200,7 +1214,8 @@ def do_advanced_search(request):
                 # all_image_ids += x.flickr_id + ','
                 try:
                     if type(x) is not NoneType and x.flickr_id not in to_join:
-                        to_join.append(x.flickr_id)
+                        if len(books_in_date_range) and x.book_identifier in books_in_date_range:
+                            to_join.append(x.flickr_id)
                 except:
                     pass
         except Exception as e23458:

@@ -362,9 +362,6 @@ class ImagePicker():
         keywords = query_items.get('keyword', '').strip()
         keywords = [x.strip() for x in keywords.split(' ')]
 
-        year_from = query_items.get('date_from', '').strip()
-        year_to = query_items.get('date_to', '').strip()
-
         year = query_items.get('year', '').strip()
         author = query_items.get('author', '').strip()
         illustrator = query_items.get('illustrator', '').strip()
@@ -475,19 +472,6 @@ class ImagePicker():
                     all_results = all_results.filter_or(pubplace__icontains=word)
 
         # all_results_list = all_results.values_list('fields__flickr_id', flat=True)
-
-        print year_from, year_to
-        if len(year_from) and year_from is not '--' and len(year_to) and year_to is not '--':
-            date_range = [year_from + '-01-01', year_to + '-12-31']
-            books_in_date_range = models.Book.objects.filter(datetime__range=date_range).values_list('book_identifier', flat=True)
-
-            # print books_in_date_range.query
-            logger.debug('books in range ' + str(year_from) + ' ' + str(year_to) + ' : ' + str(books_in_date_range.count()))
-            logger.debug(books_in_date_range)
-
-            ors = [SQ(book_identifier=str(x)) for x in books_in_date_range]
-            if len(ors):
-                all_results = all_results.filter(reduce(operator.or_, ors))
 
         logger.debug(all_results.query)
         print all_results.query
