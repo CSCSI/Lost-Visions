@@ -1,11 +1,8 @@
 import logging
 import pprint
 import datetime
-from django.db import transaction, DatabaseError
-
 import pytz
 from django.utils import timezone
-
 from lost_visions import models
 # logger = logging.getLogger('lost_visions')
 
@@ -13,8 +10,9 @@ __author__ = 'ubuntu'
 
 
 import os
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
+
+from django.db import transaction, DatabaseError
 
 unique_book_images = models.Image.objects.all().values_list('book_identifier', flat=True).distinct()
 
