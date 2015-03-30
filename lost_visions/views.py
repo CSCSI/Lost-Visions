@@ -2530,7 +2530,7 @@ def public_exhibition_list(request):
             'img_info': image_info[0]
         })
 
-    trusted_ids = [3,4,5,6,7,8]
+    trusted_ids = settings.TRUSTED_COLLECTIONS
 
     ors = [Q(id=x) for x in trusted_ids]
     # ors.append(Q(id=an_id))
