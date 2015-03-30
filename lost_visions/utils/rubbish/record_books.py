@@ -1,6 +1,8 @@
 import logging
 import pprint
 import datetime
+from django.db import transaction, DatabaseError
+
 import pytz
 from django.utils import timezone
 
@@ -57,6 +59,9 @@ for a in unique_book_images:
         try:
             book_model.save()
             count += 1
+        except DatabaseError as dbe:
+            print 'dbe : ' + str(dbe)
+            transaction.rollback()
         except Exception as e78643:
             print e78643
             # logger.debug(str(e78643))
