@@ -384,10 +384,12 @@ class ImagePicker():
             books_in_date_range = models.Book.objects.filter(datetime__range=date_range).values_list('book_identifier', flat=True)
 
             # print books_in_date_range.query
-            print 'books in range ' + str(books_in_date_range.count())
+            logger.debug('books in range ' + str(year_from) + ' ' + str(year_to) + ' : ' + str(books_in_date_range.count()))
+            logger.debug(books_in_date_range)
 
-            ors = [SQ(book_identifier=x) for x in books_in_date_range]
-            all_results = all_results.filter(reduce(operator.or_, ors))
+            ors = [SQ(book_identifier=str(x)) for x in books_in_date_range]
+            if len(ors):
+                all_results = all_results.filter(reduce(operator.or_, ors))
 
         if len(year):
             decade = year[0:3]
@@ -489,6 +491,7 @@ class ImagePicker():
 
         logger.debug(all_results.query)
         print all_results.query
+        logger.debug(all_results.count())
         return all_results
 
     # A method to find the overall tag weight for a tag

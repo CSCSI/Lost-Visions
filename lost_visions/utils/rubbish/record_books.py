@@ -22,8 +22,10 @@ count = 0
 for a in unique_book_images:
     # print pprint.pformat(a)
 
-    unique_book_image = models.Image.objects.filter(book_identifier=a)[0]
+    unique_book_image_set = models.Image.objects.filter(book_identifier=a).all()[:1]
+    # print unique_book_image_set.query
 
+    unique_book_image = unique_book_image_set[0]
     # print pprint.pformat(unique_book_image.__dict__)
 
     date_int = 1000

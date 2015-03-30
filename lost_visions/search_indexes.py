@@ -12,6 +12,7 @@ class ImageIndex(indexes.SearchIndex, indexes.Indexable):
     title = indexes.CharField(model_attr='title')
     publisher = indexes.CharField(model_attr='publisher')
     date = indexes.CharField(model_attr='date')
+    book_identifier = indexes.CharField(model_attr='book_identifier')
 
     flickr_id = indexes.CharField(model_attr='flickr_id')
 
