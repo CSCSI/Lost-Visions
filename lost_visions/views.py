@@ -261,8 +261,8 @@ def random_image(request):
         return redirect('image', image_id=image_id)
     except:
         raise Http404
-    # print pprint.pformat(request.POST)
-    # return redirect('image.random')
+        # print pprint.pformat(request.POST)
+        # return redirect('image.random')
 
 
 def is_user_tag(tag):
@@ -2523,16 +2523,45 @@ def public_exhibition_list(request):
         image_info = get_images_for_flickr_id(int(ex.collection.imagemapping_set.all()[0].image.flickr_id))
 
         response_data.append({
-            'timestamp': str(ex.timestamp),
+            'timestamp': str(ex.timestamp.strftime('%Y-%m-%d')),
             'id': ex.id,
             'name': ex.collection.name,
             'collection_id': ex.collection.id,
             'img_info': image_info[0]
         })
 
-    return render(request, 'public_exhibition_list.html',
-                  {'results': response_data},
-                  context_instance=RequestContext(request))
+    trusted_ids = [3,4,5,6,7,8]
+
+    ors = [Q(id=x) for x in trusted_ids]
+    # ors.append(Q(id=an_id))
+
+    collection_models = models.ImageCollection.objects.all()
+    collection_models = collection_models.filter(reduce(operator.or_, ors))
+
+    trusted_collections = []
+
+    for collection_model in collection_models:
+        image_mapping_set = collection_model.imagemapping_set.all()
+        if image_mapping_set.count() > 0:
+
+            image_datas = get_image_data_from_array([image_mapping_set[0].image.flickr_id], request)
+            image_url = ''
+            for img_data_id, img_data in image_datas.items():
+                image_url = img_data['img_small']
+
+            trusted_collections.append({
+                'collection_name': collection_model.name,
+                'collection_size': collection_model.imagemapping_set.all().count(),
+                'collection_id': collection_model.id,
+                'collection_creator': collection_model.user.username.username,
+                'collection_timestamp': collection_model.timestamp.strftime('%Y-%m-%d'),
+                'image_url': image_url
+            })
+
+    return render(request, 'public_exhibition_list.html', {
+        'results': response_data,
+        'trusted_collections': trusted_collections
+    }, context_instance=RequestContext(request))
 
 
 def view_collection(request, collection_id, page):

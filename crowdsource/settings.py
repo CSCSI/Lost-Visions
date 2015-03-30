@@ -226,6 +226,8 @@ shrink_arcca_images = False
 find_arcca_thumbnail = True
 use_azure = False
 
+TRUSTED_COLLECTIONS = []
+
 try:
     from crowdsource.settings_local import *
 except ImportError:
