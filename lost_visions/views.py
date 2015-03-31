@@ -1214,7 +1214,10 @@ def do_advanced_search(request):
                 # all_image_ids += x.flickr_id + ','
                 try:
                     if type(x) is not NoneType and x.flickr_id not in to_join:
-                        if len(books_in_date_range) and x.book_identifier in books_in_date_range:
+                        if len(books_in_date_range):
+                            if x.book_identifier in books_in_date_range:
+                                to_join.append(x.flickr_id)
+                        else:
                             to_join.append(x.flickr_id)
                 except:
                     pass
