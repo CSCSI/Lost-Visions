@@ -704,15 +704,33 @@
 
     {% if results.pages|length > 1 %}
         <p style="text-align:right; font-size: x-large">
-            Pages : {% for p in results.pages %}
-            <a href="{% url 'view_collection' collection_id p %}">
-                {% if results.this_page == p %}
-                    <span style="font-size: xx-large; text-decoration: underline">{{ p }}</span>
+            Pages :
+
+            {% if results.dots %}
+                <a href="{% url 'view_collection' collection_id 1 %}">
+                    {% if results.this_page == 1 %}
+                        <span style="font-size: xx-large; text-decoration: underline">1</span>
+                    {% else %}
+                        <span style="font-size: x-large">1</span>
+                    {% endif %}                </a> ... {% endif %}
+
+            {% for p in results.pages %}
+                <a href="{% url 'view_collection' collection_id p %}">
+                    {% if results.this_page == p %}
+                        <span style="font-size: xx-large; text-decoration: underline">{{ p }}</span>
+                    {% else %}
+                        <span style="font-size: x-large">{{ p }}</span>
+                    {% endif %}
+                </a>
+            {% endfor %}
+
+            {% if results.dots %} ... <a href="{% url 'view_collection' collection_id results.total_pages %}">
+                {% if results.this_page == results.total_pages %}
+                    <span style="font-size: xx-large; text-decoration: underline">{{ results.total_pages }}</span>
                 {% else %}
-                    <span style="font-size: x-large">{{ p }}</span>
-                {% endif %}
-            </a>
-        {% endfor %}
+                    <span style="font-size: x-large">{{ results.total_pages }}</span>
+                {% endif %}            </a>
+            {% endif %}
         </p>
     {% endif %}
 

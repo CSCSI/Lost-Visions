@@ -2623,9 +2623,28 @@ def view_collection(request, collection_id, page):
         else:
             mode = 'logged_in_not_owner'
 
+    dots = False
+    if total_number_of_pages < 6:
+        pages = range(1, total_number_of_pages + 1)
+    else:
+        dots = True
+        if page < 5:
+            pages = range(2, 6)
+        else:
+            range_max = page + 4
+            if range_max > total_number_of_pages:
+                range_max = total_number_of_pages
+            range_min = page - 4
+            if range_min < 2:
+                range_max = 2
+
+            pages = range(range_min, range_max)
+
     response_data = {'results': results,
-                     'pages': range(1, total_number_of_pages +1),
+                     'pages': pages,
+                     'dots': dots,
                      'this_page': page,
+                     'total_pages': total_number_of_pages,
                      'size': mapped_images_full_count}
 
     user_collections = []
