@@ -3,58 +3,151 @@
 
 {% block content %}
 
+
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
         $(document).ready(function () {
-            $('#carousel-exhibition').carousel();
-            $("#carousel-exhibition").height($(window).height() * 0.8).css({'margin': '0 auto'});
-            $(".carousel-exhibition-item").height($(window).height() * 0.8).css({'margin': '0 auto'});
+
+{#            $("img.scale").load(function(){#}
+{#                $(function() {#}
+{#                    $(this).imageScale({#}
+{#                        parent: $('.slick_container')#}
+{#                    });#}
+{#                });#}
+{#            });#}
+
+            {#            $('#carousel-exhibition').carousel();#}
+            {#            $("#carousel-exhibition").height($(window).height() * 0.6).css({'margin': '0 auto'});#}
+
+            $(".carousel-exhibition-item").css({'margin': '0 auto', 'height': ($(window).height() * 0.6), 'width': '100%'});
+            {#            $(".slick_container_nav").css({'margin': '0 auto', 'height': ($(window).height() * 0.1)});#}
+
             {#            var carousel = $(".home-carousel");#}
             {#            carousel.css({'max-height': carousel.height()});#}
+
+            $('.slider-for').slick({
+                {#                lazyLoad: 'progressive',#}
+                autoplay: true,
+                autoplaySpeed: 2000,
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: false,
+                fade: true,
+                asNavFor: '.slider-nav'
+            }).on('afterChange', function(event, slick, currentSlide){
+{#                console.log(currentSlide);#}
+{##}
+{#                console.log(slick.$slides.eq(currentSlide));#}
+{#                $(function() {#}
+{##}
+                    {#body > div.wrapper > div.base-container > div > div.slider-for.slick-initialized.slick-slider > div > div > div.slick-slide.slick-active > table > tbody > tr:nth-child(1) > th > div > a > img#}
+{#                    var img_dom = $(".slick-slide[data-slick-index="+ currentSlide +"]").find(".scale");#}
+{#                    console.log(img_dom);#}
+{#                    img_dom.imageScale({#}
+{#                        parent: $(".slick-slide[data-slick-index="+ currentSlide +"]").find(".slick_container")#}
+{#                    });#}
+{#                });#}
+            });
+
+            $('.slider-nav').slick({
+                slidesToShow: 4,
+                slidesToScroll: 1,
+                asNavFor: '.slider-for',
+                {#                                dots: true,#}
+                centerMode: true,
+                focusOnSelect: true
+            });
+
+{#            $(function() {#}
+{#                $(".scale").imageScale({#}
+{#                    parent: $('.slick_container')#}
+{#                });#}
+{#            });#}
         });
 
     </script>
 
-    <div class="home-content-main container">
-        <h3>{{ collection_data.collection_name }} - Created by {{ collection_creator }} - {{ collection_data.images|length }} images</h3>
+    {#    <div class="home-content-main container">#}
+    <h3 style="text-align: center">{{ collection_data.collection_name }} - {{ collection_data.images|length }} images</h3>
 
-        <div class="row">
+    <div class="row">
+        <div class="slider-for">
+            {% for image in collection_data.images %}
+                <div class="{% if forloop.first %} active{% endif %}">
 
-            <div id="carousel-exhibition" class="carousel slide carousel-exhibition" data-ride="carousel">
-                <!-- Indicators -->
-                <ol class="carousel-indicators">
-                    <li data-target="#carousel-exhibition" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel-exhibition" data-slide-to="1"></li>
-                    <li data-target="#carousel-exhibition" data-slide-to="2"></li>
-                </ol>
+                    <table style="width: 100%" class="findme">
+                        {#                            <col width="80%">#}
+                        {#                            <col width="20%">#}
+                        <tr>
+                            <th>
+                                <div class="slick_container carousel-exhibition-item"
+                                                                             style="width: 100%; display: table"
+                                        >
+                                    <a href="{% url 'image' image.flickr_id %}" target="_blank"
 
-                <!-- Wrapper for slides -->
-                <div class="carousel-inner carousel-exhibition-inner">
+                                                                                   style="display: table-cell; vertical-align: middle"
+                                            >
+                                        <img
+                                                class="scale" data-scale="best-fit" data-align="center"
 
-                    {% for image in collection_data.images %}
-
-                        <div class="item{% if forloop.first %} active{% endif %} carousel-exhibition-item">
-                            <img src="{{ image.url }}" alt="fire">
-                            <div class="carousel-caption carousel-exhibition-caption">
+                                                                                             style="max-width: 100%; height: inherit; margin: auto"
+                                                data-lazy="{{ image.url }}">
+                                    </a>
+                                </div>
+                            </th>
+                            {#                                <td>#}
+                            {#                                    {{ image.title }}#}
+                            {#                                    {% if image.caption %}#}
+                            {#                                        <br>#}
+                            {#                                        <span style="color: white; background-color: #A365BA; text-align: center; text-wrap: normal">#}
+                            {#                                            {{ image.caption }}#}
+                            {#                                        </span>#}
+                            {#                                    {% endif %}#}
+                            {#                                </td>#}
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">
                                 {{ image.title }}
-                                <br>
-                                <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>
-                            </div>
-                        </div>
+                                {% if image.caption %}
+                                    <br>
+                                    <span style="color: white; background-color: #A365BA; text-align: center; text-wrap: normal">
+                                            {{ image.caption }}
+                                        </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
 
-                    {% endfor %}
+                    {#                                                <img src="{{ image.url }}" class="carousel-exhibition-item">#}
+                    {#                                                <div class="" style="text-align: center">#}
+                    {#                                                    {{ image.title }}#}
+                    {#                                                    {% if image.caption %}#}
+                    {#                                                    <br>#}
+                    {#                                                    <span style="color: white; background-color: #A365BA; text-align: center">{{ image.caption }}</span>#}
+                    {#                                                    {% endif %}#}
+                    {#                                                </div>#}
 
                 </div>
+            {% endfor %}
+        </div>
 
-                <!-- Controls -->
-                <a class="left carousel-control" href="#carousel-exhibition" data-slide="prev">
-                    {#                    <span class="glyphicon glyphicon-chevron-left"></span>#}
-                </a>
-                <a class="right carousel-control" href="#carousel-exhibition" data-slide="next">
-                    {#                    <span class="glyphicon glyphicon-chevron-right"></span>#}
-                </a>
-            </div>
-
+        <div class="slider-nav">
+            {% for image in collection_data.images %}
+                <div class="{% if forloop.first %} active{% endif %}">
+                    <div id="slick_container_nav" class="slick_container_nav" style="display: table">
+                        <div style="display: table-cell; vertical-align: middle">
+                            <img src="{{ image.url }}" style="max-height: 100px; max-width: 200px">
+                            {#                        <div class="">#}
+                            {#                            <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>#}
+                            {#                        </div>#}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
+
+    <h3>This Exhibition has been public since : {{ date }}</h3>
+    <h3>Collection originally created by {{ collection_creator }} </h3>
+    {#    </div>#}
 
 {% endblock %}

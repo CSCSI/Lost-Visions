@@ -134,10 +134,11 @@ class CategoryManager():
 
         self.categories[0] = Category('0', 'yes', '', YES_BUTTON_URL).set_save(False)
         self.categories[1] = Category('1', 'no', '', NO_BUTTON_URL).set_save(False)
+        self.categories[2] = Category('2', 'none', '', NONE_OF_THESE_BUTTON_URL).set_save(False)
 
         self.categories[0] = Category('-1', 'root', 'Root', '') \
             .set_question('Is the illustration:') \
-            .set_answers([100, 200, 303, 400, 500, 600, 800, 1000, 1100]) \
+            .set_answers([100, 200, 303, 400, 500, 600, 800, 1000, 1100, 2]) \
             .set_save(False)
 
         self.categories[100] = Category('100', 'advert', '', ADVERT_BUTTON_IMAGE_URL).set_synset('advert.n.1')

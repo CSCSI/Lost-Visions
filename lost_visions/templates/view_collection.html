@@ -502,6 +502,34 @@
 
         });
 
+        var tag_collection_dialog = $( "#tag_collection_dialog_form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Tag Collection": function() {
+                    var collection_id = $(this).data('collection_id');
+
+                    $('#finish_tagging_dialog_form').dialog("open");
+
+
+
+                },
+                Cancel: function() {
+                    tag_collection_dialog.dialog( "close" );
+                }
+            },
+            close: function() {}
+        });
+
+        $('.tag_collection').click(function(){
+            var collection_id = $(this).data('collection_id');
+            var collection_name = $(this).data('collection_name');
+            $('#tag_collection_dialog_form').data('id', collection_id).data('name', collection_name).dialog("open");
+        });
+
+
         $('.request_public_exhibition').click(function(){
             var collection_name = $(this).data().collection_name;
             var collection_id = $(this).data().collection_id;
@@ -622,6 +650,227 @@
             }
         });
 
+        var all_tags = {};
+        var hightlighted_x_percent = 0;
+        var hightlighted_y_percent = 0;
+        var highlighted_x_pixel = 0;
+        var highlighted_y_pixel = 0;
+        var uid = 1;
+        function get_next_id() {
+            return uid++;
+        }
+
+        function add_tag_button(tag_string, synset) {
+            console.log(tag_string + ' : ' + synset);
+            var id = 'id_' + tag_string;
+
+            var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                    + 'id="' + id +
+                    '" name="' + tag_string +
+                    '" x_percent="' + hightlighted_x_percent +
+                    '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';
+
+            var d = new Date();
+            var timestamp = d.toISOString();
+            var tag_uid = get_next_id();
+            all_tags[tag_uid] = {
+                tag: tag_string,
+                {#            tag_id: get_next_id(),#}
+                synset: synset,
+                x_percent: hightlighted_x_percent,
+                y_percent: hightlighted_y_percent,
+                x_pixel: highlighted_x_pixel,
+                y_pixel: highlighted_y_pixel,
+                timestamp: timestamp,
+                tag_order: tag_uid
+            };
+            console.log('add_tag_button');
+            console.log(all_tags);
+
+            hightlighted_x_percent = 0;
+            hightlighted_y_percent = 0;
+            highlighted_x_pixel = 0;
+            highlighted_y_pixel = 0;
+
+            document.getElementById("tag_info").value = JSON.stringify(all_tags);
+            {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
+
+            var button_toggle_component = $($button_toggle).click(function(){
+                $(this).remove();
+            }).tooltip();
+
+            $("#add_tags_body").append(button_toggle_component);
+
+        }
+
+        $( "#dictionary" ).autocomplete({
+            source: "{% url 'find.word' %}",
+            position: { my: "left top", at: "left bottom", collision: "flip" },
+            minLength: 3,
+            select: function( event, ui ) {
+                var tag_string = ui.item.value;
+                var id = 'id_' + tag_string;
+                var synset = ui.item.synset;
+
+                add_tag_button(tag_string, synset);
+
+                ui.item.value = "";
+            }
+        }).keypress(function(e) {
+            return true;
+        }).focus(function(e){
+        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+            return $( "<li>").css('word-wrap', 'normal')
+                    .append( '<a style="word-wrap: normal;"><strong>' + item.label + "</strong><br>" + item.desc + "</a>" )
+                    .appendTo( ul);
+        };
+
+        function get_alt_tags(callback) {
+            {#        alert(document.getElementById("tag_info").value);#}
+            $.ajax({
+                type: "POST",
+                url: "{% url 'image.alt_tags' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    {#                tag_info: document.getElementById("tag_info").value#}
+                    tag_info: JSON.stringify(all_tags)
+                },
+                success: function(data) {
+                    {#                alert(document.getElementById("tag_info").value);#}
+
+                    {#                    console.log(data);#}
+                    callback(data);
+
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                    callback(null);
+                }
+            });
+        }
+
+        var window_height = $(window).height();
+        var window_width = $(window).width();
+
+        function replace_finished_tag_div(div_string) {
+            var final_tags_div = $('#final_tags').css('width', window_width);
+            final_tags_div.empty();
+            final_tags_div.append($(div_string));
+        }
+
+        var finish_tagging_dialog_form = null;
+        function setup_finish_dialog() {
+
+            var window_height = $(window).height();
+            var window_width = $(window).width();
+
+            finish_tagging_dialog_form = $( "#finish_tagging_dialog_form" ).dialog({
+                autoOpen: false,
+                height: window_height * 0.75,
+                width: window_width * 0.5,
+                modal: true,
+                buttons: {
+                    "Save": function() {
+                        {#                        $('#stay_or_next_image').val('stay');#}
+
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'manage_collection' %}",
+                            data: {
+                                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                                collection_id: {{ collection_id }},
+                                tag_info: document.getElementsByName('tag_info')[0].value,
+                                tags_2: JSON.stringify(all_tags),
+                                action: 'tag_collection'
+                            },
+                            success: function(data) {
+                                console.log(data);
+
+                            },
+                            error: function(xhr, textStatus, errorThrown) {
+                                alert("Problem tagging collection : "+errorThrown+xhr.status+xhr.responseText);
+                            }
+                        });
+
+                        finish_tagging_dialog_form.dialog( "close" );
+                        {#                        $('#image-taggin-form').submit();#}
+                    },
+                    Cancel: function() {
+                        console.log('on close:');
+                        console.log(all_tags);
+                        {#                        alert(all_tags);#}
+                        finish_tagging_dialog_form.dialog( "close");
+                        {#                        setup_finish_dialog();#}
+                    }
+                },
+                open : function() {
+
+                    var spinner = '<div style="margin: 0 auto; text-align: center; margin-top: 20px">' +
+                            '<div class="fa fa-3x fa-spinner fa-spin"></div>' +
+                            '</div>';
+                    replace_finished_tag_div(spinner);
+
+                    get_alt_tags(function(data) {
+
+
+                        var user_tags = data;
+
+                        var final_tags_div = $('#final_tags');
+                        final_tags_div.empty();
+
+                        for (var tag_index in user_tags) {
+                            var tag_uid = get_next_id();
+                            all_tags[tag_uid] = {
+                                tag: user_tags[tag_index]['tag'],
+                                {#                            tag_id: tag_uid,#}
+                                synset: user_tags[tag_index]['synset'],
+                                x_percent: user_tags[tag_index]['x_percent'],
+                                y_percent: user_tags[tag_index]['y_percent'],
+                                timestamp: user_tags[tag_index]['timestamp'],
+                                tag_order: user_tags[tag_index]['tag_order']
+                            };
+
+                            var tag_string = user_tags[tag_index]['tag'];
+                            var id = 'id_' + tag_string;
+
+                            var btn_class = 'btn-success'
+                            if (user_tags[tag_index]['tag_order'].slice(-6) == '100100') {
+                                btn_class = 'btn-success btn-surround';
+                            }
+
+                            var $button_toggle = '<div class="btn ' + btn_class + ' tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                                    + 'data-uid="' + tag_uid + '" '
+                                    + 'id="' + id + '" '
+                                    + 'name="' + tag_string +'">'  + tag_string + '</div>';
+
+                            var button_toggle_component = $($button_toggle).click(function(){
+                                $(this).remove();
+                                var remove_uid = $(this).data('uid');
+
+                                {#                                alert(remove_uid);#}
+                                delete all_tags[remove_uid];
+                                document.getElementById("tag_info").value = JSON.stringify(all_tags);
+
+                                {#                                alert(JSON.stringify(all_tags));#}
+                                {#                            TODO an attempt at flashy stuff #}
+                                {#                            $(this).toggle('scale', {}, 600, function(){});#}
+                            }).tooltip();
+
+                            document.getElementById("tag_info").value = JSON.stringify(all_tags);
+
+                            final_tags_div.append(button_toggle_component);
+                        }
+                    });
+
+                },
+                close: function() {
+
+                }
+            });
+
+        }
+
+        setup_finish_dialog();
 
     });
 
@@ -637,6 +886,13 @@
     <h3 style="text-align: center">Collection created by {{ collection_creator }}</h3>
     <h2 style="text-align: center">{{ results.size }} Illustrations</h2>
 
+    <div style="margin-left: 15px">
+        <div class="row">
+            {% for tag in collection_tags %}
+                <div class="btn btn-success">{{ tag }}</div>
+            {% endfor %}
+        </div>
+    </div>
 
 
     <div style="margin-left: 15px">
@@ -647,6 +903,11 @@
                      data-collection_id="{{ collection_id }}"
                      data-collection_name="{{ collection_name }}"
                      class="btn btn-default edit_collection">Edit Collection</div>
+
+                <div id="tag_collection_{{ collection_id }}"
+                     data-collection_id="{{ collection_id }}"
+                     data-collection_name="{{ collection_name }}"
+                     class="btn btn-default tag_collection">Tag Collection</div>
             {% endif %}
 
             <div id="download_collection{{ k }}" data-collection_id="{{ collection_id }}"
@@ -665,7 +926,7 @@
             <div id="share_all" data-collection_id="{{ collection_id }}" class="btn btn-warning share_all">Share</div>
 
             <div class="btn"  style="padding: 10px; margin-top: 10px">
-                <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'dl_collection' %}?collection_id={{ collection_id }}" data-text="I'm sharing an Image collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
+                <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://lost-visions.cf.ac.uk{% url 'view_collection' collection_id 1%}" data-text="I'm sharing an Illustration collection with the @Lost_Visions project" data-via="lost_visions" data-size="large">Tweet</a>
                 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
             </div>
@@ -783,6 +1044,21 @@
         </form>
     </div>
 
+    <div id="finish_tagging_dialog_form" title="Complete Illustration Tagging">
+        <p class="validateTips">Click any incorrect tags to remove them, then Finish tagging.</p>
+        <div id="finish_tagging_data" data-collection_id="" data-collection_name=""></div>
+        <form>
+            <fieldset>
+                <div id="final_tags">
+                    <div style="margin: 0 auto; text-align: center; margin-top: 20px">
+                        <div class="fa fa-3x fa-spinner fa-spin"></div>
+                    </div>
+                </div>
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
+
     <div id="share_all_dialogue" title="Share Entire Image Collection">
         Share this URL : <br>
         <a id="share_collection_ref" href="{% url 'dl_collection' %}">http://lost-visions.cf.ac.uk{% url 'dl_collection' %}</a>
@@ -803,5 +1079,23 @@
         </form>
     </div>
 
+    <div id="tag_collection_dialog_form" title="Create new collection">
+        <p class="validateTips">Tag collection</p>
+        <form>
+            <fieldset>
+                <input type="hidden" id = 'tag_info' name="tag_info" value="" />
+
+                <div id="add_tags_body"></div>
+
+                <div class="ui-widget">
+                    <label class="'control-label" for="dictionary">Tags: </label>
+                    <input class="'form-control" id="dictionary">
+                </div>
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
 
 {% endblock %}

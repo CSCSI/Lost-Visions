@@ -15,6 +15,7 @@ import time
 from datetime import datetime
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
+from dateutil.tz import tzlocal
 from django.contrib import auth
 from django.core import serializers
 from django.core.mail.message import EmailMultiAlternatives
@@ -206,6 +207,17 @@ def image_tags(request):
                                 tag.image = image_model
                                 tag.user = request_user
                             tag.save()
+
+                            try:
+                                synset = clean(user_tag['synset'], strip=True)
+                                if len(synset):
+                                    wordnet_tag = models.WordnetTag()
+                                    wordnet_tag.tag = tag
+                                    wordnet_tag.wordnet_synset = synset
+                                    wordnet_tag.save()
+                            except:
+                                pass
+
                     except Exception as e43533:
                         print 'ahhhh'
                         print e43533
@@ -235,6 +247,7 @@ def image_tags(request):
     else:
         # return image(request, image_id)
         return redirect('image', image_id=image_id)
+
 
 def get_request_user(request):
     try:
@@ -468,6 +481,7 @@ def get_flickr_tags(image_id):
     # except Exception as e:
     #     print 'flickr access error : ' + str(e)
     # return {}
+
 
 def get_creation_techniques_html(request):
     CreationTech = forms.creation_technique_form_factory()
@@ -1785,18 +1799,18 @@ def manage_collection(request):
     ids = ''
 
     if request.method == "POST":
-        action = request.POST.get('action', '')
-        col_id = request.POST.get('collection_id', '')
-        image_collection_name = request.POST.get('collection_name', '')
-        api_key = request.POST.get('api_key', '')
-        ids = request.POST.get('image_ids', '')
+        action = clean(request.POST.get('action', ''))
+        col_id = clean(request.POST.get('collection_id', ''))
+        image_collection_name = clean(request.POST.get('collection_name', ''))
+        api_key = clean(request.POST.get('api_key', ''))
+        ids = clean(request.POST.get('image_ids', ''))
 
     if request.method == "GET":
-        action = request.GET.get('action', '')
-        col_id = request.GET.get('collection_id', '')
-        image_collection_name = request.GET.get('collection_name', '')
-        api_key = request.GET.get('api_key', '')
-        ids = request.GET.get('image_ids', '')
+        action = clean(request.GET.get('action', ''))
+        col_id = clean(request.GET.get('collection_id', ''))
+        image_collection_name = clean(request.GET.get('collection_name', ''))
+        api_key = clean(request.GET.get('api_key', ''))
+        ids = clean(request.GET.get('image_ids', ''))
 
     id_list = ids.split(',')
     id_list = [f_id for f_id in id_list if len(f_id)]
@@ -1805,7 +1819,7 @@ def manage_collection(request):
     errors = []
 
     api_key_authd = False
-    if api_key is not '':
+    if len(api_key):
         api_key_authd, time_remaining, valid_till, error, api_key_user = auth_api_key(api_key)
         query_response['api_key_given'] = api_key
         query_response['api_key_authd'] = api_key_authd
@@ -1815,6 +1829,9 @@ def manage_collection(request):
             query_response['api_key_time_remaining'] = time_remaining
         else:
             errors.append(error)
+
+    print request.user
+    print request.user.is_authenticated()
 
     if request.user.is_authenticated() or api_key_authd:
         collection_creating_user = None
@@ -1893,6 +1910,72 @@ def manage_collection(request):
             print 'deleting collection ' + str(col_id)
             image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
             image_collection.delete()
+            query_response['success'] = True
+
+        if action == 'tag_collection':
+            tag_word = ''
+            wordnet_tag = ''
+            tag_info = '[]'
+            if request.method == "POST":
+                tag_word = clean(request.POST.get('tag', ''))
+                wordnet_tag = clean(request.POST.get('tag_synset', ''))
+                tag_info = request.POST.get('tag_info', '[]')
+
+            if request.method == "GET":
+                tag_word = clean(request.GET.get('tag', ''))
+                wordnet_tag = clean(request.GET.get('tag_synset', ''))
+                tag_info = request.GET.get('tag_info', '[]')
+
+            tags_xy = ast.literal_eval(tag_info)
+
+            print pprint.pformat(tags_xy)
+            for tag_index in tags_xy:
+                user_tag = tags_xy[tag_index]
+
+                tag_word = clean(user_tag.get('tag', ''))
+                wordnet_tag = clean(user_tag.get('synset', ''))
+
+                if len(tag_word):
+                    print 'tagging collection ' + str(col_id)
+                    image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
+
+                    image_mappings = models.ImageMapping.objects.filter(collection=image_collection)
+
+                    for image_mapping in image_mappings:
+
+                        try:
+                            image_tag = models.Tag()
+                            image_tag.tag = tag_word
+                            image_tag.image = image_mapping.image
+                            image_tag.user = collection_creating_user
+                            image_tag.tag_order = clean(user_tag['tag_order'])
+                            image_tag.timestamp = parser.parse(str(user_tag['timestamp']))
+                            image_tag.save()
+
+                            if len(wordnet_tag):
+                                try:
+                                    wordnet_tag_model = models.WordnetTag()
+                                    wordnet_tag_model.tag = image_tag
+                                    wordnet_tag_model.wordnet_synset = wordnet_tag
+                                    wordnet_tag_model.save()
+                                except Exception as e78624:
+                                    print 'e78624' + str(e78624)
+
+                        except Exception as e746224:
+                            print 'e746224' + str(e746224)
+
+                    try:
+                        collection_tag = models.CollectionTag()
+                        collection_tag.tag = tag_word
+                        collection_tag.wordnet_synset = wordnet_tag
+                        collection_tag.collection = image_collection
+                        collection_tag.user = collection_creating_user
+                        collection_tag.tag_order = clean(user_tag['tag_order'])
+                        collection_tag.timestamp = parser.parse(str(user_tag['timestamp']))
+                        collection_tag.save()
+                    except Exception as e98723:
+                        print 'e98723' + str(e98723)
+
             query_response['success'] = True
 
         if action == 'rename':
@@ -2593,7 +2676,7 @@ def view_collection(request, collection_id, page):
     # mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
     mapped_images_full_count = mapped_images.count()
 
-    images_per_page = 30
+    images_per_page = 50
     total_number_of_pages = (mapped_images_full_count // images_per_page) + 1
 
     page = int(page)
@@ -2656,6 +2739,15 @@ def view_collection(request, collection_id, page):
         user_collections.append({'name': 'NEW COLLECTION',
                                  'id': 0})
 
+    collection_creator = str(collection_model.user.username.username)
+    first_name = collection_model.user.username.first_name
+    second_name = collection_model.user.username.last_name
+
+    collection_tags = models.CollectionTag.objects.filter(collection=collection_model).values_list('tag', flat=True).distinct()
+
+    if len(first_name) or len(second_name):
+        collection_creator = first_name.capitalize() + ' ' + second_name.capitalize()
+
     return render(request, 'view_collection.html',
                   {'results': response_data,
                    'user_collections': user_collections,
@@ -2664,8 +2756,9 @@ def view_collection(request, collection_id, page):
                    'all_image_ids': all_image_ids,
                    'number_to_show': 30,
                    'collection_name': collection_model.name,
+                   'collection_tags': collection_tags,
                    'collection_id': collection_model.id,
-                   'collection_creator': str(collection_model.user.username.username)},
+                   'collection_creator':collection_creator },
                   context_instance=RequestContext(request))
 
 

@@ -141,6 +141,14 @@ class Tag(models.Model):
         return str(self.id) + ':' + self.tag + ':' + user + ':' + image
 
 
+class WordnetTag(models.Model):
+    wordnet_synset = models.CharField(max_length=256L, blank=False)
+    tag = models.ForeignKey(Tag, blank=True)
+
+    def __unicode__(self):
+        return str(self.id) + ':' + str(self.tag.tag) + ':' + str(self.wordnet_synset)
+
+
 class GeoTag(models.Model):
     # id = models.IntegerField(primary_key=True)
     # id = models.AutoField(primary_key=True)
@@ -260,6 +268,22 @@ class ImageMapping(models.Model):
     def __unicode__(self):
         return str(self.id) + ':' + str(self.image.flickr_id) \
                + ':' + self.collection.name + ':' + self.collection.user.username.username
+
+
+class CollectionTag(models.Model):
+
+    tag = models.CharField(max_length=256L, blank=False)
+    wordnet_synset = models.CharField(max_length=256L, blank=False)
+    user = models.ForeignKey(LostVisionUser, blank=False)
+    collection = models.ForeignKey(ImageCollection, blank=False)
+    timestamp = models.DateTimeField(auto_now=False, blank=True)
+    tag_order = models.IntegerField(blank=True)
+
+    def __unicode__(self):
+        user = self.user.username.username
+
+        return str(self.id) + ':' + self.tag + ':' + str(self.wordnet_synset) \
+               + ':' + user + ':' + str(self.collection.name)
 
 
 class SavedImageCaption(models.Model):
