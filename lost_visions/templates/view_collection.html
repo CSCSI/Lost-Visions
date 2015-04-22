@@ -973,10 +973,8 @@
             {% if results.dots %}
                 <a href="{% url 'view_collection' collection_id 1 %}">
                     {% if results.this_page == 1 %}
-                        <span style="font-size: xx-large; text-decoration: underline">1</span>
-                    {% else %}
-                        <span style="font-size: x-large">1</span>
-                    {% endif %}                </a> ... {% endif %}
+                        <span style="font-size: xx-large; text-decoration: underline">1</span>{% else %}
+                        <span style="font-size: x-large">1</span>{% endif %}</a> ... {% endif %}
 
             {% for p in results.pages %}
                 <a href="{% url 'view_collection' collection_id p %}">
@@ -984,8 +982,7 @@
                         <span style="font-size: xx-large; text-decoration: underline">{{ p }}</span>
                     {% else %}
                         <span style="font-size: x-large">{{ p }}</span>
-                    {% endif %}
-                </a>
+                    {% endif %}</a>
             {% endfor %}
 
             {% if results.dots %} ... <a href="{% url 'view_collection' collection_id results.total_pages %}">
