@@ -993,16 +993,15 @@
                     <span style="font-size: xx-large; text-decoration: underline">{{ results.total_pages }}</span>
                 {% else %}
                     <span style="font-size: x-large">{{ results.total_pages }}</span>
-                {% endif %}            </a>
+                {% endif %}</a>
             {% endif %}
-            <br>
-
-            {% if results.total_pages > 10 %}
-                <a href="{% url 'view_collection' collection_id p %}">
-                    <span style="font-size: x-large">{{ p }}</span>
-                </a>
-            {% endif  %}
         </p>
+        <div style="float:right; font-size: x-large">
+            {% for multiplier_button in results.page_multiplier %}
+                <a href="{% url 'view_collection' collection_id multiplier_button.page %}">
+                    <div class="btn btn-default" style="font-size: x-large">{{ multiplier_button.text }}</div></a>
+            {% endfor %}
+        </div>
     {% endif %}
 
     {#    <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>#}

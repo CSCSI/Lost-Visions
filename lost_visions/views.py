@@ -39,6 +39,7 @@ from lost_visions import forms, models
 from ipware.ip import get_ip
 from bleach import clean
 from lost_visions.categories import CategoryManager
+from lost_visions.utils.page_calculator import get_page_multipliers
 from lost_visions.utils.rubbish.images_for_books import get_book_images, get_images_for_flickr_id
 from django.utils import timezone
 logger = logging.getLogger('lost_visions')
@@ -2724,6 +2725,7 @@ def view_collection(request, collection_id, page):
 
     response_data = {'results': results,
                      'pages': pages,
+                     'page_multiplier': get_page_multipliers(total_number_of_pages, page),
                      'dots': dots,
                      'this_page': page,
                      'total_pages': total_number_of_pages,
