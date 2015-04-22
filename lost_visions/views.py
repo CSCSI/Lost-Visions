@@ -1303,7 +1303,7 @@ def do_advanced_search(request):
                     'collection_name': collection_model.name,
                     'collection_size': collection_model.imagemapping_set.all().count(),
                     'collection_id': collection_model.id,
-                    'collection_creator': collection_model.user.username.username,
+                    'collection_creator': get_collection_creator(collection_model),
                     'image_url': image_url
                 })
 
@@ -1928,7 +1928,7 @@ def manage_collection(request):
 
             tags_xy = ast.literal_eval(tag_info)
 
-            print pprint.pformat(tags_xy)
+            # print pprint.pformat(tags_xy)
             for tag_index in tags_xy:
                 user_tag = tags_xy[tag_index]
 
@@ -1936,7 +1936,7 @@ def manage_collection(request):
                 wordnet_tag = clean(user_tag.get('synset', ''))
 
                 if len(tag_word):
-                    print 'tagging collection ' + str(col_id)
+                    # print 'tagging collection ' + str(col_id)
                     image_collection = models.ImageCollection.objects.all().get(id=col_id, user=get_request_user(request))
 
                     image_mappings = models.ImageMapping.objects.filter(collection=image_collection)
@@ -2215,7 +2215,7 @@ def exhibition(request, collection_id):
 
     return_object = {'collection_id': collection_id,
                      'collection_data': collection_data,
-                     'collection_creator': collection_model.user.username,
+                     'collection_creator': get_collection_creator(collection_model),
                      'date': collection_model.timestamp,
                      }
 
@@ -2530,7 +2530,6 @@ def get_public_exhibition_data(request, exhibition_model):
     mapped_images = models.ImageMapping.objects.filter(collection=collection_model)
     mapped_images_array = []
 
-
     for image in mapped_images:
         # print pprint.pformat(image.__dict__)
 
@@ -2565,7 +2564,7 @@ def get_public_exhibition_data(request, exhibition_model):
     return_object = {'collection_id': collection_model.id,
                      'collection_data': collection_data,
                      'date': exhibition_model.timestamp,
-                     'collection_creator': exhibition_model.user_collection.user.username}
+                     'collection_creator': get_collection_creator(collection_model)}
     return render(request, 'public_exhibition.html', return_object, context_instance=RequestContext(request))
 
 
@@ -2654,7 +2653,7 @@ def public_exhibition_list(request):
                 'collection_name': collection_model.name,
                 'collection_size': collection_model.imagemapping_set.all().count(),
                 'collection_id': collection_model.id,
-                'collection_creator': collection_model.user.username.username,
+                'collection_creator': get_collection_creator(collection_model),
                 'collection_timestamp': collection_model.timestamp.strftime('%Y-%m-%d'),
                 'image_url': image_url
             })
@@ -2739,33 +2738,38 @@ def view_collection(request, collection_id, page):
         user_collections.append({'name': 'NEW COLLECTION',
                                  'id': 0})
 
+    collection_tags = models.CollectionTag.objects.filter(collection=collection_model).values_list('tag', flat=True).distinct()
+
+    return render(request, 'view_collection.html', {
+        'results': response_data,
+        'user_collections': user_collections,
+        'mode': mode,
+        'query_array': request.GET,
+        'all_image_ids': all_image_ids,
+        'number_to_show': 30,
+        'collection_name': collection_model.name,
+        'collection_tags': collection_tags,
+        'collection_id': collection_model.id,
+        'collection_creator': get_collection_creator(collection_model)
+    }, context_instance=RequestContext(request))
+
+
+# A bit anglo-saxon specific i18n in future
+def get_collection_creator(collection_model):
     collection_creator = str(collection_model.user.username.username)
     first_name = collection_model.user.username.first_name
     second_name = collection_model.user.username.last_name
-
-    collection_tags = models.CollectionTag.objects.filter(collection=collection_model).values_list('tag', flat=True).distinct()
-
     if len(first_name) or len(second_name):
-        collection_creator = first_name.capitalize() + ' ' + second_name.capitalize()
-
-    return render(request, 'view_collection.html',
-                  {'results': response_data,
-                   'user_collections': user_collections,
-                   'mode': mode,
-                   'query_array': request.GET,
-                   'all_image_ids': all_image_ids,
-                   'number_to_show': 30,
-                   'collection_name': collection_model.name,
-                   'collection_tags': collection_tags,
-                   'collection_id': collection_model.id,
-                   'collection_creator':collection_creator },
-                  context_instance=RequestContext(request))
+        try:
+            capitalized_collection_creator = str(first_name.capitalize() + ' ' + second_name.capitalize())
+            return capitalized_collection_creator
+        except:
+            return collection_creator
+    return collection_creator
 
 
 def download_collection_ready(request):
-
     collection_id = 1
-
     return render(request, 'download_collection_ready.html',
                   {'collection_id': collection_id},
                   context_instance=RequestContext(request))

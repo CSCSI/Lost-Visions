@@ -722,10 +722,26 @@ class ImagePicker():
                 regex_format = regex_string.format(word)
                 ors.append(Q(name__icontains=word))
 
-        all_results = all_results.filter(reduce(operator.or_, ors))
-        print all_results.query
+        filtered_collections = all_results.filter(reduce(operator.or_, ors))
+        print filtered_collections.query
 
-        return all_results
+
+        collection_tags = models.CollectionTag.objects.all()
+        tag_ors = []
+
+        for word in keywords:
+            if len(word):
+                tag_ors.append(Q(tag__icontains=word))
+
+        collection_tags = collection_tags.filter(reduce(operator.or_, tag_ors)).values_list('collection', flat=True).distinct()
+        collection_tag_ors = []
+        for collection_id in collection_tags:
+            collection_tag_ors.append(Q(id=collection_id))
+
+        collections_with_tags = models.ImageCollection.objects.filter(reduce(operator.or_, collection_tag_ors))
+        print collections_with_tags.query
+
+        return filtered_collections | collections_with_tags
 
 
 class Request():
