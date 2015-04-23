@@ -738,8 +738,11 @@ class ImagePicker():
         for collection_id in collection_tags:
             collection_tag_ors.append(Q(id=collection_id))
 
-        collections_with_tags = models.ImageCollection.objects.filter(reduce(operator.or_, collection_tag_ors))
-        print collections_with_tags.query
+        if len(collection_tag_ors):
+            collections_with_tags = models.ImageCollection.objects.filter(reduce(operator.or_, collection_tag_ors))
+            print collections_with_tags.query
+        else:
+            collections_with_tags = models.ImageCollection.objects.none()
 
         return filtered_collections | collections_with_tags
 
