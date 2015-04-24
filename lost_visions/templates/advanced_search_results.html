@@ -95,38 +95,47 @@
                 image_ids: ids
             },
             success: function(data) {
-                {#                    console.log(data);#}
+{#                console.log(data);#}
+
+                var ordered_id_list = ids.split(',');
 
                 var view_toggle_btn = $('#view_toggle');
                 if (view_toggle_btn.data("view") == "list") {
 
                     var table = $('#results_table');
 
-                    for (var image_id in data) {
-                        {#                            console.log(image_id);#}
+                    for (var i = 0; i < ordered_id_list.length; i++) {
+                        var next_image_id = parseInt(ordered_id_list[i]);
+{#                        console.log(next_image_id);#}
 
-                        var image_data = data[image_id];
+                        if ( next_image_id in data){
 
-                        var row = '<tr>'
-                                + '<td>' +
-                                '<a href="' + image_data['link'] + '" target="_blank">' +
-                                '<img src="' + image_data['img_small']  + '"' +
-                                'style="max-height: 80px; width:auto; max-width: 100%; display: block; margin: 0 auto">' +
-                                '</a>'
-                                + '</td>'
-                                + '<td>' + image_data['author'] + '</td>'
-                                + '<td>' + image_data['date'] + '</td>'
-                                + '<td>' + image_data['page'] + '</td>'
+                            var image_data = data[next_image_id];
 
-                                + '<td><a href="{% url 'do_advanced_search' %}'
-                                + '?book_id=' + image_data['book_id']
-                                + '&csrfmiddlewaretoken={{ csrf_token }}"'
-                                +  ' target="_blank">'
-                                + image_data['title']  +
-                                '</a></td>'
-                                + '</tr>';
+                            var row = '<tr>'
+                                    + '<td>' +
+                                    '<a href="' + image_data['link'] + '" target="_blank">' +
+                                    '<img src="' + image_data['img_small']  + '"' +
+                                    'style="max-height: 80px; width:auto; max-width: 100%; display: block; margin: 0 auto">' +
+                                    '</a>'
+                                    + '</td>'
+                                    + '<td>' + image_data['author'] + '</td>'
+                                    + '<td>' + image_data['date'] + '</td>'
+                                    + '<td>' + image_data['page'] + '</td>'
 
-                        table.append($(row));
+                                    + '<td><a href="{% url 'do_advanced_search' %}'
+                                    + '?book_id=' + image_data['book_id']
+                                    + '&csrfmiddlewaretoken={{ csrf_token }}"'
+                                    +  ' target="_blank">'
+                                    + image_data['title']  +
+                                    '</a></td>'
+                                    + '</tr>';
+
+                            table.append($(row));
+
+                        } else {
+                            console.log('Did not find data for ' + next_image_id);
+                        }
                     }
 
                 } else if (view_toggle_btn.data("view") == "gallery") {
@@ -160,8 +169,8 @@
                         var $save_button = $('<div id="hide-button-' + image_id + '" ' +
                                 'class="btn btn-primary btn-xs save_image_float_button">' +
 
-{#                                "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}'" +" style='max-height: 27px'>" +#}
-                               "<div class='fa fa-2x fa-heart'>" +
+                                {#                                "<img src='{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}'" +" style='max-height: 27px'>" +#}
+                                "<div class='fa fa-2x fa-heart'>" +
                                 "</div>").click(function(){
 
                             var btn_parent_image_id = $(this).parent().data('id');
@@ -321,6 +330,16 @@
                 document.location = $(this).data('href');
             }
         });
+
+        $( ".sorted_search" ).each(function(index) {
+            $(this).on("click", function(){
+                var sort_field = $(this).data('sort');
+                {#                alert(sort_field);#}
+
+                $('#sort_results').val(sort_field);
+                $('#advanced-search-form').submit();
+            }).css({cursor: 'pointer'});
+        });
     });
 
     </script>
@@ -373,19 +392,29 @@
                     <tbody>
                     <tr>
                         <th>
-                            Illustration
+                            <p>
+                                Illustration
+                            </p>
                         </th>
                         <th>
-                            Author
+                            <p class="clickable sorted_search" data-sort="author">
+                                Author
+                            </p>
                         </th>
                         <th>
-                            Date
+                            <p class="clickable sorted_search" data-sort="date">
+                                Date
+                            </p>
                         </th>
                         <th>
-                            Page
+                            <p>
+                                Page
+                            </p>
                         </th>
                         <th>
-                            Title
+                            <p class="clickable sorted_search" data-sort="title">
+                                Title
+                            </p>
                         </th>
                     </tr>
                     </tbody>

@@ -236,6 +236,7 @@
         <form action="{% url 'do_advanced_search' %}" id="advanced-search-form"
               method="get" class="advanced-search-form">{% csrf_token %}
             {{ tag_form.non_field_errors }}
+            <input type="hidden" id="sort_results" name="sort_results" value="none">
 
             <div class="panel-group" style="margin-top: 10px; border: solid #AAA 1px;">
                 <div class="panel-heading search-heading">

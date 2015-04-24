@@ -473,6 +473,22 @@ class ImagePicker():
 
         # all_results_list = all_results.values_list('fields__flickr_id', flat=True)
 
+        # all_results = all_results.order_by('title')
+
+        sort_by = query_items.get('sort_results', '').strip()
+        print sort_by
+        if sort_by == 'none' or len(sort_by) < 1:
+            pass
+        elif sort_by == 'title':
+            print 'title found'
+            all_results = all_results.order_by('title')
+        elif sort_by == 'date':
+            print 'date found'
+            all_results = all_results.order_by('date')
+        elif sort_by == 'author':
+            print 'author found'
+            all_results = all_results.order_by('first_author')
+
         logger.debug(all_results.query)
         print all_results.query
         logger.debug(all_results.count())

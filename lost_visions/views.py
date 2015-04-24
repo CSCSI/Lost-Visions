@@ -2706,22 +2706,25 @@ def view_collection(request, collection_id, page):
         else:
             mode = 'logged_in_not_owner'
 
-    dots = False
-    if total_number_of_pages < 6:
-        pages = range(1, total_number_of_pages + 1)
-    else:
-        dots = True
-        if page < 5:
-            pages = range(2, 6)
-        else:
-            range_max = page + 4
-            if range_max > total_number_of_pages:
-                range_max = total_number_of_pages
-            range_min = page - 4
-            if range_min < 2:
-                range_max = 2
+    # dots = False
+    # if total_number_of_pages < 6:
+    #     pages = range(1, total_number_of_pages + 1)
+    # else:
 
-            pages = range(range_min, range_max)
+    dots = True
+    # if page <= 5:
+    #     pages = range(2, 6)
+    # else:
+    range_max = page + 4
+    if range_max > total_number_of_pages:
+        range_max = total_number_of_pages
+    range_min = page - 4
+    if range_min < 2:
+        range_min = 2
+
+    print range_min, page, range_max
+
+    pages = range(range_min, range_max)
 
     response_data = {'results': results,
                      'pages': pages,
@@ -2741,6 +2744,8 @@ def view_collection(request, collection_id, page):
                                  'id': 0})
 
     collection_tags = models.CollectionTag.objects.filter(collection=collection_model).values_list('tag', flat=True).distinct()
+
+    print pprint.pformat(response_data)
 
     return render(request, 'view_collection.html', {
         'results': response_data,

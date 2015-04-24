@@ -880,7 +880,6 @@
 
 
     </script>
-    <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
 
     {#    {{ mode }}#}
 
@@ -888,14 +887,16 @@
     <h3 style="text-align: center">Collection created by {{ collection_creator }}</h3>
     <h2 style="text-align: center">{{ results.size }} Illustrations</h2>
 
-    <div style="margin-left: 15px">
-        <h3>Tags for this collection</h3>
-        <div class="row">
-            {% for tag in collection_tags %}
-                <div class="btn btn-success">{{ tag }}</div>
-            {% endfor %}
+    {% if collection_tags|length > 0%}
+        <div style="margin-left: 15px">
+            <h3>Tags for this collection</h3>
+            <div class="row">
+                {% for tag in collection_tags %}
+                    <div class="btn btn-success">{{ tag }}</div>
+                {% endfor %}
+            </div>
         </div>
-    </div>
+    {% endif %}
 
 
     <div style="margin-left: 15px">
@@ -935,6 +936,8 @@
             </div>
         </div>
     </div>
+
+    <div id="view_toggle" class="btn btn-default" data-view="list">Gallery View</div>
 
     <div id="results-parent-container">
         <div id="grid-result-container"></div>
@@ -999,6 +1002,8 @@
                     <div class="btn btn-default" style="font-size: x-large">{{ multiplier_button.text }}</div></a>
             {% endfor %}
         </div>
+    {% else %}
+        issues
     {% endif %}
 
     {#    <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>#}
