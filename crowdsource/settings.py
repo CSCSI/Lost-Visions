@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.sites',
+    'django.contrib.sitemaps',
     # 'django.contrib.gis',
     # 'social.apps.django_app.default',
     # 'dajaxice',

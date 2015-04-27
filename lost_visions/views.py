@@ -333,13 +333,13 @@ def image(request, image_id):
         formatted_info = dict()
         # formatted_info['Issuance'] = image_info.get('Issuance', "")
         formatted_info['Date of Publication'] = image_info.get('date', "")
-        formatted_info['Date_of_Publication'] = image_info.get('date', "")
+        # formatted_info['Date_of_Publication'] = image_info.get('date', "")
         formatted_info['Title'] = image_info.get('title', "")
         formatted_info['Volume'] = image_info.get('Volume', "")
         formatted_info['Author'] = image_info.get('Author', "")
         formatted_info['Book ID'] = image_info.get('Book ID', "")
         formatted_info['Place of Publication'] = image_info.get('Place of Publication', "")
-        formatted_info['Place_of_Publication'] = image_info.get('Place of Publication', "")
+        # formatted_info['Place_of_Publication'] = image_info.get('Place of Publication', "")
         formatted_info['Publisher'] = image_info.get('Publisher', "")
         formatted_info['Shelfmark'] = image_info.get('Shelfmark', "")
         formatted_info['Page'] = image_info.get('page', "").lstrip('0')
@@ -1131,6 +1131,9 @@ def search_advanced(request):
 
 def do_advanced_search(request):
 
+    number_of_results_int = 50
+    max_results = 1000
+
     # tk = TimeKeeper()
     # tk.time_now('start')
 
@@ -1149,7 +1152,6 @@ def do_advanced_search(request):
     readable_query = ''
     all_image_ids = ''
 
-    number_of_results_int = 50
     if number_of_results is not '':
         try:
             number_of_results_int = int(number_of_results)
@@ -1162,6 +1164,7 @@ def do_advanced_search(request):
     if len(year_from) and year_from is not '--' and len(year_to) and year_to is not '--':
         date_range = [year_from + '-01-01', year_to + '-12-31']
         books_in_date_range = models.Book.objects.filter(datetime__range=date_range).values_list('book_identifier', flat=True)
+        print books_in_date_range.count()
 
         # logger.debug('books in range ' + str(year_from) + ' ' + str(year_to) + ' : ' + str(books_in_date_range.count()))
         # logger.debug(books_in_date_range)
@@ -1180,7 +1183,7 @@ def do_advanced_search(request):
 
         # tk.time_now('search done, begin sort')
 
-        if all_results.count() > 500:
+        if all_results.count() > max_results:
             too_many = True
 
         # tk.time_now('counted results')
@@ -1204,10 +1207,12 @@ def do_advanced_search(request):
         else:
             readable_query += 'Please add more detail to the query. '
 
-            for result in all_results[:500]:
+            for result in all_results[:max_results]:
                 total_results += 1
                 all_image_ids += result + ','
-            readable_query += 'Only returning first 5000 images of (' + str(len(all_results)) + ' found)'
+            readable_query += 'Only returning first ' + \
+                              str(max_results) +\
+                              ' images of (' + str(len(all_results)) + ' found)'
 
             # tk.time_now('done search')
     else:
@@ -1216,6 +1221,16 @@ def do_advanced_search(request):
         user = get_request_user(request)
         logger.debug(str(user.username.username) + " : " + pprint.pformat(request.GET))
 
+        # print all_results_haystack.query
+        # print all_results_haystack.count()
+        # distincts = all_results_haystack.values_list('flickr_id', flat=True)
+        # print len(distincts)
+        #
+        # unique_set = set()
+        # for o in flickr_id_list_from_searchqueryset(distincts):
+        #     unique_set.add(o)
+        # print len(unique_set)
+
         # tk.time_now('search done, begin sort')
 
         # print all_results_haystack
@@ -1223,7 +1238,7 @@ def do_advanced_search(request):
 
         to_join = []
         try:
-            for x in all_results_haystack[:500]:
+            for x in all_results_haystack[:max_results]:
                 # print x.flickr_id
                 # print pprint.pformat(x.__dict__.get('flickr_id'))
                 # all_image_ids += x.flickr_id + ','
@@ -1267,12 +1282,12 @@ def do_advanced_search(request):
 
         # tk.time_now('pulled image_ids')
 
-        if result_count > 499:
+        if result_count > (max_results - 1):
             #            too_many = True
-            readable_query += 'Please add more detail to the query. '
-            readable_query += 'Only returning first 500 images of (' + str(result_count) + ' found)'
+            # readable_query += 'Please add more detail to the query. '
+            readable_query += 'Only returning first ' + str(max_results) + ' images of (' + str(result_count) + ' found)'
         else:
-            readable_query += '(' + str(result_count) + ' found)'
+            readable_query += ' of ' + str(result_count) + ' found.'
 
             # tk.time_now('done alt search')
     results['advanced'] = []
@@ -1318,6 +1333,11 @@ def do_advanced_search(request):
                    'number_to_show': number_of_results_int,
                    'user_collections': user_collections},
                   context_instance=RequestContext(request))
+
+
+def flickr_id_list_from_searchqueryset(sqs):
+    for thing in sqs:
+        yield thing
 
 
 def data_autocomplete(request):
@@ -2100,13 +2120,19 @@ def page_turner(request, book_id, page, volume):
     # print page_short
     # print volume
 
-    image_data = models.Image.objects.filter(book_identifier=book_id)
+
+
+    print book_id, page, volume
+    page_image_data = models.Image.objects.filter(book_identifier=book_id)
+
     flickr_ids = models.Image.objects.filter(book_identifier=book_id, page=page, volume=volume).values_list('flickr_id', flat=True)
+    print flickr_ids.query
+    print flickr_ids
     flickr_id = ''
     if len(flickr_ids):
         flickr_id = flickr_ids[0]
 
-    title = image_data[0].title
+    title = page_image_data[0].title
 
     archive = find_zip(book_id, volume)
     pages = []
@@ -2116,7 +2142,7 @@ def page_turner(request, book_id, page, volume):
             page_number_found = page_number_found.split('.')[0]
 
             found = False
-            for book_image in image_data:
+            for book_image in page_image_data:
                 # if book_image.page == page and book_image.volume == volume:
                 #     flickr_id = book_image.flickr_id
 
