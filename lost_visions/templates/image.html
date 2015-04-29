@@ -2,6 +2,28 @@
 {% load staticfiles %}
 {% load url from future %}
 
+{% block extra_head %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@Lost_Visions">
+    <meta name="twitter:creator" content="@Lost_Visions">
+    <meta name="twitter:title" content="Illustration Archive from Lost Visions">
+    <meta name="twitter:description" content="{{ formatted_info.Title }}">
+    <meta name="twitter:image:src" content="http://illustrationarchive.cardiff.ac.uk{{ image.img_small }}">
+
+    <!-- Open Graph data -->
+    <meta property="og:title" content="{{ formatted_info.Title }}" />
+    <meta property="og:type" content="book" />
+    <meta property="og:url" content="{{ this_url }}" />
+    <meta property="og:image" content="{{ image.imageurl }}" />
+    <meta property="og:description" content="{{ formatted_info.Title }} {{ formatted_info.volume }}" />
+    <meta property="og:site_name" content="Illustrtion Archive" />
+    <meta property="article:published_time" content="2015-03-30T05:59:00+01:00" />
+    <meta property="article:modified_time" content="2015-03-30T06:08:47+01:00" />
+    <meta property="article:section" content="Article Section" />
+{#    <meta property="article:tag" content="{{ image_tags }}" />#}
+
+{% endblock %}
+
 {% block content %}
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
 
@@ -1414,12 +1436,7 @@
 
     </script>
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@Lost_Visions">
-    <meta name="twitter:creator" content="@Lost_Visions">
-    <meta name="twitter:title" content="Illustration Archive from Lost Visions">
-    <meta name="twitter:description" content="{{ formatted_info.Title }}">
-    <meta name="twitter:image:src" content="http://illustrationarchive.cardiff.ac.uk{{ image.img_small }}">
+
 
     <div class="side-menu">
         {% url 'page_turner' book_id=book_id page=page volume=volume as page_turner_url  %}
@@ -1485,46 +1502,46 @@
             </ul>
         </div>
 
-        <div class="side-menu-content-wide">
-            <ul class="side-menu-list">
-                <li>
-                    <div class="side-menu-content-wide-header">
-                        <ul class="side-menu-list">
-                            <li>
-                                <div id="side-menu-close" class="btn btn-success"><div class="fa fa-2x fa-wrench"></div></div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <div class="side-menu-content-wide-body">
-                        <ul class="side-menu-list">
-                            <li class="previous">
-                                <a class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-2x fa-rotate-left"></div></a>
-                                <a class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-2x fa-rotate-right"></div></a>
-                            </li>
-                            <li>
-                                <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">
-                                    <div class="fa fa-2x fa-search-plus"></div></a>
-                            </li>
+{#        <div class="side-menu-content-wide">#}
+{#            <ul class="side-menu-list">#}
+{#                <li>#}
+{#                    <div class="side-menu-content-wide-header">#}
+{#                        <ul class="side-menu-list">#}
+{#                            <li>#}
+{#                                <div id="side-menu-close" class="btn btn-success"><div class="fa fa-2x fa-wrench"></div></div>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </li>#}
+{#                <li>#}
+{#                    <div class="side-menu-content-wide-body">#}
+{#                        <ul class="side-menu-list">#}
+{#                            <li class="previous">#}
+{#                                <a class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-2x fa-rotate-left"></div></a>#}
+{#                                <a class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-2x fa-rotate-right"></div></a>#}
+{#                            </li>#}
+{#                            <li>#}
+{#                                <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">#}
+{#                                    <div class="fa fa-2x fa-search-plus"></div></a>#}
+{#                            </li>#}
                             {#                            <li>#}
                             {#                                <a class="btn btn-success side-menu-btn" target="_blank"#}
                             {#                                   href="{{ page_turner_url }}"#}
                             {#                                        ><div class="fa fa-2x fa-book"></div></a>#}
                             {#                            </li>#}
-                            {% if user.is_authenticated %}
-                                <li>
-                                    <a class="btn btn-default save_image_btn save_image">
-                                        <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">
-                                    </a>
-                                </li>
-
-                            {% endif %}
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
+{#                            {% if user.is_authenticated %}#}
+{#                                <li>#}
+{#                                    <a class="btn btn-default save_image_btn save_image">#}
+{#                                        <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">#}
+{#                                    </a>#}
+{#                                </li>#}
+{##}
+{#                            {% endif %}#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </li>#}
+{#            </ul>#}
+{#        </div>#}
     </div>
 
     <div class="row" style="margin: 0 auto">
