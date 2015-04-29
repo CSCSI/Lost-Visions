@@ -127,10 +127,12 @@ SOCIALACCOUNT_PROVIDERS = {
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
+#ATOMIC_REQUESTS used to stop horrible memory hogging idle transactions
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ATOMIC_REQUESTS': True
         },
     'wordnet': {
         'ENGINE': 'django.db.backends.sqlite3',

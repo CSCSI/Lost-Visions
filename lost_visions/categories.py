@@ -37,7 +37,7 @@ YES_BUTTON_URL = MIKEY_URL + "yes button.jpg"
 NO_BUTTON_URL = MIKEY_URL + "No button.jpg"
 
 ARCHAEOLOGICAL_BUTTON_URL = MIKEY_URL + "archaeological.jpg"
-ARCHITECTURAL_BUTTON_URL = MIKEY_URL + "architecturaldrawing.jpg"
+ARCHITECTURAL_BUTTON_URL = MIKEY_URL + "architectural_.jpg"
 BOTANICAL_BUTTON_URL = MIKEY_URL + "botanical.jpg"
 BYNAME_BUTTON_URL = MIKEY_URL + "byname.jpg"
 ENGINEERING_BUTTON_URL = MIKEY_URL + "engineering.jpg"

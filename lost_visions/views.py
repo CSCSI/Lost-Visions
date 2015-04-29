@@ -158,7 +158,8 @@ def image_tags(request):
             else:
                 image_text.save()
 
-            if request.POST['tag_info'] and len(request.POST['tag_info'].decode('utf-8')) > 0:
+            if request.POST['tag_info']:
+                # and len(request.POST['tag_info'].decode('utf-8')) > 0:
                 tag_info = request.POST['tag_info']
                 tags_xy = ast.literal_eval(tag_info)
 
@@ -237,8 +238,8 @@ def image_tags(request):
 
             image_model.views_completed += 1
             image_model.save()
-    except:
-        pass
+    except Exception as e56732:
+        print 'why wasnt this caught ' + str(e56732)
 
     image_id = request.POST['image_id']
 
@@ -430,6 +431,7 @@ def image(request, image_id):
                       context_instance=RequestContext(request))
     except:
         raise Http404
+
 
 def get_flickr_tags(image_id):
 

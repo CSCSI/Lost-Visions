@@ -104,13 +104,28 @@ class ImagePicker():
         ors = []
 
         for tag in tag_array:
-            if len(tag.strip()):
-                regex_format = regex_string.format(tag)
+            try:
+                # tag = tag.encode('utf-8')
+                # print tag
+                if len(tag.strip()):
+                    regex_format = regex_string.format(tag)
 
-                ors.append(SQ(tag=Raw(regex_format + '*')))
+                    ors.append(SQ(tag=Raw(regex_format + '*')))
+            except Exception as e6272:
+                print 'e6272 : ' + str(e6272)
+                # raise e6272
 
         if len(ors) > 0:
-            all_results = all_results.filter(reduce(operator.or_, ors))
+            try:
+                all_results = all_results.filter(reduce(operator.or_, ors))
+                qu = u'%s' % all_results.query
+                print qu.encode('utf-8')
+
+                print all_results.count()
+
+            except Exception as e5352729:
+                print 'e5352729 : ' + str(e5352729)
+                # raise e5352729
         else:
             raise Exception('No tags to filter images for')
 
@@ -563,7 +578,7 @@ class ImagePicker():
                     weighted_tag['weight'] = self.get_tag_order_weight(tag_orders, alpha_tag['tag'])
                     weighted_tags_for_alpha_image[alpha_tag['tag']] = weighted_tag
 
-        # print 'weighted alpha tags : ' + pprint.pformat(weighted_tags_for_alpha_image)
+        # print 'weighted alpha tags : ' + pprint.pformat(weighted_tags_for_alpha_image, indent=4)
 
         to_search = []
 
@@ -580,7 +595,8 @@ class ImagePicker():
         try:
             # Get images which have any of the tags found in the alpha image
             images_with_tag = self.get_tagged_images_for_tags_again(to_search)
-        except:
+        except Exception as e76275623:
+            print 'getting similar tagged images' + str(e76275623)
             pass
 
         to_join = []

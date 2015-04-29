@@ -1,18 +1,30 @@
+import pprint
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.contrib.sitemaps.views import sitemap
+from django.contrib.sitemaps.views import index, sitemap
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from lost_visions import models
 from lost_visions.sitemap import ImageSitemap
 
 admin.autodiscover()
 
-sitemaps = {'image': ImageSitemap}
+dates = models.Book.objects.values_list('date', flat=True).distinct()
+sitemaps = {}
+
+for date in dates:
+    if not len(date):
+        date = 'unknown'
+    sitemaps[str(date)] = ImageSitemap(str(date))
+
+# print pprint.pformat(sitemaps, indent=4)
 
 urlpatterns = patterns('',
                        # Examples:
                        # url(r'^$', lambda r : HttpResponseRedirect('/home')),
-                       url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps},
-                            name='django.contrib.sitemaps.views.sitemap'),
+
+                       url(r'^sitemap\.xml$', index, {'sitemaps': sitemaps}),
+                       url(r'^sitemap-(?P<section>.+)\.xml$', sitemap,
+                           {'sitemaps': sitemaps, 'template_name': 'image_sitemap.html'}),
 
                        url(r'^$', 'lost_visions.views.home', name='home'),
                        url(r'^about_us', 'lost_visions.views.aboutus', name='about_us'),

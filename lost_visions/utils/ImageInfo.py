@@ -143,7 +143,7 @@ def get_image_data_from_array(id_list, request):
                 print 'error 3455##' + str(e88)
                 pass
     except Exception as e7834:
-        print 'e7834' + str(e7834)
+        print 'e7834 ' + str(e7834)
     return tag_results_dict
 
 
