@@ -26,7 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-SITE_ID = 1
+SITE_ID = 3
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
