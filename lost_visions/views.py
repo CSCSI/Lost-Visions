@@ -48,6 +48,7 @@ from lost_visions.utils.ImageInfo import sanitise_image_info, get_image_data_fro
 from lost_visions.utils.ImagePicker import ImagePicker
 from lost_visions.utils.db_tools import get_next_image_id, read_tsv_file, get_thumbnail_image
 from lost_visions.utils.flickr import getImageTags
+from lost_visions.utils.akismet_check import is_spam
 from PIL import Image
 from lost_visions import mario_models
 
@@ -156,7 +157,14 @@ def image_tags(request):
             if image_text.description == '' and image_text.caption == '':
                 print 'not worth saving blank image text'
             else:
-                image_text.save()
+                found_spam = False
+                if len(image_text.description):
+                    found_spam = is_spam(image_text.description)
+                if len(image_text.caption):
+                    found_spam = is_spam(image_text.caption)
+
+                if not found_spam:
+                    image_text.save()
 
             if request.POST['tag_info']:
                 # and len(request.POST['tag_info'].decode('utf-8')) > 0:

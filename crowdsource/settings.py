@@ -231,6 +231,8 @@ use_azure = False
 
 TRUSTED_COLLECTIONS = []
 
+kismet_api_key = ""
+
 try:
     from crowdsource.settings_local import *
 except ImportError:
