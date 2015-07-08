@@ -29,6 +29,7 @@
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 
     {#    <script src="//code.jquery.com/jquery-1.9.1.js"></script>#}
     <script type="text/javascript" src="{% static "jquery/jquery-1.9.1.min.js" %}"></script>
@@ -253,6 +254,10 @@
                         <ul class="dropdown-menu social-buttons">
                             <li>
                                 <a class="btn btn-block" href="{% url 'about_us' %}">About Us</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="http://lostvisions.weebly.com/blog" target="_blank">Our Blog</a>
                             </li>
                             <li class="divider"></li>
                             <li>
