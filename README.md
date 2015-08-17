@@ -56,6 +56,7 @@ command=/var/www/lost_visions/Lost-Visions/runme.sh
 ;environment=LD_LIBRARY_PATH="/usr/local/lib"
 
 ### runme.sh for supervisord
+
 #!/bin/bash
 
 export LD_LIBRARY_PATH="/usr/local/lib"
