@@ -49,10 +49,15 @@ LD_LIBRARY_PATH=/usr/local/lib python /var/www/lost_visions/Lost-Visions/manage.
 python-boost
 
 
-### supervisord
-
+### supervisord, environment var not working, so embedded in a script instead
 [program:django]
 command=/var/www/lost_visions/Lost-Visions/runme.sh
 ;command=gunicorn -c /var/www/lost_visions/Lost-Visions/crowdsource/gunicorn.settings crowdsource.wsgi:application
 ;environment=LD_LIBRARY_PATH="/usr/local/lib"
 
+### runme.sh for supervisord
+#!/bin/bash
+
+export LD_LIBRARY_PATH="/usr/local/lib"
+export PYTHONPATH="/var/www/lost_visions/Lost-Visions"
+exec gunicorn -c /var/www/lost_visions/Lost-Visions/crowdsource/gunicorn.settings crowdsource.wsgi:application
