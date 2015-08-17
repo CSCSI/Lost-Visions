@@ -47,3 +47,12 @@ sudo pip install -e .
 LD_LIBRARY_PATH=/usr/local/lib python /var/www/lost_visions/Lost-Visions/manage.py runfcgi host=127.0.0.1 port=8080
 
 python-boost
+
+
+### supervisord
+
+[program:django]
+command=/var/www/lost_visions/Lost-Visions/runme.sh
+;command=gunicorn -c /var/www/lost_visions/Lost-Visions/crowdsource/gunicorn.settings crowdsource.wsgi:application
+;environment=LD_LIBRARY_PATH="/usr/local/lib"
+
