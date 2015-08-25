@@ -1,0 +1,304 @@
+{% load staticfiles %}
+{% load url from future %}
+{#{% load dajaxice_templatetags %}#}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    {% block extra_head %}
+    {% endblock %}
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    {#    <meta charset="utf-8">#}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Illustration Archive">
+    <meta name="author" content="Cardiff University">
+    <link rel="shortcut icon" href="{% static "media/images/icon/LostVisions_Favicon.png" %}">
+
+    <title>ReImagine</title>
+
+    <!-- Bootstrap -->
+
+    <!--[if lt IE 9]>
+<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+<![endif]-->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+    {#    <script src="//code.jquery.com/jquery-1.9.1.js"></script>#}
+    <script type="text/javascript" src="{% static "jquery/jquery-1.9.1.min.js" %}"></script>
+
+    {#    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.js"></script>#}
+    <script type="text/javascript" src="{% static "jquery/jquery.cookie.js" %}"></script>
+
+{#    <script type="text/javascript" src="{% static "underscore/underscore-min.js" %}"></script>#}
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="{% static "intro.js/intro.js" %}"></script>
+
+    {#    <script type="text/javascript" src="{% static "lostvisions.js" %}"></script>#}
+
+
+    <style>
+        #format { margin-top: 2em; }
+    </style>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    {#<script src="https://code.jquery.com/jquery.js"></script>#}
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    {#    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"></script>#}
+
+    {#        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>#}
+    <script src="{% static "bootstrap-sass-master/assets/javascripts/bootstrap.js" %}"></script>
+
+
+    {#    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>#}
+    <script type="text/javascript" src="{% static "jquery/ui/1.10.4/jquery-ui.min.js" %}"></script>
+
+
+    {#      CSS Files     #}
+
+    {#    page default theme    #}
+    {#    <link href="{% static "bootstrap.readable.css" %}" rel="stylesheet">#}
+
+    {#    <link href="{% static "bootstrap-sass-master/assets/stylesheets/_bootstrap.css" %}" rel="stylesheet">#}
+
+    <link href="{% static "mini.css" %}" rel="stylesheet">
+
+    <script>
+        function load_css() {
+            var head = $('head');
+            {#            <!--head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.slate.min.css" %}') );-->#}
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.flatly.min.css" %}'));#}
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "bootstrap.readable.css" %}'));#}
+
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/intro.js/0.5.0/introjs.css'));#}
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "intro.js/0.5.0/introjs.css" %}'));
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "intro.js/0.5.0/introjs-nassim.css" %}'));
+
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css') );#}
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "font_awesome/css/font-awesome.min.css" %}'));
+
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.0.6/bootstrap-social.min.css') );#}
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css') );#}
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "jquery/ui/1.10.4/themes/smoothness/jquery-ui.css" %}'));
+            {#            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "vakata-jstree-480a265/dist/themes/default/style.css" %}') );#}
+            head.append( $('<link rel="stylesheet" type="text/css" />').attr('href', '{% static "lostvisions.css" %}') );
+        }
+
+    </script>
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-54885645-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+    });
+
+</script>
+<div class="wrapper">
+
+    <div id="navbar_lv_header" class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container navbar-container">
+            <div class="navbar-header">
+                <a href="{% url 'home' %}" class="navbar-brand">
+                    {#                <img class="lv_logos" src="{% static 'media/images/ill-arch-wide.png' %}">#}
+                </a>
+                <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#navbar-main">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar-main">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
+                        <ul class="dropdown-menu social-buttons">
+                            <li>
+                                <a class="btn btn-block" href="{% url 'about_us' %}">About Us</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="http://lostvisions.weebly.com/blog" target="_blank">Our Blog</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'tweet_card' %}">Twitter</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'software' %}">Software</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'stats' %}">Tagging Stats</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'help' %}">Help</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-info btn-xs" id="teach_me" data-toggle="tooltip" data-placement="left"
+                                   title="Teach me about this page" data-original-title="Teach Me">[?]</a>
+                            </li>
+                        </ul>
+
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account{% if user.is_authenticated %} ({{ user }}){% endif %}<b class="caret"></b></a>
+                        <ul class="dropdown-menu social-buttons">
+                            {% if user.is_authenticated %}
+                                <li>
+                                    <a class="btn btn-block" href="{% url 'user_profile_home' %}">Profile</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a class="btn btn-block" href="{% url 'logout' %}?return_url={{ request.path }}">Logout {{ user }}</a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a class="btn btn-block" href="{% url 'account_login' %}">Login</a>
+                                </li>
+                            {% endif %}
+
+
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <div class="fa fa-cog"></div>
+                            Tools
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu social-buttons">
+                            <li>
+                                <a class="btn btn-block" href="{% url 'image.random' %}">Tag Illustrations</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'search_advanced' %}">Advanced Search</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" href="{% url 'random' %}">Random Images</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+                <form class="navbar-form navbar-right" id='search_form'
+                      action='{% url 'do_advanced_search' %}' method="get" role="search" method="post">{% csrf_token %}
+                    <input type="hidden" value="on" id="alternative_search" name="alternative_search">
+                    <div class="form-group">
+                        <input type="text" class="form-control quick-search-field fa" data-toggle="tooltip"
+                               data-placement="left" title="Perform Quick Search" data-original-title="Quick Search"
+                               placeholder="&#xf002;" id="keyword" name="keyword">
+                    </div>
+                    {#                    <button type="submit" class="btn btn-default btn-xs" >Submit</button>#}
+
+                </form>
+            </div><!-- /.navbar-collapse -->
+        </div>
+
+    </div>
+
+    {#container#}
+
+    <div class=" base-container">
+
+        {% block content %}
+
+        {% endblock %}
+    </div>
+    <div class="push"></div>
+
+</div>
+
+
+<div class="sticky-footer">
+    <ul class="footer-links">
+        <li class="departments">
+            <a href="http://www.cardiff.ac.uk/" target="_blank">
+                {#                <img src="http://sites.cardiff.ac.uk/brandtoolkit/files/2013/11/universitylogo1-300x288.jpg" style='width:auto; height:80px; padding: 10px;  background-color: #ffffff'>#}
+                <img src="{% static "media/images/icon/universitylogo1-300x288.jpg" %}" style='width:auto; height:80px; padding: 10px;  background-color: #ffffff'>
+
+            </a>
+        </li>
+
+        {#        <li class="departments">#}
+        {#            <a class="department_text" href="http://www.cardiff.ac.uk/encap/" target="_blank">#}
+        {#                <p>Cardiff School of English, Communication, and Philosophy</p>#}
+        {#            </a>#}
+        {#        </li>#}
+        {##}
+        {#        <li class="departments">#}
+        {#            <a class="department_text" href="https://www.cs.cf.ac.uk/" target="_blank">#}
+        {#                <p>Cardiff School Of Computer Science & Informatics</p>#}
+        {#            </a>#}
+        {#        </li>#}
+
+        <li class="departments">
+            <a class="department_text" href="http://www.cardiff.ac.uk/arcca/" target="_blank">
+                {#                <img src="http://www.cf.ac.uk/arcca/images/homepage/image-56473-web.gif" style='width:auto; height:40px; padding: 10px; background-color: #ffffff'>#}
+                <img src="{% static "media/images/icon/image-56473-web.gif" %}" style='width:auto; height:40px; padding: 10px;  background-color: #ffffff'>
+
+                {#                <p>Advanced Research Computing @ Cardiff</p>#}
+            </a>
+        </li>
+
+        <li class="departments">
+            <a class="department_text" href="http://www.bl.uk/" target="_blank">
+                <img id='bl-image' src="{% static "media/images/BL_Logo.JPG" %}" style='width:auto; height:80px; padding: 10px; background-color: #ffffff'>
+            </a>
+        </li>
+
+        <li class="departments">
+            <a class="department_text" href="http://www.ahrc.ac.uk/Pages/Home.aspx" target="_blank">
+                <img id='ahrc-image' src="{% static "media/images/CMYK_LScape.png" %}" style='max-width: 95%; min-height:42px; max-height:70px; padding: 10px; background-color: #ffffff'>
+            </a>
+        </li>
+    </ul>
+    {#</div>#}
+
+    {#    <div style="text-align: center; display: block">Cardiff University 2014</div>#}
+    {#<div class="man"></div>#}
+</div>
+
+</body>
+</html>

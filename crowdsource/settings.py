@@ -99,7 +99,8 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'lost_visions/templates')
+    os.path.join(BASE_DIR, 'lost_visions/templates'),
+    os.path.join(BASE_DIR, 'reimagine/templates')
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -231,7 +232,9 @@ use_azure = False
 
 TRUSTED_COLLECTIONS = []
 
-kismet_api_key = ""
+kismet_api_key = ''
+
+captcha_secret = ''
 
 try:
     from crowdsource.settings_local import *

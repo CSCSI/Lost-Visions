@@ -20,7 +20,7 @@
     <meta property="article:published_time" content="2015-03-30T05:59:00+01:00" />
     <meta property="article:modified_time" content="2015-03-30T06:08:47+01:00" />
     <meta property="article:section" content="Article Section" />
-{#    <meta property="article:tag" content="{{ image_tags }}" />#}
+    {#    <meta property="article:tag" content="{{ image_tags }}" />#}
 
 {% endblock %}
 
@@ -31,951 +31,953 @@
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
 
-    $(window).load(function(){
-    });
-
-    $(window).resize(function(){
-        do_tidy();
-    });
-
-    function getDefaultFontSize(pa){
-        pa= pa || document.body;
-        var who= document.createElement('div');
-
-        who.style.cssText='display:inline-block; padding:0; line-height:1; position:absolute; visibility:hidden; font-size:1em';
-
-        who.appendChild(document.createTextNode('M'));
-        pa.appendChild(who);
-        var fs= [who.offsetWidth, who.offsetHeight];
-        pa.removeChild(who);
-        return fs;
-    }
-
-    var font_size = getDefaultFontSize()[1];
-
-    var tidy_ittr = 0;
-    var tidy_masonry_interval = setInterval(do_tidy, 1500);
-
-    function tidy_masonry() {
-        tidy_masonry_interval = setInterval(do_tidy, 1500);
-    }
-
-    function do_tidy() {
-        tidy_ittr ++;
-        $('#category-container').masonry({
-            animationOptions: {
-                duration: 50
-            }
+        $(window).load(function(){
         });
 
-        if (tidy_ittr > 10) {
-            tidy_ittr = 0;
-            clearInterval(tidy_masonry_interval);
+        $(window).resize(function(){
+            do_tidy();
+        });
+
+        function getDefaultFontSize(pa){
+            pa= pa || document.body;
+            var who= document.createElement('div');
+
+            who.style.cssText='display:inline-block; padding:0; line-height:1; position:absolute; visibility:hidden; font-size:1em';
+
+            who.appendChild(document.createTextNode('M'));
+            pa.appendChild(who);
+            var fs= [who.offsetWidth, who.offsetHeight];
+            pa.removeChild(who);
+            return fs;
         }
-    }
 
-    function get_similar_images(image_id) {
-        $.ajax({
-            type: "POST",
-            url: "{% url 'image.similar_images' image_id%}",
-            data: {
-                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                image_id: image_id
-            },
-            success: function(data) {
-                var ok = data['success'];
-                console.log(data);
+        var font_size = getDefaultFontSize()[1];
 
-                var similars = '<ul id="similars_list">';
-                for (var img_data in data['largest_set']) {
-                    similars += '<li>';
-                    similars += '<a href="' + data['largest_set'][img_data]['link']  + '" target="_blank">';
-                    similars += '<img src="' + data['largest_set'][img_data]['img_small'] +
-                            '" class="similar-image"></img>';
-                    similars += '</a>';
-                    similars += '</li>';
+        var tidy_ittr = 0;
+        var tidy_masonry_interval = setInterval(do_tidy, 1500);
+
+        function tidy_masonry() {
+            tidy_masonry_interval = setInterval(do_tidy, 1500);
+        }
+
+        function do_tidy() {
+            tidy_ittr ++;
+            $('#category-container').masonry({
+                animationOptions: {
+                    duration: 50
                 }
-                similars += '</ul>';
-                $('#similars').html(similars);
+            });
 
-                if (data['largest_set_size'] == "0") {
-                    $('#collapse_similars').accordion({active: false}).hide();
-                }
+            if (tidy_ittr > 10) {
+                tidy_ittr = 0;
+                clearInterval(tidy_masonry_interval);
+            }
+        }
 
-                var book_images = '<ul id="book_images_list">';
-                for (var img_data in data['book_images']) {
-                    book_images += '<li>';
-                    book_images += '<a href="' + data['book_images'][img_data]['link']  + '" target="_blank">';
-                    book_images += '<img src="' + data['book_images'][img_data]['img_small'] +
-                            '" class="similar-image"></img>';
-                    book_images += '</a>';
-                    book_images += '</li>';
-                }
-                book_images += '</ul>';
-                $('#book_images').html(book_images);
+        function get_similar_images(image_id) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'image.similar_images' image_id%}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    image_id: image_id
+                },
+                success: function(data) {
+                    var ok = data['success'];
+                    console.log(data);
 
-
-                console.log('mm:' + _.size(data['machine_matches']));
-                var machine_matched = '<ul id="machine_matched_list">';
-                if (_.size(data['machine_matches']) == 0) {
-                    $('#collapse_machine_matched').accordion({active: false});
-                } else {
-                    for (var img_data in data['machine_matches']) {
-                        machine_matched += '<li>';
-                        machine_matched += '<a href="' + data['machine_matches'][img_data]['link']  + '" target="_blank">';
-                        machine_matched += '<img src="' + data['machine_matches'][img_data]['img_small'] +
+                    var similars = '<ul id="similars_list">';
+                    for (var img_data in data['largest_set']) {
+                        similars += '<li>';
+                        similars += '<a href="' + data['largest_set'][img_data]['link']  + '" target="_blank">';
+                        similars += '<img src="' + data['largest_set'][img_data]['img_small'] +
                                 '" class="similar-image"></img>';
-                        machine_matched += '</a>';
-                        machine_matched += '</li>';
+                        similars += '</a>';
+                        similars += '</li>';
                     }
+                    similars += '</ul>';
+                    $('#similars').html(similars);
+
+                    if (data['largest_set_size'] == "0") {
+                        $('#collapse_similars').accordion({active: false}).hide();
+                    }
+
+                    var book_images = '<ul id="book_images_list">';
+                    for (var img_data in data['book_images']) {
+                        book_images += '<li>';
+                        book_images += '<a href="' + data['book_images'][img_data]['link']  + '" target="_blank">';
+                        book_images += '<img src="' + data['book_images'][img_data]['img_small'] +
+                                '" class="similar-image"></img>';
+                        book_images += '</a>';
+                        book_images += '</li>';
+                    }
+                    book_images += '</ul>';
+                    $('#book_images').html(book_images);
+
+
+                    console.log('mm:' + _.size(data['machine_matches']));
+                    var machine_matched = '<ul id="machine_matched_list">';
+                    if (_.size(data['machine_matches']) == 0) {
+                        $('#collapse_machine_matched').accordion({active: false});
+                    } else {
+                        for (var img_data in data['machine_matches']) {
+                            machine_matched += '<li>';
+                            machine_matched += '<a href="' + data['machine_matches'][img_data]['link']  + '" target="_blank">';
+                            machine_matched += '<img src="' + data['machine_matches'][img_data]['img_small'] +
+                                    '" class="similar-image"></img>';
+                            machine_matched += '</a>';
+                            machine_matched += '</li>';
+                        }
+                    }
+                    machine_matched += '</ul>';
+                    $('#machine_matched_images').html(machine_matched);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
                 }
-                machine_matched += '</ul>';
-                $('#machine_matched_images').html(machine_matched);
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
-            }
-        });
-    }
+            });
+        }
 
-    function add_tag_button(tag_string, synset) {
-        console.log(tag_string + ' : ' + synset);
-        var id = 'id_' + tag_string;
+        function add_tag_button(tag_string, synset) {
+            console.log(tag_string + ' : ' + synset);
+            var id = 'id_' + tag_string;
 
-        var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
-                + 'id="' + id +
-                '" name="' + tag_string +
-                '" x_percent="' + hightlighted_x_percent +
-                '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';
+            var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                    + 'id="' + id +
+                    '" name="' + tag_string +
+                    '" x_percent="' + hightlighted_x_percent +
+                    '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';
 
-        var d = new Date();
-        var timestamp = d.toISOString();
-        var tag_uid = get_next_id();
-        all_tags[tag_uid] = {
-            tag: tag_string,
-            {#            tag_id: get_next_id(),#}
-            synset: synset,
-            x_percent: hightlighted_x_percent,
-            y_percent: hightlighted_y_percent,
-            x_pixel: highlighted_x_pixel,
-            y_pixel: highlighted_y_pixel,
-            timestamp: timestamp,
-            tag_order: tag_uid
-        };
-        console.log('add_tag_button');
-        console.log(all_tags);
+            var d = new Date();
+            var timestamp = d.toISOString();
+            var tag_uid = get_next_id();
+            all_tags[tag_uid] = {
+                tag: tag_string,
+                {#            tag_id: get_next_id(),#}
+                synset: synset,
+                x_percent: hightlighted_x_percent,
+                y_percent: hightlighted_y_percent,
+                x_pixel: highlighted_x_pixel,
+                y_pixel: highlighted_y_pixel,
+                timestamp: timestamp,
+                tag_order: tag_uid
+            };
+            console.log('add_tag_button');
+            console.log(all_tags);
 
-        hightlighted_x_percent = 0;
-        hightlighted_y_percent = 0;
-        highlighted_x_pixel = 0;
-        highlighted_y_pixel = 0;
+            hightlighted_x_percent = 0;
+            hightlighted_y_percent = 0;
+            highlighted_x_pixel = 0;
+            highlighted_y_pixel = 0;
 
-        document.getElementById("tag_info").value = JSON.stringify(all_tags);
-        {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
+            document.getElementById("tag_info").value = JSON.stringify(all_tags);
+            {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
 
-        var button_toggle_component = $($button_toggle).click(function(){
-            $(this).remove();
-        }).tooltip();
+            var button_toggle_component = $($button_toggle).click(function(){
+                $(this).remove();
+            }).tooltip();
 
-        $("#add_tags_body").append(button_toggle_component);
-
-    }
-
-
-    function get_alt_tags(callback) {
-        {#        alert(document.getElementById("tag_info").value);#}
-        $.ajax({
-            type: "POST",
-            url: "{% url 'image.alt_tags' %}",
-            data: {
-                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                {#                tag_info: document.getElementById("tag_info").value#}
-                tag_info: JSON.stringify(all_tags)
-            },
-            success: function(data) {
-                {#                alert(document.getElementById("tag_info").value);#}
-
-                {#                    console.log(data);#}
-                callback(data);
-
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
-                callback(null);
-            }
-        });
-    }
-
-
-    function scroll_to_top(callback){
-        $("body").animate(
-                { scrollTop: "0" },
-                {
-                    duration: 600,
-                    complete: callback
-                }
-        );
-    }
-
-    var uid = 1;
-    function get_next_id() {
-        return uid++;
-    }
-
-    {#    This is important #}
-    var all_tags = {};
-
-    var hightlighted_x_percent = 0;
-    var hightlighted_y_percent = 0;
-    var highlighted_x_pixel = 0;
-    var highlighted_y_pixel = 0;
-
-    var current_question_pane = 1;
-    $(document).ready(function () {
-
-        $('#drag_image_box').draggable();
-        $('#drag_image').resizable({
-            aspectRatio: true,
-            handles: 'ne, se, sw, nw'
-        });
-
-
-        $('#question_prev_cell').hide();
-
-        {#        FINDME all_tags is the js object listing tags #}
-        {#        FINDME tag_info is the hidden input element #}
-        {#        FINDME final_tags is the div element in the submit dialog containing tag buttons#}
-
-        $( "#final_tags" ).change(function() {
-            alert( "Handler for .change() on final_tags called." );
-        });
-
-        $( "#tag_info" ).change(function() {
-            alert( "Handler for .change() on tag_info called." );
-        });
-
-        function replace_finished_tag_div(div_string) {
-            var final_tags_div = $('#final_tags').css('width', window_width);
-            final_tags_div.empty();
-            final_tags_div.append($(div_string));
+            $("#add_tags_body").append(button_toggle_component);
 
         }
 
-        var finish_tagging_dialog_form = null;
-        function setup_finish_dialog() {
+
+        function get_alt_tags(callback) {
+            {#        alert(document.getElementById("tag_info").value);#}
+            $.ajax({
+                type: "POST",
+                url: "{% url 'image.alt_tags' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    {#                tag_info: document.getElementById("tag_info").value#}
+                    tag_info: JSON.stringify(all_tags)
+                },
+                success: function(data) {
+                    {#                alert(document.getElementById("tag_info").value);#}
+
+                    {#                    console.log(data);#}
+                    callback(data);
+
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                    callback(null);
+                }
+            });
+        }
+
+
+        function scroll_to_top(callback){
+            $("body").animate(
+                    { scrollTop: "0" },
+                    {
+                        duration: 600,
+                        complete: callback
+                    }
+            );
+        }
+
+        var uid = 1;
+        function get_next_id() {
+            return uid++;
+        }
+
+        {#    This is important #}
+        var all_tags = {};
+
+        var hightlighted_x_percent = 0;
+        var hightlighted_y_percent = 0;
+        var highlighted_x_pixel = 0;
+        var highlighted_y_pixel = 0;
+
+        var current_question_pane = 1;
+        $(document).ready(function () {
+
+            $('#drag_image_box').draggable();
+            $('#drag_image').resizable({
+                aspectRatio: true,
+                handles: 'ne, se, sw, nw'
+            });
+
+
+            $('#question_prev_cell').hide();
+
+            {#        FINDME all_tags is the js object listing tags #}
+            {#        FINDME tag_info is the hidden input element #}
+            {#        FINDME final_tags is the div element in the submit dialog containing tag buttons#}
+
+            $( "#final_tags" ).change(function() {
+                alert( "Handler for .change() on final_tags called." );
+            });
+
+            $( "#tag_info" ).change(function() {
+                alert( "Handler for .change() on tag_info called." );
+            });
+
+            function replace_finished_tag_div(div_string) {
+                var final_tags_div = $('#final_tags').css('width', window_width);
+                final_tags_div.empty();
+                final_tags_div.append($(div_string));
+
+            }
+
+            var finish_tagging_dialog_form = null;
+            function setup_finish_dialog() {
+
+                var window_height = $(window).height();
+                var window_width = $(window).width();
+
+                finish_tagging_dialog_form = $( "#finish_tagging_dialog_form" ).dialog({
+                    autoOpen: false,
+                    height: window_height * 0.75,
+                    width: window_width * 0.5,
+                    modal: true,
+                    buttons: {
+                        "Save, stay on this Illustration": function() {
+                            $('#stay_or_next_image').val('stay');
+
+{#                            $('#captcha_key').val();#}
+                            finish_tagging_dialog_form.dialog( "close" );
+
+                            $('#image-taggin-form').submit();
+                        },
+                        "Save, move to next Illustration": function() {
+{#                            $('#captcha_key').val($('#recaptcha-token').val());#}
+                            finish_tagging_dialog_form.dialog( "close" );
+                            $('#image-taggin-form').submit();
+
+                        },
+                        Cancel: function() {
+                            console.log('on close:');
+                            console.log(all_tags);
+                            {#                        alert(all_tags);#}
+{#                            $('#captcha_key').val($('#recaptcha-token').val());#}
+                            finish_tagging_dialog_form.dialog( "close");
+                            {#                        setup_finish_dialog();#}
+                        }
+                    },
+                    open : function() {
+
+                        var spinner = '<div style="margin: 0 auto; text-align: center; margin-top: 20px">' +
+                                '<div class="fa fa-3x fa-spinner fa-spin"></div>' +
+                                '</div>';
+                        replace_finished_tag_div(spinner);
+
+                        get_alt_tags(function(data) {
+
+
+                            var user_tags = data;
+
+                            var final_tags_div = $('#final_tags');
+                            final_tags_div.empty();
+
+                            for (var tag_index in user_tags) {
+                                var tag_uid = get_next_id();
+                                all_tags[tag_uid] = {
+                                    tag: user_tags[tag_index]['tag'],
+                                    {#                            tag_id: tag_uid,#}
+                                    synset: user_tags[tag_index]['synset'],
+                                    x_percent: user_tags[tag_index]['x_percent'],
+                                    y_percent: user_tags[tag_index]['y_percent'],
+                                    timestamp: user_tags[tag_index]['timestamp'],
+                                    tag_order: user_tags[tag_index]['tag_order']
+                                };
+
+                                var tag_string = user_tags[tag_index]['tag'];
+                                var id = 'id_' + tag_string;
+
+                                var btn_class = 'btn-success'
+                                if (user_tags[tag_index]['tag_order'].slice(-6) == '100100') {
+                                    btn_class = 'btn-success btn-surround';
+                                }
+
+                                var $button_toggle = '<div class="btn ' + btn_class + ' tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
+                                        + 'data-uid="' + tag_uid + '" '
+                                        + 'id="' + id + '" '
+                                        + 'name="' + tag_string +'">'  + tag_string + '</div>';
+
+                                var button_toggle_component = $($button_toggle).click(function(){
+                                    $(this).remove();
+                                    var remove_uid = $(this).data('uid');
+
+                                    {#                                alert(remove_uid);#}
+                                    delete all_tags[remove_uid];
+                                    document.getElementById("tag_info").value = JSON.stringify(all_tags);
+
+                                    {#                                alert(JSON.stringify(all_tags));#}
+                                    {#                            TODO an attempt at flashy stuff #}
+                                    {#                            $(this).toggle('scale', {}, 600, function(){});#}
+                                }).tooltip();
+
+                                document.getElementById("tag_info").value = JSON.stringify(all_tags);
+
+                                final_tags_div.append(button_toggle_component);
+                            }
+                        });
+
+                    },
+                    close: function() {
+
+                    }
+                });
+
+            }
+
+            setup_finish_dialog();
+            $('#tagging-submit-btn').click(function(event){
+                scroll_to_top(function(){
+
+                    $('#finish_tagging_dialog_form').dialog("open");
+                });
+            });
+
+            $('#share_dialogue').dialog({
+                autoOpen: false,
+                width: $(window).width() * 0.7,
+                show: {
+                    effect: "blind",
+                    duration: 500
+                },
+                hide: {
+                    effect: "blind",
+                    duration: 500
+                }
+            });
+
+            $('#share').click(function(){
+                var collection_id = $(this).data('collection_id');
+                var link = '{% url 'dl_collection' %}?' +
+                        'collection_id=' + collection_id;
+                $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
+                {#                $('#edit_collection_dialog_form').dialog("open");#}
+                $('#share_dialogue').dialog("open");
+
+                {#                window.open("{% url 'tweet_card' %}", '_blank');#}
+            });
+
+            $('#image-taggin-form').bind("keyup keypress", function(e) {
+                var code = e.keyCode || e.which;
+                if (code  == 13) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            get_similar_images({{ image_id }});
+
+            function do_previous_question() {
+                if (current_question_pane - 1 > 0){
+                    var current_div = '#question_number_' + current_question_pane;
+                    $(current_div).hide('slide', 500, function(){
+
+                        current_question_pane -= 1;
+                        $('#question_number_' + current_question_pane).show('blind', 500, function() {
+                            scroll_to_top(tidy_masonry());
+                        });
+                    });
+                }
+                if (current_question_pane - 1 < 2) {
+                    $(this).parent().hide();
+                    $('#question_next_cell').show()
+                }
+                if (current_question_pane - 1 < 4) {
+                    $('#question_next_cell').show()
+                }
+
+                populate_categories(0, enable_category_click, null);
+
+            }
+
+            $('#question-accordion-prev').click(do_previous_question);
+
+            function do_next_question(){
+                if (current_question_pane + 1 < 5) {
+                    var div_name = '#question_number_' + current_question_pane;
+
+                    $(div_name).hide('slide', 500, function() {
+
+                        current_question_pane += 1;
+                        if (current_question_pane == 2){
+                            setTimeout("$('#dictionary').focus()", 500);
+                        }
+                        $('#question_number_' + current_question_pane).show('blind', 500, function() {
+                            scroll_to_top(tidy_masonry());
+                        });
+                    });
+                } else {
+                    alert(current_question_pane);
+                }
+                if (current_question_pane + 1 > 3) {
+                    $(this).parent().hide();
+                    $('#question_prev_cell').show();
+                }
+                if (current_question_pane + 1 > 1) {
+                    $('#question_prev_cell').show();
+                }
+            }
+
+            $('#question-accordion-next').click(do_next_question);
+
+            $('#question_number_2').hide();
+            $('#question_number_3').hide();
+            $('#question_number_4').hide();
+            $('#question_number_5').hide();
+
+            $('#collapse_cloud').accordion({
+                active: 0,
+                collapsible: true,
+                heightStyle: "content"
+
+            });
+
+            $('#collapse_metadata').accordion({
+                active: 0,
+                collapsible: true,
+                heightStyle: "content"
+            });
+
+            $('#collapse_descriptions').accordion({
+                {% if image_descriptions|length > 0 %}
+                    active: 0,
+                {% else %}
+                    active: false,
+                {% endif %}
+                collapsible: true,
+                heightStyle: "content"
+            });
+
+            $('#collapse_similars').accordion({
+                active: 0,
+                collapsible: true,
+                heightStyle: "content"
+
+            });
+
+            $('#collapse_machine_matched').accordion({
+                active: 0,
+                collapsible: true,
+                heightStyle: "content"
+
+            });
+
+            $('#collapse_book_images').accordion({
+                active: 0,
+                collapsible: true,
+                heightStyle: "content"
+
+            });
+
+            var tags = '';
+            var the_tags = {{ image_tags|safe }};
+
+            for (var tag in the_tags) {
+                tags += '<div id="search_tag" class="btn btn-success search_tag" ' +
+                        'data-val="' + the_tags[tag]['uses'] + '" ' +
+                        'data-term="' + the_tags[tag]['tag'] + '" ' +
+                        'style="margin: 5px; display: inline-block; font-size: '
+                        + (font_size/2 + (the_tags[tag]['uses'] * (font_size/2))) + 'px;';
+                if (the_tags[tag].hasOwnProperty('from_flickr')){
+                    tags += ' border-style: double; border: groove';
+                }
+                tags += '">' + the_tags[tag]['tag'] + '</div>';
+            }
+
+            if (the_tags.length < 1) {
+                $('#collapse_cloud').hide();
+            }
+
+            $('#tag_cloud').html(tags);
+
+            $('.search_tag').click(function(){
+                var word = $(this).data('term');
+                var link = "{% url 'do_advanced_search' %}" + '?keyword=' + word;
+                window.open(link, '_blank');
+            });
+
+
+            $( "#dictionary" ).autocomplete({
+                source: "{% url 'find.word' %}",
+                position: { my: "left top", at: "left bottom", collision: "flip" },
+                minLength: 3,
+                select: function( event, ui ) {
+                    {#                console.log( ui.item ?#}
+                    {#                        "Selected: " + ui.item.value + " aka " + ui.item.id :#}
+                    {#                        "Nothing selected, input was " + this.value );#}
+
+                    var tag_string = ui.item.value;
+                    var id = 'id_' + tag_string;
+                    var synset = ui.item.synset;
+
+                    {#                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});#}
+                    {#                var $label = $('<label/>').attr({for: id}).html(tag_string);#}
+
+                    add_tag_button(tag_string, synset);
+
+                    {#                var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'#}
+                    {#                        + 'id="' + id +#}
+                    {#                        '" name="' + tag_string +#}
+                    {#                        '" x_percent="' + hightlighted_x_percent +#}
+                    {#                        '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';#}
+                    {##}
+                    {##}
+                    {#                var d = new Date();#}
+                    {#                var datetime = d.toISOString();#}
+                    {#                all_tags.push({tag: tag_string,#}
+                    {#                    synset: synset,#}
+                    {#                    x_percent: hightlighted_x_percent,#}
+                    {#                    y_percent: hightlighted_y_percent,#}
+                    {#                    x_pixel: highlighted_x_pixel,#}
+                    {#                    y_pixel: highlighted_y_pixel,#}
+                    {#                    datetime: datetime,#}
+                    {#                    tag_order: all_tags.length#}
+                    {#                });#}
+                    {##}
+                    {##}
+                    {##}
+                    {#                document.getElementById("tag_info").value = JSON.stringify(all_tags);#}
+                    {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
+                    {##}
+                    {#                $("#add_tags_body").prepend($label).prepend($check);#}
+                    {##}
+                    {#                var button_toggle_component = $($button_toggle).click(function(){#}
+                    {#                    $(this).remove();#}
+                    {#                }).tooltip();#}
+                    {##}
+                    {#                $("#add_tags_body").append(button_toggle_component);#}
+
+                    ui.item.value = "";
+                }
+            }).keypress(function(e) {
+                {#            if (image_clicked()) {#}
+                {#                if(e.which == 13) {#}
+                {#                    alert('You pressed enter!');#}
+                {#                    return false;#}
+                {#                }#}
+                {#            }#}
+                return true;
+            }).focus(function(e){
+                {#            image_clicked()#}
+            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li>").css('word-wrap', 'normal')
+                        .append( '<a style="word-wrap: normal;"><strong>' + item.label + "</strong><br>" + item.desc + "</a>" )
+                        .appendTo( ul);
+            };
+
+            {#        function image_clicked(){#}
+            {#            if(hightlighted_x_percent == 0#}
+            {#                    && hightlighted_y_percent == 0#}
+            {#                    && highlighted_x_pixel == 0#}
+            {#                    && highlighted_y_pixel == 0) {#}
+            {##}
+            {#                var focus_message = '<div class="alert alert-dismissable alert-warning">\#}
+            {#  <button type="button" class="close" data-dismiss="alert">×</button>\#}
+            {#  Please try clicking part of the image before tagging objects.</div>'#}
+            {#                $('#focus_alerts').html(focus_message).fadeIn(100);#}
+            {#            } else {#}
+            {#                $('#focus_alerts').fadeOut(1000);#}
+            {#            }#}
+            {#        }#}
+
+            $('#load_new_image').click(function(){
+                window.location.replace('{% url 'image.random' %}');
+            });
+
+
+
+
+
+            var save_image_dialog_form = $( "#save_image_dialog_form" ).dialog({
+                autoOpen: false,
+                height: 300,
+                width: 350,
+                modal: true,
+                buttons: {
+                    "Save Image": function() {
+
+                        var e = document.getElementById("user_collection_select");
+                        var collection_id = e.options[e.selectedIndex].value;
+
+                        {#                    console.log({{ image_id }} + ' ' + collection_id);#}
+
+                        if (collection_id == "NEW COLLECTION"){
+                            save_image_dialog_form.dialog("close");
+                            dialog.dialog("open");
+
+                        } else {
+                            saveImageToCollection(collection_id, {{ image_id }});
+                        }
+
+                        save_image_dialog_form.dialog( "close" );
+                    },
+                    Cancel: function() {
+                        save_image_dialog_form.dialog( "close" );
+                    }
+                },
+                open : function() {
+                    var name = $(this).data('name');
+                    var id = $(this).data('id');
+                    $('#edit_image_caption_field').val(name);
+                },
+                close: function() {
+                    {#                form[ 0 ].reset();#}
+                    {#                allFields.removeClass( "ui-state-error" );#}
+                }
+            });
+
+
+
+
+            function saveMapPoints(ney, nex, swy, swx) {
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'image.coords_save' %}",
+                    data: {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        image_id: {{ image_id }},
+                        north_east_y: ney,
+                        north_east_x: nex,
+                        south_west_y: swy,
+                        south_west_x: swx
+                    },
+                    success: function(data) {
+                        var ok = data['success'];
+                        {#                    alert("Saved success : " + ok);#}
+
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                    }
+                });
+            }
+
+            $('#map-canvas').height($(window).height());
 
             var window_height = $(window).height();
             var window_width = $(window).width();
 
-            finish_tagging_dialog_form = $( "#finish_tagging_dialog_form" ).dialog({
+            var mapping_dialog_form = $( "#mapping_dialog_form" ).dialog({
                 autoOpen: false,
-                height: window_height * 0.75,
-                width: window_width * 0.5,
+                height: window_height - $('#navbar-main').height() - 40,
+                width: window_width - 20,
                 modal: true,
                 buttons: {
-                    "Save, stay on this Illustration": function() {
-                        $('#stay_or_next_image').val('stay');
+                    "Save Map": function() {
 
-                        finish_tagging_dialog_form.dialog( "close" );
+                        var ney =  document.getElementById("north_east_y").value;
+                        var nex = document.getElementById("north_east_x").value;
+                        var swy = document.getElementById("south_west_y").value;
+                        var swx = document.getElementById("south_west_x").value;
 
-                        $('#image-taggin-form').submit();
-                    },
-                    "Save, move to next Illustration": function() {
+                        saveMapPoints(ney, nex, swy, swx);
 
-                        finish_tagging_dialog_form.dialog( "close" );
-                        $('#image-taggin-form').submit();
-
+                        mapping_dialog_form.dialog( "close" );
                     },
                     Cancel: function() {
-                        console.log('on close:');
-                        console.log(all_tags);
-                        {#                        alert(all_tags);#}
-                        finish_tagging_dialog_form.dialog( "close");
-                        {#                        setup_finish_dialog();#}
+                        mapping_dialog_form.dialog( "close" );
                     }
                 },
                 open : function() {
+                    {#                        $('#mapping_dialog_form').height($(window).height());#}
 
-                    var spinner = '<div style="margin: 0 auto; text-align: center; margin-top: 20px">' +
-                            '<div class="fa fa-3x fa-spinner fa-spin"></div>' +
-                            '</div>';
-                    replace_finished_tag_div(spinner);
-
-                    get_alt_tags(function(data) {
+                    var name = $(this).data('name');
+                    var id = $(this).data('id');
 
 
-                        var user_tags = data;
+                    // Note: This example requires that you consent to location sharing when
+                    // prompted by your browser. If you see a blank space instead of the map, this
+                    // is probably because you have denied permission for location sharing.
 
-                        var final_tags_div = $('#final_tags');
-                        final_tags_div.empty();
+                    var map;
 
-                        for (var tag_index in user_tags) {
-                            var tag_uid = get_next_id();
-                            all_tags[tag_uid] = {
-                                tag: user_tags[tag_index]['tag'],
-                                {#                            tag_id: tag_uid,#}
-                                synset: user_tags[tag_index]['synset'],
-                                x_percent: user_tags[tag_index]['x_percent'],
-                                y_percent: user_tags[tag_index]['y_percent'],
-                                timestamp: user_tags[tag_index]['timestamp'],
-                                tag_order: user_tags[tag_index]['tag_order']
-                            };
+                    function initialize() {
+                        var x =  document.getElementById("x").value;
+                        var y =  document.getElementById("y").value;
 
-                            var tag_string = user_tags[tag_index]['tag'];
-                            var id = 'id_' + tag_string;
+                        var ney =  document.getElementById("north_east_y").value;
+                        var nex = document.getElementById("north_east_x").value;
+                        var swy = document.getElementById("south_west_y").value;
+                        var swx = document.getElementById("south_west_x").value;
 
-                            var btn_class = 'btn-success'
-                            if (user_tags[tag_index]['tag_order'].slice(-6) == '100100') {
-                                btn_class = 'btn-success btn-surround';
-                            }
+                        var mapOptions = {
+                            center: new google.maps.LatLng(y, x),
+                            zoom: 6
+                        };
+                        map = new google.maps.Map(document.getElementById('map-canvas'),
+                                mapOptions);
 
-                            var $button_toggle = '<div class="btn ' + btn_class + ' tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'
-                                    + 'data-uid="' + tag_uid + '" '
-                                    + 'id="' + id + '" '
-                                    + 'name="' + tag_string +'">'  + tag_string + '</div>';
+                        var bounds = new google.maps.LatLngBounds(
+                                new google.maps.LatLng(swy, swx),
+                                new google.maps.LatLng(ney, nex)
+                        );
 
-                            var button_toggle_component = $($button_toggle).click(function(){
-                                $(this).remove();
-                                var remove_uid = $(this).data('uid');
+                        // Define the rectangle and set its editable property to true.
+                        rectangle = new google.maps.Rectangle({
+                            bounds: bounds,
+                            editable: true,
+                            draggable: true
+                        });
 
-                                {#                                alert(remove_uid);#}
-                                delete all_tags[remove_uid];
-                                document.getElementById("tag_info").value = JSON.stringify(all_tags);
+                        rectangle.setMap(map);
 
-                                {#                                alert(JSON.stringify(all_tags));#}
-                                {#                            TODO an attempt at flashy stuff #}
-                                {#                            $(this).toggle('scale', {}, 600, function(){});#}
-                            }).tooltip();
+                        map.fitBounds(bounds);
 
-                            document.getElementById("tag_info").value = JSON.stringify(all_tags);
+                        // Add an event listener on the rectangle.
+                        google.maps.event.addListener(rectangle, 'bounds_changed', showNewRect);
 
-                            final_tags_div.append(button_toggle_component);
+                        // Define an info window on the map.
+                        infoWindow = new google.maps.InfoWindow();
+
+                        // Try HTML5 geolocation
+                        if(navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                var pos = new google.maps.LatLng(position.coords.latitude,
+                                        position.coords.longitude);
+
+                                console.log(pos);
+                                var infowindow = new google.maps.InfoWindow({
+                                    map: map,
+                                    position: pos,
+                                    content: 'Location found using HTML5.'
+                                });
+
+                                map.setCenter(pos);
+                            }, function() {
+                                handleNoGeolocation(true);
+                            });
+                        } else {
+                            // Browser doesn't support Geolocation
+                            handleNoGeolocation(false);
                         }
-                    });
+                    }
+
+                    // Show the new coordinates for the rectangle in an info window.
+
+                    /** @this {google.maps.Rectangle} */
+                    function showNewRect(event) {
+                        var ne = rectangle.getBounds().getNorthEast();
+                        var sw = rectangle.getBounds().getSouthWest();
+
+                        var contentString = '<b>Rectangle moved.</b><br>' +
+                                'New north-east corner: ' + ne.lat() + ', ' + ne.lng() + '<br>' +
+                                'New south-west corner: ' + sw.lat() + ', ' + sw.lng();
+
+                        // Set the info window's content and position.
+                        infoWindow.setContent(contentString);
+                        infoWindow.setPosition(ne);
+
+
+                        document.getElementById("north_east_y").value = ne.lat();
+                        document.getElementById("north_east_x").value = ne.lng();
+                        document.getElementById("south_west_y").value = sw.lat();
+                        document.getElementById("south_west_x").value = sw.lng();
+
+                    }
+
+                    function handleNoGeolocation(errorFlag) {
+                        if (errorFlag) {
+                            var content = 'Error: Your browser denied Geolocation.';
+                        } else {
+                            var content = 'Error: Your browser doesn\'t support geolocation.';
+                        }
+
+                        var x =  document.getElementById("x").value;
+                        var y =  document.getElementById("y").value;
+
+                        var options = {
+                            map: map,
+                            position: new google.maps.LatLng(y, x),
+                            content: content
+                        };
+
+                        map.setCenter(options.position);
+                    }
+
+                    {#                google.maps.event.addDomListener(window, 'load', initialize);#}
+                    initialize();
+
 
                 },
                 close: function() {
-
+                    populate_categories(0, null, null);
+                    $('#category-extra').empty();
                 }
             });
 
-        }
 
-        setup_finish_dialog();
-        $('#tagging-submit-btn').click(function(event){
-            scroll_to_top(function(){
+            function saveImageToCollection(collection_name) {
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'user_profile.new_collection' %}",
+                    data: {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        collection_name: collection_name,
+                        image_id: {{ image_id }}
+                    },
+                    success: function(data) {
+                        var ok = data['success'];
+                        alert("Added Image to Collection : " + collection_name);
 
-                $('#finish_tagging_dialog_form').dialog("open");
-            });
-        });
-
-        $('#share_dialogue').dialog({
-            autoOpen: false,
-            width: $(window).width() * 0.7,
-            show: {
-                effect: "blind",
-                duration: 500
-            },
-            hide: {
-                effect: "blind",
-                duration: 500
-            }
-        });
-
-        $('#share').click(function(){
-            var collection_id = $(this).data('collection_id');
-            var link = '{% url 'dl_collection' %}?' +
-                    'collection_id=' + collection_id;
-            $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
-            {#                $('#edit_collection_dialog_form').dialog("open");#}
-            $('#share_dialogue').dialog("open");
-
-            {#                window.open("{% url 'tweet_card' %}", '_blank');#}
-        });
-
-        $('#image-taggin-form').bind("keyup keypress", function(e) {
-            var code = e.keyCode || e.which;
-            if (code  == 13) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
-        get_similar_images({{ image_id }});
-
-        function do_previous_question() {
-            if (current_question_pane - 1 > 0){
-                var current_div = '#question_number_' + current_question_pane;
-                $(current_div).hide('slide', 500, function(){
-
-                    current_question_pane -= 1;
-                    $('#question_number_' + current_question_pane).show('blind', 500, function() {
-                        scroll_to_top(tidy_masonry());
-                    });
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                    }
                 });
             }
-            if (current_question_pane - 1 < 2) {
-                $(this).parent().hide();
-                $('#question_next_cell').show()
+
+            function addCollection(){
+                var collection_name = $( "#collection_name").val();
+                saveImageToCollection(collection_name);
+                dialog.dialog( "close" );
             }
-            if (current_question_pane - 1 < 4) {
-                $('#question_next_cell').show()
-            }
 
-            populate_categories(0, enable_category_click, null);
-
-        }
-
-        $('#question-accordion-prev').click(do_previous_question);
-
-        function do_next_question(){
-            if (current_question_pane + 1 < 5) {
-                var div_name = '#question_number_' + current_question_pane;
-
-                $(div_name).hide('slide', 500, function() {
-
-                    current_question_pane += 1;
-                    if (current_question_pane == 2){
-                        setTimeout("$('#dictionary').focus()", 500);
+            var dialog = $( "#dialog-form" ).dialog({
+                autoOpen: false,
+                height: 300,
+                width: 350,
+                modal: true,
+                buttons: {
+                    "Create a collection": addCollection,
+                    Cancel: function() {
+                        dialog.dialog( "close" );
                     }
-                    $('#question_number_' + current_question_pane).show('blind', 500, function() {
-                        scroll_to_top(tidy_masonry());
-                    });
-                });
-            } else {
-                alert(current_question_pane);
-            }
-            if (current_question_pane + 1 > 3) {
-                $(this).parent().hide();
-                $('#question_prev_cell').show();
-            }
-            if (current_question_pane + 1 > 1) {
-                $('#question_prev_cell').show();
-            }
-        }
-
-        $('#question-accordion-next').click(do_next_question);
-
-        $('#question_number_2').hide();
-        $('#question_number_3').hide();
-        $('#question_number_4').hide();
-        $('#question_number_5').hide();
-
-        $('#collapse_cloud').accordion({
-            active: 0,
-            collapsible: true,
-            heightStyle: "content"
-
-        });
-
-        $('#collapse_metadata').accordion({
-            active: 0,
-            collapsible: true,
-            heightStyle: "content"
-        });
-
-        $('#collapse_descriptions').accordion({
-            {% if image_descriptions|length > 0 %}
-                active: 0,
-            {% else %}
-                active: false,
-            {% endif %}
-            collapsible: true,
-            heightStyle: "content"
-        });
-
-        $('#collapse_similars').accordion({
-            active: 0,
-            collapsible: true,
-            heightStyle: "content"
-
-        });
-
-        $('#collapse_machine_matched').accordion({
-            active: 0,
-            collapsible: true,
-            heightStyle: "content"
-
-        });
-
-        $('#collapse_book_images').accordion({
-            active: 0,
-            collapsible: true,
-            heightStyle: "content"
-
-        });
-
-        var tags = '';
-        var the_tags = {{ image_tags|safe }};
-
-        for (var tag in the_tags) {
-            tags += '<div id="search_tag" class="btn btn-success search_tag" ' +
-                    'data-val="' + the_tags[tag]['uses'] + '" ' +
-                    'data-term="' + the_tags[tag]['tag'] + '" ' +
-                    'style="margin: 5px; display: inline-block; font-size: '
-                    + (font_size/2 + (the_tags[tag]['uses'] * (font_size/2))) + 'px;';
-            if (the_tags[tag].hasOwnProperty('from_flickr')){
-                tags += ' border-style: double; border: groove';
-            }
-            tags += '">' + the_tags[tag]['tag'] + '</div>';
-        }
-
-        if (the_tags.length < 1) {
-            $('#collapse_cloud').hide();
-        }
-
-        $('#tag_cloud').html(tags);
-
-        $('.search_tag').click(function(){
-            var word = $(this).data('term');
-            var link = "{% url 'do_advanced_search' %}" + '?keyword=' + word;
-            window.open(link, '_blank');
-        });
-
-
-        $( "#dictionary" ).autocomplete({
-            source: "{% url 'find.word' %}",
-            position: { my: "left top", at: "left bottom", collision: "flip" },
-            minLength: 3,
-            select: function( event, ui ) {
-                {#                console.log( ui.item ?#}
-                {#                        "Selected: " + ui.item.value + " aka " + ui.item.id :#}
-                {#                        "Nothing selected, input was " + this.value );#}
-
-                var tag_string = ui.item.value;
-                var id = 'id_' + tag_string;
-                var synset = ui.item.synset;
-
-                {#                var $check = $('<input/>').attr({type: 'checkbox', id: id, checked: true, name: tag_string, x_percent: hightlighted_x_percent, y_percent: hightlighted_y_percent});#}
-                {#                var $label = $('<label/>').attr({for: id}).html(tag_string);#}
-
-                add_tag_button(tag_string, synset);
-
-                {#                var $button_toggle = '<div class="btn btn-success tag-button" data-toggle="tooltip" data-placement="right" title="Remove this Tag" data-original-title="Remove this Tag"'#}
-                {#                        + 'id="' + id +#}
-                {#                        '" name="' + tag_string +#}
-                {#                        '" x_percent="' + hightlighted_x_percent +#}
-                {#                        '" y_percent="' + hightlighted_y_percent + '">' + tag_string + '</div>';#}
-                {##}
-                {##}
-                {#                var d = new Date();#}
-                {#                var datetime = d.toISOString();#}
-                {#                all_tags.push({tag: tag_string,#}
-                {#                    synset: synset,#}
-                {#                    x_percent: hightlighted_x_percent,#}
-                {#                    y_percent: hightlighted_y_percent,#}
-                {#                    x_pixel: highlighted_x_pixel,#}
-                {#                    y_pixel: highlighted_y_pixel,#}
-                {#                    datetime: datetime,#}
-                {#                    tag_order: all_tags.length#}
-                {#                });#}
-                {##}
-                {##}
-                {##}
-                {#                document.getElementById("tag_info").value = JSON.stringify(all_tags);#}
-                {#                console.log(JSON.parse(document.getElementById("tag_info").value));#}
-                {##}
-                {#                $("#add_tags_body").prepend($label).prepend($check);#}
-                {##}
-                {#                var button_toggle_component = $($button_toggle).click(function(){#}
-                {#                    $(this).remove();#}
-                {#                }).tooltip();#}
-                {##}
-                {#                $("#add_tags_body").append(button_toggle_component);#}
-
-                ui.item.value = "";
-            }
-        }).keypress(function(e) {
-            {#            if (image_clicked()) {#}
-            {#                if(e.which == 13) {#}
-            {#                    alert('You pressed enter!');#}
-            {#                    return false;#}
-            {#                }#}
-            {#            }#}
-            return true;
-        }).focus(function(e){
-            {#            image_clicked()#}
-        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-            return $( "<li>").css('word-wrap', 'normal')
-                    .append( '<a style="word-wrap: normal;"><strong>' + item.label + "</strong><br>" + item.desc + "</a>" )
-                    .appendTo( ul);
-        };
-
-        {#        function image_clicked(){#}
-        {#            if(hightlighted_x_percent == 0#}
-        {#                    && hightlighted_y_percent == 0#}
-        {#                    && highlighted_x_pixel == 0#}
-        {#                    && highlighted_y_pixel == 0) {#}
-        {##}
-        {#                var focus_message = '<div class="alert alert-dismissable alert-warning">\#}
-        {#  <button type="button" class="close" data-dismiss="alert">×</button>\#}
-        {#  Please try clicking part of the image before tagging objects.</div>'#}
-        {#                $('#focus_alerts').html(focus_message).fadeIn(100);#}
-        {#            } else {#}
-        {#                $('#focus_alerts').fadeOut(1000);#}
-        {#            }#}
-        {#        }#}
-
-        $('#load_new_image').click(function(){
-            window.location.replace('{% url 'image.random' %}');
-        });
-
-
-
-
-
-        var save_image_dialog_form = $( "#save_image_dialog_form" ).dialog({
-            autoOpen: false,
-            height: 300,
-            width: 350,
-            modal: true,
-            buttons: {
-                "Save Image": function() {
-
-                    var e = document.getElementById("user_collection_select");
-                    var collection_id = e.options[e.selectedIndex].value;
-
-                    {#                    console.log({{ image_id }} + ' ' + collection_id);#}
-
-                    if (collection_id == "NEW COLLECTION"){
-                        save_image_dialog_form.dialog("close");
-                        dialog.dialog("open");
-
-                    } else {
-                        saveImageToCollection(collection_id, {{ image_id }});
-                    }
-
-                    save_image_dialog_form.dialog( "close" );
                 },
-                Cancel: function() {
-                    save_image_dialog_form.dialog( "close" );
-                }
-            },
-            open : function() {
-                var name = $(this).data('name');
-                var id = $(this).data('id');
-                $('#edit_image_caption_field').val(name);
-            },
-            close: function() {
-                {#                form[ 0 ].reset();#}
-                {#                allFields.removeClass( "ui-state-error" );#}
-            }
-        });
-
-
-
-
-        function saveMapPoints(ney, nex, swy, swx) {
-            $.ajax({
-                type: "POST",
-                url: "{% url 'image.coords_save' %}",
-                data: {
-                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                    image_id: {{ image_id }},
-                    north_east_y: ney,
-                    north_east_x: nex,
-                    south_west_y: swy,
-                    south_west_x: swx
-                },
-                success: function(data) {
-                    var ok = data['success'];
-                    {#                    alert("Saved success : " + ok);#}
-
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                close: function() {
+                    {#                form[ 0 ].reset();#}
+                    {#                allFields.removeClass( "ui-state-error" );#}
                 }
             });
-        }
 
-        $('#map-canvas').height($(window).height());
-
-        var window_height = $(window).height();
-        var window_width = $(window).width();
-
-        var mapping_dialog_form = $( "#mapping_dialog_form" ).dialog({
-            autoOpen: false,
-            height: window_height - $('#navbar-main').height() - 40,
-            width: window_width - 20,
-            modal: true,
-            buttons: {
-                "Save Map": function() {
-
-                    var ney =  document.getElementById("north_east_y").value;
-                    var nex = document.getElementById("north_east_x").value;
-                    var swy = document.getElementById("south_west_y").value;
-                    var swx = document.getElementById("south_west_x").value;
-
-                    saveMapPoints(ney, nex, swy, swx);
-
-                    mapping_dialog_form.dialog( "close" );
-                },
-                Cancel: function() {
-                    mapping_dialog_form.dialog( "close" );
-                }
-            },
-            open : function() {
-                {#                        $('#mapping_dialog_form').height($(window).height());#}
-
-                var name = $(this).data('name');
-                var id = $(this).data('id');
-
-
-                // Note: This example requires that you consent to location sharing when
-                // prompted by your browser. If you see a blank space instead of the map, this
-                // is probably because you have denied permission for location sharing.
-
-                var map;
-
-                function initialize() {
-                    var x =  document.getElementById("x").value;
-                    var y =  document.getElementById("y").value;
-
-                    var ney =  document.getElementById("north_east_y").value;
-                    var nex = document.getElementById("north_east_x").value;
-                    var swy = document.getElementById("south_west_y").value;
-                    var swx = document.getElementById("south_west_x").value;
-
-                    var mapOptions = {
-                        center: new google.maps.LatLng(y, x),
-                        zoom: 6
-                    };
-                    map = new google.maps.Map(document.getElementById('map-canvas'),
-                            mapOptions);
-
-                    var bounds = new google.maps.LatLngBounds(
-                            new google.maps.LatLng(swy, swx),
-                            new google.maps.LatLng(ney, nex)
-                    );
-
-                    // Define the rectangle and set its editable property to true.
-                    rectangle = new google.maps.Rectangle({
-                        bounds: bounds,
-                        editable: true,
-                        draggable: true
-                    });
-
-                    rectangle.setMap(map);
-
-                    map.fitBounds(bounds);
-
-                    // Add an event listener on the rectangle.
-                    google.maps.event.addListener(rectangle, 'bounds_changed', showNewRect);
-
-                    // Define an info window on the map.
-                    infoWindow = new google.maps.InfoWindow();
-
-                    // Try HTML5 geolocation
-                    if(navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(function(position) {
-                            var pos = new google.maps.LatLng(position.coords.latitude,
-                                    position.coords.longitude);
-
-                            console.log(pos);
-                            var infowindow = new google.maps.InfoWindow({
-                                map: map,
-                                position: pos,
-                                content: 'Location found using HTML5.'
-                            });
-
-                            map.setCenter(pos);
-                        }, function() {
-                            handleNoGeolocation(true);
-                        });
-                    } else {
-                        // Browser doesn't support Geolocation
-                        handleNoGeolocation(false);
-                    }
-                }
-
-                // Show the new coordinates for the rectangle in an info window.
-
-                /** @this {google.maps.Rectangle} */
-                function showNewRect(event) {
-                    var ne = rectangle.getBounds().getNorthEast();
-                    var sw = rectangle.getBounds().getSouthWest();
-
-                    var contentString = '<b>Rectangle moved.</b><br>' +
-                            'New north-east corner: ' + ne.lat() + ', ' + ne.lng() + '<br>' +
-                            'New south-west corner: ' + sw.lat() + ', ' + sw.lng();
-
-                    // Set the info window's content and position.
-                    infoWindow.setContent(contentString);
-                    infoWindow.setPosition(ne);
-
-
-                    document.getElementById("north_east_y").value = ne.lat();
-                    document.getElementById("north_east_x").value = ne.lng();
-                    document.getElementById("south_west_y").value = sw.lat();
-                    document.getElementById("south_west_x").value = sw.lng();
-
-                }
-
-                function handleNoGeolocation(errorFlag) {
-                    if (errorFlag) {
-                        var content = 'Error: Your browser denied Geolocation.';
-                    } else {
-                        var content = 'Error: Your browser doesn\'t support geolocation.';
-                    }
-
-                    var x =  document.getElementById("x").value;
-                    var y =  document.getElementById("y").value;
-
-                    var options = {
-                        map: map,
-                        position: new google.maps.LatLng(y, x),
-                        content: content
-                    };
-
-                    map.setCenter(options.position);
-                }
-
-                {#                google.maps.event.addDomListener(window, 'load', initialize);#}
-                initialize();
-
-
-            },
-            close: function() {
-                populate_categories(0, null, null);
-                $('#category-extra').empty();
-            }
-        });
-
-
-        function saveImageToCollection(collection_name) {
-            $.ajax({
-                type: "POST",
-                url: "{% url 'user_profile.new_collection' %}",
-                data: {
-                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                    collection_name: collection_name,
-                    image_id: {{ image_id }}
-                },
-                success: function(data) {
-                    var ok = data['success'];
-                    alert("Added Image to Collection : " + collection_name);
-
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
-                }
+            $('.save_image_btn').each(function(){
+                $(this).click(function() {
+                    $('#save_image_dialog_form').dialog("open");
+                })
             });
-        }
 
-        function addCollection(){
-            var collection_name = $( "#collection_name").val();
-            saveImageToCollection(collection_name);
-            dialog.dialog( "close" );
-        }
+            $('#map_btn').click(function() {
+                $('#mapping_dialog_form').dialog("open");
+            });
 
-        var dialog = $( "#dialog-form" ).dialog({
-            autoOpen: false,
-            height: 300,
-            width: 350,
-            modal: true,
-            buttons: {
-                "Create a collection": addCollection,
-                Cancel: function() {
-                    dialog.dialog( "close" );
-                }
-            },
-            close: function() {
-                {#                form[ 0 ].reset();#}
-                {#                allFields.removeClass( "ui-state-error" );#}
-            }
-        });
+            function populate_categories(cat_id, callback, text) {
+                scroll_to_top(null);
 
-        $('.save_image_btn').each(function(){
-            $(this).click(function() {
-                $('#save_image_dialog_form').dialog("open");
-            })
-        });
-
-        $('#map_btn').click(function() {
-            $('#mapping_dialog_form').dialog("open");
-        });
-
-        function populate_categories(cat_id, callback, text) {
-            scroll_to_top(null);
-
-            $.ajax({
-                type: "POST",
-                url: "{% url 'image.category' %}",
-                data: {
-                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                    category_id: cat_id,
-                    text_entry: text,
-                    image_id: {{ image_id }}
-                },
-                success: function(data) {
-                    if(data['next_question'] == true){
-                        do_next_question();
-                    } else {
-
-                        if (data['root']) {
-                            $('#question_header').show();
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'image.category' %}",
+                    data: {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        category_id: cat_id,
+                        text_entry: text,
+                        image_id: {{ image_id }}
+                    },
+                    success: function(data) {
+                        if(data['next_question'] == true){
+                            do_next_question();
                         } else {
-                            $('#question_header').hide();
-                        }
 
-                        {#                    Clear the category container, ready to put new category buttons in #}
-                        var category_container = $('#category-container');
-                        var masonry_container = category_container.masonry({
-                            animationOptions: {
-                                duration: 50
-                            }
-                        });
-                        masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
-                        var category_extra_div = $('#category-extra').empty();
-
-                        {#                    Get the question for this set of category buttons #}
-                        var question = data['question'];
-                        $('#category-question').html(question);
-
-                        for (var ans in data['answers']) {
-
-                            var classname = 'category-answer';
-                            if (data['answers'][ans].text.length > 5) {
-                                classname = 'category-answer wide';
+                            if (data['root']) {
+                                $('#question_header').show();
+                            } else {
+                                $('#question_header').hide();
                             }
 
-                            var answer = '<div class="' + classname + '" ' +
-                                    'data-category_name="' + data['answers'][ans].name + '" ' +
-                                    'data-category_synset="' + data['answers'][ans].synset + '" ' +
-                                    'data-category_save="' + data['answers'][ans].save + '" ' +
-                                    'data-category_id="' + data['answers'][ans].id + '"> \
+                            {#                    Clear the category container, ready to put new category buttons in #}
+                            var category_container = $('#category-container');
+                            var masonry_container = category_container.masonry({
+                                animationOptions: {
+                                    duration: 50
+                                }
+                            });
+                            masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
+                            var category_extra_div = $('#category-extra').empty();
+
+                            {#                    Get the question for this set of category buttons #}
+                            var question = data['question'];
+                            $('#category-question').html(question);
+
+                            for (var ans in data['answers']) {
+
+                                var classname = 'category-answer';
+                                if (data['answers'][ans].text.length > 5) {
+                                    classname = 'category-answer wide';
+                                }
+
+                                var answer = '<div class="' + classname + '" ' +
+                                        'data-category_name="' + data['answers'][ans].name + '" ' +
+                                        'data-category_synset="' + data['answers'][ans].synset + '" ' +
+                                        'data-category_save="' + data['answers'][ans].save + '" ' +
+                                        'data-category_id="' + data['answers'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
                                     <img src="' + data['answers'][ans].img + '"\
                                          style="width:100%; height: auto;\
                                          margin:0 auto; display:block; border:1px">\
                                 </div>';
-                            if (data['answers'][ans].text != ''){
-                                answer +=    '<div class="panel-footer">\
+                                if (data['answers'][ans].text != ''){
+                                    answer +=    '<div class="panel-footer">\
                                     <div class="wrap-text">\
                                         ' + data['answers'][ans].text + '\
                                     </div>\
                                 </div>';
-                            }
-                            answer += '</div>\
+                                }
+                                answer += '</div>\
                         </div>';
 
-                            var elem = $(answer);
-                            masonry_container.append(elem).masonry( 'appended', elem );
-                        }
-
-
-                        for (var ans in data['actions']) {
-
-                            var classname = 'category-answer';
-                            if (data['actions'][ans].text.length > 5) {
-                                classname = 'category-answer wide';
+                                var elem = $(answer);
+                                masonry_container.append(elem).masonry( 'appended', elem );
                             }
 
-                            var answer = '<div class="' + classname + '" data-link="' + data['actions'][ans].link +
-                                    '" data-action_name="' + data['actions'][ans].action +
-                                    '" data-type="' + data['actions'][ans].type +
-                                    '" data-category_id="' + data['actions'][ans].id + '"> \
+
+                            for (var ans in data['actions']) {
+
+                                var classname = 'category-answer';
+                                if (data['actions'][ans].text.length > 5) {
+                                    classname = 'category-answer wide';
+                                }
+
+                                var answer = '<div class="' + classname + '" data-link="' + data['actions'][ans].link +
+                                        '" data-action_name="' + data['actions'][ans].action +
+                                        '" data-type="' + data['actions'][ans].type +
+                                        '" data-category_id="' + data['actions'][ans].id + '"> \
                             <div class="panel">\
                                 <div class="category-answer-image">\
                                     <img src="' + data['actions'][ans].img + '"\
@@ -983,455 +985,455 @@
                                          margin:0 auto; display:block; border:1px">\
                                 </div>';
 
-                            if (data['actions'][ans].text != ''){
-                                answer += '<div class="panel-footer">\
+                                if (data['actions'][ans].text != ''){
+                                    answer += '<div class="panel-footer">\
                                     <div class="wrap-text">\
                                         ' + data['actions'][ans].text + '\
                                     </div>\
                                 </div>';
-                            }
+                                }
 
-                            answer += '</div>\
+                                answer += '</div>\
                         </div>';
 
-                            var action_elem = $(answer);
-                            masonry_container.append(action_elem).masonry( 'appended', action_elem );
+                                var action_elem = $(answer);
+                                masonry_container.append(action_elem).masonry( 'appended', action_elem );
 
-                            if (data['actions'][ans].type == 'text_entry') {
-                                var text_input = '<label class="control-label" for="' + data['actions'][ans].action + '">'
-                                        + data['actions'][ans].question +
-                                        '</label><input class="form-control" id="' + data['actions'][ans].action + '">';
+                                if (data['actions'][ans].type == 'text_entry') {
+                                    var text_input = '<label class="control-label" for="' + data['actions'][ans].action + '">'
+                                            + data['actions'][ans].question +
+                                            '</label><input class="form-control" id="' + data['actions'][ans].action + '">';
 
-                                var text_input_elem = $(text_input);
-                                category_extra_div.append(text_input_elem);
+                                    var text_input_elem = $(text_input);
+                                    category_extra_div.append(text_input_elem);
 
-                                setTimeout("$('.form-control').focus()", 500);
+                                    setTimeout("$('.form-control').focus()", 500);
+                                }
                             }
+                            enable_category_click();
+                            tidy_masonry();
+
                         }
-                        enable_category_click();
-                        tidy_masonry();
-
-                    }
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
-                }
-            });
-            if (callback != null) {
-                callback();
-            }
-        }
-
-        function enable_category_click() {
-            $('.category-answer').click(function() {
-                var masonry_container = $('#category-container').masonry({
-                    animationOptions: {
-                        duration: 50
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
                     }
                 });
-                masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
+                if (callback != null) {
+                    callback();
+                }
+            }
 
-                if ($(this).data('action_name') == 'gazetteer') {
-                    var cat_id = $(this).data('category_id');
-                    var map_link = $(this).data('link');
+            function enable_category_click() {
+                $('.category-answer').click(function() {
+                    var masonry_container = $('#category-container').masonry({
+                        animationOptions: {
+                            duration: 50
+                        }
+                    });
+                    masonry_container.masonry( 'remove', masonry_container.find('.category-answer'));
 
-                    {#                    console.log('clicked a request to show gazetteer');#}
+                    if ($(this).data('action_name') == 'gazetteer') {
+                        var cat_id = $(this).data('category_id');
+                        var map_link = $(this).data('link');
 
-                    var places_autocomplete = '<label class="control-label" for="places">Location: </label> \
+                        {#                    console.log('clicked a request to show gazetteer');#}
+
+                        var places_autocomplete = '<label class="control-label" for="places">Location: </label> \
                     <input class="form-control" id="places">'
 
-                    var elem = $(places_autocomplete);
-                    var category_extra_div = $('#category-extra');
-                    category_extra_div.append(elem).on('focus', '.form-control', function() {
+                        var elem = $(places_autocomplete);
+                        var category_extra_div = $('#category-extra');
+                        category_extra_div.append(elem).on('focus', '.form-control', function() {
 
-                        $( "#places" ).autocomplete({
-                            source: function(request, response) {
-                                $.ajax({
-                                    type: 'GET',
-                                    url: "http://unlock.edina.ac.uk/ws/nameSearch",
-                                    dataType: "json",
-                                    data: {
-                                        name : request.term,
-                                        format: "json",
-                                        maxRows: 50
-                                        {#                                    data_object : "publisher"#}
-                                    },
-                                    success: function(data) {
-                                        response(data.features);
+                            $( "#places" ).autocomplete({
+                                source: function(request, response) {
+                                    $.ajax({
+                                        type: 'GET',
+                                        url: "http://unlock.edina.ac.uk/ws/nameSearch",
+                                        dataType: "json",
+                                        data: {
+                                            name : request.term,
+                                            format: "json",
+                                            maxRows: 50
+                                            {#                                    data_object : "publisher"#}
+                                        },
+                                        success: function(data) {
+                                            response(data.features);
+                                        }
+                                    });
+                                },
+                                minLength: 3,
+                                select: function( event, ui ) {
+
+                                    add_tag_button(ui.item.properties['name'], '');
+                                    add_tag_button(ui.item.properties['country'], '');
+
+                                    var x = ui.item.properties.centroid.split(', ')[0];
+                                    var y = ui.item.properties.centroid.split(', ')[1];
+                                    var nex = ui.item.bbox[0];
+                                    var ney = ui.item.bbox[1];
+                                    var swx = ui.item.bbox[2];
+                                    var swy = ui.item.bbox[3];
+
+                                    var map_link_string = map_link
+                                            + '?x=' + x
+                                            + '&y=' + y
+                                            + '&nex=' + nex
+                                            + '&ney=' + ney
+                                            + '&swx=' + swx
+                                            + '&swy=' + swy;
+
+                                    if (nex == swx) {
+                                        nex = nex + 0.05;
+                                        swx = swx - 0.05;
                                     }
-                                });
-                            },
-                            minLength: 3,
-                            select: function( event, ui ) {
+                                    if (ney == swy) {
+                                        ney = ney + 0.05;
+                                        swy = swy - 0.05;
+                                    }
 
-                                add_tag_button(ui.item.properties['name'], '');
-                                add_tag_button(ui.item.properties['country'], '');
+                                    document.getElementById("x").value = x;
+                                    document.getElementById("y").value = y;
+                                    document.getElementById("north_east_y").value = ney;
+                                    document.getElementById("north_east_x").value = nex;
+                                    document.getElementById("south_west_y").value = swy;
+                                    document.getElementById("south_west_x").value = swx;
 
-                                var x = ui.item.properties.centroid.split(', ')[0];
-                                var y = ui.item.properties.centroid.split(', ')[1];
-                                var nex = ui.item.bbox[0];
-                                var ney = ui.item.bbox[1];
-                                var swx = ui.item.bbox[2];
-                                var swy = ui.item.bbox[3];
+                                    console.log(map_link_string);
 
-                                var map_link_string = map_link
-                                        + '?x=' + x
-                                        + '&y=' + y
-                                        + '&nex=' + nex
-                                        + '&ney=' + ney
-                                        + '&swx=' + swx
-                                        + '&swy=' + swy;
+                                    $('#mapping_dialog_form').data('x', x).data('y', y).data('nex', nex).data('ney', ney).data('swx', swx).data('swy', swy).dialog("open");
 
-                                if (nex == swx) {
-                                    nex = nex + 0.05;
-                                    swx = swx - 0.05;
+                                    populate_categories(cat_id, null, null);
+                                    category_extra_div.empty();
+
                                 }
-                                if (ney == swy) {
-                                    ney = ney + 0.05;
-                                    swy = swy - 0.05;
-                                }
-
-                                document.getElementById("x").value = x;
-                                document.getElementById("y").value = y;
-                                document.getElementById("north_east_y").value = ney;
-                                document.getElementById("north_east_x").value = nex;
-                                document.getElementById("south_west_y").value = swy;
-                                document.getElementById("south_west_x").value = swx;
-
-                                console.log(map_link_string);
-
-                                $('#mapping_dialog_form').data('x', x).data('y', y).data('nex', nex).data('ney', ney).data('swx', swx).data('swy', swy).dialog("open");
-
-                                populate_categories(cat_id, null, null);
-                                category_extra_div.empty();
-
-                            }
-                        }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-                            var li_text = "<a>";
-                            li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";
-                            li_text += "<br>";
-                            if (item.properties.featuretype && item.properties.featuretype != 'Undefined') {
-                                li_text += item.properties.featuretype;
-                                li_text +=  "<br>";
-
-                            }
-
-                            var need_br = false;
-                            if (item.properties.adminlevel1) {
-                                need_br = true;
-                                li_text += "" + item.properties.adminlevel1 + ", ";
-                            }
-                            if (item.properties.adminlevel2) {
-                                need_br = true;
-                                li_text += "" + item.properties.adminlevel2 + ", ";
-                            }
-                            if (item.properties.adminlevel3) {
-                                need_br = true;
-                                li_text += "" + item.properties.adminlevel3 + ", ";
-                            }
-                            if (item.properties.adminlevel4) {
-                                need_br = true;
-                                li_text += "" + item.properties.adminlevel4 + "";
-                            }
-                            if (need_br) {
+                            }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+                                var li_text = "<a>";
+                                li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";
                                 li_text += "<br>";
-                            }
-                            li_text += "(" + item.properties.centroid + ")</a>";
+                                if (item.properties.featuretype && item.properties.featuretype != 'Undefined') {
+                                    li_text += item.properties.featuretype;
+                                    li_text +=  "<br>";
 
-                            return $( "<li>" )
-                                    .append( li_text )
-                                    .appendTo( ul );
-                        };
-                    });
+                                }
 
-                    setTimeout("$('.form-control').focus()", 500);
-                }
+                                var need_br = false;
+                                if (item.properties.adminlevel1) {
+                                    need_br = true;
+                                    li_text += "" + item.properties.adminlevel1 + ", ";
+                                }
+                                if (item.properties.adminlevel2) {
+                                    need_br = true;
+                                    li_text += "" + item.properties.adminlevel2 + ", ";
+                                }
+                                if (item.properties.adminlevel3) {
+                                    need_br = true;
+                                    li_text += "" + item.properties.adminlevel3 + ", ";
+                                }
+                                if (item.properties.adminlevel4) {
+                                    need_br = true;
+                                    li_text += "" + item.properties.adminlevel4 + "";
+                                }
+                                if (need_br) {
+                                    li_text += "<br>";
+                                }
+                                li_text += "(" + item.properties.centroid + ")</a>";
 
-                else if ($(this).data('type') == 'text_entry') {
-                    var cat_id = $(this).data('category_id');
-                    var input_box = $('#' + $(this).data('action_name'));
-                    console.log(input_box);
-                    populate_categories(cat_id, null, input_box.val());
-                    add_tag_button(input_box.val(), '');
-                    {#                    alert(input_box.val() + ' ' + cat_id);#}
-                }
+                                return $( "<li>" )
+                                        .append( li_text )
+                                        .appendTo( ul );
+                            };
+                        });
 
-                else if ($(this).data('action_name') == 'map') {
-                    $('#mapping_dialog_form').dialog("open");
-                }
-                else {
-                    {#                    console.log($(this).data('category_save'));#}
-                    if ($(this).data('category_save') == true) {
-                        add_tag_button($(this).data('category_name'), $(this).data('category_synset'));
+                        setTimeout("$('.form-control').focus()", 500);
                     }
-                    var cat_id = $(this).data('category_id');
-                    populate_categories(cat_id, null, null);
+
+                    else if ($(this).data('type') == 'text_entry') {
+                        var cat_id = $(this).data('category_id');
+                        var input_box = $('#' + $(this).data('action_name'));
+                        console.log(input_box);
+                        populate_categories(cat_id, null, input_box.val());
+                        add_tag_button(input_box.val(), '');
+                        {#                    alert(input_box.val() + ' ' + cat_id);#}
+                    }
+
+                    else if ($(this).data('action_name') == 'map') {
+                        $('#mapping_dialog_form').dialog("open");
+                    }
+                    else {
+                        {#                    console.log($(this).data('category_save'));#}
+                        if ($(this).data('category_save') == true) {
+                            add_tag_button($(this).data('category_name'), $(this).data('category_synset'));
+                        }
+                        var cat_id = $(this).data('category_id');
+                        populate_categories(cat_id, null, null);
+                    }
+                });
+            }
+
+            populate_categories(0, enable_category_click, null);
+
+            $('#add_tag').click(function(){
+                var input_field = $("#input_tag");
+                var tag_string = input_field.val();
+                if (tag_string != "") {
+                    var id = 'id_' + tag_string;
+                }
+                input_field.val("");
+            });
+
+
+            var active = true;
+
+            $('#collapse-init').click(function () {
+                if (active) {
+                    active = false;
+                    $('.panel-collapse').collapse('show');
+                    $('.panel-title').attr('data-toggle', '');
+                    $(this).text('-');
+                } else {
+                    active = true;
+                    $('.panel-collapse').collapse('hide');
+                    $('.panel-title').attr('data-toggle', 'collapse');
+                    $(this).text('+');
                 }
             });
-        }
 
-        populate_categories(0, enable_category_click, null);
-
-        $('#add_tag').click(function(){
-            var input_field = $("#input_tag");
-            var tag_string = input_field.val();
-            if (tag_string != "") {
-                var id = 'id_' + tag_string;
-            }
-            input_field.val("");
-        });
-
-
-        var active = true;
-
-        $('#collapse-init').click(function () {
-            if (active) {
-                active = false;
-                $('.panel-collapse').collapse('show');
-                $('.panel-title').attr('data-toggle', '');
-                $(this).text('-');
-            } else {
-                active = true;
-                $('.panel-collapse').collapse('hide');
-                $('.panel-title').attr('data-toggle', 'collapse');
-                $(this).text('+');
-            }
-        });
-
-        {#        $('#accordion').on('show.bs.collapse', function () {#}
-        {#            if (active) $('#accordion .in').collapse('hide');#}
-        {##}
-        {#        }).on('shown.bs.collapse', function () {#}
-        {#            $('.js-masonry').masonry();#}
-        {##}
-        {#        }).bind('accordionchange', function(event, ui) {#}
-        {#            console.log('change scroll to ' + ui.newHeader.offset.top)#}
-        {#            /* In here, ui.newHeader = the newly active header as a jQ object#}
-        {#             ui.newContent = the newly active content area */#}
-        {#            $.scrollTo( ui.newHeader ); // or ui.newContent, if you prefer#}
-        {#            $('html,body').animate({scrollTop: ui.newHeader.offset().top},'slow');#}
-        {#        });#}
-
-        var canvas_object = $('#photo'),
-                canvas = canvas_object.get(0),
-                ctx = canvas.getContext('2d'),
-                parent = canvas_object.parent(),
-                img = new Image;
-
-        {#        function getMousePos(canvas, evt) {#}
-        {#            var rect = canvas.getBoundingClientRect();#}
-        {#            return {#}
-        {#                x: evt.clientX - rect.left,#}
-        {#                y: evt.clientY - rect.top#}
-        {#            };#}
-        {#        };#}
-        {##}
-        {#        function translateCoords(mouseX, mouseY, component, degreesRotation) {#}
-        {#            var centerpointX = (component.getBoundingClientRect().width /2);#}
-        {#            var centerpointY = (component.getBoundingClientRect().height /2);#}
-        {##}
-        {#            var mouseOffsetX = mouseX - centerpointX;#}
-        {#            var mouseOffsetY = mouseY - centerpointY;#}
-        {##}
-        {#            var radians = ((degreesRotation) * (Math.PI/180));#}
-        {##}
-        {#            var theta = Math.atan(mouseOffsetY / mouseOffsetX);#}
-        {##}
-        {#            var hyp = mouseOffsetX / Math.cos(theta);#}
-        {##}
-        {#            var scale = 1;#}
-        {##}
-        {#            if (Math.cos(radians) == 0) {#}
-        {#                scale = img.naturalWidth / canvas.height;#}
-        {#            } else {#}
-        {#                scale = img.naturalWidth / canvas.width;#}
-        {#            }#}
-        {##}
-        {#            var draw_x = (hyp * Math.cos(theta - radians)) + centerpointX;#}
-        {##}
-        {#            var draw_y = (hyp * Math.sin(theta - radians)) + centerpointY;#}
-        {##}
-        {#            return {#}
-        {#                radians: radians,#}
-        {#                theta: theta,#}
-        {#                hyp: hyp,#}
-        {#                x : draw_x,#}
-        {#                y : draw_y,#}
-        {#                offsetX : mouseOffsetX,#}
-        {#                offsetY : mouseOffsetY,#}
-        {#                centerpointX : centerpointX,#}
-        {#                centerpointY :  centerpointY,#}
-        {#                x_percent : (((draw_x/img.naturalWidth)*scale) *100),#}
-        {#                y_percent : (((draw_y/img.naturalHeight)*scale) *100)#}
-        {#            }#}
-        {#        };#}
-
-        {#        canvas.addEventListener('mousemove', function(evt) {#}
-        {#            var mousePos = getMousePos(canvas, evt);#}
-        {#            var translated_variables = translateCoords(mousePos.x, mousePos.y, canvas, degs);#}
-        {##}
-        {#            var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;#}
-        {#            message += ('<br>draw coords: ' + translated_variables.x + ' , ' + translated_variables.y);#}
-        {#            message += ('<br>scale-x% : ' + translated_variables.x_percent + ', scale-y% ' + translated_variables.y_percent);#}
-        {##}
-        {#            message += ('<br>offset : ' + translated_variables.offsetX + ' , ' + translated_variables.offsetY);#}
-        {#            message += ('<br>centerpoint : ' + translated_variables.centerpointX + ' , ' + translated_variables.centerpointY);#}
-        {#            message += ('<br>theta : ' + translated_variables.theta + ', hyp : ' + translated_variables.hyp);#}
-        {#            message += ('<br>degs : ' + degs + ', rads : ' + translated_variables.radians);#}
-        {#            message += ('<br>t-x : ' + (mousePos.x / translated_variables.x) + ', t-y : ' + (mousePos.y / translated_variables.y));#}
-        {##}
-        {#            $('#output').html(message);#}
-        {#        }, false);#}
-
-        img.src = "{{ image.imageurl }}";
-        img.onload = function(){
-
-            var windowHeight = $(window).height() * 0.8;
-            var maxWindowWidth = $(window).width() * (5/12);
-
-            var scale = img.naturalHeight / windowHeight;
-            canvas.width = img.naturalWidth / scale;
-            canvas.height = windowHeight;
-
-            console.log('nat:' + img.naturalHeight + ' window:' + windowHeight + ' scale:' + scale);
-
-
-            var jumbotronWidth = canvas.width + 200;
-            if (jumbotronWidth > maxWindowWidth){
-                var widthScale = jumbotronWidth / maxWindowWidth ;
-                canvas.width = canvas.width / widthScale;
-                canvas.height = canvas.height / widthScale;
-            }
-            console.log('jmbo:' + jumbotronWidth + ' window:' + maxWindowWidth + ' scale:' + widthScale);
-
-            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-
-            $(".photo_background").height(windowHeight).css({'width': canvas.width, 'margin': '0 auto', 'height': canvas.height + 80});
-
-            $(".photo-jumbotron").css({'margin': '0 auto', 'width': canvas.width + 80, 'height': canvas.height + 80});
-
-
-            {#            var divSizes = getPhotoDivSizes(img.naturalWidth, img.naturalHeight);#}
+            {#        $('#accordion').on('show.bs.collapse', function () {#}
+            {#            if (active) $('#accordion .in').collapse('hide');#}
             {##}
-            {#            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, divSizes['width'], divSizes['height']);#}
+            {#        }).on('shown.bs.collapse', function () {#}
+            {#            $('.js-masonry').masonry();#}
             {##}
-            {#            $(".photo-jumbotron").css({'margin': '0 auto', 'width': divSizes['width'] + 80});#}
-            {#            $(".photo_background").height(divSizes['height']).css({'width': divSizes['width'], 'margin': '0 auto'});#}
+            {#        }).bind('accordionchange', function(event, ui) {#}
+            {#            console.log('change scroll to ' + ui.newHeader.offset.top)#}
+            {#            /* In here, ui.newHeader = the newly active header as a jQ object#}
+            {#             ui.newContent = the newly active content area */#}
+            {#            $.scrollTo( ui.newHeader ); // or ui.newContent, if you prefer#}
+            {#            $('html,body').animate({scrollTop: ui.newHeader.offset().top},'slow');#}
+            {#        });#}
+
+            var canvas_object = $('#photo'),
+                    canvas = canvas_object.get(0),
+                    ctx = canvas.getContext('2d'),
+                    parent = canvas_object.parent(),
+                    img = new Image;
+
+            {#        function getMousePos(canvas, evt) {#}
+            {#            var rect = canvas.getBoundingClientRect();#}
+            {#            return {#}
+            {#                x: evt.clientX - rect.left,#}
+            {#                y: evt.clientY - rect.top#}
+            {#            };#}
+            {#        };#}
+            {##}
+            {#        function translateCoords(mouseX, mouseY, component, degreesRotation) {#}
+            {#            var centerpointX = (component.getBoundingClientRect().width /2);#}
+            {#            var centerpointY = (component.getBoundingClientRect().height /2);#}
+            {##}
+            {#            var mouseOffsetX = mouseX - centerpointX;#}
+            {#            var mouseOffsetY = mouseY - centerpointY;#}
+            {##}
+            {#            var radians = ((degreesRotation) * (Math.PI/180));#}
+            {##}
+            {#            var theta = Math.atan(mouseOffsetY / mouseOffsetX);#}
+            {##}
+            {#            var hyp = mouseOffsetX / Math.cos(theta);#}
+            {##}
+            {#            var scale = 1;#}
+            {##}
+            {#            if (Math.cos(radians) == 0) {#}
+            {#                scale = img.naturalWidth / canvas.height;#}
+            {#            } else {#}
+            {#                scale = img.naturalWidth / canvas.width;#}
+            {#            }#}
+            {##}
+            {#            var draw_x = (hyp * Math.cos(theta - radians)) + centerpointX;#}
+            {##}
+            {#            var draw_y = (hyp * Math.sin(theta - radians)) + centerpointY;#}
+            {##}
+            {#            return {#}
+            {#                radians: radians,#}
+            {#                theta: theta,#}
+            {#                hyp: hyp,#}
+            {#                x : draw_x,#}
+            {#                y : draw_y,#}
+            {#                offsetX : mouseOffsetX,#}
+            {#                offsetY : mouseOffsetY,#}
+            {#                centerpointX : centerpointX,#}
+            {#                centerpointY :  centerpointY,#}
+            {#                x_percent : (((draw_x/img.naturalWidth)*scale) *100),#}
+            {#                y_percent : (((draw_y/img.naturalHeight)*scale) *100)#}
+            {#            }#}
+            {#        };#}
+
+            {#        canvas.addEventListener('mousemove', function(evt) {#}
+            {#            var mousePos = getMousePos(canvas, evt);#}
+            {#            var translated_variables = translateCoords(mousePos.x, mousePos.y, canvas, degs);#}
+            {##}
+            {#            var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;#}
+            {#            message += ('<br>draw coords: ' + translated_variables.x + ' , ' + translated_variables.y);#}
+            {#            message += ('<br>scale-x% : ' + translated_variables.x_percent + ', scale-y% ' + translated_variables.y_percent);#}
+            {##}
+            {#            message += ('<br>offset : ' + translated_variables.offsetX + ' , ' + translated_variables.offsetY);#}
+            {#            message += ('<br>centerpoint : ' + translated_variables.centerpointX + ' , ' + translated_variables.centerpointY);#}
+            {#            message += ('<br>theta : ' + translated_variables.theta + ', hyp : ' + translated_variables.hyp);#}
+            {#            message += ('<br>degs : ' + degs + ', rads : ' + translated_variables.radians);#}
+            {#            message += ('<br>t-x : ' + (mousePos.x / translated_variables.x) + ', t-y : ' + (mousePos.y / translated_variables.y));#}
+            {##}
+            {#            $('#output').html(message);#}
+            {#        }, false);#}
+
+            img.src = "{{ image.imageurl }}";
+            img.onload = function(){
+
+                var windowHeight = $(window).height() * 0.8;
+                var maxWindowWidth = $(window).width() * (5/12);
+
+                var scale = img.naturalHeight / windowHeight;
+                canvas.width = img.naturalWidth / scale;
+                canvas.height = windowHeight;
+
+                console.log('nat:' + img.naturalHeight + ' window:' + windowHeight + ' scale:' + scale);
 
 
-        };
+                var jumbotronWidth = canvas.width + 200;
+                if (jumbotronWidth > maxWindowWidth){
+                    var widthScale = jumbotronWidth / maxWindowWidth ;
+                    canvas.width = canvas.width / widthScale;
+                    canvas.height = canvas.height / widthScale;
+                }
+                console.log('jmbo:' + jumbotronWidth + ' window:' + maxWindowWidth + ' scale:' + widthScale);
 
-        function getPhotoDivSizes(apparentWidth, apparentHeight) {
-            var windowHeight = $(window).height() * 0.8;
-            var maxWindowWidth = $(window).width() * (6/12);
+                ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 
-            var scale = apparentHeight / windowHeight;
-            var fitWidth = apparentWidth / scale;
-            var fitHeight = windowHeight;
+                $(".photo_background").height(windowHeight).css({'width': canvas.width, 'margin': '0 auto', 'height': canvas.height + 80});
 
-            console.log('nat:' + apparentHeight + ' window:' + windowHeight + ' scale:' + scale);
-
-            var jumbotronWidth = fitWidth + 200;
-            if (jumbotronWidth > maxWindowWidth){
-                var widthScale = jumbotronWidth / maxWindowWidth ;
-                fitWidth = fitWidth / widthScale;
-                fitHeight = fitHeight / widthScale;
-            }
-            console.log(maxWindowWidth + ' ' + jumbotronWidth + ' ' + widthScale);
+                $(".photo-jumbotron").css({'margin': '0 auto', 'width': canvas.width + 80, 'height': canvas.height + 80});
 
 
-            return {
-                'width': fitWidth,
-                'height': fitHeight
+                {#            var divSizes = getPhotoDivSizes(img.naturalWidth, img.naturalHeight);#}
+                {##}
+                {#            ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, divSizes['width'], divSizes['height']);#}
+                {##}
+                {#            $(".photo-jumbotron").css({'margin': '0 auto', 'width': divSizes['width'] + 80});#}
+                {#            $(".photo_background").height(divSizes['height']).css({'width': divSizes['width'], 'margin': '0 auto'});#}
+
+
             };
 
-        }
+            function getPhotoDivSizes(apparentWidth, apparentHeight) {
+                var windowHeight = $(window).height() * 0.8;
+                var maxWindowWidth = $(window).width() * (6/12);
 
-        var degs = 0;
-        var r = $("#photo").get(0).getBoundingClientRect();
+                var scale = apparentHeight / windowHeight;
+                var fitWidth = apparentWidth / scale;
+                var fitHeight = windowHeight;
 
-        $(".rota").click(function() {
-            var photo = $("#photo");
-            var photo_zoom = $("#zoom-photo");
+                console.log('nat:' + apparentHeight + ' window:' + windowHeight + ' scale:' + scale);
 
-            var turn_degs = $(this).data('degs');
-
-            if (turn_degs == 'reset') {
-                degs = 0;
-            } else {
-                degs += turn_degs;
-                if (degs < 0) {
-                    degs += 360;
+                var jumbotronWidth = fitWidth + 200;
+                if (jumbotronWidth > maxWindowWidth){
+                    var widthScale = jumbotronWidth / maxWindowWidth ;
+                    fitWidth = fitWidth / widthScale;
+                    fitHeight = fitHeight / widthScale;
                 }
-            }
+                console.log(maxWindowWidth + ' ' + jumbotronWidth + ' ' + widthScale);
 
-            console.log(photo.width());
 
-            photo.rotate( {animateTo: degs}, 'abs' );
-            photo_zoom.rotate( {animateTo: degs}, 'abs' );
-
-            degs = degs%360;
-
-            $('#save_deg_value').val(degs);
-
-            console.log(getRotatedSize(degs, photo.width(), photo.height()));
-
-            var offset_top = photo.offset().top;
-
-            var offset_l = photo.offset().left;
-
-            var apparentDimentions = getRotatedSize(degs, photo.width(), photo.height());
-
-            var divSizes = getPhotoDivSizes(apparentDimentions['width'], apparentDimentions['height']);
-
-            $(".photo-jumbotron").height($(window).height() * 0.8).css({'margin': '0 auto', 'width': divSizes['width'] + 80});
-            $(".photo_background").height(divSizes['height']).css({'width': divSizes['width'], 'margin': '0 auto'});
-
-            if (photo.width() < apparentDimentions['width']) {
-                var horizontalOffset = (apparentDimentions['width'] - photo.width()) / 2;
-
-                photo.css({'margin-left': horizontalOffset});
-            } else {
-                photo.css({'margin-left': 0});
+                return {
+                    'width': fitWidth,
+                    'height': fitHeight
+                };
 
             }
 
-            load_css();
-        });
+            var degs = 0;
+            var r = $("#photo").get(0).getBoundingClientRect();
 
-        function getRotatedSize(angle, originalWidth, originalHeight) {
-            var rads = angle * Math.PI / 180;
-            var cosA = Math.cos(rads);
-            var sinA = Math.sin(rads);
+            $(".rota").click(function() {
+                var photo = $("#photo");
+                var photo_zoom = $("#zoom-photo");
 
-            var rotatedWidth = Math.round(originalWidth * Math.abs(cosA) + originalHeight * Math.abs(sinA));
-            var rotatedHeight = Math.round(originalWidth * Math.abs(sinA) + originalHeight * Math.abs(cosA));
+                var turn_degs = $(this).data('degs');
 
-            return { 'width': rotatedWidth, 'height': rotatedHeight };
-        }
+                if (turn_degs == 'reset') {
+                    degs = 0;
+                } else {
+                    degs += turn_degs;
+                    if (degs < 0) {
+                        degs += 360;
+                    }
+                }
 
-        $('#side-menu-open').click(function(){
-            $('.side-menu-content-wide').show('slide', 100);
-            $('.side-menu-content-thin').hide();
-        });
-        $('#side-menu-close').click(function(){
-            $('.side-menu-content-wide').hide('slide', 100, function(){
-                $('.side-menu-content-thin').show();
+                console.log(photo.width());
+
+                photo.rotate( {animateTo: degs}, 'abs' );
+                photo_zoom.rotate( {animateTo: degs}, 'abs' );
+
+                degs = degs%360;
+
+                $('#save_deg_value').val(degs);
+
+                console.log(getRotatedSize(degs, photo.width(), photo.height()));
+
+                var offset_top = photo.offset().top;
+
+                var offset_l = photo.offset().left;
+
+                var apparentDimentions = getRotatedSize(degs, photo.width(), photo.height());
+
+                var divSizes = getPhotoDivSizes(apparentDimentions['width'], apparentDimentions['height']);
+
+                $(".photo-jumbotron").height($(window).height() * 0.8).css({'margin': '0 auto', 'width': divSizes['width'] + 80});
+                $(".photo_background").height(divSizes['height']).css({'width': divSizes['width'], 'margin': '0 auto'});
+
+                if (photo.width() < apparentDimentions['width']) {
+                    var horizontalOffset = (apparentDimentions['width'] - photo.width()) / 2;
+
+                    photo.css({'margin-left': horizontalOffset});
+                } else {
+                    photo.css({'margin-left': 0});
+
+                }
+
+                load_css();
             });
+
+            function getRotatedSize(angle, originalWidth, originalHeight) {
+                var rads = angle * Math.PI / 180;
+                var cosA = Math.cos(rads);
+                var sinA = Math.sin(rads);
+
+                var rotatedWidth = Math.round(originalWidth * Math.abs(cosA) + originalHeight * Math.abs(sinA));
+                var rotatedHeight = Math.round(originalWidth * Math.abs(sinA) + originalHeight * Math.abs(cosA));
+
+                return { 'width': rotatedWidth, 'height': rotatedHeight };
+            }
+
+            $('#side-menu-open').click(function(){
+                $('.side-menu-content-wide').show('slide', 100);
+                $('.side-menu-content-thin').hide();
+            });
+            $('#side-menu-close').click(function(){
+                $('.side-menu-content-wide').hide('slide', 100, function(){
+                    $('.side-menu-content-thin').show();
+                });
+            });
+            $('.side-menu-content-wide').hide();
+
+            $( "#dictionary").focus();
+
+            setTimeout(function(){
+                var saved_degs = {{ rotation }};
+                var photo = $("#photo");
+                {#        var photo_zoom = $("#zoom-photo");#}
+                photo.rotate( {animateTo: saved_degs}, 'abs' );
+                {#        photo_zoom.rotate( {animateTo: saved_degs}, 'abs' );#}
+            }, 2000);
+
         });
-        $('.side-menu-content-wide').hide();
-
-        $( "#dictionary").focus();
-
-        setTimeout(function(){
-            var saved_degs = {{ rotation }};
-            var photo = $("#photo");
-            {#        var photo_zoom = $("#zoom-photo");#}
-            photo.rotate( {animateTo: saved_degs}, 'abs' );
-            {#        photo_zoom.rotate( {animateTo: saved_degs}, 'abs' );#}
-        }, 2000);
-
-    });
 
 
     </script>
@@ -1502,46 +1504,46 @@
             </ul>
         </div>
 
-{#        <div class="side-menu-content-wide">#}
-{#            <ul class="side-menu-list">#}
-{#                <li>#}
-{#                    <div class="side-menu-content-wide-header">#}
-{#                        <ul class="side-menu-list">#}
-{#                            <li>#}
-{#                                <div id="side-menu-close" class="btn btn-success"><div class="fa fa-2x fa-wrench"></div></div>#}
-{#                            </li>#}
-{#                        </ul>#}
-{#                    </div>#}
-{#                </li>#}
-{#                <li>#}
-{#                    <div class="side-menu-content-wide-body">#}
-{#                        <ul class="side-menu-list">#}
-{#                            <li class="previous">#}
-{#                                <a class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-2x fa-rotate-left"></div></a>#}
-{#                                <a class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-2x fa-rotate-right"></div></a>#}
-{#                            </li>#}
-{#                            <li>#}
-{#                                <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">#}
-{#                                    <div class="fa fa-2x fa-search-plus"></div></a>#}
-{#                            </li>#}
-                            {#                            <li>#}
-                            {#                                <a class="btn btn-success side-menu-btn" target="_blank"#}
-                            {#                                   href="{{ page_turner_url }}"#}
-                            {#                                        ><div class="fa fa-2x fa-book"></div></a>#}
-                            {#                            </li>#}
-{#                            {% if user.is_authenticated %}#}
-{#                                <li>#}
-{#                                    <a class="btn btn-default save_image_btn save_image">#}
-{#                                        <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">#}
-{#                                    </a>#}
-{#                                </li>#}
-{##}
-{#                            {% endif %}#}
-{#                        </ul>#}
-{#                    </div>#}
-{#                </li>#}
-{#            </ul>#}
-{#        </div>#}
+        {#        <div class="side-menu-content-wide">#}
+        {#            <ul class="side-menu-list">#}
+        {#                <li>#}
+        {#                    <div class="side-menu-content-wide-header">#}
+        {#                        <ul class="side-menu-list">#}
+        {#                            <li>#}
+        {#                                <div id="side-menu-close" class="btn btn-success"><div class="fa fa-2x fa-wrench"></div></div>#}
+        {#                            </li>#}
+        {#                        </ul>#}
+        {#                    </div>#}
+        {#                </li>#}
+        {#                <li>#}
+        {#                    <div class="side-menu-content-wide-body">#}
+        {#                        <ul class="side-menu-list">#}
+        {#                            <li class="previous">#}
+        {#                                <a class="rota btn btn-success side-menu-btn" data-degs="-90"><div class="fa fa-2x fa-rotate-left"></div></a>#}
+        {#                                <a class="rota btn btn-success side-menu-btn" data-degs="90"><div class="fa fa-2x fa-rotate-right"></div></a>#}
+        {#                            </li>#}
+        {#                            <li>#}
+        {#                                <a class="btn btn-success side-menu-btn" data-toggle="modal" data-target=".bs-example-modal-lg">#}
+        {#                                    <div class="fa fa-2x fa-search-plus"></div></a>#}
+        {#                            </li>#}
+        {#                            <li>#}
+        {#                                <a class="btn btn-success side-menu-btn" target="_blank"#}
+        {#                                   href="{{ page_turner_url }}"#}
+        {#                                        ><div class="fa fa-2x fa-book"></div></a>#}
+        {#                            </li>#}
+        {#                            {% if user.is_authenticated %}#}
+        {#                                <li>#}
+        {#                                    <a class="btn btn-default save_image_btn save_image">#}
+        {#                                        <img src="{% static 'media/images/free-vector-heart-gloss-5_101629_Heart_Gloss_5.png' %}" style="max-height: 27px">#}
+        {#                                    </a>#}
+        {#                                </li>#}
+        {##}
+        {#                            {% endif %}#}
+        {#                        </ul>#}
+        {#                    </div>#}
+        {#                </li>#}
+        {#            </ul>#}
+        {#        </div>#}
     </div>
 
     <div class="row" style="margin: 0 auto">
@@ -1614,7 +1616,7 @@
                                 <th>Place of Publication</th>
                                 <td itemprop="datePublished">{{ formatted_info.Place_of_Publication }}</td>
                             </tr>
-                                                        <tr>
+                            <tr>
                                 <th>Date of Publication</th>
                                 <td itemprop="datePublished">{{ formatted_info.Date_of_Publication }}</td>
                             </tr>
@@ -1767,6 +1769,7 @@
                 <input type="hidden" id="stay_or_next_image" name="stay_or_next_image" value="next_image" />
                 <input type="hidden" name="image_id" value="{{ image_id }}" />
                 <input type="hidden" id = 'tag_info' name="tag_info" value="" />
+                <input type="hidden" id = 'captcha_key' name="captcha_key" value="" />
 
 
                 {#                <ul class="pager prev_next_pager">#}

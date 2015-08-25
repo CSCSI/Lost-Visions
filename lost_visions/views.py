@@ -139,6 +139,14 @@ def image_tags(request):
     try:
         print request.get_full_path()
 
+        # r = requests.post('https://www.google.com/recaptcha/api/siteverify', {
+        #     'secret': settings.captcha_secret,
+        #     'response': request.POST.get('captcha_key', '')
+        # })
+        #
+        # print r.text
+        # print r.json
+
         if request.method == 'POST':
             next_action = clean(request.POST.get('stay_or_next_image', 'next_image'), strip=True)
 

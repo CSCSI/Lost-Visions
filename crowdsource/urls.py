@@ -5,6 +5,7 @@ from django.contrib.sitemaps.views import index, sitemap
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from lost_visions import models
 from lost_visions.sitemap import ImageSitemap
+from reimagine.views import reimagine_home
 
 admin.autodiscover()
 
@@ -21,6 +22,8 @@ for date in dates:
 urlpatterns = patterns('',
                        # Examples:
                        # url(r'^$', lambda r : HttpResponseRedirect('/home')),
+
+                       url(r'reimagine', 'reimagine.views.reimagine_home', name='reimagine'),
 
                        url(r'^sitemap\.xml$', index, {'sitemaps': sitemaps}),
                        url(r'^sitemap-(?P<section>.+)\.xml$', sitemap,
