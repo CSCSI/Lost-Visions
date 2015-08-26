@@ -1,5 +1,6 @@
 import json
 import uuid
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 # Create your views here.
@@ -16,7 +17,7 @@ def reimagine_home(request):
                   },
                   context_instance=RequestContext(request))
 
-
+@login_required
 def entry_upload(request):
     return render(request, 'entry_upload.html',
                   {
@@ -25,7 +26,8 @@ def entry_upload(request):
                   context_instance=RequestContext(request))
 
 
-@csrf_exempt
+# @csrf_exempt
+@login_required
 def competition_entry_store(request):
 
     errors = []
