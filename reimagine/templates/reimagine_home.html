@@ -3,32 +3,6 @@
 
 {% block content %}
 
-    <style>
-        .file_submit_panel{
-            margin: 50px
-        }
-
-        .fileUpload {
-            position: relative;
-            overflow: hidden;
-            margin-top: 0
-
-        }
-        .fileUpload input.upload {
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 0;
-            padding: 0;
-            font-size: 20px;
-            cursor: pointer;
-            opacity: 0;
-            filter: alpha(opacity=0);
-        }
-        #hidden_iframe {
-            display: none;
-        }
-    </style>
 
 
     <script type="text/javascript">
@@ -36,14 +10,14 @@
             var main_image = window.innerHeight;
             var header_height = $('.navbar').height();
 
-            document.getElementById("uploadBtn").onchange = function () {
-                document.getElementById("upload_file_textbox").value = this.value.replace(/^C:\\fakepath\\/, "");
-            };
-
-            $('#reimagine_image').css({height: main_image - header_height - 5,  margin: 'auto'});
-
-            $('#form_upload').find('#form_submit_input').append('&lt;span id="uploadprogressbar"&gt;&lt;/span&lt;');
-            $('#form_upload').find('#uploadprogressbar').progressbar();
+{#            document.getElementById("uploadBtn").onchange = function () {#}
+{#                document.getElementById("upload_file_textbox").value = this.value.replace(/^C:\\fakepath\\/, "");#}
+{#            };#}
+{##}
+{#            $('#reimagine_image').css({height: main_image - header_height - 5,  margin: 'auto'});#}
+{##}
+{#            $('#form_upload').find('#form_submit_input').append('&lt;span id="uploadprogressbar"&gt;&lt;/span&lt;');#}
+{#            $('#form_upload').find('#uploadprogressbar').progressbar({value: false});#}
 
         });
     </script>
@@ -59,78 +33,43 @@
 
 
     <div id="education" class="education" style="">
-    <h1 style="text-align: center;">
-        Hey look, a competition
-    </h1>
-    <p>
-        <img src="{% static "media/documents/images/image03.jpg" %}"
-             style="margin-left: auto; margin-right: auto; display: block; width: 70%; padding: 10px;">
-    </p>
-     <p>
+        <h1 style="text-align: center;">
+            Hey look, a competition
+        </h1>
+        <p>
+            <img src="{% static "media/documents/images/image03.jpg" %}"
+                 style="margin-left: auto; margin-right: auto; display: block; width: 70%; padding: 10px;">
+        </p>
+        <p>
             <span >
                 This guide is intended to introduce users to </span>
             <span>
                 The Illustration Archive - ReImagine</span>
             <span >
                 &nbsp;and to provide the option to upload entries and stuff.</span>
-    </p>
-        </div>
+        </p>
+    </div>
 
 
 
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="file_submit_panel panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Upload Illustration - ReImagineD</h3>
+        <div class="col-md-6 col-md-offset-3">
+            {% if user.is_authenticated %}
+                <p>
+                    Hi {{ user }}! If you have an entry to submit, please
+                    <a class="btn btn-block btn-info" href="{% url 'entry_upload' %}">Click Here To Upload Your Entry</a>
+                </p>
+            {% else %}
+                <p style="text-align: center">
+                    You must be logged in to submit a competition entry!
+                </p>
+                <div class="col-md-6 col-md-offset-3">
+                    <a class="btn btn-block btn-info" href="{% url 'account_login' %}">
+                        <span style="text-align: center">Click Here To Login</span>
+                    </a>
                 </div>
-                <div class="panel-body">
-                    <iframe id="hidden_iframe" name="hidden_iframe" src="about:blank"></iframe>
-
-                    <form role="form" _lpchecked="1" id="form_upload"
-                          enctype="multipart/form-data" target="hidden_iframe"
-                          action="/upload_shapefile" method="POST">
-                        <fieldset>
-                            <div class="form-group input-group">
-                                <input id="upload_file_textbox" placeholder="Select a File to Upload" type="text" class="form-control" />
-                                <div class="input-group-btn">
-                                    <div class="fileUpload btn btn-outline btn-default">
-                                        <i class="fa fa-search"></i>
-                                        <input class="upload" id="uploadBtn" type="file" name="shapefile_upload" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-{#                                <p>#}
-{#                                    <strong>Upload progress</strong>#}
-{#                                    <span class="pull-right text-muted">0% Complete</span>#}
-{#                                </p>#}
-                                <div class="progress progress-striped active">
-                                    <div class="progress-bar progress-bar-info"
-                                         role="progressbar" aria-valuenow="0"
-                                         aria-valuemin="60" aria-valuemax="100" style="width: 20%">
-{#                                        <span class="sr-only">0% Complete</span>#}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <input class="form-control" type="hidden"
-                                       id="X-Progress-ID" name="X-Progress-ID" value="">
-                            </div>
-                            <div class="form-group">
-                                <input class="form-control" type="hidden" id="id" name="id" value="">
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-6">
-                                <input class="btn btn-lg btn-info btn-block"
-                                       id="form_submit_button" class="tp-button" type="submit" value="Submit" >
-                                </div>
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-            </div>
+            {% endif %}
         </div>
+
     </div>
 {% endblock %}

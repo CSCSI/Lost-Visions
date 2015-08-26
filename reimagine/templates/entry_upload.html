@@ -1,0 +1,131 @@
+{% extends 'reimagine_base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <style>
+        .file_submit_panel{
+            margin: 50px
+        }
+
+        .fileUpload {
+            position: relative;
+            overflow: hidden;
+            margin-top: 0
+
+        }
+        .fileUpload input.upload {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+        }
+        #hidden_iframe {
+            display: none;
+        }
+        .text-entry {
+            margin-bottom: 0.5em !important;
+        }
+    </style>
+
+    <script type="text/javascript"
+            src="{% static "reimagine/BootstrapFormHelpers-master/dist/js/bootstrap-formhelpers.min.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "reimagine/BootstrapFormHelpers-master/dist/css/bootstrap-formhelpers.min.css" %}">
+
+    <script>
+        $(document).ready(function () {
+            document.getElementById("uploadBtn").onchange = function () {
+                document.getElementById("upload_file_textbox").value = this.value.replace(/^C:\\fakepath\\/, "");
+            };
+            $('#form_upload').find('#form_submit_input').append('&lt;span id="uploadprogressbar"&gt;&lt;/span&lt;');
+            $('#form_upload').find('#uploadprogressbar').progressbar({value: false});
+
+            for (i = new Date().getFullYear(); i > 1900; i--)
+            {
+                $('#yearpicker').append($('<option />').val(i).html(i));
+            }
+        });
+    </script>
+
+
+    <div class="col-md-8 col-md-offset-2">
+        <div class="file_submit_panel panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Upload Illustration - ReImagineD</h3>
+            </div>
+            <div class="panel-body">
+                <iframe id="hidden_iframe" name="hidden_iframe" src="about:blank"></iframe>
+
+                <form role="form" _lpchecked="1" id="form_upload"
+                      enctype="multipart/form-data"
+                        {#                          target="hidden_iframe"#}
+                      action="{% url 'competition_entry_store' %}" method="POST">
+                    <fieldset>
+                        <div class="form-group input-group">
+                            <h3>Describe yourself</h3>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="country_picker">Country</label>
+                                    <div id="country_picker" class="bfh-selectbox bfh-countries" data-name="country" data-country="GB" data-flags="true"></div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="yearpicker">Year of Birth</label>
+                                    <select class="form-control" name="yearpicker" id="yearpicker"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group input-group" style="width: 100%">
+                            <h3>Describe your entry</h3>
+                            <input id="entry_name" name="entry_name" placeholder="Name your Entry" type="text" class="text-entry form-control" />
+                            <textarea id="entry_description" name="entry_description"
+                                      placeholder="Describe your entry" class="text-entry form-control"></textarea>
+                            <textarea id="illustration_description" name="illustration_description"
+                                      placeholder="Which illustrations did you use for inspiration?"
+                                      class="text-entry form-control"></textarea>
+
+                        </div>
+
+                        <h3>Upload image, video or other media</h3>
+                        <div class="form-group input-group">
+                            <input id="upload_file_textbox" placeholder="Select a File to Upload" type="text" class="form-control" />
+                            <div class="input-group-btn">
+                                <div class="fileUpload btn btn-outline btn-default">
+                                    <i class="fa fa-search"></i>
+                                    <input class="upload" id="uploadBtn" type="file" name="entry_upload_file" />
+                                </div>
+                            </div>
+                        </div>
+                        {#                        <div>#}
+                        {#                            <div class="progress progress-striped active">#}
+                        {#                                <div class="progress-bar progress-bar-info"#}
+                        {#                                     role="progressbar" style="width: 20%">#}
+                        {#                                    <span class="sr-only">20% Complete</span>#}
+                        {#                                </div>#}
+                        {#                            </div>#}
+                        {#                        </div>#}
+
+                        <div class="form-group">
+                            <input class="form-control" type="hidden"
+                                   id="X-Progress-ID" name="X-Progress-ID" value="">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="hidden" id="id" name="id" value="">
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-6">
+                                <input class="btn btn-lg btn-info btn-block"
+                                       id="form_submit_button" class="tp-button" type="submit" value="Submit" >
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

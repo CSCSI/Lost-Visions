@@ -23,7 +23,11 @@ urlpatterns = patterns('',
                        # Examples:
                        # url(r'^$', lambda r : HttpResponseRedirect('/home')),
 
-                       url(r'reimagine', 'reimagine.views.reimagine_home', name='reimagine'),
+                       url(r'reimagine/home', 'reimagine.views.reimagine_home', name='reimagine'),
+                       url(r'reimagine/entry_upload', 'reimagine.views.entry_upload', name='entry_upload'),
+                       url(r'reimagine/competition_entry_store',
+                           'reimagine.views.competition_entry_store',
+                           name='competition_entry_store'),
 
                        url(r'^sitemap\.xml$', index, {'sitemaps': sitemaps}),
                        url(r'^sitemap-(?P<section>.+)\.xml$', sitemap,

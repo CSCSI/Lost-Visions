@@ -70,6 +70,7 @@ INSTALLED_APPS = (
     'haystack',
     # 'watson',
     'lost_visions',
+    'reimagine'
 )
 
 MIDDLEWARE_CLASSES = (

@@ -1,0 +1,58 @@
+{% extends 'reimagine_base.html' %}
+
+{% block content %}
+
+    <script>
+        $(document).ready(function () {
+            document.getElementById("uploadBtn").onchange = function () {
+                document.getElementById("upload_file_textbox").value = this.value.replace(/^C:\\fakepath\\/, "");
+            };
+            $('#form_upload').find('#form_submit_input').append('&lt;span id="uploadprogressbar"&gt;&lt;/span&lt;');
+            $('#form_upload').find('#uploadprogressbar').progressbar({value: false});
+
+            for (i = new Date().getFullYear(); i > 1900; i--)
+            {
+                $('#yearpicker').append($('<option />').val(i).html(i));
+            }
+        });
+    </script>
+
+    <style>
+    .thank_you_panel {
+        margin: 5em
+    }
+    </style>
+
+
+    <div class="col-md-8 col-md-offset-2">
+        <div class="thank_you_panel panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Thank you {{ user }}!</h3>
+            </div>
+            <div class="panel-body">
+                <div>
+                    {% for e in errors %}
+                        <p>
+                            {{ e }}<br>
+                        </p>
+                    {% endfor %}
+                </div>
+                <div>
+                {% for m in messages %}
+                    <p>
+                        {{ m }}<br>
+                    </p>
+                {% endfor %}
+
+                <div class="col-md-6 col-md-offset-3">
+                    <a class="btn btn-block btn-info" href="{% url 'entry_upload' %}">
+                        <span style="text-align: center">Click Here To Upload another Entry</span>
+                    </a>
+                </div>
+
+            </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

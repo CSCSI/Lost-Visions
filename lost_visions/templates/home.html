@@ -46,6 +46,11 @@
         {% endif %}
     {% endif %}
 
+{#    <div class="row">#}
+        <div style="margin: 0.2em; padding: 5px; text-align: center" class="alert alert-success">
+            Enter the ReImagine competition now! <a class="alert-link" href="{% url 'reimagine' %}">Click Here</a> for more information
+        </div>
+{#    </div>#}
     <div class="home-content-main container">
         <div class="row">
             <div class="title-logo col-md-12">
@@ -97,28 +102,28 @@
 
             <!-- Wrapper for slides -->
 
-                    <div class="carousel-inner" >
-                        <div class="item active" style="margin: 0 auto">
-                            <a href="{% url 'image.random' %}">
-                                <img src="{% static "media/images/home/The Thames.jpg" %}" style="margin: 0 auto">
-                                <div class="carousel-caption"></div>
-                            </a>
-                        </div>
+            <div class="carousel-inner" >
+                <div class="item active" style="margin: 0 auto">
+                    <a href="{% url 'image.random' %}">
+                        <img src="{% static "media/images/home/The Thames.jpg" %}" style="margin: 0 auto">
+                        <div class="carousel-caption"></div>
+                    </a>
+                </div>
 
-                        <div class="item">
-                            <a href="{% url 'image.random' %}" style="margin: 0 auto">
-                                <img src="{% static "media/images/home/Skull Man.jpg" %}" style="margin: 0 auto">
-                                <div class="carousel-caption"></div>
-                            </a>
-                        </div>
+                <div class="item">
+                    <a href="{% url 'image.random' %}" style="margin: 0 auto">
+                        <img src="{% static "media/images/home/Skull Man.jpg" %}" style="margin: 0 auto">
+                        <div class="carousel-caption"></div>
+                    </a>
+                </div>
 
-                        <div class="item">
-                            <a href="{% url 'image.random' %}" style="margin: 0 auto">
-                                <img src="{% static "media/images/home/The Soldiers.jpg" %}" style="margin: 0 auto">
-                                <div class="carousel-caption"></div>
-                            </a>
-                        </div>
-                    </div>
+                <div class="item">
+                    <a href="{% url 'image.random' %}" style="margin: 0 auto">
+                        <img src="{% static "media/images/home/The Soldiers.jpg" %}" style="margin: 0 auto">
+                        <div class="carousel-caption"></div>
+                    </a>
+                </div>
+            </div>
 
 
             {##}
