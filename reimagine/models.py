@@ -13,7 +13,7 @@ class CompetitionEntry(models.Model):
         # uid = uuid.uuid4()
         return '/tmp/reimagine/entries/' + str(self.uuid) + '/' + filename
 
-    file = models.FileField(upload_to=get_upload_directory)
+    file = models.FileField(upload_to=get_upload_directory, max_length=1024)
     year_of_birth = models.IntegerField(max_length=4, choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     description = models.TextField(blank=True, null=True)
     name = models.TextField(blank=True, null=True)
