@@ -2,6 +2,13 @@ from django.contrib import admin
 
 # Register your models here.
 from django.db.models import get_models, get_app
+from reimagine.models import CompetitionEntry
+
+
+class EntryAdmin(admin.ModelAdmin):
+    readonly_fields = ('submit_time',)
+
+admin.site.register(CompetitionEntry, EntryAdmin)
 
 for model in get_models(get_app('reimagine')):
     try:
