@@ -20,5 +20,5 @@ class CompetitionEntry(models.Model):
     country = models.TextField(blank=True, null=True)
     user = models.ForeignKey(LostVisionUser)
     uuid = models.TextField(blank=True, null=True)
-    datetime = models.DateTimeField(auto_now=True)
+    submit_time = models.DateTimeField(auto_now=True)
     illustration_description = models.TextField(blank=True, null=True)
