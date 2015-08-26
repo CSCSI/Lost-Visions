@@ -48,6 +48,7 @@ def competition_entry_store(request):
                 new_entry.datetime = request.POST.get('yearpicker', '')
                 new_entry.country = request.POST.get('country', '')
                 new_entry.illustration_description = request.POST.get('illustration_description', '')
+                new_entry.illustration_understanding = request.POST.get('illustration_understanding', '')
                 new_entry.save()
                 messages.append('Your entry named "' + str(new_entry.name) + '" has been submitted.')
                 messages.append('Entry reference ID : ' + str(new_entry.uuid))

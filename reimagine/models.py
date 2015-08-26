@@ -22,3 +22,4 @@ class CompetitionEntry(models.Model):
     uuid = models.TextField(blank=True, null=True)
     submit_time = models.DateTimeField(auto_now=True)
     illustration_description = models.TextField(blank=True, null=True)
+    illustration_understanding = models.TextField(blank=True, null=True)

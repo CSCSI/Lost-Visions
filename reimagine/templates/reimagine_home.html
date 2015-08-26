@@ -10,14 +10,14 @@
             var main_image = window.innerHeight;
             var header_height = $('.navbar').height();
 
-{#            document.getElementById("uploadBtn").onchange = function () {#}
-{#                document.getElementById("upload_file_textbox").value = this.value.replace(/^C:\\fakepath\\/, "");#}
-{#            };#}
-{##}
-{#            $('#reimagine_image').css({height: main_image - header_height - 5,  margin: 'auto'});#}
-{##}
-{#            $('#form_upload').find('#form_submit_input').append('&lt;span id="uploadprogressbar"&gt;&lt;/span&lt;');#}
-{#            $('#form_upload').find('#uploadprogressbar').progressbar({value: false});#}
+            {#            document.getElementById("uploadBtn").onchange = function () {#}
+            {#                document.getElementById("upload_file_textbox").value = this.value.replace(/^C:\\fakepath\\/, "");#}
+            {#            };#}
+            {##}
+            {#            $('#reimagine_image').css({height: main_image - header_height - 5,  margin: 'auto'});#}
+            {##}
+            {#            $('#form_upload').find('#form_submit_input').append('&lt;span id="uploadprogressbar"&gt;&lt;/span&lt;');#}
+            {#            $('#form_upload').find('#uploadprogressbar').progressbar({value: false});#}
 
         });
     </script>
@@ -31,43 +31,65 @@
     </div>
 
 
+    <div class="row">
+        <div id="education" class="education" style="">
+            <h1 style="text-align: center;">
+                Competition Information
+            </h1>
+            <p>
+                <img src="{% static "media/documents/images/image03.jpg" %}"
+                     style="margin-left: auto; margin-right: auto; display: block; width: 70%; padding: 10px;">
+            </p>
 
-    <div id="education" class="education" style="">
-        <h1 style="text-align: center;">
-            Hey look, a competition
-        </h1>
-        <p>
-            <img src="{% static "media/documents/images/image03.jpg" %}"
-                 style="margin-left: auto; margin-right: auto; display: block; width: 70%; padding: 10px;">
-        </p>
-        <p>
-            <span >
-                This guide is intended to introduce users to </span>
-            <span>
-                The Illustration Archive - ReImagine</span>
-            <span >
-                &nbsp;and to provide the option to upload entries and stuff.</span>
-        </p>
+            <h3>How to enter</h3>
+            <ul style="list-style-type: circle">
+                <li>
+                    Log in to The Illustration Archive using the button below
+                </li>
+                <li>
+                    Choose an illustration (or illustrations) from the Archive
+                </li>
+                <li>
+                    Reimagine the illustration(s). See our <a href="#">YouTube video</a> for some ideas
+                </li>
+                <li>
+                    Fill in the entry form and upload your entry
+                </li>
+            </ul>
+            <p>
+                That's it! Enjoy reimagining these illustrations from the past!
+            </p>
+            <p>
+                For competition rules, and details of what you can win, <a href="#">click here</a>
+            </p>
+        </div>
     </div>
-
 
 
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             {% if user.is_authenticated %}
-                <p>
-                    Hi {{ user }}! If you have an entry to submit, please
-                    <a class="btn btn-block btn-info" href="{% url 'entry_upload' %}">Click Here To Upload Your Entry</a>
-                </p>
-            {% else %}
-                <p style="text-align: center">
-                    You must be logged in to submit a competition entry!
-                </p>
-                <div class="col-md-6 col-md-offset-3">
-                    <a class="btn btn-block btn-info" href="{% url 'account_login' %}">
-                        <span style="text-align: center">Click Here To Login</span>
-                    </a>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        Hi {{ user }}! If you have an entry to submit, please:
+                    </div>
+                    <div class="panel-body">
+                        <a class="btn btn-block btn-info" href="{% url 'entry_upload' %}">Click Here To Upload Your Entry</a>
+
+                    </div>
                 </div>
+            {% else %}
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        You must be logged in to submit a competition entry!
+                    </div>
+                    <div class="panel-body">
+                        <a class="btn btn-block btn-info" href="{% url 'account_login' %}">
+                            <span style="text-align: center">Click Here To Login</span>
+                        </a>
+                    </div>
+                </div>
+
             {% endif %}
         </div>
 

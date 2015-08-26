@@ -55,7 +55,7 @@
     <div class="col-md-8 col-md-offset-2">
         <div class="file_submit_panel panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Upload Illustration - ReImagineD</h3>
+                <h3 class="panel-title">Entry Form</h3>
             </div>
             <div class="panel-body">
                 <iframe id="hidden_iframe" name="hidden_iframe" src="about:blank"></iframe>
@@ -75,29 +75,35 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="yearpicker">Year of Birth</label>
-                                    <select class="form-control" name="yearpicker" id="yearpicker"></select>
+                                    <select required class="form-control" name="yearpicker" id="yearpicker"></select>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group input-group" style="width: 100%">
                             <h3>Describe your entry</h3>
-                            <input id="entry_name" name="entry_name" placeholder="Name your Entry" type="text" class="text-entry form-control" />
-                            <textarea id="entry_description" name="entry_description"
+                            <input required id="entry_name" name="entry_name" placeholder="Name your Entry" type="text" class="text-entry form-control" />
+
+                            <textarea required id="entry_description" name="entry_description"
                                       placeholder="Describe your entry" class="text-entry form-control"></textarea>
-                            <textarea id="illustration_description" name="illustration_description"
+
+                            <textarea required id="illustration_description" name="illustration_description"
                                       placeholder="Which illustrations did you use for inspiration?"
+                                      class="text-entry form-control"></textarea>
+
+                            <textarea required id="illustration_understanding" name="illustration_understanding"
+                                      placeholder="How has The Illustration Archive changed your understanding of illustrations from the past?"
                                       class="text-entry form-control"></textarea>
 
                         </div>
 
-                        <h3>Upload image, video or other media</h3>
+                        <h3>Upload entry (image, video or other media)</h3>
                         <div class="form-group input-group">
-                            <input id="upload_file_textbox" placeholder="Select a File to Upload" type="text" class="form-control" />
+                            <input required id="upload_file_textbox" placeholder="Select a File to Upload" type="text" class="form-control" />
                             <div class="input-group-btn">
                                 <div class="fileUpload btn btn-outline btn-default">
                                     <i class="fa fa-search"></i>
-                                    <input class="upload" id="uploadBtn" type="file" name="entry_upload_file" />
+                                    <input required class="upload" id="uploadBtn" type="file" name="entry_upload_file" />
                                 </div>
                             </div>
                         </div>
@@ -128,5 +134,32 @@
             </div>
         </div>
     </div>
+
+    <div class="sticky-footer">
+    <ul class="footer-links">
+        <li class="departments">
+            <a href="http://www.cardiff.ac.uk/" target="_blank">
+{#                                <img src="http://sites.cardiff.ac.uk/brandtoolkit/files/2013/11/universitylogo1-300x288.jpg" style='width:auto; height:80px; padding: 10px;  background-color: #ffffff'>#}
+                <img src="{% static "media/images/icon/universitylogo1-300x288.jpg" %}" style='width:auto; height:80px; padding: 10px;  background-color: #ffffff'>
+
+            </a>
+        </li>
+
+
+        <li class="departments">
+            <a class="department_text" href="http://www.cardiff.ac.uk/arcca/" target="_blank">
+{#                                <img src="http://www.cf.ac.uk/arcca/images/homepage/image-56473-web.gif" style='width:auto; height:40px; padding: 10px; background-color: #ffffff'>#}
+                <img src="{% static "media/images/icon/image-56473-web.gif" %}" style='width:auto; height:40px; padding: 10px;  background-color: #ffffff'>
+
+                                <p>Advanced Research Computing @ Cardiff</p>
+            </a>
+        </li>
+
+
+    </ul>
+            <div style="text-align: center; display: block">Cardiff University 2014</div>
+
+    </div>
+
 
 {% endblock %}
