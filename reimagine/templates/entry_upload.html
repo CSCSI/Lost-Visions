@@ -64,6 +64,7 @@
                       enctype="multipart/form-data"
                         {#                          target="hidden_iframe"#}
                       action="{% url 'competition_entry_store' %}" method="POST">
+                    {% csrf_token %}
                     <fieldset>
                         <div class="form-group input-group">
                             <h3>Describe yourself</h3>

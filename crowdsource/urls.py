@@ -26,11 +26,11 @@ urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^accounts/', include('allauth.urls')),
 
-                       url(r'^reimagine', 'reimagine.views.reimagine_home', name='reimagine'),
                        url(r'^reimagine/entry_upload', 'reimagine.views.entry_upload', name='entry_upload'),
                        url(r'^reimagine/store_competition_entry',
                            'reimagine.views.competition_entry_store',
                            name='competition_entry_store'),
+                       url(r'^reimagine', 'reimagine.views.reimagine_home', name='reimagine'),
 
                        url(r'^sitemap\.xml$', index, {'sitemaps': sitemaps}),
                        url(r'^sitemap-(?P<section>.+)\.xml$', sitemap,
