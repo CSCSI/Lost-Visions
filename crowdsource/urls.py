@@ -23,9 +23,12 @@ urlpatterns = patterns('',
                        # Examples:
                        # url(r'^$', lambda r : HttpResponseRedirect('/home')),
 
-                       url(r'reimagine', 'reimagine.views.reimagine_home', name='reimagine'),
-                       url(r'reimagine/entry_upload', 'reimagine.views.entry_upload', name='entry_upload'),
-                       url(r'reimagine/competition_entry_store',
+                       url(r'^admin/', include(admin.site.urls)),
+                       url(r'^accounts/', include('allauth.urls')),
+
+                       url(r'^reimagine', 'reimagine.views.reimagine_home', name='reimagine'),
+                       url(r'^reimagine/entry_upload', 'reimagine.views.entry_upload', name='entry_upload'),
+                       url(r'^reimagine/store_competition_entry',
                            'reimagine.views.competition_entry_store',
                            name='competition_entry_store'),
 
@@ -131,8 +134,7 @@ urlpatterns = patterns('',
                        # url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
                        # url(r'^admin_tools/', include('admin_tools.urls')),
 
-                       url(r'^admin/', include(admin.site.urls)),
-                       url(r'^accounts/', include('allauth.urls'))
+
 
 )
 
