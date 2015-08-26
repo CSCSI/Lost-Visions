@@ -62,3 +62,6 @@ command=/var/www/lost_visions/Lost-Visions/runme.sh
 export LD_LIBRARY_PATH="/usr/local/lib"
 export PYTHONPATH="/var/www/lost_visions/Lost-Visions"
 exec gunicorn -c /var/www/lost_visions/Lost-Visions/crowdsource/gunicorn.settings crowdsource.wsgi:application
+
+### ReImagine change to nginx.conf
+    client_max_body_size 20M;

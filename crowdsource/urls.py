@@ -23,7 +23,7 @@ urlpatterns = patterns('',
                        # Examples:
                        # url(r'^$', lambda r : HttpResponseRedirect('/home')),
 
-                       url(r'reimagine/home', 'reimagine.views.reimagine_home', name='reimagine'),
+                       url(r'reimagine', 'reimagine.views.reimagine_home', name='reimagine'),
                        url(r'reimagine/entry_upload', 'reimagine.views.entry_upload', name='entry_upload'),
                        url(r'reimagine/competition_entry_store',
                            'reimagine.views.competition_entry_store',
