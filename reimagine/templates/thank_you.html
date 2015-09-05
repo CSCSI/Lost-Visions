@@ -18,11 +18,13 @@
     </script>
 
     <style>
-    .thank_you_panel {
-        margin: 5em
-    }
+        .thank_you_panel {
+            margin: 5em
+        }
     </style>
-
+    <div class="row">
+        <a href="{% url 'reimagine' %}"><div class="btn btn-info">REimagine Home</div></a>
+    </div>
 
     <div class="col-md-8 col-md-offset-2">
         <div class="thank_you_panel panel panel-default">
@@ -38,19 +40,19 @@
                     {% endfor %}
                 </div>
                 <div>
-                {% for m in messages %}
-                    <p>
-                        {{ m }}<br>
-                    </p>
-                {% endfor %}
+                    {% for m in messages %}
+                        <p>
+                            {{ m }}<br>
+                        </p>
+                    {% endfor %}
 
-                <div class="col-md-6 col-md-offset-3">
-                    <a class="btn btn-block btn-info" href="{% url 'entry_upload' %}">
-                        <span style="text-align: center">Click Here To Upload another Entry</span>
-                    </a>
+                    <div class="col-md-6 col-md-offset-3">
+                        <a class="btn btn-block btn-info" href="{% url 'entry_upload' %}">
+                            <span style="text-align: center">Click Here To Upload another Entry</span>
+                        </a>
+                    </div>
+
                 </div>
-
-            </div>
             </div>
         </div>
     </div>
