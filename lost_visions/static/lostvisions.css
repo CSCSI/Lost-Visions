@@ -244,10 +244,27 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     margin-right: auto
 }
 
-.education > p > span{
+.education > p > span {
     font-family: 'Baskerville Old Face', serif;
     font-size: x-large;
 }
+
+.education > p > span > a{
+    font-family: 'Baskerville Old Face', serif;
+    font-size: x-large;
+}
+
+.education > ul > li > p > span{
+    font-family: 'Baskerville Old Face', serif;
+    font-size: x-large;
+}
+
+.education > ul > li > p > span a{
+    font-family: 'Baskerville Old Face', serif;
+    font-size: x-large;
+}
+
+
 
 /*help*/
 

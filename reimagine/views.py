@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 # Create your views here.
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from lost_visions.views import get_request_user
@@ -64,3 +65,7 @@ def competition_entry_store(request):
                       'messages': messages
                   },
                   context_instance=RequestContext(request))
+
+
+def reimagine_rules(request):
+    return render_to_response('reimagine_rules.html')

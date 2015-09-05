@@ -30,6 +30,8 @@ urlpatterns = patterns('',
                        url(r'^reimagine/store_competition_entry',
                            'reimagine.views.competition_entry_store',
                            name='competition_entry_store'),
+                       url(r'^reimagine_rules', 'reimagine.views.reimagine_rules', name='reimagine_rules'),
+
                        url(r'^reimagine', 'reimagine.views.reimagine_home', name='reimagine'),
 
                        url(r'^sitemap\.xml$', index, {'sitemaps': sitemaps}),

@@ -3,25 +3,6 @@
 
 {% block content %}
 
-
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var main_image = window.innerHeight;
-            var header_height = $('.navbar').height();
-
-            {#            document.getElementById("uploadBtn").onchange = function () {#}
-            {#                document.getElementById("upload_file_textbox").value = this.value.replace(/^C:\\fakepath\\/, "");#}
-            {#            };#}
-            {##}
-            {#            $('#reimagine_image').css({height: main_image - header_height - 5,  margin: 'auto'});#}
-            {##}
-            {#            $('#form_upload').find('#form_submit_input').append('&lt;span id="uploadprogressbar"&gt;&lt;/span&lt;');#}
-            {#            $('#form_upload').find('#uploadprogressbar').progressbar({value: false});#}
-
-        });
-    </script>
-
     <div class="row">
         <div class="" style="margin: auto">
             <img id='reimagine_image'
@@ -32,7 +13,7 @@
 
 
     <div class="row">
-        <div id="education" class="education" style="">
+        <div id="education" class="education">
             <h1 style="text-align: center;">
                 Competition Information
             </h1>
@@ -41,26 +22,75 @@
                      style="margin-left: auto; margin-right: auto; display: block; width: 70%; padding: 10px;">
             </p>
 
-            <h3>How to enter</h3>
+            <p>
+                <span style="font-weight: bold">General Information</span>
+            </p>
+
+            <p>
+                <span>
+                    The REimagine competition encourages the creative REimagining of an illustration or illustrations from <a href="http://illustrationarchive.cf.ac.uk/">The Illustration Archive</a>:
+                </span>
+            </p>
+            <p>
+                <span>
+                    Participants are invited to create a work of art or craft inspired by an illustration(s) and to submit their entries online by 14th December 2015.
+                </span>
+            </p>
+            <p>
+                <span>
+                    Entries will be judged by a selected panel of experts from the creative industries and the work of nominated winners will be exhibited in Cardiff University and in an online exhibition.
+                </span>
+            </p>
+            <p>
+                <span>
+                    Prizes will be awarded to winners and runners up in two categories: over and under 16s.
+                </span>
+            </p>
+
+            <hr>
+
+            <p>
+                <span style="font-weight: bold">How to enter</span>
+            </p>
             <ul style="list-style-type: circle">
                 <li>
-                    Log in to The Illustration Archive using the button below
+                    <p>
+                        <span>
+                            Log in to The Illustration Archive using the button below
+                        </span>
+                    </p>
                 </li>
                 <li>
-                    Choose an illustration (or illustrations) from the Archive
+                    <p>
+                        <span>
+                            Choose an illustration (or illustrations) from the Archive
+                        </span>
+                    </p>
                 </li>
                 <li>
-                    Reimagine the illustration(s). See our <a href="#">YouTube video</a> for some ideas
+                    <p>
+                        <span>
+                            REimagine the illustration(s). See our <a href="#">YouTube video</a> for some ideas
+                        </span>
+                    </p>
                 </li>
                 <li>
-                    Fill in the entry form and upload your entry
+                    <p>
+                        <span>
+                            Fill in the entry form and upload your entry
+                        </span>
+                    </p>
                 </li>
             </ul>
             <p>
-                That's it! Enjoy reimagining these illustrations from the past!
+                <span>
+                    That's it! Enjoy REimagining these illustrations from the past!
+                </span>
             </p>
             <p>
-                For competition rules, and details of what you can win, <a href="#">click here</a>
+                <span>
+                    For competition rules, and details of what you can win, <a href="{% url 'reimagine_rules' %}">click here</a>
+                </span>
             </p>
         </div>
     </div>
