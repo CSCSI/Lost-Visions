@@ -367,7 +367,7 @@ class ImagePicker():
         logger.debug(all_results.query)
         return all_results
 
-    def advanced_haystack_search(self, query_items, similar_tags=False):
+    def advanced_haystack_search(self, query_items, similar_tags=False, book_ids=None):
 
         regex_string = r"{0}"
 
@@ -390,9 +390,18 @@ class ImagePicker():
 
         all_results = SearchQuerySet()
 
+        # # This should work, but it makes solr throw "too many boolean clauses"
+        # # if the user selects too many years/ books
+        # if book_ids is not None and len(book_ids) > 0:
+        #     print len(book_ids), type(book_ids)
+        #     # image_ids_from_books = []
+        #     # if x.book_identifier in book_ids:
+        #     #     image_ids_from_books.append(x.flickr_id)
+        #     all_results = all_results.filter(book_identifier__in=book_ids)
+
         if len(year):
             decade = year[0:3]
-            all_results = all_results.filter((SQ(date__startswith=decade)))
+            all_results = all_results.filter(SQ(date__startswith=decade))
 
         if len(author):
             # all_results = all_results.filter_or(first_author__icontains='*' + author + '*')
@@ -491,7 +500,7 @@ class ImagePicker():
         # all_results = all_results.order_by('title')
 
         sort_by = query_items.get('sort_results', '').strip()
-        print sort_by
+        print 'sorting by', sort_by
         if sort_by == 'none' or len(sort_by) < 1:
             pass
         elif sort_by == 'title':
@@ -505,8 +514,9 @@ class ImagePicker():
             all_results = all_results.order_by('first_author')
 
         logger.debug(all_results.query)
-        print all_results.query
+        # print 'full query', all_results.query
         logger.debug(all_results.count())
+        print 'full result count', all_results.count()
         return all_results
 
     # A method to find the overall tag weight for a tag

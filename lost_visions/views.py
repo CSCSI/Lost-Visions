@@ -1150,7 +1150,7 @@ def search_advanced(request):
 def do_advanced_search(request):
 
     number_of_results_int = 50
-    max_results = 10000
+    max_results = 500
 
     # tk = TimeKeeper()
     # tk.time_now('start')
@@ -1182,7 +1182,8 @@ def do_advanced_search(request):
     if len(year_from) and year_from is not '--' and len(year_to) and year_to is not '--':
         date_range = [year_from + '-01-01', year_to + '-12-31']
         books_in_date_range = models.Book.objects.filter(datetime__range=date_range).values_list('book_identifier', flat=True)
-        print books_in_date_range.count()
+        print 'books in range', date_range, books_in_date_range.count()
+        print books_in_date_range.query
 
         # logger.debug('books in range ' + str(year_from) + ' ' + str(year_to) + ' : ' + str(books_in_date_range.count()))
         # logger.debug(books_in_date_range)
@@ -1234,7 +1235,7 @@ def do_advanced_search(request):
 
             # tk.time_now('done search')
     else:
-        all_results_haystack = im.advanced_haystack_search(request.GET).load_all()
+        all_results_haystack = im.advanced_haystack_search(request.GET, book_ids=books_in_date_range).load_all()
 
         user = get_request_user(request)
         logger.debug(str(user.username.username) + " : " + pprint.pformat(request.GET))
@@ -1254,24 +1255,27 @@ def do_advanced_search(request):
         # print all_results_haystack
         # print type(all_results_haystack)
 
-        to_join = []
-        try:
-            for x in all_results_haystack[:max_results]:
-                # print x.flickr_id
-                # print pprint.pformat(x.__dict__.get('flickr_id'))
-                # all_image_ids += x.flickr_id + ','
-                try:
-                    if type(x) is not NoneType and x.flickr_id not in to_join:
-                        if len(books_in_date_range):
-                            if x.book_identifier in books_in_date_range:
-                                to_join.append(x.flickr_id)
-                        else:
-                            to_join.append(x.flickr_id)
-                except:
-                    pass
-        except Exception as e23458:
-            print str(e23458)
-            pass
+        # # TODO check if this block is needed now
+        # to_join = []
+        # try:
+        #     for x in all_results_haystack[:max_results]:
+        #         # print x.flickr_id
+        #         # print pprint.pformat(x.__dict__.get('flickr_id'))
+        #         # all_image_ids += x.flickr_id + ','
+        #         try:
+        #             if type(x) is not NoneType and x.flickr_id not in to_join:
+        #                 if len(books_in_date_range):
+        #                     if x.book_identifier in books_in_date_range:
+        #                         to_join.append(x.flickr_id)
+        #                 else:
+        #                     to_join.append(x.flickr_id)
+        #         except:
+        #             pass
+        # except Exception as e23458:
+        #     print str(e23458)
+        #     pass
+
+        to_join = get_images_in_books(all_results_haystack, books_in_date_range, max_results)
 
         # all_results = [x.object for x in all_results_haystack]
         if len(to_join) > 0:
@@ -1351,6 +1355,31 @@ def do_advanced_search(request):
                    'number_to_show': number_of_results_int,
                    'user_collections': user_collections},
                   context_instance=RequestContext(request))
+
+
+def get_images_in_books(images, books, max_results):
+    # These are the images returned from haystack
+    # We need to filter by which books we're allowing
+    # Books are selected using a date range
+    # This avoids solr throwing "too many boolean clauses" when filtering multiple years
+    # Also allows specific tailoring of max_results we're allowing, tweak till reasonable timings
+
+    # print 'checking if ', images.count(), 'are in ', len(books), 'books'
+
+    book_filtered = models.Image.objects.all()
+    if len(books):
+        # If we specify books, we're looking in them only
+        # Otherwise return all images
+        book_filtered = book_filtered.filter(
+            book_identifier__in=books
+        )
+    book_filtered = book_filtered.filter(
+        flickr_id__in=images.values_list('flickr_id', flat=True)[:max_results]
+    ).values_list(
+        'flickr_id', flat=True
+    ).distinct()
+    # print book_filtered.query
+    return book_filtered
 
 
 def flickr_id_list_from_searchqueryset(sqs):

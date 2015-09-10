@@ -56,7 +56,7 @@ COAT_OF_ARMS_BUTTON_URL = MIKEY_URL + "coatofarms.jpg"
 DECORATIVE_BORDER_BUTTON_URL = MIKEY_URL + "decorative border.jpg"
 DECORATIVE_MOTIF_BUTTON_URL = MIKEY_URL + "decorativeletter.jpg"
 DECORATIVE_LETTER_BUTTON_URL = MIKEY_URL + "decorativemotif.jpg"
-
+PHOTOGRAPH_BUTTON_IMAGE_URL = MIKEY_URL + "a_photograph.jpg"
 
 class Category():
     def __init__(self, category_id, name, text, img):
@@ -138,7 +138,7 @@ class CategoryManager():
 
         self.categories[0] = Category('-1', 'root', 'Root', '') \
             .set_question('Is the illustration:') \
-            .set_answers([100, 200, 303, 400, 500, 600, 800, 1000, 1100, 2]) \
+            .set_answers([100, 200, 303, 400, 500, 600, 800, 1000, 1100, 1200, 2]) \
             .set_save(False)
 
         self.categories[100] = Category('100', 'advert', '', ADVERT_BUTTON_IMAGE_URL).set_synset('advert.n.1')
@@ -243,6 +243,9 @@ class CategoryManager():
         self.categories[1101] = Category('1101', 'poem', '', POEM_BUTTON_URL).set_synset('poetry.n.2')
         self.categories[1102] = Category('1102', 'play', '', PLAY_BUTTON_URL).set_synset('play.n.2')
         self.categories[1103] = Category('1103', 'novel', '', NOVEL_BUTTON_URL).set_synset('novel.n.1')
+
+        self.categories[1200] = Category('1200', 'photograph', '', PHOTOGRAPH_BUTTON_IMAGE_URL).set_synset('photograph.n.1')
+
 
     def get_tag_for_category_id(self, category_id):
         try:
