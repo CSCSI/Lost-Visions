@@ -240,6 +240,8 @@ kismet_api_key = ''
 
 captcha_secret = ''
 
+MAX_RESULTS = 10000
+
 try:
     from crowdsource.settings_local import *
 except ImportError:

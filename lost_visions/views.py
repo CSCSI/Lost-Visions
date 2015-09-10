@@ -1150,7 +1150,7 @@ def search_advanced(request):
 def do_advanced_search(request):
 
     number_of_results_int = 50
-    max_results = 500
+    max_results = settings.MAX_RESULTS
 
     # tk = TimeKeeper()
     # tk.time_now('start')
