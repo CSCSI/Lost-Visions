@@ -138,7 +138,7 @@ class CategoryManager():
 
         self.categories[0] = Category('-1', 'root', 'Root', '') \
             .set_question('Is the illustration:') \
-            .set_answers([100, 200, 303, 400, 500, 600, 800, 1000, 1100, 1200, 2]) \
+            .set_answers([100, 303, 400, 500, 600, 800, 1000, 1100, 1200, 2]) \
             .set_save(False)
 
         self.categories[100] = Category('100', 'advert', '', ADVERT_BUTTON_IMAGE_URL).set_synset('advert.n.1')
@@ -148,7 +148,7 @@ class CategoryManager():
             .set_save(False).set_action('product_name_entry')
         self.categories[102] = Category('102', 'no', '', NO_BUTTON_URL).set_save(False)
 
-        self.categories[200] = Category('200', 'building', '', BUILDING_BUTTON_IMAGE_URL).set_synset('building.n.1')
+        # self.categories[200] = Category('200', 'building', '', BUILDING_BUTTON_IMAGE_URL).set_synset('building.n.1')
             # .set_answers([203, 204])
         # self.categories[201] = Category('201', 'interior', 'Interior?', ICON_URL + 'interior.jpg')
         # self.categories[202] = Category('202', 'exterior', 'Exterior?', ICON_URL + 'exterior.jpg')
