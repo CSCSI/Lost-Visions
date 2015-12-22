@@ -68,11 +68,11 @@ def get_alternative_tags(request):
         tag_info = request.GET['tag_info']
 
     response_data = []
-    # print tag_info
+    print tag_info
 
     try:
         tags_xy = ast.literal_eval(tag_info)
-        print pprint.pformat(tags_xy)
+        # print pprint.pformat(tags_xy)
 
         for tag_index in tags_xy:
             user_tag = tags_xy[tag_index]
@@ -116,10 +116,10 @@ def get_alternative_tags(request):
                     tag['tag_order'] = str(tag_order)
                     response_data.append(tag)
             except Exception as e2:
-                print 'alt tag exception e2: ' + str(e2)
+                print 'get_alternative_tags.list_wordnet_links', str(e2), type(e2)
                 pass
     except Exception as e3:
-        print 'e3: ' + str(e3)
+        print 'get_alternative_tags.literal_eval', str(e3), type(e3)
         pass
 
     unique_comp_key = {}
@@ -137,7 +137,7 @@ def get_alternative_tags(request):
 def image_tags(request):
     next_action = 'next_image'
     try:
-        print request.get_full_path()
+        # print request.get_full_path()
 
         # r = requests.post('https://www.google.com/recaptcha/api/siteverify', {
         #     'secret': settings.captcha_secret,
@@ -150,7 +150,7 @@ def image_tags(request):
         if request.method == 'POST':
             next_action = clean(request.POST.get('stay_or_next_image', 'next_image'), strip=True)
 
-            print pprint.pformat(request.POST)
+            # print pprint.pformat(request.POST)
             # print request.user
 
             image_model = models.Image.objects.get(flickr_id=request.POST['image_id'])
@@ -163,7 +163,8 @@ def image_tags(request):
             image_text.user = request_user
 
             if image_text.description == '' and image_text.caption == '':
-                print 'not worth saving blank image text'
+                # print 'not worth saving blank image text'
+                pass
             else:
                 found_spam = False
                 if len(image_text.description):
@@ -195,7 +196,7 @@ def image_tags(request):
                             tag = models.Tag()
                             # word = weighted_word[0]
 
-                            print word
+                            # print word
                             tag.tag = word
                             tag.x_percent = clean(str(user_tag['x_percent']), strip=True)
                             tag.y_percent = clean(str(user_tag['y_percent']), strip=True)
@@ -237,8 +238,7 @@ def image_tags(request):
                                 pass
 
                     except Exception as e43533:
-                        print 'ahhhh'
-                        print e43533
+                        print 'error saving tags', e43533, type(e43533)
             try:
                 rotate_degs = int(clean(request.POST.get('save_deg_value', 0)))
                 previous_rotation_count = models.ImageRotation.objects.filter(image=image_model).count()
@@ -250,16 +250,16 @@ def image_tags(request):
                     rotate_model.user = request_user
                     rotate_model.save()
             except Exception as e329781:
-                print e329781
+                print 'rotation error', str(e329781), type(e329781)
 
             image_model.views_completed += 1
             image_model.save()
     except Exception as e56732:
-        print 'why wasnt this caught ' + str(e56732)
+        print 'general tag error ', str(e56732), type(e56732)
 
     image_id = request.POST['image_id']
 
-    print next_action
+    # print next_action
     if next_action == 'next_image':
         return random_image(request)
     else:
@@ -467,13 +467,13 @@ def get_flickr_tags(image_id):
     tags = {}
     for tag in flickr_tags:
 
-        print '\n'
-        print tag
-        print type(flickr_tags[tag])
-        print flickr_tags[tag]
-
-        print type(author)
-        print author
+        # print '\n'
+        # print tag
+        # print type(flickr_tags[tag])
+        # print flickr_tags[tag]
+        #
+        # print type(author)
+        # print author
 
         if is_number(tag) and is_user_tag(flickr_tags[tag]):
 
@@ -483,11 +483,11 @@ def get_flickr_tags(image_id):
 
 
 
-                try:
-                    #     # TODO utf fix
-                    print "*" + flickr_tags[tag].lower() + "* *" + author.lower() + "*"
-                except Exception as e:
-                    print e
+                # try:
+                #     #     # TODO utf fix
+                #     print "*" + flickr_tags[tag].lower() + "* *" + author.lower() + "*"
+                # except Exception as e:
+                #     print e
 
 
                 tags[tag] = flickr_tags[tag]
@@ -607,7 +607,7 @@ def login(request):
 
 @requires_csrf_token
 def do_signup(request):
-    print request.POST
+    # print request.POST
     username = request.POST['username']
     password = request.POST['password']
     user = auth.authenticate(username=username, password=password)
@@ -636,7 +636,7 @@ def do_signup(request):
 @requires_csrf_token
 def do_login(request):
 
-    print request.POST
+    # print request.POST
     username = request.POST['username']
     password = request.POST['password']
     user = auth.authenticate(username=username, password=password)
@@ -865,7 +865,7 @@ def word_in_word(string, word_array):
 
 @requires_csrf_token
 def map(request, image_id):
-    print 'map for image : ' + image_id
+    # print 'map for image : ' + image_id
 
     y = 51.49006473014369
     x = -3.1805146484375
@@ -874,7 +874,7 @@ def map(request, image_id):
     ney = 52.49006473014369
     nex = -2.1805146484375
 
-    print request.GET
+    # print request.GET
 
     if request.GET.get('x', 10000) is not 10000:
         x = request.GET.get('x')
@@ -939,7 +939,7 @@ def coords_save(request):
 
         geotag.save()
     except Exception as e:
-        print e
+        print 'coords_save err', str(e), type(e)
 
     result = {'success': True}
     return HttpResponse(json.dumps(result), content_type="application/json")
@@ -958,12 +958,12 @@ def coords(request, image_id):
 def save_image(request):
     if request.is_ajax():
         if request.POST.get('delete_image', False):
-            try:
-                # TODO this can go soon
-                delete_image = models.SavedImages.objects.get(image__flickr_id=request.POST['image_id'])
-                delete_image.delete()
-            except Exception as e:
-                print e
+            # try:
+            #     # TODO this can go soon
+            #     delete_image = models.SavedImages.objects.get(image__flickr_id=request.POST['image_id'])
+            #     delete_image.delete()
+            # except Exception as e:
+            #     print e
 
             try:
                 # TODO use this from now on
@@ -973,7 +973,7 @@ def save_image(request):
                 saved_image = models.ImageMapping.objects.get(collection=collection, image__flickr_id=request.POST['image_id'])
                 saved_image.delete()
             except Exception as e:
-                print e
+                print 'delete_image error', str(e), type(e)
 
             return HttpResponse('Removed Image ' + request.POST['image_id'])
         else:
@@ -983,14 +983,10 @@ def save_image(request):
 
                 if user and image and user.username.username is not 'Anon_y_mouse':
                     image_to_save = models.SavedImages.objects.get_or_create(user=user, image=image)
-                    # image_to_save.user = user
-                    # image_to_save.image = image
-                    #
-                    # image_to_save.save()
 
                     return HttpResponse('Saved Image ' + request.POST['image_id'])
             except Exception as e:
-                print e
+                print 'save_image error', str(e), type(e)
                 return HttpResponse('Error')
     else:
         raise Http404
@@ -1058,7 +1054,8 @@ def user_home(request):
 
                     all_image_data.get(image.image.flickr_id)['caption'] = image_mapping_caption.caption
                 except Exception as e:
-                    print e
+                    pass
+                    # print e
 
                 mapped_images_array.append(image_dict)
 
@@ -1133,7 +1130,7 @@ def image_category(request):
             #     tag.save()
 
     except Exception as e:
-        print e
+        print 'image_category', str(e), type(e)
         pass
 
     # get data for the clicked category
@@ -1178,12 +1175,13 @@ def do_advanced_search(request):
     readable_query += 'Showing first ' + str(number_of_results_int) + ' results '
 
     books_in_date_range = []
-    print year_from, year_to
+    # print year_from, year_to
     if len(year_from) and year_from is not '--' and len(year_to) and year_to is not '--':
         date_range = [year_from + '-01-01', year_to + '-12-31']
         books_in_date_range = models.Book.objects.filter(datetime__range=date_range).values_list('book_identifier', flat=True)
-        print 'books in range', date_range, books_in_date_range.count()
-        print books_in_date_range.query
+
+        # print 'books in range', date_range, books_in_date_range.count()
+        # print books_in_date_range.query
 
         # logger.debug('books in range ' + str(year_from) + ' ' + str(year_to) + ' : ' + str(books_in_date_range.count()))
         # logger.debug(books_in_date_range)
@@ -1388,7 +1386,7 @@ def flickr_id_list_from_searchqueryset(sqs):
 
 
 def data_autocomplete(request):
-    print request.GET
+    # print request.GET
 
     term = request.GET['term']
 
@@ -1456,7 +1454,7 @@ def get_resized_image(request, book_identifier, volume, page, image_idx):
 
 
             img = Image.open(image_location[0].location)
-            print image_location[0].location
+            # print image_location[0].location
             # img.verify()
 
             basewidth = thumbnail_size
@@ -1487,11 +1485,11 @@ def get_image_data(request):
 
 
 def user_dl_all(request):
-    print request.GET
+    # print request.GET
 
     collection_ids = request.GET.get('collection_ids')
 
-    print collection_ids
+    # print collection_ids
     if collection_ids:
         # collection_list = ast.literal_eval(collection_ids)
         collection_list = collection_ids.split(',')
@@ -1593,7 +1591,7 @@ def haystack_search(request):
     keys = [x.object.flickr_id for x in found_imagepicker]
 
 
-    print keys
+    # print keys
 
     query_response['list'] = keys
 
@@ -1787,7 +1785,7 @@ def new_collection(request):
         users_collections.append('NEW COLLECTION')
 
     except Exception as e:
-        print e
+        print 'new_collection', str(e), type(e)
         success = False
 
     query_response = {
@@ -1898,8 +1896,8 @@ def manage_collection(request):
         else:
             errors.append(error)
 
-    print request.user
-    print request.user.is_authenticated()
+    # print request.user
+    # print request.user.is_authenticated()
 
     if request.user.is_authenticated() or api_key_authd:
         collection_creating_user = None
@@ -2099,7 +2097,7 @@ def get_zip_path(root_folder, book_id, volume='0'):
                         else:
                             return os.path.join(root_folder, os.path.join(a_file, b_file))
     except Exception as e:
-        print e
+        print 'get_zip_path', str(e), type(e)
 
         return None
 
@@ -2169,12 +2167,12 @@ def page_turner(request, book_id, page, volume):
 
 
 
-    print book_id, page, volume
+    # print book_id, page, volume
     page_image_data = models.Image.objects.filter(book_identifier=book_id)
 
     flickr_ids = models.Image.objects.filter(book_identifier=book_id, page=page, volume=volume).values_list('flickr_id', flat=True)
-    print flickr_ids.query
-    print flickr_ids
+    # print flickr_ids.query
+    # print flickr_ids
     flickr_id = ''
     if len(flickr_ids):
         flickr_id = flickr_ids[0]
@@ -2273,16 +2271,17 @@ def exhibition(request, collection_id):
             else:
                 image_dict['url'] = sanitise_image_info(image_info, request)['imageurl']
         except Exception as e69362:
-            print 'e69362' + str(e69362)
+            print 'get_image_data_with_location', str(e69362), type(e69362)
 
         try:
             image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
             image_dict['caption'] = image_mapping_caption.caption
         except Exception as e:
-            print e
+            pass
+            # print e
 
         mapped_images_array.append(image_dict)
-        print pprint.pformat(image_dict)
+        # print pprint.pformat(image_dict)
 
     collection_data['images'] = mapped_images_array
     collection_data['collection_name'] = collection_model.name
@@ -2293,7 +2292,7 @@ def exhibition(request, collection_id):
                      'date': collection_model.timestamp,
                      }
 
-    print return_object
+    # print return_object
 
     return render(request, 'exhibition.html', return_object)
 
@@ -2345,7 +2344,7 @@ def similar_images(request, image_id):
         if len(machine_matched_ids) > 0:
             machine_matches = get_image_data_from_array(machine_matched_ids, request)
     except Exception as e0293:
-        print 'machine match : ' + str(e0293)
+        print 'machine match error', str(e0293), type(e0293)
 
     machine_match_query_count = len(connection.queries)
     sorted_id_list = img_pick.get_similar_images_with_tags(image_id)
@@ -2437,7 +2436,7 @@ def education(request):
 
 def mario_find(request, flickr_id):
 
-    print flickr_id
+    # print flickr_id
 
     # query = "SELECT wordid, lemma, definition, synsetid, pos, sensenum FROM words LEFT JOIN senses s USING (wordid) " \
     #         "LEFT JOIN synsets USING (synsetid) where lemma like %s " \
@@ -2454,12 +2453,12 @@ def mario_find(request, flickr_id):
 
     if len(results) > 0:
         for result in results:
-            print pprint.pformat(result.__dict__)
+            # print pprint.pformat(result.__dict__)
 
             # normalised = mario_models.Normalized.objects.filter(profileid=result.id)
             normalised = mario_models.Normalized.objects.filter(profileid=result)
 
-            print normalised.query
+            # print normalised.query
 
             stuff[result.pk] = json.loads(serializers.serialize('json', normalised))
 
@@ -2493,7 +2492,7 @@ def help(request):
 def request_public_exhibition(request):
     if request.user.is_authenticated():
 
-        print request.POST
+        # print request.POST
 
         collection_name = request.POST.get('collection_name', '*UNKNOWN*')
         collection_id = request.POST.get('collection_id', '*UNKNOWN*')
@@ -2621,13 +2620,15 @@ def get_public_exhibition_data(request, exhibition_model):
                 image_dict['url'] = sanitise_image_info(image_info, request)['imageurl']
 
         except Exception as e69362:
-            print 'e69362' + str(e69362)
+            pass
+            # print 'e69362' + str(e69362)
 
         try:
             image_mapping_caption = models.SavedImageCaption.objects.get(image_mapping=image)
             image_dict['caption'] = image_mapping_caption.caption
         except Exception as e:
-            print e
+            pass
+            # print e
 
         mapped_images_array.append(image_dict)
         # print pprint.pformat(image_dict)
@@ -2795,7 +2796,7 @@ def view_collection(request, collection_id, page):
     if range_min < 2:
         range_min = 2
 
-    print range_min, page, range_max
+    # print range_min, page, range_max
 
     pages = range(range_min, range_max)
 
@@ -2818,7 +2819,7 @@ def view_collection(request, collection_id, page):
 
     collection_tags = models.CollectionTag.objects.filter(collection=collection_model).values_list('tag', flat=True).distinct()
 
-    print pprint.pformat(response_data)
+    # print pprint.pformat(response_data)
 
     return render(request, 'view_collection.html', {
         'results': response_data,

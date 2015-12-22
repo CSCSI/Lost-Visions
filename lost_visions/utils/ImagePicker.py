@@ -119,9 +119,9 @@ class ImagePicker():
             try:
                 all_results = all_results.filter(reduce(operator.or_, ors))
                 qu = u'%s' % all_results.query
-                print qu.encode('utf-8')
+                # print qu.encode('utf-8')
 
-                print all_results.count()
+                # print all_results.count()
 
             except Exception as e5352729:
                 print 'e5352729 : ' + str(e5352729)
@@ -252,7 +252,7 @@ class ImagePicker():
         for word in alternative_words:
             word_list.append(word[0])
 
-        self.pprint_object(word_list)
+        # self.pprint_object(word_list)
 
         return word_list
 
@@ -269,7 +269,7 @@ class ImagePicker():
         # db_regex_char = "\y"
         regex_string = r"\b{0}\b".replace("\\b", db_regex_char)
 
-        print request.GET
+        # print request.GET
 
         keywords = request.GET.get('keyword', '').strip()
         keywords = [x.strip() for x in keywords.split(' ')]
@@ -339,7 +339,7 @@ class ImagePicker():
                     similar_words.extend(self.get_similar_word_array(word))
             keywords = similar_words
 
-        print '*' + str(keywords) + '*'
+        # print '*' + str(keywords) + '*'
         for word in keywords:
             if len(word):
                 # all_results = self.filter_all_on_tag(all_results, word)
@@ -459,31 +459,7 @@ class ImagePicker():
             keywords = similar_words
 
         for word in keywords:
-            # if len(word):
-            #     regex_format = regex_string.format(word)
-            #     ors = [
-            #         SQ(tag=Raw('*' + regex_format + '*')),
-            #         SQ(caption=Raw('*' + regex_format + '*')),
-            #         SQ(description=Raw('*' + regex_format + '*')),
-            #         ]
-            #
-            #     if not tag_keywords_only:
-            #         ors += [
-            #             SQ(first_author=Raw('*' + regex_format + '*')),
-            #             SQ(date__contains=regex_format),
-            #             # SQ(title__contains=regex_format),
-            #             SQ(title=Raw('*' + regex_format + '*')),
-            #
-            #             SQ(publisher=Raw('*' + regex_format + '*')),
-            #             SQ(pubplace=Raw('*' + regex_format + '*')),
-            #
-            #             ]
-            #
-            #     all_results = all_results.filter(reduce(operator.or_, ors))
-
             if len(word):
-                regex_format = regex_string.format(word)
-
                 all_results = all_results.filter_or(tag__icontains=word)
                 all_results = all_results.filter_or(caption__icontains=word)
                 all_results = all_results.filter_or(description__icontains=word)
@@ -495,28 +471,24 @@ class ImagePicker():
                     all_results = all_results.filter_or(publisher__icontains=word)
                     all_results = all_results.filter_or(pubplace__icontains=word)
 
-        # all_results_list = all_results.values_list('fields__flickr_id', flat=True)
-
-        # all_results = all_results.order_by('title')
-
         sort_by = query_items.get('sort_results', '').strip()
-        print 'sorting by', sort_by
+        # print 'sorting by', sort_by
         if sort_by == 'none' or len(sort_by) < 1:
             pass
         elif sort_by == 'title':
-            print 'title found'
+            # print 'title found'
             all_results = all_results.order_by('title')
         elif sort_by == 'date':
-            print 'date found'
+            # print 'date found'
             all_results = all_results.order_by('date')
         elif sort_by == 'author':
-            print 'author found'
+            # print 'author found'
             all_results = all_results.order_by('first_author')
 
-        logger.debug(all_results.query)
+        # logger.debug(all_results.query)
         # print 'full query', all_results.query
-        logger.debug(all_results.count())
-        print 'full result count', all_results.count()
+        # logger.debug(all_results.count())
+        # print 'full result count', all_results.count()
         return all_results
 
     # A method to find the overall tag weight for a tag
@@ -606,7 +578,7 @@ class ImagePicker():
             # Get images which have any of the tags found in the alpha image
             images_with_tag = self.get_tagged_images_for_tags_again(to_search)
         except Exception as e76275623:
-            print 'getting similar tagged images' + str(e76275623)
+            # print 'getting similar tagged images ' + str(e76275623)
             pass
 
         to_join = []
@@ -749,7 +721,7 @@ class ImagePicker():
         keywords = request_get.get('keyword', '').strip()
         keywords = [x.strip() for x in keywords.split(' ') if len(x)]
 
-        print keywords
+        # print keywords
 
         if len(keywords) == 0:
             return models.ImageCollection.objects.none()
@@ -765,7 +737,7 @@ class ImagePicker():
                 ors.append(Q(name__icontains=word))
 
         filtered_collections = all_results.filter(reduce(operator.or_, ors))
-        print filtered_collections.query
+        # print filtered_collections.query
 
 
         collection_tags = models.CollectionTag.objects.all()
@@ -782,7 +754,7 @@ class ImagePicker():
 
         if len(collection_tag_ors):
             collections_with_tags = models.ImageCollection.objects.filter(reduce(operator.or_, collection_tag_ors))
-            print collections_with_tags.query
+            # print collections_with_tags.query
         else:
             collections_with_tags = models.ImageCollection.objects.none()
 

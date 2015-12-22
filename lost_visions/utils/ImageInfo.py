@@ -78,7 +78,7 @@ def get_image_data_from_array(id_list, request):
 
                     tag_result['img'] = image_info['imageurl']
                 except Exception as e5:
-                    print 'error 57382 ' + str(e5)
+                    print 'get_image_info sanitise_image_info', str(e5), type(e5)
                     tag_result['img'] = result.flickr_small_source
 
                 if tag_result['img'] is None:
@@ -140,10 +140,11 @@ def get_image_data_from_array(id_list, request):
 
                 tag_results_dict[result.flickr_id] = tag_result
             except Exception as e88:
-                print 'error 3455##' + str(e88)
+                print 'fast_image_data', str(e88), type(e88)
                 pass
     except Exception as e7834:
-        print 'e7834 ' + str(e7834)
+        print 'get_image_data_from_array', str(e7834), type(e7834)
+        pass
     return tag_results_dict
 
 

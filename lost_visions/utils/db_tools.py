@@ -30,8 +30,8 @@ def get_next_image_id():
         # print data
         # image_id = str(min_viewed_image.identifier)
         image_id = str(min_viewed_image.flickr_id)
-    except ObjectDoesNotExist as e:
-        print e
+    except ObjectDoesNotExist as e34423:
+        print 'get_next_image_id', str(e34423), type(e34423)
         pass
 
     if image_id is None or len(image_id) == 0:
@@ -55,10 +55,10 @@ def get_info_from_image_model(image_model):
         try:
            image_info['location'] = image_model.location
            # print 'IMAGE HAS A LOCATION???'
-        except:
-            print 'no location'
+        except Exception as e78942:
+            print 'image_model.location', str(e78942), type(e78942)
     except Exception as e7682:
-        print 'e7682' + str(e7682)
+        print 'get_info_from_image_model', str(e7682), type(e7682)
     return image_info
 
 
@@ -151,18 +151,18 @@ def find_image(image_info):
                 filename_split = a_file.split('_')
                 if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
                     if filename_split[1] == image_info['volume']:
-                        print '**' + full_path
-                        print filename_split[2]
-                        print image_info['page']
+                        # print '**' + full_path
+                        # print filename_split[2]
+                        # print image_info['page']
                         if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
                             if filename_split[3] == image_info['image_idx']:
                                 image_root_url = os.path.join(STATIC_URL, medium_folder)
                                 file_url = os.path.join(image_root_url, a_file)
-                                print file_url
+                                # print file_url
                                 return file_url
                             # return STATIC_URL + 'bl_images/' + a_file
-            except Exception as e:
-                print e
+            except Exception as e890234:
+                print 'full_path', str(e890234), type(e890234)
                 pass
 
         scan_folder = os.path.join(web_folder, 'plates')
@@ -180,17 +180,17 @@ def find_image(image_info):
                 filename_split = a_file.split('_')
                 if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
                     if filename_split[1] == image_info['volume']:
-                        print full_path
-                        print filename_split[2]
-                        print image_info['page']
+                        # print full_path
+                        # print filename_split[2]
+                        # print image_info['page']
                         if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
                             if filename_split[3] == image_info['image_idx']:
                                 image_root_url = os.path.join(STATIC_URL, scan_folder)
                                 file_url = os.path.join(image_root_url, a_file)
-                                print file_url
+                                # print file_url
                                 return file_url
             except Exception as e:
-                print e
+                # print e
                 pass
 
         scan_folder = os.path.join(web_folder, 'covers')
@@ -208,17 +208,17 @@ def find_image(image_info):
                 filename_split = a_file.split('_')
                 if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
                     if filename_split[1] == image_info['volume']:
-                        print full_path
-                        print filename_split[2]
-                        print image_info['page']
+                        # print full_path
+                        # print filename_split[2]
+                        # print image_info['page']
                         if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
                             if filename_split[3] == image_info['image_idx']:
                                 image_root_url = os.path.join(STATIC_URL, scan_folder)
                                 file_url = os.path.join(image_root_url, a_file)
-                                print file_url
+                                # print file_url
                                 return file_url
             except Exception as e:
-                print e
+                # print e
                 pass
 
 
@@ -237,17 +237,17 @@ def find_image(image_info):
                 filename_split = a_file.split('_')
                 if os.path.isfile(full_path) and filename_split[0] == image_info['book_identifier']:
                     if filename_split[1] == image_info['volume']:
-                        print full_path
-                        print filename_split[2]
-                        print image_info['page']
+                        # print full_path
+                        # print filename_split[2]
+                        # print image_info['page']
                         if filename_split[2].lstrip('0') == image_info['page'].lstrip('0'):
                             if filename_split[3] == image_info['image_idx']:
                                 image_root_url = os.path.join(STATIC_URL, scan_folder)
                                 file_url = os.path.join(image_root_url, a_file)
-                                print file_url
+                                # print file_url
                                 return file_url
             except Exception as e:
-                print e
+                # print e
                 pass
     except:
         pass
@@ -261,8 +261,8 @@ def get_image_info(image_model):
 
         try:
             arcca_image = find_image(image_info)
-        except:
-            print 'error db.find_image'
+        except Exception as e7863257:
+            print 'error db.find_image', str(e7863257), type(e7863257)
             arcca_image == None
 
         image_info['arcca_url'] = ''
@@ -272,7 +272,7 @@ def get_image_info(image_model):
         image_model.save()
         return image_info
     except Exception as e84:
-        print 'e84 ' + str(e84)
+        print 'get_info_from_image_model', str(e84), type(e84)
         return None
 
 
@@ -468,7 +468,7 @@ def wordnet_formatted(word):
 
     stem = wn.morphy(word)
     if stem is not None and stem is not word:
-        print '*' + str(stem) + '*'
+        # print '*' + str(stem) + '*'
 
         word_stem_words = search_wordnet(stem)
         for found_word in word_stem_words:
@@ -508,8 +508,8 @@ def list_wordnet_links(tag_synset_id):
         loop += 1
         synset, synset_list = get_hypernyms(word_synset, initial_list, loop)
         return synset_list
-    except Exception as e:
-        print 'list_wordnet_links: ' + tag_synset_id + ' ' + str(e)
+    except Exception as e2432:
+        print 'list_wordnet_links: ', tag_synset_id, str(e2432), type(e2432)
         return initial_list
 
 # we stop looking upwards for parent words once we reach these pretty useless tags
@@ -546,5 +546,5 @@ def get_hypernyms(synset, synset_list, loop=0):
             else:
                 return get_hypernyms(word, synset_list, loop), synset_list
     except Exception as e45:
-        print 'get_hypernyms: ' + str(e45)
+        print 'get_hypernyms: ', str(e45), type(e45)
         return ('', synset_list, loop), synset_list

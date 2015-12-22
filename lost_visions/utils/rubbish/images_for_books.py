@@ -98,7 +98,7 @@ def get_image_data_for_array(image_data):
         c['image_area'] = int(c['flickr_original_height']) * int(c['flickr_original_width'])
 
         if a.location:
-            print a.location
+            # print 'quoi?', a.location
             c['arcca_url'] = a.location
 
             image_path = a.location
