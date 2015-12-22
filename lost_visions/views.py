@@ -82,14 +82,18 @@ def get_alternative_tags(request):
 
     try:
         tags_xy = ast.literal_eval(tag_info)
-        # print pprint.pformat(tags_xy)
+        logger.debug(pprint.pformat(tags_xy))
 
         for tag_index in tags_xy:
             user_tag = tags_xy[tag_index]
+            logger.debug(user_tag)
+
             # print '\n'
             # print pprint.pformat(user_tag)
             try:
                 alternative_words = db_tools.list_wordnet_links(user_tag['synset'].replace(' ', '_'))[::-1]
+                logger.debug(alternative_words)
+
                 # print 'alt_words: ' + str(alternative_words)
                 alternative_words.append([user_tag['tag'], [0, 0], user_tag['synset']])
 
@@ -126,11 +130,15 @@ def get_alternative_tags(request):
                     tag['tag_order'] = str(tag_order)
                     response_data.append(tag)
             except Exception as e2:
+                logger.debug('err2')
+                logger.debug(e2)
                 print 'get_alternative_tags.list_wordnet_links', str(e2), type(e2)
                 logger.debug(('get_alternative_tags.list_wordnet_links', str(e2), type(e2)))
 
                 pass
     except Exception as e3:
+        logger.debug('err3')
+        logger.debug(e3)
         print 'get_alternative_tags.literal_eval', str(e3), type(e3)
         logger.debug(('get_alternative_tags.literal_eval', str(e3), type(e3)))
         pass
