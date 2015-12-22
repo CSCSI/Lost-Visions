@@ -92,7 +92,7 @@ def get_alternative_tags(request):
             # print pprint.pformat(user_tag)
             try:
                 alternative_words = db_tools.list_wordnet_links(user_tag['synset'].replace(' ', '_'))[::-1]
-                logger.debug(alternative_words)
+                logger.debug('alternative_words' + str(alternative_words))
 
                 # print 'alt_words: ' + str(alternative_words)
                 alternative_words.append([user_tag['tag'], [0, 0], user_tag['synset']])

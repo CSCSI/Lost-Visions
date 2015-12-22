@@ -8,6 +8,8 @@ from random import randint
 from django.core import serializers
 from lost_visions import models, wordnet
 from django.core.exceptions import ObjectDoesNotExist
+import logging
+logger = logging.getLogger('lost_visions')
 
 import nltk
 from nltk.corpus import wordnet as wn, WordNetCorpusReader
@@ -509,6 +511,7 @@ def list_wordnet_links(tag_synset_id):
         synset, synset_list = get_hypernyms(word_synset, initial_list, loop)
         return synset_list
     except Exception as e2432:
+        logger.debug(e2432)
         print 'list_wordnet_links: ', tag_synset_id, str(e2432), type(e2432)
         return initial_list
 
