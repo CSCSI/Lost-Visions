@@ -62,6 +62,8 @@ def home(request):
 
 @requires_csrf_token
 def get_alternative_tags(request):
+    print 'HERE'
+    
     if request.method == 'POST':
         tag_info = request.POST['tag_info']
     else:

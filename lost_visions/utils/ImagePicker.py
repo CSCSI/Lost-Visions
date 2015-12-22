@@ -112,7 +112,7 @@ class ImagePicker():
 
                     ors.append(SQ(tag=Raw(regex_format + '*')))
             except Exception as e6272:
-                print 'e6272 : ' + str(e6272)
+                print 'e6272 : ', tag, str(e6272), type(e6272)
                 # raise e6272
 
         if len(ors) > 0:
