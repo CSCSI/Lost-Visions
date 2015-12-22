@@ -372,7 +372,7 @@ class ImagePicker():
         regex_string = r"{0}"
 
         # print query_items
-        # logger.debug(query_items)
+        logger.debug(query_items)
 
         keywords = query_items.get('keyword', '').strip()
         keywords = [x.strip() for x in keywords.split(' ')]
@@ -485,9 +485,9 @@ class ImagePicker():
             # print 'author found'
             all_results = all_results.order_by('first_author')
 
-        # logger.debug(all_results.query)
+        logger.debug(all_results.query)
         # print 'full query', all_results.query
-        # logger.debug(all_results.count())
+        logger.debug(all_results.count())
         # print 'full result count', all_results.count()
         return all_results
 

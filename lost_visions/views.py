@@ -63,7 +63,8 @@ def home(request):
 @requires_csrf_token
 def get_alternative_tags(request):
     print 'HERE'
-    
+    logger.debug('HERE')
+
     if request.method == 'POST':
         tag_info = request.POST['tag_info']
     else:
@@ -71,8 +72,13 @@ def get_alternative_tags(request):
 
     response_data = []
     print 'get', request.GET
+    logger.debug(request.POST)
+
     print 'post', request.POST
+    logger.debug(request.POST)
+
     print tag_info
+    logger.debug(tag_info)
 
     try:
         tags_xy = ast.literal_eval(tag_info)
@@ -121,9 +127,12 @@ def get_alternative_tags(request):
                     response_data.append(tag)
             except Exception as e2:
                 print 'get_alternative_tags.list_wordnet_links', str(e2), type(e2)
+                logger.debug(('get_alternative_tags.list_wordnet_links', str(e2), type(e2)))
+
                 pass
     except Exception as e3:
         print 'get_alternative_tags.literal_eval', str(e3), type(e3)
+        logger.debug(('get_alternative_tags.literal_eval', str(e3), type(e3)))
         pass
 
     unique_comp_key = {}
