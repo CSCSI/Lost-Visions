@@ -512,6 +512,7 @@ def list_wordnet_links(tag_synset_id):
         return synset_list
     except Exception as e2432:
         logger.debug(e2432)
+        logger.debug(('list_wordnet_links: ', tag_synset_id, str(e2432), type(e2432)))
         print 'list_wordnet_links: ', tag_synset_id, str(e2432), type(e2432)
         return initial_list
 
@@ -549,5 +550,6 @@ def get_hypernyms(synset, synset_list, loop=0):
             else:
                 return get_hypernyms(word, synset_list, loop), synset_list
     except Exception as e45:
+        logger.debug(e45)
         print 'get_hypernyms: ', str(e45), type(e45)
         return ('', synset_list, loop), synset_list
