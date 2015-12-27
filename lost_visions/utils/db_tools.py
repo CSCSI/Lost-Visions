@@ -439,7 +439,9 @@ def backup_db():
 def search_wordnet(searchword, limit=30):
     query = "SELECT wordid, lemma, definition, synsetid, pos, sensenum FROM words LEFT JOIN senses s USING (wordid) " \
             "LEFT JOIN synsets USING (synsetid) where lemma like %s " \
-            "order by length(lemma), sensenum COLLATE NOCASE ASC limit %s"
+            "order by length(lemma), sensenum ASC limit %s"
+
+    #  COLLATE NOCASE removed from above query
 
     results = wordnet.Words.objects.db_manager('default').raw(query, [searchword + '%', limit])
 
