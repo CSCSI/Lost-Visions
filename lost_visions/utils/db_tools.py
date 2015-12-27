@@ -441,7 +441,7 @@ def search_wordnet(searchword, limit=30):
             "LEFT JOIN synsets USING (synsetid) where lemma like %s " \
             "order by length(lemma), sensenum COLLATE NOCASE ASC limit %s"
 
-    results = wordnet.Words.objects.db_manager('wordnet').raw(query, [searchword + '%', limit])
+    results = wordnet.Words.objects.db_manager('default').raw(query, [searchword + '%', limit])
 
     # for word in results:
     #

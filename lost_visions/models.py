@@ -334,5 +334,39 @@ class ImageRotation(models.Model):
     user = models.ForeignKey(LostVisionUser, blank=False)
 
 
+class Senses(models.Model):
+    id = models.IntegerField(primary_key=True)
+    wordid = models.IntegerField()
+    casedwordid = models.IntegerField(blank=True, null=True)
+    synsetid = models.IntegerField()
+    senseid = models.IntegerField(blank=True, null=True)
+    sensenum = models.SmallIntegerField()
+    lexid = models.SmallIntegerField()
+    tagcount = models.IntegerField(blank=True, null=True)
+    sensekey = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        # managed = False
+        db_table = 'senses'
+
+
+class Words(models.Model):
+    wordid = models.IntegerField(primary_key=True)
+    lemma = models.CharField(max_length=80)
+
+    class Meta:
+        # managed = False
+        db_table = 'words'
+
+
+class Synsets(models.Model):
+    synsetid = models.IntegerField(primary_key=True)
+    pos = models.TextField() # This field type is a guess.
+    lexdomainid = models.SmallIntegerField()
+    definition = models.TextField(blank=True)
+    class Meta:
+        db_table = 'synsets'
+
+
 # watson.register(Image)
 # watson.register(ImageText)

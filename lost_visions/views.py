@@ -62,8 +62,6 @@ def home(request):
 
 @requires_csrf_token
 def get_alternative_tags(request):
-    print 'HERE'
-    logger.debug('HERE')
 
     if request.method == 'POST':
         tag_info = request.POST['tag_info']
@@ -71,13 +69,6 @@ def get_alternative_tags(request):
         tag_info = request.GET['tag_info']
 
     response_data = []
-    print 'get', request.GET
-    logger.debug(request.POST)
-
-    print 'post', request.POST
-    logger.debug(request.POST)
-
-    print tag_info
     logger.debug(tag_info)
 
     try:
@@ -147,16 +138,7 @@ def get_alternative_tags(request):
     for tag in response_data:
         unique_comp_key[tag['tag'], tag['synset']] = tag
 
-    response_data = [
-         {
-            "timestamp": "2015-12-22T17:47:55.456Z",
-            "y_percent": "0",
-            "tag": "thing",
-            "x_percent": "0",
-            "synset": "thing.n.4",
-            "tag_order": "300100100"
-        }
-    ]
+    response_data = []
     for tag_key in unique_comp_key:
         response_data.append(unique_comp_key[tag_key])
 
