@@ -335,7 +335,6 @@ class ImageRotation(models.Model):
 
 
 class Senses(models.Model):
-    id = models.IntegerField(primary_key=True)
     wordid = models.IntegerField()
     casedwordid = models.IntegerField(blank=True, null=True)
     synsetid = models.IntegerField()
