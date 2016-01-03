@@ -54,8 +54,8 @@ POEM_BUTTON_URL = MIKEY_URL + "poem1.jpg"
 BACK_BUTTON_URL = MIKEY_URL + "back.jpg"
 COAT_OF_ARMS_BUTTON_URL = MIKEY_URL + "coatofarms.jpg"
 DECORATIVE_BORDER_BUTTON_URL = MIKEY_URL + "decorative border.jpg"
-DECORATIVE_MOTIF_BUTTON_URL = MIKEY_URL + "decorativeletter.jpg"
-DECORATIVE_LETTER_BUTTON_URL = MIKEY_URL + "decorativemotif.jpg"
+DECORATIVE_MOTIF_BUTTON_URL = MIKEY_URL + "decorativemotif.jpg"
+DECORATIVE_LETTER_BUTTON_URL = MIKEY_URL + "decorativeletter.jpg"
 PHOTOGRAPH_BUTTON_IMAGE_URL = MIKEY_URL + "a_photograph.jpg"
 
 class Category():

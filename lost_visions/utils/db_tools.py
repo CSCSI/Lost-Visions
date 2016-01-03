@@ -445,6 +445,8 @@ def search_wordnet(searchword, limit=30):
 
     results = wordnet.Words.objects.db_manager('default').raw(query, [searchword + '%', limit])
 
+    print '\n', results.query, '\n'
+
     # for word in results:
     #
     #     print type(word)
@@ -458,6 +460,7 @@ def search_wordnet(searchword, limit=30):
 
 
 def wordnet_formatted(word):
+    word = word.lower()
     words = search_wordnet(word)
     response_data = []
     for found_word in words:
@@ -488,6 +491,9 @@ def wordnet_formatted(word):
     return response_data
 
 
+# TODO we can speed this up,
+# use the search_word code to grab synsets instead
+# currently uses the nltk wordnet package which is slooooow
 def list_wordnet_links(tag_synset_id):
 
     initial_list = []

@@ -53,14 +53,22 @@
 
         var font_size = getDefaultFontSize()[1];
 
+        var intervals = [];
         var tidy_ittr = 0;
-        var tidy_masonry_interval = setInterval(do_tidy, 1500);
+        {#        var tidy_masonry_interval = null;#}
+        {#        var tidy_masonry_interval = setInterval(do_tidy, 1500);#}
+        {#        console.log('created tidy_masonry_interval' + tidy_masonry_interval);#}
 
+        tidy_masonry();
         function tidy_masonry() {
-            tidy_masonry_interval = setInterval(do_tidy, 1500);
+            var tidy_masonry_interval = setInterval(do_tidy, 1500);
+            intervals.push(tidy_masonry_interval);
+            console.log('created tidy_masonry_interval' + tidy_masonry_interval);
         }
 
         function do_tidy() {
+            console.log(intervals);
+
             tidy_ittr ++;
             $('#category-container').masonry({
                 animationOptions: {
@@ -70,7 +78,17 @@
 
             if (tidy_ittr > 10) {
                 tidy_ittr = 0;
-                clearInterval(tidy_masonry_interval);
+
+                for (var i = 0; i < intervals.length; i++) {
+                    console.log('removing ' + intervals[i]);
+                    clearInterval(intervals[i]);
+
+                    var index = intervals.indexOf(intervals[i]);
+                    if (index > -1) {
+                        intervals.splice(index, 1);
+                    }
+                }
+
             }
         }
 
@@ -276,13 +294,13 @@
                         "Save, stay on this Illustration": function() {
                             $('#stay_or_next_image').val('stay');
 
-{#                            $('#captcha_key').val();#}
+                            {#                            $('#captcha_key').val();#}
                             finish_tagging_dialog_form.dialog( "close" );
 
                             $('#image-taggin-form').submit();
                         },
                         "Save, move to next Illustration": function() {
-{#                            $('#captcha_key').val($('#recaptcha-token').val());#}
+                            {#                            $('#captcha_key').val($('#recaptcha-token').val());#}
                             finish_tagging_dialog_form.dialog( "close" );
                             $('#image-taggin-form').submit();
 
@@ -291,7 +309,7 @@
                             console.log('on close:');
                             console.log(all_tags);
                             {#                        alert(all_tags);#}
-{#                            $('#captcha_key').val($('#recaptcha-token').val());#}
+                            {#                            $('#captcha_key').val($('#recaptcha-token').val());#}
                             finish_tagging_dialog_form.dialog( "close");
                             {#                        setup_finish_dialog();#}
                         }
@@ -388,7 +406,7 @@
                 var collection_id = $(this).data('collection_id');
                 var link = '{% url 'dl_collection' %}?' +
                         'collection_id=' + collection_id;
-                $('#share_collection_ref').attr('href', link).text('http://lost-visions.cf.ac.uk' + link);
+                $('#share_collection_ref').attr('href', link).text('http://illustrationarchive.cf.ac.uk' + link);
                 {#                $('#edit_collection_dialog_form').dialog("open");#}
                 $('#share_dialogue').dialog("open");
 
@@ -2017,7 +2035,7 @@
 
     <div id="share_dialogue" title="Share Image">
         Share this URL : <br>
-        <a target="_blank" id="share_image_ref" href="{% url 'image' image_id %}">http://lost-visions.cf.ac.uk{% url 'image' image_id %}</a>
+        <a target="_blank" id="share_image_ref" href="{% url 'image' image_id %}">http://http://illustrationarchive.cf.ac.uk{% url 'image' image_id %}</a>
         <br><br>
         <a href="https://twitter.com/share" class="twitter-share-button" data-text="I'm tagging this image with the @Lost_Visions project" data-size="large" data-hashtags="Lost_Visions">Tweet</a>
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>

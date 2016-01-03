@@ -1,5 +1,7 @@
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
+from django.db import connections
+from lost_visions.utils.db_tools import wordnet_formatted
 from lost_visions import wordnet, models
 
 __author__ = 'ubuntu'
@@ -65,6 +67,17 @@ def copy_synsets():
 
     models.Synsets.objects.bulk_create(all_synsets)
 
-copy_words()
-copy_senses()
-copy_synsets()
+
+def test_wordnet():
+    t = wordnet_formatted('napk')
+    print len(t)
+
+    print connections['default'].queries
+
+
+test_wordnet()
+
+# copy_words()
+# copy_senses()
+# copy_synsets()
+

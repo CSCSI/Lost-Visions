@@ -1536,7 +1536,7 @@ def user_dl_all(request):
 
             filename = os.path.join('/tmp/', image_id + '.jpg')
             if 'static/media' in fpath:
-                fpath = 'http://lost-visions.cf.ac.uk' + fpath
+                fpath = 'http://illustrationarchive.cf.ac.uk' + fpath
             urllib.urlretrieve(fpath, filename)
             fpath = filename
 
@@ -1662,7 +1662,7 @@ def download_collection(request):
 
         filename = os.path.join('/tmp/', image_id + '.jpg')
         if 'static/media' in fpath:
-            fpath = 'http://lost-visions.cf.ac.uk' + fpath
+            fpath = 'http://illustrationarchive.cf.ac.uk' + fpath
         urllib.urlretrieve(fpath, filename)
         fpath = filename
 
@@ -1809,11 +1809,11 @@ def new_collection(request):
 
 
 def tweet_card(request):
-    image = 'http://lost-visions.cf.ac.uk/static/media/images/ill-arch-wide.png'
+    image = 'http://illustrationarchive.cf.ac.uk/static/media/images/ill-arch-wide.png'
     text = 'Here is a test twitter card'
     title = 'this is the title'
     user = '@Lost_Visions'
-    site = 'lost-visions.cf.ac.uk'
+    site = 'illustrationarchive.cf.ac.uk'
 
     return render(request, 'twitter_card.html',
                   {'tweet_image': image,
@@ -2521,9 +2521,9 @@ def request_public_exhibition(request):
         html_text += '<p>User ' + get_request_user(request).username.username + \
                      ' has requested that a collection named *' + collection_name + \
                      '* with collection ID *' + collection_id + '* be made into a Public Exhibition.</p><br>'
-        html_text += '<p>Click <a href="lost-visions.cf.ac.uk' + reverse('exhibition', kwargs={'collection_id': collection_id}) + \
+        html_text += '<p>Click <a href="illustrationarchive.cf.ac.uk' + reverse('exhibition', kwargs={'collection_id': collection_id}) + \
                      '">Here</a> to review it.</p><br>'
-        html_text += '<p>Click <a href="lost-visions.cf.ac.uk' + reverse('accept_public_exhibition', kwargs={'collection_id': collection_id}) + \
+        html_text += '<p>Click <a href="illustrationarchive.cf.ac.uk' + reverse('accept_public_exhibition', kwargs={'collection_id': collection_id}) + \
                      '">Here</a> to accept.</p><br>'
         html_text += '<p>Thanks.</p><p>This is an automated message, please do not reply.</p>'
         html_text += '<br><p>Lost Visions/ Illustration Archive, 2015<p>'

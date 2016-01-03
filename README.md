@@ -65,3 +65,7 @@ exec gunicorn -c /var/www/lost_visions/Lost-Visions/crowdsource/gunicorn.setting
 
 ### ReImagine change to nginx.conf
     client_max_body_size 20M;
+
+
+Log files are all over the place:
+root user (sudo su), /debug.log
