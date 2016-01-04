@@ -6,6 +6,7 @@ from haystack.backends import SQ
 from haystack.inputs import Raw
 from haystack.query import SearchQuerySet
 import re
+from nltk import corpus
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowdsource.settings")
 import pprint
@@ -377,6 +378,18 @@ class ImagePicker():
         keywords = query_items.get('keyword', '').strip()
         keywords = [x.strip() for x in keywords.split(' ')]
 
+        print keywords
+        clean_keywords = []
+
+        stop = corpus.stopwords.words('english')
+        for word in keywords:
+            if word not in stop:
+                clean_keywords.append(word)
+
+        keywords = clean_keywords
+
+        print keywords
+
         year = query_items.get('year', '').strip()
         author = query_items.get('author', '').strip()
         illustrator = query_items.get('illustrator', '').strip()
@@ -460,16 +473,34 @@ class ImagePicker():
 
         for word in keywords:
             if len(word):
-                all_results = all_results.filter_or(tag__icontains=word)
-                all_results = all_results.filter_or(caption__icontains=word)
-                all_results = all_results.filter_or(description__icontains=word)
+                # Create seperate querysets for each keyword with all the possible ORs
+                # then use | to get the union of the queysets with the main set from above
+
+                all_results_for_ANDs = SearchQuerySet()
+
+                all_results_for_ANDs = all_results_for_ANDs.filter_or(tag__icontains=word)
+                all_results_for_ANDs = all_results_for_ANDs.filter_or(caption__icontains=word)
+                all_results_for_ANDs = all_results_for_ANDs.filter_or(description__icontains=word)
 
                 if not tag_keywords_only:
-                    all_results = all_results.filter_or(first_author__icontains=word)
-                    all_results = all_results.filter_or(date__icontains=word)
-                    all_results = all_results.filter_or(title__icontains=word)
-                    all_results = all_results.filter_or(publisher__icontains=word)
-                    all_results = all_results.filter_or(pubplace__icontains=word)
+                    all_results_for_ANDs = all_results_for_ANDs.filter_or(first_author__icontains=word)
+                    all_results_for_ANDs = all_results_for_ANDs.filter_or(date__icontains=word)
+                    all_results_for_ANDs = all_results_for_ANDs.filter_or(title__icontains=word)
+                    all_results_for_ANDs = all_results_for_ANDs.filter_or(publisher__icontains=word)
+                    all_results_for_ANDs = all_results_for_ANDs.filter_or(pubplace__icontains=word)
+
+                all_results = all_results & all_results_for_ANDs
+
+                # all_results = all_results.filter_or(tag__icontains=word)
+                # all_results = all_results.filter_or(caption__icontains=word)
+                # all_results = all_results.filter_or(description__icontains=word)
+                #
+                # if not tag_keywords_only:
+                #     all_results = all_results.filter_or(first_author__icontains=word)
+                #     all_results = all_results.filter_or(date__icontains=word)
+                #     all_results = all_results.filter_or(title__icontains=word)
+                #     all_results = all_results.filter_or(publisher__icontains=word)
+                #     all_results = all_results.filter_or(pubplace__icontains=word)
 
         sort_by = query_items.get('sort_results', '').strip()
         # print 'sorting by', sort_by
