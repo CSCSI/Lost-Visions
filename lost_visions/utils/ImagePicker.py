@@ -753,6 +753,12 @@ class ImagePicker():
         keywords = [x.strip() for x in keywords.split(' ') if len(x)]
 
         # print keywords
+        clean_keywords = []
+        stop = corpus.stopwords.words('english')
+        for word in keywords:
+            if word not in stop:
+                clean_keywords.append(word)
+        keywords = clean_keywords
 
         if len(keywords) == 0:
             return models.ImageCollection.objects.none()
