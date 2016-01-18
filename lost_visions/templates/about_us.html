@@ -24,24 +24,24 @@
         </div>
     </div>
 
-    <hr>
-
-    <div class="panel panel-default">
-        <div class="panel">
-            <div class="panel-heading" style="color: #ffffff">
-                ReImagine Competition
-            </div>
-            <div class="panel-body">
-                <div style="margin: 0.2em; padding: 5px; text-align: center" class="alert alert-success">
-                    Enter the ReImagine competition now! <a class="alert-link" href="{% url 'reimagine' %}">Click Here</a> for more information
-                </div>
-
-                <p style="text-align: center;">
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/J81veSzrZr8" frameborder="0" allowfullscreen></iframe>
-                </p>
-            </div>
-        </div>
-    </div>
+{#    <hr>#}
+{##}
+{#    <div class="panel panel-default">#}
+{#        <div class="panel">#}
+{#            <div class="panel-heading" style="color: #ffffff">#}
+{#                ReImagine Competition#}
+{#            </div>#}
+{#            <div class="panel-body">#}
+{#                <div style="margin: 0.2em; padding: 5px; text-align: center" class="alert alert-success">#}
+{#                    Enter the ReImagine competition now! <a class="alert-link" href="{% url 'reimagine' %}">Click Here</a> for more information#}
+{#                </div>#}
+{##}
+{#                <p style="text-align: center;">#}
+{#                    <iframe width="560" height="315" src="https://www.youtube.com/embed/J81veSzrZr8" frameborder="0" allowfullscreen></iframe>#}
+{#                </p>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
 
     <hr>
 
@@ -132,6 +132,10 @@
                         <img src="{% static "media/images/about_us/thomas-julia-web.jpg" %}" style="width: 125px">
                     </div>
                     <div class="col-xs-12 col-sm-8">
+                        <h4>About Julia Thomas</h4>
+                        <p>
+                            Julia Thomas is Professor of English Literature at Cardiff University, where she specialises in Illustration Studies. She has published widely on aspects of Victorian and material culture including Victorian Narrative Painting (Tate, 2000), Pictorial Victorians (Ohio UP, 2004) and Shakespeare’s Shrine (2012). She is Director of the AHRC-funded Database of Mid-Victorian Illustration and The Illustration Archive.
+                        </p>
                         <h4>University webpage</h4>
                         <p>
                             <a href="http://www.cf.ac.uk/encap/contactsandpeople/profiles/thomas-julia.html" target="_blank">Here</a>
@@ -144,12 +148,12 @@
                         <p>David Skilton</p>
                     </h4>
                     <div class="col-xs-12 col-sm-4">
-                        <img src="http://www.cf.ac.uk/encap/images/skilton-david-web.jpg" style="width: 125px">
+                        <img src="{% static 'media/images/about_us/skilton-david-web-2.jpg' %}" style="width: 125px">
                     </div>
                     <div class="col-xs-12 col-sm-8">
-                        <h4>University webpage</h4>
+                        <h4>About David Skilton</h4>
                         <p>
-                            <a href="{% static "media/images/about_us/skilton-david-web.jpg" %}" target="_blank">Here</a>
+                            David Skilton is Emeritus Professor of English at Cardiff University. Having worked on the history of the English novel and on Victorian fiction in particular, he was one of those who in the 1980s began serious work to create the discipline of Illustration Studies. He has worked on the original illustrations to the works of Anthony Trollope, on whom he is an established authority, and has written articles on meaning production in literary illustration and on the place of illustration in nineteenth-century visual culture in general. One of his other principal interests, the art and literature of London, merged with Illustration Studies when he began to work on Gustave Doré's London: a Pilgrimage. He is currently contributing to a more systematic description and analysis of nineteenth-century literary illustration in Britain and France.
                         </p>
                     </div>
                 </div>
@@ -162,6 +166,10 @@
                         <img src="{% static "media/images/about_us/Nicky.jpg" %}" style="width: 125px">
                     </div>
                     <div class="col-xs-12 col-sm-8">
+                        <h4>About Nicky Lloyd</h4>
+                        <p>
+                            Nicky is Lecturer in English Literature at Bath Spa University, having previously completed her PhD at Cardiff University and worked as Post Doctoral Research Associate on the AHRC-funded Lost Visions project. Nicky specialises in fiction of the Romantic period, with a particular focus on the Irish national tale and the interactions between Romanticism and Enlightenment, and has research interests in the digital humanities, book illustration and visual cultures. She has published articles on the Irish novelist Lady Morgan and is one of the authors of The Palgrave Guide to Gothic Publishing: The Business of Gothic Fiction, 1764–1835 (2016). She is also Associate Editor of the online journal, Romantic Textualities: Literature and Print Culture, 1780-1840.
+                        </p>
                         <h4>University webpage</h4>
                         <p>
                             <a href="http://www.cardiff.ac.uk/encap/degreeprogrammes/postgraduateresearch/currentphdtopics/pgstudents/lloyd.html" target="_blank">Here</a>
@@ -184,6 +192,10 @@
                             <img src="{% static "media/images/about_us/o.f.rana.jpg" %}" style="width: 125px">
                         </div>
                         <div class="col-xs-12 col-sm-8">
+                            <h4>About Omer Rana</h4>
+                            <p>
+                                Omer Rana is Professor of Performance Engineering in the School of Computer Science & Informatics (Cardiff University), and leads the Complex Systems group. His research interests are high performance distributed computing, data mining/analysis and multi-agent systems. He holds a PhD in Computing from Imperial College (London).
+                            </p>
                             <h4>University webpage</h4>
                             <p>
                                 <a href="https://www.cs.cf.ac.uk/contactsandpeople/staffpage.php?emailname=O.F.Rana" target="_blank">Here</a>
@@ -199,6 +211,10 @@
                             <img src="{% static "media/images/about_us/paul.rosin.jpg" %}" style="width: 125px">
                         </div>
                         <div class="col-xs-12 col-sm-8">
+                            <h4>About Paul Rosin</h4>
+                            <p>
+                                Paul Rosin is Professor at the School of Computer Science & Informatics, Cardiff University. Previous posts include lecturer at the Department of Information Systems and Computing, Brunel University London, UK, research scientist at the Institute for Remote Sensing Applications, Joint Research Centre, Ispra, Italy, and lecturer at Curtin University of Technology, Perth, Australia. His research interests include the representation, segmentation, and grouping of curves, knowledge-based vision systems, early image representations, low level image processing, machine vision approaches to remote sensing, methods for evaluation of approximation algorithms, etc., medical and biological image analysis, mesh processing, non-photorealistic rendering and the analysis of shape in art and architecture.
+                            </p>
                             <h4>University webpage</h4>
                             <p>
                                 <a href="http://www.cs.cf.ac.uk/contactsandpeople/staffpage.php?emailname=paul.rosin" target="_blank">Here</a>
@@ -216,13 +232,9 @@
                             <img src="{% static "media/images/about_us/i.harvey.jpg" %}" style="width: 125px">
                         </div>
                         <div class="col-xs-12 col-sm-8">
-                            <h4>Research Interests</h4>
+                            <h4>About Ian Harvey</h4>
                             <p>
                                 Research interests include interoperability of experimental and production data and computing resources, utilising scalable computing infrastructures such as Cloud and Grid Computing environments, and development of tools useful to the research community.
-                            </p>
-                            <h4>University webpage</h4>
-                            <p>
-                                <a href="" target="_blank">Here</a>
                             </p>
                         </div>
                     </div>
