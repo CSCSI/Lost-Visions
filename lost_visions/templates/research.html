@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel">
+            <div class="panel-heading" style="color: #ffffff">
+                <span style="font-size: x-large">&#10087;</span>The Significance of <span style="font-style: italic">The Illustration Archive</span></div>
+            <div class="panel-body">
+                <p>
+                    We live in an age when images proliferate at unprecedented speed thanks to digital technology. It is ironic, then, that our past visual culture is seriously threatened by the very same technical advances. Many texts are now stored and delivered by computers, and digital search techniques help us understand the meaning, provenance and reception of these texts. However, the illustrations that appear in these texts are frequently omitted. When included, they are often of low quality and without the metadata needed to understand or to retrieve them. There is a risk that tomorrow's readers will be almost unaware of illustration, even though our research has shown that illustrated texts have qualities, meanings and strategies that are very different from those of texts that are not illustrated, and even strikingly different from those of the same verbal texts stripped of their images. Whole genres of artistic, educational and informative products may effectively be lost to us.
+                </p>
+                <p>
+                    <span style="font-style: italic">The Illustration Archive</span> sets out to address this problem. The Archive was created on the ‘Lost Visions’ project funded by the AHRC and involved collaboration with the British Library, Advanced Research Computing@Cardiff (ARCCA) and the partnership of leading humanities scholars and computer scientists.
+                </p>
+                <p>
+                    The Archive contains over a million illustrations from 68,000 digitised volumes covering ‘Literature’, ‘Philosophy’, ‘History’ and ‘Geography’, published primarily in the eighteenth and nineteenth centuries. This period is arguably the most important in book illustration. In these years, rapid changes in reproductive techniques were paralleled by changes in the meanings of art and its reception. Art was democratised and book illustrations became more widely collectable and mobile than ever before.
+                </p>
+                <p>
+                    <span style="font-style: italic">The Illustration Archive</span> is a fully searchable web-based interface that provides access to these illustrations with accompanying bibliographic metadata and the option of viewing the text in which the illustration appears. The searchability of the illustrations is made possible through a combination of machine learning and crowdsourced image tagging. To date, this is the largest searchable online resource dedicated to illustrations.
+                </p>
+                <p>
+                    The Archive is big in itself, but far bigger in its impact. It has the potential to revolutionise how illustration is understood and the importance accorded to it, to supply an image-hungry commercial world with illustrative material, and to lead to ever more accurate ways of classifying and analysing images in large databases
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="panel panel-default">
+        <div class="panel">
+            <div class="panel-heading" style="color: #ffffff">
+                <span style="font-size: x-large">&#10087;</span>Research Objectives of <span style="font-style: italic">The Illustration Archive</span></div>
+            <div class="panel-body">
+                <ol>
+                    <li>
+                        <p>
+                            The creation of a dedicated, searchable archive of illustration with adequate metadata that is available for researchers and the public
+                        </p>
+                        <p>
+                            New technologies often marginalise the visual. Mass digitisation projects have tended either to omit illustrations or describe them inadequately for independent retrieval. <span style="font-style: italic">The Illustration Archive</span> addresses this shortcoming by locating, analysing, and supplementing the metadata attached to the illustrations in the 68,000 digitised volumes of the British Library's dataset.
+                        </p>
+                    </li>
+
+                    <li>
+                        <p>
+                            The development of tools for viewing individual images or classes of images from a large corpus
+                        </p>
+                        <p>
+                            Digital representations of institutional collections and cross-institutional projects do not cover illustrations in volumes. A facility for viewing such images exists only in a very small minority of academic databases, and on a relatively small scale. The open-access tools developed on this project have applicability for other large datasets containing images.
+                        </p>
+                    </li>
+
+                    <li>
+                        <p>
+                            The exploration of methods and tools to make the content of illustrations searchable
+                        </p>
+                        <p>
+                            This includes cutting-edge research into Computer Vision and the development of a system of crowdsourced tagging, which involved an analysis of crowdsourcing mechanisms and ways of classifying illustrations.
+                        </p>
+                    </li>
+
+                    <li>
+                        <p>
+                            The promotion of Illustration Studies
+                        </p>
+                        <p>
+                            <span style="font-style: italic">The Illustration Archive</span> and its underpinning research play a key role in the development of Illustration Studies as a distinct academic field. The Archive provides a valuable tool for future research into historic illustrations (see For the Researcher).
+                        </p>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="panel panel-default">
+        <div class="panel">
+            <div class="panel-heading" style="color: #ffffff">
+                <span style="font-size: x-large">&#10087;</span>Research Context for <span style="font-style: italic">The Illustration Archive</span></div>
+            <div class="panel-body">
+                <p>
+                    <span style="font-style: italic">The Illustration Archive</span> draws on extensive research into illustration and how it generates meanings in relation to the text and its historical context. This agenda was laid out in Julia Thomas’s Pictorial Victorians (Ohio University Press, 2004) and the numerous articles and essays of the ‘Lost Visions’ team (see ‘About Us’). An overriding objective has been the establishment of Illustration Studies, which emphasises the significance of this neglected mode of representation.
+                </p>
+
+                <p>
+                    A major aspect of the research that fed into <span style="font-style: italic">The Illustration Archive</span> has been the application of ICT methods to the study of illustration. We have directed four AHRC-funded projects, which provide the research context for <span style="font-style: italic">The Illustration Archive</span>:
+                </p>
+
+                <ol>
+                    <li>
+                        <p>
+                            The Database of Mid-Victorian Illustration: <a href="www.dmvi.org.uk">www.dmvi.org.uk</a>. DMVI includes all wood-engraved literary illustration from 1862 and has had widespread impact. It is searchable via bibliographic and iconographic metadata. Not only can lesser-known illustrations be found, but also illustrations already known can be better understood in the context of the wide practice of the whole literary publishing industry. In its aim to raise the quality of metadata in visual databases, DMVI was foundational for the underlying principles of <span style="font-style: italic">The Illustration Archive</span>. However, the sheer number of illustrations that <span style="font-style: italic">The Illustration Archive</span> contains necessitated further research into ways of making image content searchable and identifying image similarity in big datasets, including crowdsourcing, Content Based Image Retrieval (CBIR), and the use of local image descriptors (e.g. SIFT features) which are quantized to form a set of visual words (the so-called bag of visual words (BoW) approach).
+                        </p>
+                    </li>
+
+                    <li>
+                        <p>
+                            The computational infrastructure of DMVI and its impact was further developed under the Digital Equipment and Database Enhancement for Impact (DEDEFI) call. This included the mapping of our expert iconographic descriptors onto Iconclass codes, which enabled DMVI to be searchable in different languages.
+                        </p>
+                    </li>
+
+                    <li>
+                        <p>
+                            An ICT methods workshop entitled ‘Annotating Image Archives to Support Literary Research’, which discussed ICT support for Illustration Studies, including Semantic Web and CBIR technologies.
+                        </p>
+                    </li>
+
+                    <li>
+                        <p>
+                            ‘Literary Illustration: Conservation, Access, Use’ (LICAU). A Museums, Libraries and Galleries Workshop series, run in partnership with the V&A, on the curation, access and use of images from printed texts. Participants came from all sectors and many holding institutions. Follow-up workshops were run with funding from the UK and Norway.
+                        </p>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="panel panel-default">
+        <div class="panel">
+            <div class="panel-heading" style="color: #ffffff">
+                <span style="font-size: x-large">&#10087;</span>Publications</div>
+            <div class="panel-body">
+                <p>
+                    Calè, L. et al., (2015). Lost Visions: An Interview with Julia Thomas. 19: Interdisciplinary Studies in the
+
+                    Long Nineteenth Century. 2015(21). DOI: <a href="http://doi.org/10.16995/ntn.752">http://doi.org/10.16995/ntn.752</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="panel panel-default">
+        <div class="panel">
+            <div class="panel-heading" style="color: #ffffff">
+                Listen to us talk about the project
+            </div>
+            <div class="panel-body">
+                <h2>Digital histories on YouTube</h2>
+                <p>
+                    <a target="_blank" href="https://www.youtube.com/watch?v=LqDYsCsomnU">On YouTube</a>
+                </p>
+                <p>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/LqDYsCsomnU" frameborder="0" allowfullscreen></iframe>
+                </p>
+
+                <h2>Digital histories Podcast</h2>
+                <p>
+                    <a target="_blank" href="http://www.history.ac.uk/podcasts/digital-history/lost-visions-retrieving-visual-element-printed-books">http://www.history.ac.uk/podcasts/digital-history/lost-visions-retrieving-visual-element-printed-books
+                    </a>
+                </p>
+                <h2>British Library : Curious Illustrations</h2>
+                <p>
+                    <a target="_blank" href="https://www.youtube.com/watch?v=6PszlgSI1ro&feature=youtu.be">On YouTube</a>
+                </p>
+                <p>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/6PszlgSI1ro" frameborder="0" allowfullscreen></iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="panel panel-default">
+        <div class="panel">
+            <div class="panel-heading" style="color: #ffffff">
+                <span style="font-size: x-large">&#10087;</span>For the Researcher</div>
+            <div class="panel-body">
+                <p>
+                    <span style="font-style: italic">The Illustration Archive</span> transforms research into historic illustrations by providing access to over a million illustrations from 68,000 volumes from the British Library covering ‘literature’, ‘history’, ‘philosophy’ and ‘geography’. These generic categories were attributed to the books in the nineteenth century and the dataset is actually far broader than they suggest (there is a significant number of scientific books, for example). Likewise, while the illustrations appear primarily in books published in the eighteenth and nineteenth centuries, but we have identified illustrations from 1511 to 1946.
+                </p>
+                <p>
+                    Our aim in creating <span style="font-style: italic">The Illustration Archive</span> was to give more prominence to illustration and to suggest the ways in which an understanding of this mode of representation is fundamental to an understanding of cultural meanings. Whatever your areas of research, <span style="font-style: italic">The Illustration Archive</span> can help you find relevant images. You can utilise all the features of the Archive if you set up an account on the site.
+                </p>
+
+                <h4>Searching for Illustrations:</h4>
+                <p>
+                    Using our bespoke infrastructure, you can search for illustrations across multiple fields: by the content of the pictures (entered into the ‘keyword’ field), the illustrator, and/or the bibliographic details of the book in which the illustrations appeared. Or you may want to use the ‘Browse Illustrations’ feature to look through randomly-generated illustrations.
+                </p>
+
+                <h4>Viewing the Illustrations:</h4>
+
+                <p>
+                    You can choose to view the illustrations in a ‘gallery’ view, where the images appear side by side, or as a ‘list’ view, which includes the bibliographic information attached to the image. Clicking on an image gives the bibliographic details for the image, thumbnails of other illustrations that appear in the book, and, where available, ‘similar’ illustrations that appear elsewhere. There is also the option to view the full page/book from which the illustration is taken. The magnifying glass icon in the bar on the left of the image allows you to zoom in on the illustrations.
+                </p>
+
+                <h4>Using the Illustrations</h4>
+
+                <p>
+                    You can download the illustrations and share them on social media. If you have an account and are logged in, you can create your own collections of images or even curate an exhibition, which can be displayed on the site. For instructions on how to use these features, go to the ‘Help’ button in the drop down menu under ‘About’. All the illustrations in the Archive have been declared ‘Public Domain’ by the British Library and, as such, are considered to be free from copyright restrictions.
+                </p>
+
+                <h4>Tagging the Illustrations</h4>
+
+                <p>
+                    The ability to search the content of the illustrations in the Archive is dependent on their being tagged. Take a break from your research and help us out by tagging some images while you are visiting the site. A warning: tagging illustrations can be addictive!
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

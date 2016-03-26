@@ -369,3 +369,4 @@ class Synsets(models.Model):
 
 # watson.register(Image)
 # watson.register(ImageText)
+import lost_visions.signals.handlers

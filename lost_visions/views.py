@@ -2875,3 +2875,7 @@ def zip_available(request, collection_id):
     return HttpResponse(json.dumps({'success': False,
                                     'url': static(url)
                                    }, indent=4), content_type="application/json")
+
+
+def research(request):
+    return render_to_response('research.html')
