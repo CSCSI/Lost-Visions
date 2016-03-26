@@ -6,6 +6,8 @@
 {% block results %}
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
 
+        var view_toggle = "list";
+
         var all_image_ids = "{{ all_image_ids }}";
         var all_image_ids_list = all_image_ids.split(',');
         var start_id_index = 0;
@@ -100,7 +102,7 @@
                     var ordered_id_list = ids.split(',');
 
                     var view_toggle_btn = $('#view_toggle');
-                    if (view_toggle_btn.data("view") == "list") {
+                    if (view_toggle == "list") {
 
                         var table = $('#results_table');
 
@@ -138,7 +140,7 @@
                             }
                         }
 
-                    } else if (view_toggle_btn.data("view") == "gallery") {
+                    } else if (view_toggle == "gallery") {
                         $('#results_table').empty();
 
                         var result_container = $('#grid-result-container').masonry({
@@ -246,30 +248,27 @@
 
             if($.cookie("lv_results_view_layout")) {
                 var view = $.cookie("lv_results_view_layout");
+
                 if (view == "gallery") {
-                    view_toggle_btn.data("view", "gallery");
-                    view_toggle_btn.text("List view");
+                    view_toggle = "gallery";
+                    view_toggle_btn.text("Switch to List view");
                 } else if (view == "list") {
-                    view_toggle_btn.data("view", "list");
-                    view_toggle_btn.text("Gallery view");
+                    view_toggle = "list";
+                    view_toggle_btn.text("Switch to Gallery view");
                 }
             }
 
             view_toggle_btn.click(function(){
-                if (view_toggle_btn.data("view") == "list") {
-                    view_toggle_btn.data("view", "gallery");
-                    view_toggle_btn.text("Gallery View");
+                console.log(view_toggle);
+                if (view_toggle == "list") {
+                    view_toggle = "gallery";
+                    view_toggle_btn.text("Switch to List View");
                     $.cookie("lv_results_view_layout", "gallery", {expires: 365, path: '/'});
-                    {#                location.reload();#}
 
-                    {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
-                } else if (view_toggle_btn.data("view") == "gallery") {
-                    view_toggle_btn.data("view", "list");
-                    view_toggle_btn.text("List view");
-                    {#                    alert("changed view to " + view_toggle_btn.data("view"));#}
+                } else if (view_toggle == "gallery") {
+                    view_toggle = "list";
+                    view_toggle_btn.text("Switch to Gallery view");
                     $.cookie("lv_results_view_layout", "list", {expires: 365, path: '/'});
-                    {#                location.reload();#}
-
                 }
                 start_id_index = 0;
                 end_id_index = {{ number_to_show }};

@@ -32,7 +32,9 @@ h3 {
     text-decoration: underline;
 }
 
-
+/*.introjs-nextbutton:active, .introjs-nextbutton:active {*/
+    /*color: greenyellow;*/
+/*}*/
 
 
 h5 {
@@ -264,7 +266,9 @@ body > div.wrapper > div.navbar.navbar-default.navbar-fixed-top > div{
     font-size: x-large;
 }
 
-
+.education > p > span > a{
+    color: #0088cc;
+}
 
 /*help*/
 

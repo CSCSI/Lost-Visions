@@ -1516,6 +1516,10 @@
                                          class="btn btn-success side-menu-btn save_image_btn save_image"><div class="fa fa-heart"></div></div>
                                 </li>
                             {% endif %}
+                            <li>
+                                <a class="btn btn-success side-menu-btn" id="teach_me" data-toggle="tooltip" data-placement="left"
+                                   title="Teach me about this page" data-original-title="Teach Me"><i class="fa fa-question-circle"></i></a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -1676,10 +1680,12 @@
 
 
 
-        <div data-toggle="tooltip" data-placement="top"
+        <div
+{#                data-toggle="tooltip" data-placement="top"#}
              title="Similar Illustration" data-original-title="Similar Images"
              id="collapse_similars" class="panel-group"
-             data-step="5" data-intro='These are potentially similar Illustration' data-position="right">
+{#             data-step="5" data-intro='These are similar illustrations' #}
+             data-position="right">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     Similar Illustrations
@@ -1712,7 +1718,7 @@
         <div data-toggle="tooltip" data-placement="top"
              title="Book Illustration" data-original-title="Book Illustrations"
              id="collapse_book_images" class="panel-group"
-             data-step="6" data-intro='These are Illustration from this book' data-position="right">
+             data-step="6" data-intro='These are other illustrations from this book' data-position="right">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     Other Illustrations from this Book
@@ -1726,10 +1732,11 @@
         </div>
 
 
-        <div data-toggle="tooltip" data-placement="top"
+        <div
+{#                data-toggle="tooltip" data-placement="top"#}
              title="Tags previously added for this Illustration" data-original-title="Image Tags"
              id="collapse_cloud" class="panel-group"
-             data-step="2" data-intro="This is the tag cloud for the Illustration.\n Previous Illustration taggers may have added the same tag as you, <br>which helps us raise it's relevance in search results"
+{#             data-step="2" data-intro="This is the tag cloud for the Illustration.\n Previous Illustration taggers may have added the same tag as you, which helps us raise it's relevance in search results"#}
              data-position="right">
             <div class="panel-heading">
                 <h4 class="panel-title">
