@@ -2,13 +2,31 @@
 {% load staticfiles %}
 
 {% block content %}
-    <h3>
-        Exhibitions
-    </h3>
+{#    <h3>#}
+{#        Exhibitions#}
+{#    </h3>#}
+    <div class="row">
+        <div class="col-lg-1">
+            <div style="color: #b87004; font-size: 60px; margin: -25px +20px">&#10087;</div>
+        </div>
+        <div class="col-lg-11">
+            <div class="">
+                <div style="font-family: Helvetica, Arial, sans-serif; margin-top: 0.5em">Exhibitions</div>
+            </div>
+            <div class="">
+                <div style="font-family: Helvetica, Arial, sans-serif; color: grey">The Illustration Archive</div>
+            </div>
+        </div>
+    </div>
 
+    <div class="row">
     <a href="{% url 'public_exhibition' %}">
         <div class="btn btn-success">Latest Exhibition</div>
     </a>
+    <a href="{% url 'help' %}#exhibition" target="_blank">
+        <div class="btn btn-success">Create an Exhibition</div>
+    </a>
+    </div>
 
     <hr>
 
