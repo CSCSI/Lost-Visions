@@ -372,7 +372,7 @@ class ImagePicker():
 
         regex_string = r"{0}"
 
-        # print query_items
+        print query_items
         logger.debug(query_items)
 
         keywords = query_items.get('keyword', '').strip()
@@ -388,7 +388,7 @@ class ImagePicker():
 
         keywords = clean_keywords
 
-        print keywords
+        print 'keywords', keywords
 
         year = query_items.get('year', '').strip()
         author = query_items.get('author', '').strip()
@@ -402,6 +402,7 @@ class ImagePicker():
         tag_keywords_only = query_items.get('tag_keywords_only', False)
 
         all_results = SearchQuerySet()
+        print all_results.count()
 
         # # This should work, but it makes solr throw "too many boolean clauses"
         # # if the user selects too many years/ books

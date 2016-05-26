@@ -1192,8 +1192,8 @@ def do_advanced_search(request):
         date_range = [year_from + '-01-01', year_to + '-12-31']
         books_in_date_range = models.Book.objects.filter(datetime__range=date_range).values_list('book_identifier', flat=True)
 
-        # print 'books in range', date_range, books_in_date_range.count()
-        # print books_in_date_range.query
+        print 'books in range', date_range, books_in_date_range.count()
+        print 'books_in_date_range.query', books_in_date_range.query
 
         # logger.debug('books in range ' + str(year_from) + ' ' + str(year_to) + ' : ' + str(books_in_date_range.count()))
         # logger.debug(books_in_date_range)
@@ -1374,21 +1374,34 @@ def get_images_in_books(images, books, max_results):
     # This avoids solr throwing "too many boolean clauses" when filtering multiple years
     # Also allows specific tailoring of max_results we're allowing, tweak till reasonable timings
 
-    # print 'checking if ', images.count(), 'are in ', len(books), 'books'
+    print 'checking if ', images.count(), 'are in ', len(books), 'books'
 
     book_filtered = models.Image.objects.all()
     if len(books):
         # If we specify books, we're looking in them only
         # Otherwise return all images
-        book_filtered = book_filtered.filter(
+
+        # book_filtered = book_filtered.filter(
+        #     book_identifier__in=books
+        # )
+
+        book_filtered = images.filter(
             book_identifier__in=books
         )
-    book_filtered = book_filtered.filter(
-        flickr_id__in=images.values_list('flickr_id', flat=True)[:max_results]
-    ).values_list(
-        'flickr_id', flat=True
-    ).distinct()
-    # print book_filtered.query
+    print 'book_filtered.count()', book_filtered.count()
+
+    # book_filtered = book_filtered.filter(
+    #     flickr_id__in=images.values_list('flickr_id', flat=True)[:max_results]
+    # ).values_list(
+    #     'flickr_id', flat=True
+    # ).distinct()
+
+    book_filtered = book_filtered.values_list('flickr_id', flat=True)[:max_results]
+
+    book_filtered = set(book_filtered)
+
+    # print 'book_filtered.query', book_filtered.query
+
     return book_filtered
 
 
@@ -2250,6 +2263,9 @@ def page_turner(request, book_id, page, volume):
 
         render_details['pre_post']= pre_post
         render_details['pre_post_number'] = extra_page_number
+
+    render_details['pre_number'] = str(int(page_detail[0]) - 1)
+    render_details['post_number'] = str(int(page_detail[0]) + 1)
 
     return render(request, 'page_turner.html', render_details)
 
