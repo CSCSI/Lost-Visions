@@ -1374,7 +1374,9 @@ def get_images_in_books(images, books, max_results):
     # This avoids solr throwing "too many boolean clauses" when filtering multiple years
     # Also allows specific tailoring of max_results we're allowing, tweak till reasonable timings
 
-    print 'checking if ', images.count(), 'are in ', len(books), 'books'
+    logger.debug('checking if {} are in {} books'.format(images.count(), len(books)))
+
+    # print 'checking if ', images.count(), 'are in ', len(books), 'books'
 
     book_filtered = models.Image.objects.all()
     if len(books):
@@ -1388,7 +1390,9 @@ def get_images_in_books(images, books, max_results):
         book_filtered = images.filter(
             book_identifier__in=books
         )
-    print 'book_filtered.count()', book_filtered.count()
+        
+    logger.debug('book_filtered.count {}'.format(book_filtered.count()))
+    # print 'book_filtered.count()', book_filtered.count()
 
     # book_filtered = book_filtered.filter(
     #     flickr_id__in=images.values_list('flickr_id', flat=True)[:max_results]
