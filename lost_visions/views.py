@@ -1186,7 +1186,7 @@ def do_advanced_search(request):
             pass
     readable_query += 'Showing first ' + str(number_of_results_int) + ' results '
 
-    books_in_date_range = []
+    books_in_date_range = None
     # print year_from, year_to
     if len(year_from) and year_from is not '--' and len(year_to) and year_to is not '--':
         date_range = [year_from + '-01-01', year_to + '-12-31']
@@ -1378,8 +1378,15 @@ def get_images_in_books(images, books, max_results):
 
     # print 'checking if ', images.count(), 'are in ', len(books), 'books'
 
-    book_filtered = models.Image.objects.all()
-    if len(books):
+    # book_filtered = models.Image.objects.all()
+    if books is None:
+        return images.values_list('flickr_id', flat=True)[:max_results]
+
+    if len(books) == 0:
+        # If we have no valid books in the age range, then no images are valid. Return empty set
+        return set()
+
+    else:
         # If we specify books, we're looking in them only
         # Otherwise return all images
 
@@ -1392,7 +1399,7 @@ def get_images_in_books(images, books, max_results):
         )
 
     # logger.debug('book_filtered.count {}'.format(book_filtered.count()))
-    
+
     # print 'book_filtered.count()', book_filtered.count()
 
     # book_filtered = book_filtered.filter(
