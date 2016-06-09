@@ -242,7 +242,7 @@ captcha_secret = ''
 
 MAX_RESULTS = 10000
 # Solr limits number of boolean searches
-MAX_BOOK_RESULTS = 10000
+MAX_BOOK_RESULTS = 1024
 
 try:
     from crowdsource.settings_local import *
