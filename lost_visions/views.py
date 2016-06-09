@@ -1246,6 +1246,7 @@ def do_advanced_search(request):
             # tk.time_now('done search')
     else:
         all_results_haystack = im.advanced_haystack_search(request.GET, book_ids=books_in_date_range).load_all()
+        # print 'all_results_haystack', all_results_haystack.count()
 
         user = get_request_user(request)
         logger.debug(str(user.username.username) + " : " + pprint.pformat(request.GET))
@@ -1394,9 +1395,32 @@ def get_images_in_books(images, books, max_results):
         #     book_identifier__in=books
         # )
 
-        book_filtered = images.filter(
-            book_identifier__in=books
+        filtered_images = images.filter(
+            book_identifier__in=books[:settings.MAX_BOOK_RESULTS]
         )
+        print 'filtered_images1', filtered_images.count(), max_results
+
+        # a = 0
+        # b = 1024
+        # c = 0
+        # while c < max_results and b < len(books):
+        #     a += 1024
+        #     b += 1024
+        #     print a, b, c, max_results
+        #
+        #     this_bookset = books[a:b]
+        #     print len(this_bookset)
+        #     print type(this_bookset)
+        #
+        #     this_set = images.filter(
+        #         book_identifier__in=this_bookset
+        #     )
+        #     print 'this_set', this_set.count()
+        #
+        #     filtered_images = filtered_images | this_set
+        #     c += this_set.count()
+
+        book_filtered = filtered_images
 
     # logger.debug('book_filtered.count {}'.format(book_filtered.count()))
 
@@ -1408,13 +1432,10 @@ def get_images_in_books(images, books, max_results):
     #     'flickr_id', flat=True
     # ).distinct()
 
-    book_filtered = book_filtered.values_list('flickr_id', flat=True)[:max_results]
-
-    book_filtered = set(book_filtered)
-
     # print 'book_filtered.query', book_filtered.query
-
-    return book_filtered
+    book_filtered = book_filtered.values_list('flickr_id', flat=True)[:max_results]
+    book_filtered = set(book_filtered)
+    return list(book_filtered)
 
 
 def flickr_id_list_from_searchqueryset(sqs):
