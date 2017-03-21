@@ -25,8 +25,9 @@
 {% endblock %}
 
 {% block content %}
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
-
+{#    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>#}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCLYZo9x8bzVLh-plQEWHV-9LchxdEVZw"
+  type="text/javascript"></script>
     {#    <script src="https://cdn.rawgit.com/GestiXi/image-scale/master/image-scale.min.js"></script>#}
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
@@ -67,7 +68,7 @@
         }
 
         function do_tidy() {
-            console.log(intervals);
+{#            console.log(intervals);#}
 
             tidy_ittr ++;
             $('#category-container').masonry({
@@ -756,6 +757,8 @@
                         var swy = document.getElementById("south_west_y").value;
                         var swx = document.getElementById("south_west_x").value;
 
+                        console.log([ney, nex, swy, swx]);
+
                         var mapOptions = {
                             center: new google.maps.LatLng(y, x),
                             zoom: 6
@@ -767,6 +770,8 @@
                                 new google.maps.LatLng(swy, swx),
                                 new google.maps.LatLng(ney, nex)
                         );
+
+                        console.log(bounds);
 
                         // Define the rectangle and set its editable property to true.
                         rectangle = new google.maps.Rectangle({
@@ -1058,7 +1063,7 @@
                         {#                    console.log('clicked a request to show gazetteer');#}
 
                         var places_autocomplete = '<label class="control-label" for="places">Location: </label> \
-                    <input class="form-control" id="places">'
+                    <input class="form-control" id="places">';
 
                         var elem = $(places_autocomplete);
                         var category_extra_div = $('#category-extra');
@@ -1068,31 +1073,37 @@
                                 source: function(request, response) {
                                     $.ajax({
                                         type: 'GET',
-                                        url: "http://unlock.edina.ac.uk/ws/nameSearch",
+{#                                        url: "http://unlock.edina.ac.uk/ws/nameSearch",#}
+                                        url: "http://nominatim.openstreetmap.org/search",
                                         dataType: "json",
                                         data: {
-                                            name : request.term,
+                                            q : request.term,
+{#                                            name : request.term,#}
                                             format: "json",
-                                            maxRows: 50
+{#                                            maxRows: 50#}
                                             {#                                    data_object : "publisher"#}
                                         },
                                         success: function(data) {
-                                            response(data.features);
+{#                                            response(data.features);#}
+                                            response(data);
                                         }
                                     });
                                 },
                                 minLength: 3,
                                 select: function( event, ui ) {
 
-                                    add_tag_button(ui.item.properties['name'], '');
-                                    add_tag_button(ui.item.properties['country'], '');
+                                    var name_parts = ui.item.display_name.split(', ');
 
-                                    var x = ui.item.properties.centroid.split(', ')[0];
-                                    var y = ui.item.properties.centroid.split(', ')[1];
-                                    var nex = ui.item.bbox[0];
-                                    var ney = ui.item.bbox[1];
-                                    var swx = ui.item.bbox[2];
-                                    var swy = ui.item.bbox[3];
+                                    for(var part in name_parts) {
+                                        add_tag_button(name_parts[part], '');
+                                    }
+
+                                    var x = ui.item.lat;
+                                    var y = ui.item.lon;
+                                    var nex = ui.item.boundingbox[3];
+                                    var ney = ui.item.boundingbox[1];
+                                    var swx = ui.item.boundingbox[2];
+                                    var swy = ui.item.boundingbox[0];
 
                                     var map_link_string = map_link
                                             + '?x=' + x
@@ -1127,36 +1138,47 @@
 
                                 }
                             }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+{#                                var li_text = "<a>";#}
+{#                                li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";#}
+{#                                li_text += "<br>";#}
+{#                                if (item.properties.featuretype && item.properties.featuretype != 'Undefined') {#}
+{#                                    li_text += item.properties.featuretype;#}
+{#                                    li_text +=  "<br>";#}
+{##}
+{#                                }#}
+{##}
+{#                                var need_br = false;#}
+{#                                if (item.properties.adminlevel1) {#}
+{#                                    need_br = true;#}
+{#                                    li_text += "" + item.properties.adminlevel1 + ", ";#}
+{#                                }#}
+{#                                if (item.properties.adminlevel2) {#}
+{#                                    need_br = true;#}
+{#                                    li_text += "" + item.properties.adminlevel2 + ", ";#}
+{#                                }#}
+{#                                if (item.properties.adminlevel3) {#}
+{#                                    need_br = true;#}
+{#                                    li_text += "" + item.properties.adminlevel3 + ", ";#}
+{#                                }#}
+{#                                if (item.properties.adminlevel4) {#}
+{#                                    need_br = true;#}
+{#                                    li_text += "" + item.properties.adminlevel4 + "";#}
+{#                                }#}
+{#                                if (need_br) {#}
+{#                                    li_text += "<br>";#}
+{#                                }#}
+{#                                li_text += "(" + item.properties.centroid + ")</a>";#}
+
                                 var li_text = "<a>";
-                                li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";
+                                li_text += "<strong>" + item.display_name + "</strong>";
                                 li_text += "<br>";
-                                if (item.properties.featuretype && item.properties.featuretype != 'Undefined') {
-                                    li_text += item.properties.featuretype;
-                                    li_text +=  "<br>";
 
-                                }
+                                li_text += item.class;
+                                li_text +=  "<br>";
+                                li_text += item.type;
+                                li_text +=  "<br>";
 
-                                var need_br = false;
-                                if (item.properties.adminlevel1) {
-                                    need_br = true;
-                                    li_text += "" + item.properties.adminlevel1 + ", ";
-                                }
-                                if (item.properties.adminlevel2) {
-                                    need_br = true;
-                                    li_text += "" + item.properties.adminlevel2 + ", ";
-                                }
-                                if (item.properties.adminlevel3) {
-                                    need_br = true;
-                                    li_text += "" + item.properties.adminlevel3 + ", ";
-                                }
-                                if (item.properties.adminlevel4) {
-                                    need_br = true;
-                                    li_text += "" + item.properties.adminlevel4 + "";
-                                }
-                                if (need_br) {
-                                    li_text += "<br>";
-                                }
-                                li_text += "(" + item.properties.centroid + ")</a>";
+                                li_text += "(" + item.lat + ", " + item.lon + ")</a>";
 
                                 return $( "<li>" )
                                         .append( li_text )
