@@ -246,7 +246,7 @@
                 </div>
 
                 <div class="panel-body" style="padding: 1em 2.2em;">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="ui-widget" data-toggle="tooltip" data-placement="left"
                              title="Keyword can be in Tags, Title, Author, Publisher"
                              data-original-title="Keyword Input">
@@ -254,8 +254,18 @@
                             <input class="'form-control" id="keyword" name="keyword" value="{{ query_array.keyword }}">
                         </div>
                     </div>
-                    <div class="col-md-6">
 
+                    <div class="col-md-6">
+                        <div style="margin-top: 0.8em" class="ui-widget" data-toggle="tooltip" data-placement="left"
+                             title="Limit search to Tags, without Title, Author etc"
+                             data-original-title="Tags only">
+                            <label class="'control-label" for="tag_keywords_only">Only search tags: </label>
+                            <input type="checkbox" class="'form-control"
+                                   id="tag_keywords_only" name="tag_keywords_only">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
                         <ul class="pager prev_next_pager" style="padding: 0">
                             <li style="float: right">
                                 <button type="submit" class="btn btn-success btn-sm adv_search_btn">Search</button>
@@ -341,13 +351,13 @@
                             <hr>
                             <div class="row" style="margin: 0">
                                 <div class="col-md-6">
-                                    <div class="ui-widget" data-toggle="tooltip" data-placement="left"
-                                         title="Limit search to Tags, without Title, Author etc"
-                                         data-original-title="Tags only">
-                                        <label class="'control-label" for="tag_keywords_only">Only search tags: </label>
-                                        <input type="checkbox" class="'form-control"
-                                               id="tag_keywords_only" name="tag_keywords_only">
-                                    </div>
+{#                                    <div class="ui-widget" data-toggle="tooltip" data-placement="left"#}
+{#                                         title="Limit search to Tags, without Title, Author etc"#}
+{#                                         data-original-title="Tags only">#}
+{#                                        <label class="'control-label" for="tag_keywords_only">Only search tags: </label>#}
+{#                                        <input type="checkbox" class="'form-control"#}
+{#                                               id="tag_keywords_only" name="tag_keywords_only">#}
+{#                                    </div>#}
                                 </div>
                                 <div class="col-md-6">
                                     <ul class="pager prev_next_pager" style="padding: 0">
