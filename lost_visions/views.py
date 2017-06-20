@@ -1532,6 +1532,8 @@ def get_resized_image(request, book_identifier, volume, page, image_idx):
 def get_image_data(request):
 
     ids = request.POST.get('image_ids', '')
+    if ids == '':
+        ids = request.GET.get('image_ids', '')
     tag_results_dict = dict()
 
     if ids:
