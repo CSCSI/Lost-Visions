@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import pprint
+import requests
 from random import randint, sample
 import re
 from types import NoneType
@@ -2930,3 +2931,68 @@ def zip_available(request, collection_id):
 
 def research(request):
     return render_to_response('research.html')
+
+
+all_id_list = []
+with open('lost_visions/scrape/all_id_file.txt', 'r') as all_id_file:
+    all_ids = all_id_file.read()
+    all_id_list = ast.literal_eval(all_ids)
+
+
+def get_thumb_url(next_id):
+    image_data_text = requests.get('http://lost-visions.cf.ac.uk/image_data/{}'.format(next_id))
+    image_data = json.loads(image_data_text.text)
+
+    volume = image_data['bl_flickr_data'][0]['fields']['volume']
+    page = image_data['bl_flickr_data'][0]['fields']['page']
+
+    for a in image_data['image_location']:
+        if a['fields']['page'] == page:
+            if a['fields']['volume'] == volume:
+
+                next_url = a['fields']['location']
+                next_url = next_url.replace(
+                    '/scratch/lost-visions/images-found/',
+                    # '/static/media/found/'
+                    '/static/media/images/resized/'
+
+                )
+                next_url = next_url.replace(
+                    'jpg', 'jpg.thumb.jpg'
+
+                )
+                next_url = 'http://lost-visions.cf.ac.uk{}'.format(next_url)
+                return next_url
+
+
+def image_sorter(request):
+
+    print request.GET
+    category = 'Britain Outline'
+
+    prev_user_opinion = request.GET.get('user_opinion')
+    prev_image_id = request.GET.get('image_id')
+
+    if prev_user_opinion == '1':
+        with open('lost_visions/scrape/{}.txt'.format(category), 'a') as yes_file:
+            yes_file.write('{}\n'.format(prev_image_id))
+    else:
+        with open('lost_visions/scrape/not_{}.txt'.format(category), 'a') as no_file:
+            no_file.write('{}\n'.format(prev_image_id))
+
+    itr = request.GET.get('itr', -1)
+    itr = int(itr) + 1
+    next_id = all_id_list[itr]
+    print next_id
+
+    next_url = get_thumb_url(next_id)
+
+    return render(request, 'image_sorter.html',
+                  {
+                      'user_opinion': prev_user_opinion,
+                      'itr': itr,
+                      'image_id': next_id,
+                      'next_url': next_url,
+                      'category': category
+                  },
+                  context_instance=RequestContext(request))

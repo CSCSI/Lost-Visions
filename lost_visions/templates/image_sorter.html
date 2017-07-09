@@ -1,0 +1,84 @@
+{% load staticfiles %}
+
+<link type="text/css" href="{% static "font_awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+
+<style>
+    .container {
+        display: -webkit-flex;
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+    }
+
+    .row1 {
+        display: flex;
+    }
+    .row2 {
+        display: flex;
+        height: 100%;
+
+    }
+
+    .flex1 {
+        -webkit-flex: 1;
+        flex: 1 2;
+    }
+    .flex2 {
+        -webkit-flex: 2;
+        flex: 8 2;
+    }
+    .btn {
+        background-color: rgba(40, 142, 255, 0.27);
+        display: flex;
+        border: ridge 5px;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn_text {
+        max-width: 50%;
+    }
+    .fa-rotate-45 {
+        -ms-transform:rotate(45deg);     /* Internet Explorer 9 */
+        -webkit-transform:rotate(45deg); /* Chrome, Safari, Opera */
+        transform:rotate(45deg);         /* Standard syntax */
+    }
+    .image_box {
+        max-width: 100%;
+        max-height: 90%;
+        margin: 0 auto;
+    }
+    .image_box_img {
+        object-fit: cover;
+    }
+</style>
+
+<div class="container">
+    <div class="row1">
+        <h1>
+            Is image {{ itr }} (id={{ image_id }}) a {{ category }}?
+        </h1>
+    </div>
+    <div class="row1">
+        <h4>
+            previous image {{ prev_id }} was {{ user_opinion }}
+        </h4>
+    </div>
+    <div class="row2">
+
+        <a href="?user_opinion=-1&itr={{ itr }}&image_id={{ image_id }}" class="flex1 btn">
+            <div class="btn_text">
+                <h1><i class="fa fa-plus fa-rotate-45 fa-3x"></i></h1>
+            </div>
+        </a>
+
+        <div class="flex2 image_box">
+            <img class="image_box_img" src="{{ next_url }}">
+        </div>
+
+        <a href="?user_opinion=1&itr={{ itr }}&image_id={{ image_id }}" class="flex1 btn">
+            <div class="btn_text">
+                <h1><i class="fa fa-check fa-3x"></i></h1>
+            </div>
+        </a>
+    </div>
+</div>
