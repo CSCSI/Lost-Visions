@@ -27,6 +27,10 @@
         -webkit-flex: 2;
         flex: 8 2;
     }
+    .flex9 {
+        -webkit-flex: 9;
+        flex: 9;
+    }
     .btn {
         background-color: rgba(40, 142, 255, 0.27);
         display: flex;
@@ -34,8 +38,16 @@
         align-items: center;
         justify-content: center;
     }
+    .btn:hover {
+        background-color: rgba(11, 119, 180, 0.49);
+    }
+    .big_btn_text {
+        max-width: 50%;
+        margin-left: -4em;
+    }
     .btn_text {
         max-width: 50%;
+{#        margin-left: -2em;#}
     }
     .fa-rotate-45 {
         -ms-transform:rotate(45deg);     /* Internet Explorer 9 */
@@ -48,36 +60,68 @@
         margin: 0 auto;
     }
     .image_box_img {
-        object-fit: cover;
+        object-fit: contain;
+        height: 90%;
+        width: 100%;
     }
 </style>
 
+<script>
+    document.onkeydown = function(e) {
+        e = e || window.event;
+        switch(e.which || e.keyCode) {
+            case 37: // left
+{#                alert('left');#}
+                document.getElementById('no_btn').click();
+            break;
+
+            case 38: // up
+            break;
+
+            case 39: // right
+{#                alert('right');#}
+                document.getElementById('yes_btn').click();
+            break;
+
+            case 40: // down
+            break;
+
+            default: return; // exit this handler for other keys
+        }
+        e.preventDefault(); // prevent the default action (scroll / move caret)
+    };
+</script>
+
 <div class="container">
     <div class="row1">
-        <h1>
+        <h2 class="flex9">
             Is image {{ itr }} (id={{ image_id }}) a {{ category }}?
-        </h1>
+        </h2>
+         <a id="none_btn" href="?user_opinion=0&itr={{ itr }}&image_id={{ image_id }}" class="flex1 btn">
+            <div class="btn_text">
+                <h1><i class="fa fa-fw fa-minus-circle"></i></h1>
+            </div>
+        </a>
     </div>
     <div class="row1">
-        <h4>
-            previous image {{ prev_id }} was {{ user_opinion }}
-        </h4>
+        <h4>Previous image {{ prev_id }} was {{ user_opinion }} || {{ percent }}% || {{ itr }}/{{ total }}</h4>
     </div>
     <div class="row2">
 
-        <a href="?user_opinion=-1&itr={{ itr }}&image_id={{ image_id }}" class="flex1 btn">
-            <div class="btn_text">
-                <h1><i class="fa fa-plus fa-rotate-45 fa-3x"></i></h1>
+        <a id="no_btn" href="?user_opinion=-1&itr={{ itr }}&image_id={{ image_id }}" class="flex1 btn">
+            <div class="big_btn_text">
+                <h1><i class="fa fa-fw fa-plus fa-rotate-45 fa-3x icon-fixed-width"></i></h1>
             </div>
         </a>
+
 
         <div class="flex2 image_box">
             <img class="image_box_img" src="{{ next_url }}">
         </div>
 
-        <a href="?user_opinion=1&itr={{ itr }}&image_id={{ image_id }}" class="flex1 btn">
-            <div class="btn_text">
-                <h1><i class="fa fa-check fa-3x"></i></h1>
+        <a id="yes_btn" href="?user_opinion=1&itr={{ itr }}&image_id={{ image_id }}" class="flex1 btn">
+            <div class="big_btn_text">
+                <h1><i class="fa fa-fw fa-check fa-3x icon-fixed-width"></i></h1>
             </div>
         </a>
     </div>

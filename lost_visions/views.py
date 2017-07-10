@@ -2941,7 +2941,9 @@ with open('lost_visions/scrape/all_id_file.txt', 'r') as all_id_file:
 
 def get_thumb_url(next_id):
     image_data_text = requests.get('http://lost-visions.cf.ac.uk/image_data/{}'.format(next_id))
-    image_data = json.loads(image_data_text.text)
+    # image_data = json.loads(image_data_text.text)
+    image_data = image_data_text.json()
+    # print image_data
 
     volume = image_data['bl_flickr_data'][0]['fields']['volume']
     page = image_data['bl_flickr_data'][0]['fields']['page']
@@ -2951,16 +2953,26 @@ def get_thumb_url(next_id):
             if a['fields']['volume'] == volume:
 
                 next_url = a['fields']['location']
-                next_url = next_url.replace(
-                    '/scratch/lost-visions/images-found/',
-                    # '/static/media/found/'
-                    '/static/media/images/resized/'
 
-                )
-                next_url = next_url.replace(
-                    'jpg', 'jpg.thumb.jpg'
+                if int(image_data['bl_flickr_data'][0]['fields']['date']) < 1898:
+                    next_url = next_url.replace(
+                        '/scratch/lost-visions/images-found/',
+                        # '/static/media/found/'
+                        '/static/media/images/resized/'
 
-                )
+                    )
+                    next_url = next_url.replace(
+                        'jpg', 'jpg.thumb.jpg'
+
+                    )
+                else:
+                    next_url = next_url.replace(
+                        '/scratch/lost-visions/images-found/',
+                        '/static/media/found/'
+                    )
+                # next_url = next_url.replace(
+                #     '[', '%5B'
+                # )
                 next_url = 'http://lost-visions.cf.ac.uk{}'.format(next_url)
                 return next_url
 
@@ -2976,9 +2988,12 @@ def image_sorter(request):
     if prev_user_opinion == '1':
         with open('lost_visions/scrape/{}.txt'.format(category), 'a') as yes_file:
             yes_file.write('{}\n'.format(prev_image_id))
-    else:
+    elif prev_user_opinion == '-1':
         with open('lost_visions/scrape/not_{}.txt'.format(category), 'a') as no_file:
             no_file.write('{}\n'.format(prev_image_id))
+    else:
+        with open('lost_visions/scrape/no_opinion_{}.txt'.format(category), 'a') as none_file:
+            none_file.write('{}\n'.format(prev_image_id))
 
     itr = request.GET.get('itr', -1)
     itr = int(itr) + 1
@@ -2987,12 +3002,16 @@ def image_sorter(request):
 
     next_url = get_thumb_url(next_id)
 
+    percent = (float(itr) / len(all_id_list)) * 100
+
     return render(request, 'image_sorter.html',
                   {
                       'user_opinion': prev_user_opinion,
                       'itr': itr,
                       'image_id': next_id,
                       'next_url': next_url,
-                      'category': category
+                      'category': category,
+                      'percent': percent,
+                      'total': len(all_id_list)
                   },
                   context_instance=RequestContext(request))
