@@ -924,7 +924,7 @@ def map(request, image_id):
                    'ne_y': ney,
                    'sw_x': swx,
                    'sw_y': swy
-                  },
+                   },
                   context_instance=RequestContext(request))
 
 
@@ -1241,7 +1241,7 @@ def do_advanced_search(request):
                 total_results += 1
                 all_image_ids += result + ','
             readable_query += 'Only returning first ' + \
-                              str(max_results) +\
+                              str(max_results) + \
                               ' images of (' + str(len(all_results)) + ' found)'
 
             # tk.time_now('done search')
@@ -1764,9 +1764,9 @@ def get_api_key(request):
     api_model.save()
 
     return HttpResponse(json.dumps({
-                                       'user': request_user.username.username,
-                                       'api_key': apikey,
-                                       'valid_till': valid_to.strftime('%Y-%m-%d %H:%M:%S %Z')}, indent=4), content_type="application/json")
+        'user': request_user.username.username,
+        'api_key': apikey,
+        'valid_till': valid_to.strftime('%Y-%m-%d %H:%M:%S %Z')}, indent=4), content_type="application/json")
 
 
 def auth_api_key(api_key):
@@ -2361,6 +2361,21 @@ def exhibition(request, collection_id):
     return render(request, 'exhibition.html', return_object)
 
 
+def book_images(request, image_id):
+
+    book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
+    book_images = get_book_images(book_id[0]['book_identifier'])
+    for book_image in book_images:
+        book_image['link'] = reverse('image', kwargs={'image_id': int(book_image['flickr_id'])})
+    book_image_count = len(book_images)
+
+    return_data = {
+        'book_images': book_images,
+        'book_image_count': book_image_count,
+    }
+    return HttpResponse(json.dumps(return_data, indent=4), content_type="application/json")
+
+
 def similar_images(request, image_id):
     error = ''
     book_images = []
@@ -2369,24 +2384,15 @@ def similar_images(request, image_id):
     machine_matched_ids = []
 
     db_count = len(connection.queries)
-
     img_pick = ImagePicker()
+    # book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
+    # book_id_query_count = len(connection.queries)
 
-    book_id = models.Image.objects.filter(flickr_id=image_id).values('book_identifier').distinct()
-    # print book_id
-
-    book_id_query_count = len(connection.queries)
-    # flickr_ids_from_book = models.Image.objects.filter(book_identifier=book_id) \
-    #     .exclude(flickr_id=image_id).values_list('flickr_id', flat=True)
-    # # print flickr_ids_from_book
-    #
-    # book_images = get_image_data_from_array(flickr_ids_from_book, request)
-
-    book_images = get_book_images(book_id[0]['book_identifier'])
-    for book_image in book_images:
-        book_image['link'] = reverse('image', kwargs={'image_id': int(book_image['flickr_id'])})
+    # book_images = get_book_images(book_id[0]['book_identifier'])
+    # for book_image in book_images:
+    #     book_image['link'] = reverse('image', kwargs={'image_id': int(book_image['flickr_id'])})
     book_image_count = len(book_images)
-    book_images_query_count = len(connection.queries)
+    # book_images_query_count = len(connection.queries)
 
     machine_matches = []
     try:
@@ -2397,7 +2403,6 @@ def similar_images(request, image_id):
                             .filter(Q(image_a=image_object) | Q(image_b=image_object)) \
                             .values_list('image_a__flickr_id', 'image_b__flickr_id') \
                             .order_by('-metric_value')[:20]
-        # print image_matches.query
 
         for machine_matched in image_matches:
             if machine_matched[0] == image_object_flickr_id:
@@ -2427,27 +2432,23 @@ def similar_images(request, image_id):
     end_query_count = len(connection.queries)
 
     db_counts = [('db_count', db_count),
-                 ('book_id_query_count', book_id_query_count),
-                 ('book_images_query_count', book_images_query_count),
+                 # ('book_id_query_count', book_id_query_count),
+                 # ('book_images_query_count', book_images_query_count),
                  ('machine_match_query_count', machine_match_query_count),
                  ('similar_image_query_count', similar_image_query_count),
                  ('similar_image_info_query_count', similar_image_info_query_count),
                  ('end_query_count', end_query_count)]
 
-
     return_data = {'db_counts': db_counts,
                    'similars_id_list': sorted_id_list,
                    'error': error,
-                   'book_images': book_images,
-                   'book_image_count': book_image_count,
+                   # 'book_images': book_images,
+                   # 'book_image_count': book_image_count,
                    'image_sets': powerset_image_data,
                    'largest_set': largest_set,
                    'largest_set_size': len(largest_set),
                    'machine_matches': machine_matches
-    }
-
-    # print pprint.pformat(return_data)
-
+                   }
     return HttpResponse(json.dumps(return_data, indent=4), content_type="application/json")
 
 
@@ -2926,7 +2927,7 @@ def zip_available(request, collection_id):
 
     return HttpResponse(json.dumps({'success': False,
                                     'url': static(url)
-                                   }, indent=4), content_type="application/json")
+                                    }, indent=4), content_type="application/json")
 
 
 def research(request):

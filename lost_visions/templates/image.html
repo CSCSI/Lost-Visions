@@ -25,9 +25,9 @@
 {% endblock %}
 
 {% block content %}
-{#    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>#}
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCLYZo9x8bzVLh-plQEWHV-9LchxdEVZw"
-  type="text/javascript"></script>
+    {#    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>#}
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCLYZo9x8bzVLh-plQEWHV-9LchxdEVZw"
+            type="text/javascript"></script>
     {#    <script src="https://cdn.rawgit.com/GestiXi/image-scale/master/image-scale.min.js"></script>#}
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
@@ -68,7 +68,7 @@
         }
 
         function do_tidy() {
-{#            console.log(intervals);#}
+            {#            console.log(intervals);#}
 
             tidy_ittr ++;
             $('#category-container').masonry({
@@ -91,6 +91,37 @@
                 }
 
             }
+        }
+
+        function get_book_images(image_id) {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'image.book_images' image_id%}",
+                data: {
+                    image_id: image_id
+                },
+                success: function(data) {
+                    var ok = data['success'];
+                    console.log(data);
+
+
+                    var book_images = '<ul id="book_images_list">';
+                    for (var img_data in data['book_images']) {
+                        book_images += '<li>';
+                        book_images += '<a href="' + data['book_images'][img_data]['link']  + '" target="_blank">';
+                        book_images += '<img src="' + data['book_images'][img_data]['img_small'] +
+                                '" class="similar-image"></img>';
+                        book_images += '</a>';
+                        book_images += '</li>';
+                    }
+                    book_images += '</ul>';
+                    $('#book_images').html(book_images);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+
         }
 
         function get_similar_images(image_id) {
@@ -121,18 +152,17 @@
                         $('#collapse_similars').accordion({active: false}).hide();
                     }
 
-                    var book_images = '<ul id="book_images_list">';
-                    for (var img_data in data['book_images']) {
-                        book_images += '<li>';
-                        book_images += '<a href="' + data['book_images'][img_data]['link']  + '" target="_blank">';
-                        book_images += '<img src="' + data['book_images'][img_data]['img_small'] +
-                                '" class="similar-image"></img>';
-                        book_images += '</a>';
-                        book_images += '</li>';
-                    }
-                    book_images += '</ul>';
-                    $('#book_images').html(book_images);
-
+{#                    var book_images = '<ul id="book_images_list">';#}
+{#                    for (var img_data in data['book_images']) {#}
+{#                        book_images += '<li>';#}
+{#                        book_images += '<a href="' + data['book_images'][img_data]['link']  + '" target="_blank">';#}
+{#                        book_images += '<img src="' + data['book_images'][img_data]['img_small'] +#}
+{#                                '" class="similar-image"></img>';#}
+{#                        book_images += '</a>';#}
+{#                        book_images += '</li>';#}
+{#                    }#}
+{#                    book_images += '</ul>';#}
+{#                    $('#book_images').html(book_images);#}
 
                     console.log('mm:' + _.size(data['machine_matches']));
                     var machine_matched = '<ul id="machine_matched_list">';
@@ -423,6 +453,7 @@
             });
 
             get_similar_images({{ image_id }});
+            get_book_images({{ image_id }});
 
             function do_previous_question() {
                 if (current_question_pane - 1 > 0){
@@ -1073,18 +1104,18 @@
                                 source: function(request, response) {
                                     $.ajax({
                                         type: 'GET',
-{#                                        url: "http://unlock.edina.ac.uk/ws/nameSearch",#}
+                                        {#                                        url: "http://unlock.edina.ac.uk/ws/nameSearch",#}
                                         url: "http://nominatim.openstreetmap.org/search",
                                         dataType: "json",
                                         data: {
                                             q : request.term,
-{#                                            name : request.term,#}
+                                            {#                                            name : request.term,#}
                                             format: "json",
-{#                                            maxRows: 50#}
+                                            {#                                            maxRows: 50#}
                                             {#                                    data_object : "publisher"#}
                                         },
                                         success: function(data) {
-{#                                            response(data.features);#}
+                                            {#                                            response(data.features);#}
                                             response(data);
                                         }
                                     });
@@ -1138,36 +1169,36 @@
 
                                 }
                             }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-{#                                var li_text = "<a>";#}
-{#                                li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";#}
-{#                                li_text += "<br>";#}
-{#                                if (item.properties.featuretype && item.properties.featuretype != 'Undefined') {#}
-{#                                    li_text += item.properties.featuretype;#}
-{#                                    li_text +=  "<br>";#}
-{##}
-{#                                }#}
-{##}
-{#                                var need_br = false;#}
-{#                                if (item.properties.adminlevel1) {#}
-{#                                    need_br = true;#}
-{#                                    li_text += "" + item.properties.adminlevel1 + ", ";#}
-{#                                }#}
-{#                                if (item.properties.adminlevel2) {#}
-{#                                    need_br = true;#}
-{#                                    li_text += "" + item.properties.adminlevel2 + ", ";#}
-{#                                }#}
-{#                                if (item.properties.adminlevel3) {#}
-{#                                    need_br = true;#}
-{#                                    li_text += "" + item.properties.adminlevel3 + ", ";#}
-{#                                }#}
-{#                                if (item.properties.adminlevel4) {#}
-{#                                    need_br = true;#}
-{#                                    li_text += "" + item.properties.adminlevel4 + "";#}
-{#                                }#}
-{#                                if (need_br) {#}
-{#                                    li_text += "<br>";#}
-{#                                }#}
-{#                                li_text += "(" + item.properties.centroid + ")</a>";#}
+                                {#                                var li_text = "<a>";#}
+                                {#                                li_text += "<strong>" + item.properties.name + " - " + item.properties.country + "</strong>";#}
+                                {#                                li_text += "<br>";#}
+                                {#                                if (item.properties.featuretype && item.properties.featuretype != 'Undefined') {#}
+                                {#                                    li_text += item.properties.featuretype;#}
+                                {#                                    li_text +=  "<br>";#}
+                                {##}
+                                {#                                }#}
+                                {##}
+                                {#                                var need_br = false;#}
+                                {#                                if (item.properties.adminlevel1) {#}
+                                {#                                    need_br = true;#}
+                                {#                                    li_text += "" + item.properties.adminlevel1 + ", ";#}
+                                {#                                }#}
+                                {#                                if (item.properties.adminlevel2) {#}
+                                {#                                    need_br = true;#}
+                                {#                                    li_text += "" + item.properties.adminlevel2 + ", ";#}
+                                {#                                }#}
+                                {#                                if (item.properties.adminlevel3) {#}
+                                {#                                    need_br = true;#}
+                                {#                                    li_text += "" + item.properties.adminlevel3 + ", ";#}
+                                {#                                }#}
+                                {#                                if (item.properties.adminlevel4) {#}
+                                {#                                    need_br = true;#}
+                                {#                                    li_text += "" + item.properties.adminlevel4 + "";#}
+                                {#                                }#}
+                                {#                                if (need_br) {#}
+                                {#                                    li_text += "<br>";#}
+                                {#                                }#}
+                                {#                                li_text += "(" + item.properties.centroid + ")</a>";#}
 
                                 var li_text = "<a>";
                                 li_text += "<strong>" + item.display_name + "</strong>";
@@ -1703,11 +1734,11 @@
 
 
         <div
-{#                data-toggle="tooltip" data-placement="top"#}
-             title="Similar Illustration" data-original-title="Similar Images"
-             id="collapse_similars" class="panel-group"
-{#             data-step="5" data-intro='These are similar illustrations' #}
-             data-position="right">
+                {#                data-toggle="tooltip" data-placement="top"#}
+                title="Similar Illustration" data-original-title="Similar Images"
+                id="collapse_similars" class="panel-group"
+                {#             data-step="5" data-intro='These are similar illustrations' #}
+                data-position="right">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     Similar Illustrations
@@ -1755,11 +1786,11 @@
 
 
         <div
-{#                data-toggle="tooltip" data-placement="top"#}
-             title="Tags previously added for this Illustration" data-original-title="Image Tags"
-             id="collapse_cloud" class="panel-group"
-{#             data-step="2" data-intro="This is the tag cloud for the Illustration.\n Previous Illustration taggers may have added the same tag as you, which helps us raise it's relevance in search results"#}
-             data-position="right">
+                {#                data-toggle="tooltip" data-placement="top"#}
+                title="Tags previously added for this Illustration" data-original-title="Image Tags"
+                id="collapse_cloud" class="panel-group"
+                {#             data-step="2" data-intro="This is the tag cloud for the Illustration.\n Previous Illustration taggers may have added the same tag as you, which helps us raise it's relevance in search results"#}
+                data-position="right">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     Cloud of Tags
