@@ -217,6 +217,7 @@ LOGGING = {
 bl_folder = ''
 db_json_location = ''
 db_cleaned_json_location = ''
+tagging_stat_min = 2
 
 recorded_image_root = '/scratch/lost-visions/images-found/'
 web_server_start_resized = '/static/media/images/resized/'

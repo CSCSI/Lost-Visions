@@ -25,6 +25,38 @@
             return defaultSize + ((value -1) * (10 / {{ most_used_tag_count }}) * defaultSize);
         }
 
+        function get_tag_stats() {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'stats_json' %}",
+                data: {},
+                success: function(data) {
+                    var the_tags = data['image_tags'];
+                    var font_size = getDefaultFontSize()[1];
+                    var tags_html = '';
+                    for (var tag_idx in the_tags) {
+                        var tag = the_tags[tag_idx];
+{#                        console.log(tag);#}
+                        tags_html += '<div id="search_tag" class="btn btn-success search_tag" ' +
+                                'data-val="' + the_tags[tag_idx]['uses'] + '" ' +
+                                'data-term="' + the_tags[tag_idx]['tag'] + '" ' +
+                                'style="margin: 5px; display: inline-block; font-size: '
+                                + getFontSize(1, 50, the_tags[tag_idx]['uses']) + 'px">'
+                                + the_tags[tag_idx]['tag'] +
+                                '</div>';
+                    }
+
+                    console.log(the_tags);
+
+                    $('#tag_cloud').html(tags_html);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+
+        }
+
         $(document).ready(function () {
 
             $('#collapse_cloud').accordion({
@@ -34,23 +66,23 @@
 
             });
 
-            var tags = '';
-            var the_tags = {{ image_tags|safe }};
-            var font_size = getDefaultFontSize()[1];
+{#            var tags = '';#}
+{#            var the_tags = {{ image_tags|safe }};#}
+{#            var font_size = getDefaultFontSize()[1];#}
+{##}
+{#            for (var tag in the_tags) {#}
+{#                tags += '<div id="search_tag" class="btn btn-success search_tag" ' +#}
+{#                        'data-val="' + the_tags[tag]['uses'] + '" ' +#}
+{#                        'data-term="' + the_tags[tag]['tag'] + '" ' +#}
+{#                        'style="margin: 5px; display: inline-block; font-size: '#}
+{#                        + getFontSize(1, 50, the_tags[tag]['uses']) + 'px">'#}
+{#                        + the_tags[tag]['tag'] +#}
+{#                        '</div>';#}
+{#            }#}
+{#            console.log(the_tags);#}
 
-            for (var tag in the_tags) {
-                tags += '<div id="search_tag" class="btn btn-success search_tag" ' +
-                        'data-val="' + the_tags[tag]['uses'] + '" ' +
-                        'data-term="' + the_tags[tag]['tag'] + '" ' +
-                        'style="margin: 5px; display: inline-block; font-size: '
-                        + getFontSize(1, 50, the_tags[tag]['uses']) + 'px">'
-                        + the_tags[tag]['tag'] +
-                        '</div>';
-            }
-
-            console.log(the_tags);
-
-            $('#tag_cloud').html(tags);
+{#            $('#tag_cloud').html(tags);#}
+            get_tag_stats();
 
             $('.search_tag').click(function(){
                 var word = $(this).data('term');

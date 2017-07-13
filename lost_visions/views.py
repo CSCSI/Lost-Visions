@@ -34,7 +34,7 @@ import itertools
 import operator
 from pygeoip import GeoIP
 from crowdsource import settings
-from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size
+from crowdsource.settings import BASE_DIR, STATIC_ROOT, STATIC_URL, thumbnail_size, tagging_stat_min
 from crowdsource.settings import ADMIN_EMAIL_ADDRESSES
 from lost_visions import forms, models
 from ipware.ip import get_ip
@@ -1609,9 +1609,8 @@ def user_dl_all(request):
         return redirect('user_profile_home')
 
 
-def stats(request):
-
-    tags_for_image = models.Tag.objects.all().values('tag').annotate(uses=Count('tag'))
+def get_stats():
+    tags_for_image = models.Tag.objects.all().values('tag').annotate(uses=Count('tag')).filter(uses__gt=tagging_stat_min)
     u = 1
     most_used_tag = ''
     for v in list(tags_for_image):
@@ -1622,15 +1621,22 @@ def stats(request):
     metrics = dict()
     metrics['total_tags_number'] = models.Tag.objects.count()
     metrics['total_tagged_image_number'] = models.Tag.objects.values('image__id').distinct().count()
+    data = {
+        'metrics': metrics,
+        'image_tags': list(tags_for_image),
+        'most_used_tag_count': u,
+        'most_used_tag': most_used_tag
+    }
+    return data
 
-    return render(request, 'stats.html',
-                  {
-                      'metrics': metrics,
-                      'image_tags': json.dumps(list(tags_for_image)),
-                      'most_used_tag_count': u,
-                      'most_used_tag' : most_used_tag
-                  },
-                  context_instance=RequestContext(request))
+
+def stats_json(request):
+    return HttpResponse(json.dumps(get_stats(), indent=4), content_type="application/json")
+
+
+def stats(request):
+    data = get_stats()
+    return render(request, 'stats.html', data, context_instance=RequestContext(request))
 
 
 def haystack_search(request):
