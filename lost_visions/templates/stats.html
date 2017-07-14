@@ -22,7 +22,8 @@
         var defaultSize = getDefaultFontSize()[1];
 
         function getFontSize(small, big, value) {
-            return defaultSize + ((value -1) * (10 / {{ most_used_tag_count }}) * defaultSize);
+            return Math.log(value);
+{#            return defaultSize + ((value -1) * (10 / {{ most_used_tag_count }}) * defaultSize);#}
         }
 
         function get_tag_stats() {
@@ -37,11 +38,12 @@
                     for (var tag_idx in the_tags) {
                         var tag = the_tags[tag_idx];
 {#                        console.log(tag);#}
-                        tags_html += '<div id="search_tag" class="btn btn-success search_tag" ' +
+                        tags_html += '<div title="' + the_tags[tag_idx]['uses'] + '" ' +
+                                'id="search_tag" class="btn btn-success search_tag" ' +
                                 'data-val="' + the_tags[tag_idx]['uses'] + '" ' +
                                 'data-term="' + the_tags[tag_idx]['tag'] + '" ' +
                                 'style="margin: 5px; display: inline-block; font-size: '
-                                + getFontSize(1, 50, the_tags[tag_idx]['uses']) + 'px">'
+                                + getFontSize(1, 50, the_tags[tag_idx]['uses']) + 'em">'
                                 + the_tags[tag_idx]['tag'] +
                                 '</div>';
                     }
