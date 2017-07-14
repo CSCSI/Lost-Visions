@@ -2941,9 +2941,11 @@ def research(request):
 
 
 all_id_list = []
-with open('lost_visions/scrape/all_id_file.txt', 'r') as all_id_file:
-    all_ids = all_id_file.read()
-    all_id_list = ast.literal_eval(all_ids)
+fname = 'lost_visions/scrape/all_id_file.txt'
+if os.path.isfile(fname):
+    with open(fname, 'r') as all_id_file:
+        all_ids = all_id_file.read()
+        all_id_list = ast.literal_eval(all_ids)
 
 
 def get_thumb_url(next_id):
