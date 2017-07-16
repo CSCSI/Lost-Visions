@@ -2361,10 +2361,7 @@ def exhibition(request, collection_id):
                      'collection_creator': get_collection_creator(collection_model),
                      'date': collection_model.timestamp,
                      }
-
-    # print return_object
-
-    return render(request, 'exhibition.html', return_object)
+    return render(request, 'exhibition-new.html', return_object)
 
 
 def book_images(request, image_id):
