@@ -1545,68 +1545,68 @@ def get_image_data(request):
     return HttpResponse(json.dumps(tag_results_dict), content_type="application/json")
 
 
-def user_dl_all(request):
-    # print request.GET
-
-    collection_ids = request.GET.get('collection_ids')
-
-    # print collection_ids
-    if collection_ids:
-        # collection_list = ast.literal_eval(collection_ids)
-        collection_list = collection_ids.split(',')
-
-        filenames = dict()
-        for image_id in collection_list:
-            image_model = models.Image.objects.get(flickr_id=image_id)
-            image_info = db_tools.get_image_info(image_model)
-
-            if image_info:
-                filenames[image_id] = (image_info['imageurl'])
-
-        # Files (local path) to put in the .zip
-        # FIXME: Change this (get paths from DB etc)
-        # filenames = ["/tmp/file1.txt", "/tmp/file2.txt"]
-
-        # Folder name in ZIP archive which contains the above files
-        # E.g [thearchive.zip]/somefiles/file2.txt
-        # FIXME: Set this to something better
-        zip_subdir = 'bl_images'
-        zip_filename = "%s.zip" % zip_subdir
-
-        # Open StringIO to grab in-memory ZIP contents
-        s = StringIO.StringIO()
-
-        # The zip compressor
-        zf = zipfile.ZipFile(s, "w", zipfile.ZIP_DEFLATED)
-
-        for image_id in filenames:
-
-            fpath = filenames[image_id].replace(' ', '%20')
-
-            filename = os.path.join('/tmp/', image_id + '.jpg')
-            if 'static/media' in fpath:
-                fpath = 'http://illustrationarchive.cf.ac.uk' + fpath
-            urllib.urlretrieve(fpath, filename)
-            fpath = filename
-
-            # Calculate path for file in zip
-            fdir, fname = os.path.split(fpath)
-            zip_path = os.path.join(zip_subdir, fname)
-
-            # Add file, at correct path
-            zf.write(fpath, zip_path)
-
-        # Must close zip for all contents to be written
-        zf.close()
-
-        # Grab ZIP file from in-memory, make response with correct MIME-type
-        resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
-        # ..and correct content-disposition
-        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
-
-        return resp
-    else:
-        return redirect('user_profile_home')
+# def user_dl_all(request):
+#     # print request.GET
+#
+#     collection_ids = request.GET.get('collection_ids')
+#
+#     # print collection_ids
+#     if collection_ids:
+#         # collection_list = ast.literal_eval(collection_ids)
+#         collection_list = collection_ids.split(',')
+#
+#         filenames = dict()
+#         for image_id in collection_list:
+#             image_model = models.Image.objects.get(flickr_id=image_id)
+#             image_info = db_tools.get_image_info(image_model)
+#
+#             if image_info:
+#                 filenames[image_id] = (image_info['imageurl'])
+#
+#         # Files (local path) to put in the .zip
+#         # FIXME: Change this (get paths from DB etc)
+#         # filenames = ["/tmp/file1.txt", "/tmp/file2.txt"]
+#
+#         # Folder name in ZIP archive which contains the above files
+#         # E.g [thearchive.zip]/somefiles/file2.txt
+#         # FIXME: Set this to something better
+#         zip_subdir = 'bl_images'
+#         zip_filename = "%s.zip" % zip_subdir
+#
+#         # Open StringIO to grab in-memory ZIP contents
+#         s = StringIO.StringIO()
+#
+#         # The zip compressor
+#         zf = zipfile.ZipFile(s, "w", zipfile.ZIP_DEFLATED)
+#
+#         for image_id in filenames:
+#
+#             fpath = filenames[image_id].replace(' ', '%20')
+#
+#             filename = os.path.join('/tmp/', image_id + '.jpg')
+#             if 'static/media' in fpath:
+#                 fpath = 'http://illustrationarchive.cf.ac.uk' + fpath
+#             urllib.urlretrieve(fpath, filename)
+#             fpath = filename
+#
+#             # Calculate path for file in zip
+#             fdir, fname = os.path.split(fpath)
+#             zip_path = os.path.join(zip_subdir, fname)
+#
+#             # Add file, at correct path
+#             zf.write(fpath, zip_path)
+#
+#         # Must close zip for all contents to be written
+#         zf.close()
+#
+#         # Grab ZIP file from in-memory, make response with correct MIME-type
+#         resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+#         # ..and correct content-disposition
+#         resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+#
+#         return resp
+#     else:
+#         return redirect('user_profile_home')
 
 
 def get_stats():
@@ -1674,16 +1674,38 @@ def haystack_search(request):
     return HttpResponse(json.dumps(query_response, indent=4), content_type="application/json")
 
 
-def download_collection(request):
-    collection_id = request.GET.get('collection_id')
+try:
+    import zlib  # We may need its compression method
+except ImportError:
+    zlib = None
 
+
+def get_collection_zip_stream(request, collection_id, log_output=0, max_files=None):
     image_collection = models.ImageCollection.objects.all().get(id=collection_id)
+    images = models.ImageMapping.objects.filter(collection=image_collection).values_list('image__flickr_id', flat=True)
 
-    images = models.ImageMapping.objects.filter(collection=image_collection)
-
+    if log_output > 0:
+        print 'images.count', images.count()
     image_ids = []
+
+    # Use this to put an upper limit on number of files per zip
+
+    if not max_files:
+        max_files = images.count()
+
+    images_lower_idx = 0
+    images_high_idx = max_files
+
+    # while images_high_idx < images.count():
+    images = images[images_lower_idx:images_high_idx]
+
     for image_mapping in images:
-        image_ids.append(image_mapping.image.flickr_id)
+        # image_ids.append(image_mapping.image.flickr_id)
+        image_ids.append(image_mapping)
+
+    if log_output > 0:
+        print 'collection_id', collection_id
+        print 'image_ids', image_ids
 
     filenames = dict()
     for image_id in image_ids:
@@ -1694,30 +1716,39 @@ def download_collection(request):
         if image_info:
             filenames[image_id] = (image_info['imageurl'])
 
-    # Files (local path) to put in the .zip
-    # FIXME: Change this (get paths from DB etc)
-    # filenames = ["/tmp/file1.txt", "/tmp/file2.txt"]
+        if log_output > 1:
+            print image_info
 
-    # Folder name in ZIP archive which contains the above files
-    # E.g [thearchive.zip]/somefiles/file2.txt
-    # FIXME: Set this to something better
+    if log_output > 0:
+        print filenames
+
     zip_subdir = image_collection.name
-    zip_filename = "%s.zip" % zip_subdir
+    zip_filename = "{}_{}.zip".format(collection_id, zip_subdir)
 
     # Open StringIO to grab in-memory ZIP contents
     s = StringIO.StringIO()
 
     # The zip compressor
     # .ZIP_STORED .ZIP_DEFLATED
-    zf = zipfile.ZipFile(s, "w", zipfile.ZIP_STORED)
+    if not zlib:
+        zf = zipfile.ZipFile(s, "w", zipfile.ZIP_STORED)
+    else:
+        zf = zipfile.ZipFile(s, "w", zipfile.ZIP_DEFLATED)
 
     for image_id in filenames:
 
         fpath = filenames[image_id].replace(' ', '%20')
 
-        filename = os.path.join('/tmp/', image_id + '.jpg')
+        tmp_dir = '/tmp/lv_images/'
+        if not os.path.exists(tmp_dir):
+            os.makedirs(tmp_dir)
+
+        filename = os.path.join(tmp_dir, image_id + '.jpg')
         if 'static/media' in fpath:
             fpath = 'http://illustrationarchive.cf.ac.uk' + fpath
+
+        if log_output > 0:
+            print 'pulling ', fpath, filename
         urllib.urlretrieve(fpath, filename)
         fpath = filename
 
@@ -1728,6 +1759,9 @@ def download_collection(request):
         # Add file, at correct path
         zf.write(fpath, zip_path)
 
+        # delete fpath
+        os.remove(fpath)
+
         image_info = get_image_data_dict(image_id)
 
         json_path = os.path.join(zip_subdir, str(image_id) + '.json')
@@ -1735,22 +1769,51 @@ def download_collection(request):
 
         try:
             chicago_path = os.path.join(zip_subdir, str(image_id) + '-chicago-formatted.txt')
-
-            formatted_data = 'Illustration. '
             bl_data = image_info['bl_flickr_data'][0]['fields']
 
-            formatted_data += str(bl_data['flickr_original_height']) + ' ' + str(bl_data['flickr_original_height']) + ' px. '
-            formatted_data += 'From ' + str(bl_data['title']) + ' ' + str(bl_data['first_author']) + '. '
+            formatted_data = u'{} {} {} px. From {} {}. '.format(
+                'Illustration.',
+                bl_data['flickr_original_height'].strip(),
+                bl_data['flickr_original_width'].strip(),
+                bl_data['title'],
+                bl_data['first_author']
+            )
 
-            zf.writestr(chicago_path, formatted_data)
-        except:
-            pass
+            # formatted_data = 'Illustration. '
+            # formatted_data += str(bl_data['flickr_original_height']) + ' ' + str(
+            #     bl_data['flickr_original_height']) + ' px. '
+            # formatted_data += 'From ' + str(bl_data['title']) + ' ' + str(bl_data['first_author']) + '. '
+            if log_output > 1:
+                print chicago_path, formatted_data
+
+            zf.writestr(chicago_path, formatted_data.encode('utf-8'))
+        except Exception as ex5846732:
+            print 'chicago_path error', ex5846732
 
     # Must close zip for all contents to be written
     zf.close()
 
+    collection_dir = 'lost_visions/static/media/collections'
+    if not os.path.exists(collection_dir):
+        os.makedirs(collection_dir)
+
+    zip_file = os.path.join(collection_dir, zip_filename)
+    with open(zip_file, 'wb') as f_out:
+        f_out.write(s.getvalue())
+
+        if log_output > 1:
+            print f_out.name
+
+    return s, zip_filename
+
+
+def download_collection(request):
+    collection_id = request.GET.get('collection_id')
+
+    s, zip_filename = get_collection_zip_stream(request, collection_id)
+
     # Grab ZIP file from in-memory, make response with correct MIME-type
-    resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+    resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
     # ..and correct content-disposition
     resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
 
@@ -2943,6 +3006,8 @@ if os.path.isfile(fname):
     with open(fname, 'r') as all_id_file:
         all_ids = all_id_file.read()
         all_id_list = ast.literal_eval(all_ids)
+        print 'all', len(all_id_list)
+        print 'set', len(set(all_id_list))
 
 
 def get_thumb_url(next_id):
@@ -3021,3 +3086,4 @@ def image_sorter(request):
                       'total': len(all_id_list)
                   },
                   context_instance=RequestContext(request))
+

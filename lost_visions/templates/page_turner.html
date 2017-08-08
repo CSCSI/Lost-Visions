@@ -116,26 +116,31 @@
                             <div id="page_image_wrapper">
                                 <table align="center" cellpadding="5px">
                                     <tr>
-                                        {% if pre_post == 'pre' %}
-                                            <td>
-                                                <img id="page_image_pre" src="{% url 'find_page' book_id pre_post_number volume%}"
+                                        <td id="pre_image_td" hidden="hidden">
+{#                                            {{ pre_number }}#}
+{#                                            {% if pre_post == 'pre' %}#}
+                                                <img id="page_image_pre" src="{% url 'find_page' book_id pre_number volume%}"
                                                      style="background-color: #27268c; padding:1px;
-                                                     border: 3px; border-style: dashed; display: block; margin: 0 auto">
-                                            </td>
-                                        {% endif %}
-                                        <td>
-                                            {#                                            <a href="{% url 'page_turner' book_id next volume%}">#}
-                                            <img id="page_image" src="{% url 'find_page' book_id page volume%}"
-                                                 style="background-color: #27268c; padding:1px; display: block; margin: 0 auto">
-                                            {#                                            </a>#}
+                                                     display: block; margin: 0 auto">
+{#                                            {% endif %}#}
                                         </td>
-                                        {% if pre_post == 'post' %}
-                                            <td>
-                                                <img id="page_image_post" src="{% url 'find_page' book_id pre_post_number volume%}"
+
+                                        <td>
+{#                                            {{ page }}#}
+                                            <img id="page_image" src="{% url 'find_page' book_id page volume%}"
+                                                 style="background-color: #27268c; padding:1px; display: block;
+                                                 border: 3px; border-style: dashed; margin: 0 auto">
+                                        </td>
+
+                                        <td id="post_image_td" hidden="hidden">
+{#                                            {{ post_number }}#}
+{#                                            {% if pre_post == 'post' %}#}
+
+                                                <img id="page_image_post" src="{% url 'find_page' book_id post_number volume%}"
                                                      style="background-color: #27268c; padding:1px;
-                                                     border: 3px; border-style: dashed; display: block; margin: 0 auto">
-                                            </td>
-                                        {% endif %}
+                                                     display: block; margin: 0 auto">
+{#                                            {% endif %}#}
+                                        </td>
                                     </tr>
                                 </table>
 
@@ -167,6 +172,17 @@
 
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
 
+        $("#double-left").click(function(e) {
+            $.cookie("lv_page_viewer_pages", "double_left", {expires: 365, path: '/'});
+        });
+
+        $("#double-right").click(function(e) {
+            $.cookie("lv_page_viewer_pages", "double_right", {expires: 365, path: '/'});
+        });
+
+        $("#single-page").click(function(e) {
+            $.cookie("lv_page_viewer_pages", "single_page", {expires: 365, path: '/'});
+        });
 
         $("#menu-toggle").click(function(e) {
             e.preventDefault();
@@ -199,6 +215,19 @@
         });
 
         $(document).ready(function(){
+            var view_pages = $.cookie("lv_page_viewer_pages");
+
+{#            alert('show ' + view_pages);#}
+
+            if (view_pages == "double_left") {
+                $('#pre_image_td').show();
+            } else if (view_pages == "double_right") {
+                $('#post_image_td').show();
+                $('#double-right').style({'border': '3px', 'border-style': 'dashed'});
+            } else if (view_pages == "single_page") {
+
+            }
+
             setTimeout(function(){
                 $("#menu-toggle").click();
             }, 3);

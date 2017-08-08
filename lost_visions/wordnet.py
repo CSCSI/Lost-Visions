@@ -134,7 +134,7 @@ class Linktypes(models.Model):
         db_table = 'linktypes'
 
 class Logs(models.Model):
-    id = models.IntegerField(primary_key=True, blank=True, null=True)
+    id = models.IntegerField(primary_key=True)
     module = models.CharField(max_length=32)
     tag = models.CharField(max_length=32)
     subtag = models.CharField(max_length=64)
@@ -341,7 +341,7 @@ class Synsets(models.Model):
 
 class Vframemaps(models.Model):
     synsetid = models.IntegerField(primary_key=True)
-    wordid = models.IntegerField(primary_key=True, blank=True, null=True)
+    wordid = models.IntegerField(primary_key=True)
     frameid = models.SmallIntegerField(primary_key=True)
     class Meta:
         managed = False

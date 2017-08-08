@@ -449,14 +449,14 @@
             });
         });
 
-        $('#download_all').click(function(){
-            var dl_link = '{% url 'user_dl_all' %}' +
-                    '?csrfmiddlewaretoken=' +
-                    document.getElementsByName('csrfmiddlewaretoken')[0].value +
-                    '&collection_ids=' +
-                    '{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}';
-            window.open(dl_link, '_blank');
-        });
+{#        $('#download_all').click(function(){#}
+{#            var dl_link = '{% url 'user_dl_all' %}' +#}
+{#                    '?csrfmiddlewaretoken=' +#}
+{#                    document.getElementsByName('csrfmiddlewaretoken')[0].value +#}
+{#                    '&collection_ids=' +#}
+{#                    '{% for id, data in images.items %}{{ id }}{% if not forloop.last %},{% endif %}{% endfor %}';#}
+{#            window.open(dl_link, '_blank');#}
+{#        });#}
 
         $('.dl_collection').click(function(){
             var collection_id = $(this).data('collection_id');

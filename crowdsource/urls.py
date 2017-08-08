@@ -56,7 +56,7 @@ urlpatterns = patterns('',
 
                        url(r'^logout', 'lost_visions.views.logout', name='logout'),
                        url(r'^request_public_exhibition', 'lost_visions.views.request_public_exhibition', name='request_public_exhibition'),
-                       url(r'^user_dl_all', 'lost_visions.views.user_dl_all', name='user_dl_all'),
+                       # url(r'^user_dl_all', 'lost_visions.views.user_dl_all', name='user_dl_all'),
                        url(r'^download_collection', 'lost_visions.views.download_collection', name='dl_collection'),
                        url(r'^download_ready', 'lost_visions.views.download_collection_ready', name='dl_collection_ready'),
                        url(r'^zip_available/(?P<collection_id>\d+)', 'lost_visions.views.zip_available', name='zip_available'),

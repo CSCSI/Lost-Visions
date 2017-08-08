@@ -42,7 +42,10 @@
 
         .nav-row1 {
             display: flex;
-            height: 8em;
+            height: 9em;
+        }
+        .nav_img {
+            border: 1px outset darkgray;
         }
         .row2 {
             display: flex;
@@ -52,6 +55,7 @@
         .flex1 {
             -webkit-flex: 1;
             flex: 1 2;
+            padding-top: 2em;
         }
         .flex2 {
             -webkit-flex: 2;
@@ -107,7 +111,11 @@
 
         <div class="row2">
 
-        <div class="flex1"></div>
+        <div class="flex1">
+            <h3>{{ collection_data.collection_name|title }}</h3>
+            <h2>{{ collection_data.images|length }} Illustrations</h2>
+            <h4 style="margin: 5px">Created by {{ collection_creator }}</h4>
+        </div>
 
 
             <div class="flex2 image_box slider-for">
@@ -115,7 +123,7 @@
 
 {#                    <img class="image_box_img scale" src="http://lost-visions.cf.ac.uk/static/media/images/resized/plates/1800/000033858_0_000165_1_[England Delineated  or  a Geographical description of every county in England a_1800.jpg.thumb.jpg">#}
                     <div class="{% if forloop.first %}active{% endif %}">
-                    <div class="">
+                    <div class="" style="text-align: right">
                         <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>
                     </div>
                     <img
@@ -130,14 +138,14 @@
         <div class="flex1"></div>
         </div>
 
-        <div class="nav-row1" style="background-color: lightgrey">
+        <div class="nav-row1" style="background-color: beige">
             <div class="slider-nav">
                 {% for image in collection_data.images %}
                     <div class="{% if forloop.first %} active{% endif %}">
 {#                        <div id="slick_container_nav" class="slick_container_nav" style="display: table">#}
 {#                            <div style="display: table-cell; vertical-align: middle">#}
-                                <img data-lazy="{{ image.url }}"
-                                     style="max-height: 7em; max-width: 200px; ">
+                                <img class="nav_img" data-lazy="{{ image.url }}"
+                                     style="height: 7em; max-width: 200px; ">
 
 {#                            </div>#}
 {#                        </div>#}

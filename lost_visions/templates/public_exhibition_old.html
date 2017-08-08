@@ -3,6 +3,7 @@
 
 {% block content %}
 
+
     <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
         $(document).ready(function () {
 
@@ -68,38 +69,18 @@
     {#    <div class="home-content-main container">#}
     <h3 style="text-align: center">{{ collection_data.collection_name }} - {{ collection_data.images|length }} images</h3>
 
-    <div class="container">
-    <div class="row1">
-        <h2 class="flex9">
-            Is image {{ itr }} (id={{ image_id }}) a {{ category }}?
-        </h2>
-
-    </div>
-    <div class="row1">
-        <h4>Previous image {{ prev_id }} was {{ user_opinion }} || {{ percent }}% || {{ itr }}/{{ total }}</h4>
-    </div>
-    <div class="row2">
-
-        <div class="flex2 image_box">
-{#            <img class="image_box_img" src="{{ next_url }}">#}
-            <img class="image_box_img" src="http://lost-visions.cf.ac.uk/static/media/images/resized/plates/1800/000033858_0_000165_1_[England Delineated  or  a Geographical description of every county in England a_1800.jpg.thumb.jpg">
-        </div>
-
-    </div>
-</div>
-
     <div class="row">
         <div class="slider-for">
             {% for image in collection_data.images %}
                 <div class="{% if forloop.first %} active{% endif %}">
 
                     <table style="width: 100%" class="findme">
-                                                    <col width="80%">
-                                                    <col width="20%">
+                        {#                            <col width="80%">#}
+                        {#                            <col width="20%">#}
                         <tr>
                             <th>
                                 <div class="slick_container carousel-exhibition-item"
-                                                                             style="max-height: 90%; width: 100%; display: table"
+                                                                             style="width: 100%; display: table"
                                         >
                                     <a href="{% url 'image' image.flickr_id %}" target="_blank"
 
@@ -113,15 +94,15 @@
                                     </a>
                                 </div>
                             </th>
-                                                            <td>
-                                                                {{ image.title }}
-                                                                {% if image.caption %}
-                                                                    <br>
-                                                                    <span style="color: white; background-color: #A365BA; text-align: center; text-wrap: normal">
-                                                                        {{ image.caption }}
-                                                                    </span>
-                                                                {% endif %}
-                                                            </td>
+                            {#                                <td>#}
+                            {#                                    {{ image.title }}#}
+                            {#                                    {% if image.caption %}#}
+                            {#                                        <br>#}
+                            {#                                        <span style="color: white; background-color: #A365BA; text-align: center; text-wrap: normal">#}
+                            {#                                            {{ image.caption }}#}
+                            {#                                        </span>#}
+                            {#                                    {% endif %}#}
+                            {#                                </td>#}
                         </tr>
                         <tr>
                             <td style="text-align: center">
@@ -136,14 +117,14 @@
                         </tr>
                     </table>
 
-                                                                    <img src="{{ image.url }}" class="carousel-exhibition-item">
-                                                                    <div class="" style="text-align: center">
-                                                                        {{ image.title }}
-                                                                        {% if image.caption %}
-                                                                        <br>
-                                                                        <span style="color: white; background-color: #A365BA; text-align: center">{{ image.caption }}</span>
-                                                                        {% endif %}
-                                                                    </div>
+                    {#                                                <img src="{{ image.url }}" class="carousel-exhibition-item">#}
+                    {#                                                <div class="" style="text-align: center">#}
+                    {#                                                    {{ image.title }}#}
+                    {#                                                    {% if image.caption %}#}
+                    {#                                                    <br>#}
+                    {#                                                    <span style="color: white; background-color: #A365BA; text-align: center">{{ image.caption }}</span>#}
+                    {#                                                    {% endif %}#}
+                    {#                                                </div>#}
 
                 </div>
             {% endfor %}
@@ -154,10 +135,10 @@
                 <div class="{% if forloop.first %} active{% endif %}">
                     <div id="slick_container_nav" class="slick_container_nav" style="display: table">
                         <div style="display: table-cell; vertical-align: middle">
-                            <img data-lazy="{{ image.url }}" style="max-height: 100px; max-width: 200px">
-                                                    <div class="">
-                                                        <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>
-                                                    </div>
+                            <img src="{{ image.url }}" style="max-height: 100px; max-width: 200px">
+                            {#                        <div class="">#}
+                            {#                            <span style="color: white; background-color: #A365BA">{{ image.caption }}</span>#}
+                            {#                        </div>#}
                         </div>
                     </div>
                 </div>
