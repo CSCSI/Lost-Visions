@@ -58,22 +58,28 @@ class Command(BaseCommand):
 
         mappings = []
         skipped = []
-        with open(options['list_file'], 'r') as list_file:
-            for image_id in list_file:
-                image_id = image_id.strip()
-                print '\n*{}*'.format(image_id)
 
-                try:
-                    image = Image.objects.get(flickr_id=image_id)
-                    mapping, created = ImageMapping.objects.get_or_create(
-                        collection=collection, image=image
-                    )
-                    if created:
-                        mappings.append(mapping)
-                    else:
-                        skipped.append(mapping)
-                except Exception as e1:
-                    print e1
-                    err(e1)
+        try:
+            with open(options['list_file'], 'r') as list_file:
+                for image_id in list_file:
+                    image_id = image_id.strip()
+                    print '\n*{}*'.format(image_id)
+
+                    try:
+                        image = Image.objects.get(flickr_id=image_id)
+                        mapping, created = ImageMapping.objects.get_or_create(
+                            collection=collection, image=image
+                        )
+                        if created:
+                            mappings.append(mapping)
+                        else:
+                            skipped.append(mapping)
+                    except Exception as e1:
+                        print e1
+                        err(e1)
+
+        except Exception as e2:
+            print e2
+            err(e2)
 
         print mappings
