@@ -17,12 +17,16 @@ class Command(BaseCommand):
                     dest='log_output',
                     default=0,
                     help='Logging level 0-2, increasing detail to stdout. Default is 0'),
-
         make_option('--max_files',
                     action='store',
                     dest='max_files',
                     default=None,
                     help='Number of files to do into the zip. BEWARE: Default is all of them.'),
+        make_option('--collection_name',
+                    action='store',
+                    dest='collection_name',
+                    default=None,
+                    help='Specific collection to zip. BEWARE: Default is all of them.'),
     )
 
     def handle(self, *args, **options):
@@ -31,15 +35,18 @@ class Command(BaseCommand):
             try:
                 print 'ok', thing
             except:
-                raise CommandError('{}'.format(thing))
+                raise CommandError('{0}'.format(thing))
 
         for thing in options:
             try:
                 print 'ok', thing, options[thing]
             except:
-                raise CommandError('{}'.format(thing))
+                raise CommandError('{0}'.format(thing))
 
-        collections = ImageCollection.objects.all()
+        if options['collection_name']:
+            collections = ImageCollection.objects.filter(name=options['collection_name'])
+        else:
+            collections = ImageCollection.objects.all()
         print 'collections.count', collections.count()
 
         for collection in collections:
