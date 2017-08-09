@@ -466,8 +466,8 @@ def get_flickr_tags(image_id):
 
     # try:
 
-    #cut image ID from image URL
-    #get Flickr tags for this image
+    # cut image ID from image URL
+    # get Flickr tags for this image
     flickr_tags = getImageTags('http://www.flickr.com/photos/britishlibrary/' + image_id, size='z')
     author = u''
     if u'Author' in flickr_tags:
@@ -494,14 +494,11 @@ def get_flickr_tags(image_id):
 
             if flickr_tags[tag].lower().strip() != author.lower().strip():
 
-
-
                 # try:
                 #     #     # TODO utf fix
                 #     print "*" + flickr_tags[tag].lower() + "* *" + author.lower() + "*"
                 # except Exception as e:
                 #     print e
-
 
                 tags[tag] = flickr_tags[tag]
         else:
@@ -1723,7 +1720,7 @@ def get_collection_zip_stream(request, collection_id, log_output=0, max_files=No
         print filenames
 
     zip_subdir = image_collection.name
-    zip_filename = "{}_{}.zip".format(collection_id, zip_subdir)
+    zip_filename = "{0}_{0}.zip".format(collection_id, zip_subdir)
 
     # Open StringIO to grab in-memory ZIP contents
     s = StringIO.StringIO()
@@ -1771,7 +1768,7 @@ def get_collection_zip_stream(request, collection_id, log_output=0, max_files=No
             chicago_path = os.path.join(zip_subdir, str(image_id) + '-chicago-formatted.txt')
             bl_data = image_info['bl_flickr_data'][0]['fields']
 
-            formatted_data = u'{} {} {} px. From {} {}. '.format(
+            formatted_data = u'{0} {0} {0} px. From {0} {0}. '.format(
                 'Illustration.',
                 bl_data['flickr_original_height'].strip(),
                 bl_data['flickr_original_width'].strip(),
@@ -2374,6 +2371,7 @@ def page_turner(request, book_id, page, volume):
 
     return render(request, 'page_turner.html', render_details)
 
+
 @requires_csrf_token
 def software(request):
     return render(request, 'software.html', {})
@@ -2569,14 +2567,14 @@ def mario_find(request, flickr_id):
 
     # print flickr_id
 
-    # query = "SELECT wordid, lemma, definition, synsetid, pos, sensenum FROM words LEFT JOIN senses s USING (wordid) " \
+    # query = "SELECT wordid, lemma, definition, synsetid, pos, sensenum FROM words \
+    # LEFT JOIN senses s USING (wordid) " \
     #         "LEFT JOIN synsets USING (synsetid) where lemma like %s " \
     #         "order by length(lemma), sensenum COLLATE NOCASE ASC limit %s"
 
     results = mario_models.Profiles.objects.filter(fileid__contains=flickr_id)
 
     # .objects.db_manager('wordnet').raw(query, [searchword + '%', limit])
-
 
     # found_ids = models.Profiles()
 
@@ -3011,7 +3009,7 @@ if os.path.isfile(fname):
 
 
 def get_thumb_url(next_id):
-    image_data_text = requests.get('http://lost-visions.cf.ac.uk/image_data/{}'.format(next_id))
+    image_data_text = requests.get('http://lost-visions.cf.ac.uk/image_data/{0}'.format(next_id))
     # image_data = json.loads(image_data_text.text)
     image_data = image_data_text.json()
     # print image_data
@@ -3044,7 +3042,7 @@ def get_thumb_url(next_id):
                 # next_url = next_url.replace(
                 #     '[', '%5B'
                 # )
-                next_url = 'http://lost-visions.cf.ac.uk{}'.format(next_url)
+                next_url = 'http://lost-visions.cf.ac.uk{0}'.format(next_url)
                 return next_url
 
 
@@ -3057,14 +3055,14 @@ def image_sorter(request):
     prev_image_id = request.GET.get('image_id')
 
     if prev_user_opinion == '1':
-        with open('lost_visions/scrape/{}.txt'.format(category), 'a') as yes_file:
-            yes_file.write('{}\n'.format(prev_image_id))
+        with open('lost_visions/scrape/{0}.txt'.format(category), 'a') as yes_file:
+            yes_file.write('{0}\n'.format(prev_image_id))
     elif prev_user_opinion == '-1':
-        with open('lost_visions/scrape/not_{}.txt'.format(category), 'a') as no_file:
-            no_file.write('{}\n'.format(prev_image_id))
+        with open('lost_visions/scrape/not_{0}.txt'.format(category), 'a') as no_file:
+            no_file.write('{0}\n'.format(prev_image_id))
     else:
-        with open('lost_visions/scrape/no_opinion_{}.txt'.format(category), 'a') as none_file:
-            none_file.write('{}\n'.format(prev_image_id))
+        with open('lost_visions/scrape/no_opinion_{0}.txt'.format(category), 'a') as none_file:
+            none_file.write('{0}\n'.format(prev_image_id))
 
     itr = request.GET.get('itr', -1)
     itr = int(itr) + 1
