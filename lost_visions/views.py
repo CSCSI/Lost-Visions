@@ -1707,20 +1707,45 @@ def get_collection_zip_stream(request, collection_id, log_output=0, max_files=No
     filenames = dict()
     for image_id in image_ids:
         image_model = models.Image.objects.get(flickr_id=image_id)
-        image_info = db_tools.get_image_info(image_model)
-        image_info = sanitise_image_info(image_info, request)
 
-        if image_info:
-            filenames[image_id] = (image_info['imageurl'])
+        image_locations = models.ImageLocation.objects.filter(
+            book_id=image_model.book_identifier,
+            volume=image_model.volume,
+            page=image_model.page,
+            idx=image_model.image_idx
+        )
+        if image_locations.count() > 0:
+            image_location_model = image_locations[0]
 
-        if log_output > 1:
-            print image_info
+            # file system location - this location looks like:
+            # /scratch/lost-visions/images-found/covers/1676/
+            # 002110888_0_Gloriana or the Court of Augustus C sar etc[A tragedy in five acts and in verse]_1676.jpg
+            location = image_location_model.location
+
+            # we need it to be the webserver URL:
+            # (without the http://lost-visions.cf.ac.uk)
+            # /static/media/images/scans/covers/1676/
+            # 002110888_0_Gloriana%20%20or%20the%20Court%20of%20Augustus%20C%20sar%20%20etc%20%20%5bA%20tragedy%20%20in%20five%20acts%20and%20in%20verse%20%5d_1676.jpg
+
+            location = location.replace('/scratch/lost-visions/images-found', '/static/media/images/scans')
+            filenames[image_id] = location
+
+            print 'url location', location
+        else:
+            image_info = db_tools.get_image_info(image_model)
+            image_info = sanitise_image_info(image_info, request)
+
+            if image_info:
+                filenames[image_id] = (image_info['imageurl'])
+
+            if log_output > 1:
+                print image_info
 
     if log_output > 0:
         print filenames
 
     zip_subdir = image_collection.name
-    zip_filename = "{0}_{0}.zip".format(collection_id, zip_subdir)
+    zip_filename = "{0}_{1}.zip".format(collection_id, zip_subdir)
 
     # Open StringIO to grab in-memory ZIP contents
     s = StringIO.StringIO()
@@ -1768,7 +1793,7 @@ def get_collection_zip_stream(request, collection_id, log_output=0, max_files=No
             chicago_path = os.path.join(zip_subdir, str(image_id) + '-chicago-formatted.txt')
             bl_data = image_info['bl_flickr_data'][0]['fields']
 
-            formatted_data = u'{0} {0} {0} px. From {0} {0}. '.format(
+            formatted_data = u'{0} {1} {2} px. From {3} {4}. '.format(
                 'Illustration.',
                 bl_data['flickr_original_height'].strip(),
                 bl_data['flickr_original_width'].strip(),
@@ -2521,17 +2546,18 @@ def powerset_generator(i):
         yield subset
 
 
-def get_image_data_dict(image_id):
+def get_image_data_dict(image_id, location_only=False):
     image_data_model = models.Image.objects.get(flickr_id=image_id)
     serialized_image_model = serializers.serialize('json', [image_data_model])
 
-    tags = models.Tag.objects.filter(image=image_data_model)
     tags_list = []
-    for tag in tags:
-        tags_list.append({
-            'tag': tag.tag,
-            'tag_order': tag.tag_order
-        })
+    if not location_only:
+        tags = models.Tag.objects.filter(image=image_data_model)
+        for tag in tags:
+            tags_list.append({
+                'tag': tag.tag,
+                'tag_order': tag.tag_order
+            })
 
     image_location = models.ImageLocation.objects.filter(book_id=image_data_model.book_identifier)
     serialized_location_model = serializers.serialize('json', image_location)
@@ -2539,10 +2565,12 @@ def get_image_data_dict(image_id):
     descriptor_locations = models.DescriptorLocation.objects.filter(image_id=image_data_model)
     serialized_descriptors_model = serializers.serialize('json', descriptor_locations)
 
-    image_matches = models.MachineMatching.objects.filter(Q(image_a=image_data_model) |
-                                                          Q(image_b=image_data_model)) \
-        .filter(Q(metric='CV_COMP_CORREL')).order_by('-metric_value')
-    serialized_matches_model = serializers.serialize('json', image_matches)
+    serialized_matches_model = {}
+    if not location_only:
+        image_matches = models.MachineMatching.objects.filter(Q(image_a=image_data_model) |
+                                                              Q(image_b=image_data_model)) \
+            .filter(Q(metric='CV_COMP_CORREL')).order_by('-metric_value')
+        serialized_matches_model = serializers.serialize('json', image_matches)
 
     return_data = {
         'bl_flickr_data': json.loads(serialized_image_model),
