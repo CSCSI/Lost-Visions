@@ -9,6 +9,7 @@ from lost_visions.models import ImageCollection, ImageMapping, Image, LostVision
 
 
 def err(error):
+    print error
     exc_type, exc_obj, exc_tb = sys.exc_info()
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     print(exc_type, fname, exc_tb.tb_lineno)
@@ -47,7 +48,7 @@ class Command(BaseCommand):
             try:
                 print 'ok', thing, options[thing]
             except:
-                raise CommandError('{}'.format(thing))
+                raise CommandError('{0}'.format(thing))
 
         anon_user = User.objects.get(username='Anon_y_mouse')
         anon_lv_user = LostVisionUser.objects.get(username=anon_user)
@@ -63,7 +64,7 @@ class Command(BaseCommand):
             with open(options['list_file'], 'r') as list_file:
                 for image_id in list_file:
                     image_id = image_id.strip()
-                    print '\n*{}*'.format(image_id)
+                    print '\n*{0}*'.format(image_id)
 
                     try:
                         image = Image.objects.get(flickr_id=image_id)
@@ -75,11 +76,9 @@ class Command(BaseCommand):
                         else:
                             skipped.append(mapping)
                     except Exception as e1:
-                        print e1
                         err(e1)
 
         except Exception as e2:
-            print e2
             err(e2)
 
         print mappings
