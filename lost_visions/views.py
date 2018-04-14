@@ -2645,6 +2645,39 @@ def mario_find(request, flickr_id):
 def help(request):
     return render(request, 'help.html', {}, context_instance=RequestContext(request))
 
+
+import threading
+from django.core.mail import EmailMessage
+
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, txt_content, html_content, recipient_list, sender):
+        self.subject = subject
+        self.txt_content = txt_content
+        self.recipient_list = recipient_list
+        self.html_content = html_content
+        self.sender = sender
+        threading.Thread.__init__(self)
+
+    def run(self):
+        msg = EmailMultiAlternatives(
+            self.subject,
+            self.txt_content,
+            self.sender,
+            self.recipient_list)
+        # msg.content_subtype = 'html'
+        msg.attach_alternative(self.html_content, "text/html")
+
+        start_time = time.time()
+        print('3 Email created', start_time )
+        msg.send()
+        end_time = time.time()
+        print('4 Email sent', end_time, end_time - start_time, 'seconds')
+
+
+def send_html_mail(subject, txt_content, html_content, recipient_list, sender):
+    EmailThread(subject, txt_content, html_content, recipient_list, sender).start()
+
 @requires_csrf_token
 def request_public_exhibition(request):
     if request.user.is_authenticated():
@@ -2673,12 +2706,17 @@ def request_public_exhibition(request):
         html_text += '<p>Thanks.</p><p>This is an automated message, please do not reply.</p>'
         html_text += '<br><p>Lost Visions/ Illustration Archive, 2015<p>'
 
-        email = EmailMultiAlternatives('Request for Public Exhibition ' + collection_name + ' ' + collection_id,
-                                       email_text, to=ADMIN_EMAIL_ADDRESSES)
-        email.attach_alternative(html_text, "text/html")
-        res = email.send()
+        send_html_mail('Request for Public Exhibition ' + collection_name + ' ' + collection_id,
+                       txt_content=email_text,
+                       html_content=html_text,
+                       recipient_list=ADMIN_EMAIL_ADDRESSES,
+                       sender=settings.DEFAULT_FROM_EMAIL)
+        # email = EmailMultiAlternatives('Request for Public Exhibition ' + collection_name + ' ' + collection_id,
+        #                                email_text, to=ADMIN_EMAIL_ADDRESSES)
+        # email.attach_alternative(html_text, "text/html")
+        # res = email.send()
 
-        return HttpResponse(json.dumps({'success': res}, indent=4), content_type="application/json")
+        return HttpResponse(json.dumps({'success': 'Thread running, wait ~130 secondss'}, indent=4), content_type="application/json")
 
 
 def accept_public_exhibition(request, collection_id):

@@ -86,8 +86,11 @@ if __name__ == "__main__":
     print 'Running..'
     print sys.argv
 
+    test()
+
     for arg in sys.argv[1:]:
         print arg
+        arg = "test"
 
         if arg == "test":
             test()
@@ -96,5 +99,5 @@ if __name__ == "__main__":
         if arg == "del_spam":
             clean_image_texts(True)
 
-    if len(sys.argv) < 2:
-        clean_image_texts(False)
+    # if len(sys.argv) < 2:
+    #     clean_image_texts(False)

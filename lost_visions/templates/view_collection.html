@@ -529,6 +529,25 @@
             $('#tag_collection_dialog_form').data('id', collection_id).data('name', collection_name).dialog("open");
         });
 
+        function request_collection_be_public(collection_name, collection_id) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'request_public_exhibition' %}",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    collection_name: collection_name,
+                    collection_id: collection_id
+                },
+                success: function(data) {
+                    var ok = data['success'];
+                    alert("Thank you. A request has been sent to the administrator : " + collection_name + ' ' + collection_id);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('An error occured. Please check you are still logged in');
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
 
         $('.request_public_exhibition').click(function(){
             var collection_name = $(this).data().collection_name;
@@ -1003,7 +1022,7 @@
             {% endfor %}
         </div>
     {% else %}
-        issues
+        issues : {{ results }}
     {% endif %}
 
     {#    <div id="load_more" class="btn btn-primary" style="display: block; margin: 0 auto">Click to load more</div>#}
