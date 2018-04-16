@@ -2670,7 +2670,11 @@ class EmailThread(threading.Thread):
 
         start_time = time.time()
         print('3 Email created', start_time )
-        msg.send()
+        try:
+            msg.send()
+        except Exception as e:
+            print(e)
+
         end_time = time.time()
         print('4 Email sent', end_time, end_time - start_time, 'seconds')
 
