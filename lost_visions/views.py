@@ -2695,7 +2695,8 @@ def request_public_exhibition(request):
         email_text += 'User ' + get_request_user(request).username.username + \
                       ' has requested that a collection named *' + collection_name + \
                       '* with collection ID *' + collection_id + '* be made into a Public Exhibition.\n\n'
-        email_text += 'Click <here> to accept.\n\n'
+        email_text += "Click https://illustrationarchive.cf.ac.uk" + reverse('exhibition', kwargs={'collection_id': collection_id}) + 'to review.\n\n'
+        email_text += "Click https://illustrationarchive.cf.ac.uk" + reverse('accept_public_exhibition', kwargs={'collection_id': collection_id}) + 'to accept.\n\n'
         email_text += 'Thanks.\n\nThis is an automated message, please do not reply.'
         email_text += '\n\nLost Visions/ Illustration Archive, 2015'
 
@@ -2703,9 +2704,9 @@ def request_public_exhibition(request):
         html_text += '<p>User ' + get_request_user(request).username.username + \
                      ' has requested that a collection named *' + collection_name + \
                      '* with collection ID *' + collection_id + '* be made into a Public Exhibition.</p><br>'
-        html_text += '<p>Click <a href="illustrationarchive.cf.ac.uk' + reverse('exhibition', kwargs={'collection_id': collection_id}) + \
+        html_text += '<p>Click <a href="https://illustrationarchive.cf.ac.uk' + reverse('exhibition', kwargs={'collection_id': collection_id}) + \
                      '">Here</a> to review it.</p><br>'
-        html_text += '<p>Click <a href="illustrationarchive.cf.ac.uk' + reverse('accept_public_exhibition', kwargs={'collection_id': collection_id}) + \
+        html_text += '<p>Click <a href="https://illustrationarchive.cf.ac.uk' + reverse('accept_public_exhibition', kwargs={'collection_id': collection_id}) + \
                      '">Here</a> to accept.</p><br>'
         html_text += '<p>Thanks.</p><p>This is an automated message, please do not reply.</p>'
         html_text += '<br><p>Lost Visions/ Illustration Archive, 2015<p>'
