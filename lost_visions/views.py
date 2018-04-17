@@ -2726,7 +2726,7 @@ def request_public_exhibition(request):
 
 def accept_public_exhibition(request, collection_id):
     if request.user.is_authenticated():
-        if get_request_user(request).username.username == 'davejones':
+        if get_request_user(request).username.username == 'davejones' or request.user.is_superuser:
             msg = 'OK added ' + str(collection_id)
 
             # This needs explanation
