@@ -275,6 +275,14 @@ def image_tags(request):
     # print next_action
     if next_action == 'next_image':
         return random_image(request)
+    elif next_action == 'book':
+        image_model = models.Image.objects.get(flickr_id=image_id)
+        images_for_book = models.Image.objects.filter(
+            book_identifier=image_model.book_identifier
+        ).exclude(flickr_id=image_id)
+        images_for_book_count = images_for_book.count()
+        random_image_from_book = images_for_book[randint(0, images_for_book_count - 1)]
+        return redirect('image', image_id=random_image_from_book.flickr_id)
     else:
         # return image(request, image_id)
         return redirect('image', image_id=image_id)

@@ -324,7 +324,6 @@
                     buttons: {
                         "Save, stay on this Illustration": function() {
                             $('#stay_or_next_image').val('stay');
-
                             {#                            $('#captcha_key').val();#}
                             finish_tagging_dialog_form.dialog( "close" );
 
@@ -334,7 +333,11 @@
                             {#                            $('#captcha_key').val($('#recaptcha-token').val());#}
                             finish_tagging_dialog_form.dialog( "close" );
                             $('#image-taggin-form').submit();
-
+                        },
+                        "Save, move to next Illustration in book": function() {
+                            $('#stay_or_next_image').val('book');
+                            finish_tagging_dialog_form.dialog( "close" );
+                            $('#image-taggin-form').submit();
                         },
                         Cancel: function() {
                             console.log('on close:');

@@ -119,7 +119,7 @@ class Image(models.Model):
         db_table = 'image'
 
     def __unicode__(self):
-        return str(self.id) + ':' + self.flickr_id
+        return str(self.id) + ':' + self.flickr_id + ':' + self.book_identifier
 
 
 class Tag(models.Model):
@@ -295,8 +295,8 @@ class SavedImageCaption(models.Model):
         user = self.image_mapping.collection.user.username.username
 
         return str(self.id) + ':' + user + ':' \
-            + self.image_mapping.collection.name + ':' \
-            + self.image_mapping.image.flickr_id + ':' + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+               + self.image_mapping.collection.name + ':' \
+               + self.image_mapping.image.flickr_id + ':' + self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
 
 class MachineMatching(models.Model):
@@ -317,6 +317,14 @@ class PublicExhibition(models.Model):
     timestamp = models.DateTimeField(auto_now=True, blank=True, null=True)
     comment = models.TextField()
     visible = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return '{}, user : {}, {}, collection: {}, {}'.format(
+            self.id,
+            self.user_collection.name,
+            self.user_collection.user.username,
+            self.collection.name,
+            self.collection.user.username)
 
 
 class APIkey(models.Model):
