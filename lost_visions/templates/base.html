@@ -183,6 +183,31 @@
     {#    }#}
 
     $(document).ready(function () {
+
+        function addEvent(obj, evt, fn) {
+            if (obj.addEventListener) {
+                obj.addEventListener(evt, fn, false);
+            }
+            else if (obj.attachEvent) {
+                obj.attachEvent('on' + evt, fn);
+            }
+        }
+
+{#        var removed_cookie = $.removeCookie("survey_shown", { path: '/' });#}
+        addEvent(document, 'mouseout', function(e) {
+            e = e ? e : window.event;
+            var from = e.relatedTarget || e.toElement;
+            if (!from || from.nodeName == 'HTML') {
+                // the cursor has left the building
+                var survey_shown = $.cookie('survey_shown');
+                if (survey_shown == undefined) {
+                    $.cookie("survey_shown", 'true', {expires: 5, path: '/'});
+                    $('#leave_site_dialog_form').dialog("open");
+                } else {
+                }
+            }
+        });
+
 {#        load_css();#}
 
         {#        $('#photo').imgAreaSelect({ handles: true, fadeSpeed: 200, onSelectChange: preview });#}
@@ -222,6 +247,36 @@
                     $(targetElement).collapse('show');
                 }
             }).start();
+        });
+
+        var window_height = $(window).height();
+        var window_width = $(window).width();
+
+        var leave_site_dialog_form = null;
+        leave_site_dialog_form = $( "#leave_site_dialog_form" ).dialog({
+            autoOpen: false,
+            height: window_height * 0.75,
+            width: window_width * 0.5,
+            modal: true,
+            buttons: {
+                "Fill in Survey": function() {
+                    leave_site_dialog_form.dialog( "close" );
+                    var survey_url = 'https://forms.office.com/Pages/ResponsePage.aspx?id=MEu3vWiVVki9vwZ1l3j8vC6x3FvG8GhElTMaJJSK3OJUQTNOMU1GTEpRV0RKOUxXOVdNNlFRRUhFQS4u'
+                    window.open(survey_url,'_blank');
+                },
+                "No thanks": function() {
+                    leave_site_dialog_form.dialog( "close" );
+                }
+{#                Cancel: function() {#}
+{#                    leave_site_dialog_form.dialog( "close");#}
+{#                }#}
+            },
+            open : function() {
+
+            },
+            close: function() {
+
+            }
         });
     });
 
@@ -339,6 +394,10 @@
                             <li>
                                 <a class="btn btn-block" href="{% url 'random' %}">Random Images</a>
                             </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="btn btn-block" target="_blank" href="https://forms.office.com/Pages/ResponsePage.aspx?id=MEu3vWiVVki9vwZ1l3j8vC6x3FvG8GhElTMaJJSK3OJUQTNOMU1GTEpRV0RKOUxXOVdNNlFRRUhFQS4u">Give Feedback</a>
+                            </li>
                         </ul>
                     </li>
 
@@ -358,6 +417,24 @@
             </div><!-- /.navbar-collapse -->
         </div>
 
+    </div>
+
+    <div id="leave_site_dialog_form" title="Leaving the site?">
+        <p class="validateTips">Would you like to tell us about your experience with the Illustration Archive?</p>
+        <p class="validateTips">If you select no now, you can fill in the survey later via the Tools menu above</p>
+        <p class="validateTips">This popup will only appear once a week.</p>
+
+        <div id="leave_site_data" data-collection_id="" data-collection_name=""></div>
+        <form>
+            <fieldset>
+                <div id="final_tags">
+{#                    <div style="margin: 0 auto; text-align: center; margin-top: 20px">#}
+{#                        <div class="fa fa-3x fa-spinner fa-spin"></div>#}
+{#                    </div>#}
+                </div>
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
     </div>
 
     {#container#}
