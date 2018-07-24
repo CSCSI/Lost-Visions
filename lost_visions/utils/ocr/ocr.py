@@ -13,6 +13,7 @@ THIS_FILE_PATH = os.path.realpath(__file__)
 
 
 def standard_deviation(lst, population=True):
+    # https://codeselfstudy.com/blog/how-to-calculate-standard-deviation-in-python/
     min_time = min(lst)
     max_time = max(lst)
 
@@ -50,6 +51,7 @@ class OCReveryting():
         self.total_page_count = 0
         self.total_archive_count = 0
         self.logfile = 'log.log'
+        self.mean = 40
 
     def get_zip_path(self, root_folder, book_id, volume='0'):
         book_id = book_id + '_' + volume.lstrip('0')
@@ -208,17 +210,35 @@ class OCReveryting():
                     page_count = self.count_pages_in_archive(archive)
                     self.total_page_count += page_count
                     self.total_archive_count += 1
+
+                    print '\nTotal pages : {}'.format(ocr.total_page_count)
+                    print 'Total archives : {}'.format(ocr.total_archive_count)
+                    print 'Average pages per archive : {}'.format(
+                        ocr.total_page_count / ocr.total_archive_count)
+                    print 'Assuming mean tesseract time per page (seconds) {}'.format(
+                        self.mean)
+                    print 'Average time (mins, hours) to complete : {}, {}'.format(
+                        float(ocr.total_page_count * self.mean / 60),
+                        float(ocr.total_page_count * self.mean / 60 / 60)
+                    )
                 except Exception as e:
                     print e
 
     def ocr_stats(self, logfile):
         times = []
+        if not os.path.isfile(logfile):
+            print 'No log file, using default 40s'
+            return self.mean
+
         with open(logfile, 'r') as logfile_handle:
             for line in logfile_handle:
                 times.append(float(line.split('\t')[-1]))
-
-
         standard_deviation(times)
+
+        mean = sum(times) / len(times)
+        self.mean = mean
+        return self.mean
+
 
 if __name__ == "__main__":
 
@@ -248,15 +268,8 @@ if __name__ == "__main__":
             ocr.ocr_book(book_id, volume, start_page, end_page)
 
         if arg == "count_all_pages":
+            ocr.ocr_stats(ocr.logfile)
             ocr.count_all_pages()
-            print 'Total pages : {}'.format(ocr.total_page_count)
-            print 'Total archives : {}'.format(ocr.total_archive_count)
-            print 'Average pages per archive : {}'.format(
-                ocr.total_page_count / ocr.total_archive_count)
-            print 'Average time (mins, hours) to complete : {}, {}'.format(
-                float(ocr.total_page_count * 45 / 60),
-                float(ocr.total_page_count * 45 / 60 / 60)
-            )
 
         if arg == "ocr_stats":
             ocr.ocr_stats(ocr.logfile)
