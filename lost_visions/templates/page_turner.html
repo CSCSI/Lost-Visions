@@ -226,7 +226,7 @@
                 $('#pre_image_td').show();
             } else if (view_pages == "double_right") {
                 $('#post_image_td').show();
-                $('#double-right').style({'border': '3px', 'border-style': 'dashed'});
+                $('#double-right').css({'border': '3px', 'border-style': 'dashed'});
             } else if (view_pages == "single_page") {
 
             }
@@ -247,10 +247,10 @@
                     var page_text_html = "";
                     for(var line_num in data[0]['contents']){
                         var line = data[0]['contents'][line_num];
-                        page_text_html += "<div>" + line.replace('\n', '<br>') + "</div>";
+                        page_text_html += '<div class="ocr_text_row">' + line.replace('\n', '<br>') + "</div>";
                     }
                     $('#ocr_text').html(page_text_html).css(
-                            {'width': '100%', 'height': '80vh', 'overflow-y': 'scroll' }
+                            {'max-width': '30vw', 'width': '100%', 'height': '80vh', 'overflow-y': 'scroll' }
                     );
 
                 },
