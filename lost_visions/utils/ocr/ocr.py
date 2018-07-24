@@ -56,7 +56,7 @@ class OCReveryting:
     def __init__(self):
         self.total_page_count = 0
         self.total_archive_count = 0
-        self.logfile = os.path.join(THIS_FILE_PATH, 'log.log')
+        self.logfile = os.path.join(BASE_DIR, 'log.log')
         self.mean = 40
 
     def get_zip_path(self, root_folder, book_id, volume='0'):
