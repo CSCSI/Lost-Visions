@@ -24,9 +24,9 @@ def standard_deviation(lst, population=True):
     sq_differences = [d ** 2 for d in differences]
     ssd = sum(sq_differences)
 
-    print('The minimum is {}.'.format(min_time))
-    print('The maximum is {}.'.format(max_time))
-    print('The mean is {}.'.format(mean))
+    print('The minimum is {0}.'.format(min_time))
+    print('The maximum is {0}.'.format(max_time))
+    print('The mean is {0}.'.format(mean))
 
     # Note: it would be better to return a value and then print it outside
     # the function, but this is just a quick way to print out the values along
@@ -38,10 +38,10 @@ def standard_deviation(lst, population=True):
         print('This is SAMPLE standard deviation.')
         variance = ssd / (num_items - 1)
     sd = sqrt(variance)
-    # print('The differences are {}.'.format(differences))
-    # print('The sum of squared differences is {}.'.format(ssd))
-    print('The variance is {}.'.format(variance))
-    print('The standard deviation is {}.'.format(sd))
+    # print('The differences are {0}.'.format(differences))
+    # print('The sum of squared differences is {0}.'.format(ssd))
+    print('The variance is {0}.'.format(variance))
+    print('The standard deviation is {0}.'.format(sd))
 
     return sd
 
@@ -127,7 +127,7 @@ class OCReveryting():
 
         if compress:
             quality = 10
-            filename = 'compress_{}_{}'.format(quality, filename)
+            filename = 'compress_{0}_{0}'.format(quality, filename)
             img2_fp = StringIO.StringIO()
             img.save(img2_fp, "JPEG", quality=quality, optimize=True, progressive=True)
             img2_fp.seek(0)
@@ -171,12 +171,12 @@ class OCReveryting():
 
                 inner_zipped_file = self.get_page_from_archive(archive, page)
 
-                filename = '{}_{}_{}.txt'.format(book_id, volume, page)
+                filename = '{0}_{1}_{2}.txt'.format(book_id, volume, page)
                 filename = self.text_file_from_img(archive, inner_zipped_file, filename)
 
                 end = time.time()
                 diff = end - start
-                log_file.write('{}\t{}\t{}\t{}\n'.format(
+                log_file.write('{0}\t{1}\t{2}\t{3}\n'.format(
                     filename,
                     start,
                     end,
@@ -211,13 +211,13 @@ class OCReveryting():
                     self.total_page_count += page_count
                     self.total_archive_count += 1
 
-                    print '\nTotal pages : {}'.format(ocr.total_page_count)
-                    print 'Total archives : {}'.format(ocr.total_archive_count)
-                    print 'Average pages per archive : {}'.format(
+                    print '\nTotal pages : {0}'.format(ocr.total_page_count)
+                    print 'Total archives : {0}'.format(ocr.total_archive_count)
+                    print 'Average pages per archive : {0}'.format(
                         ocr.total_page_count / ocr.total_archive_count)
-                    print 'Assuming mean tesseract time per page (seconds) {}'.format(
+                    print 'Assuming mean tesseract time per page (seconds) {0}'.format(
                         self.mean)
-                    print 'Average time (mins, hours) to complete : {}, {}'.format(
+                    print 'Average time (mins, hours) to complete : {0}, {1}'.format(
                         float(ocr.total_page_count * self.mean / 60),
                         float(ocr.total_page_count * self.mean / 60 / 60)
                     )
