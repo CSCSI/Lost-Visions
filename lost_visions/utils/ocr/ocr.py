@@ -139,7 +139,7 @@ class OCReveryting:
         else:
             img_text = pytesseract.image_to_string(img)
 
-        print img_text
+        # print img_text.encode('utf-8')
         return img_text
 
     def text_file_from_img(self, archive, img_file, filename, compress=False, quality=50):
