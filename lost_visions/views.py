@@ -40,6 +40,7 @@ from lost_visions import forms, models
 from ipware.ip import get_ip
 from bleach import clean
 from lost_visions.categories import CategoryManager
+from lost_visions.utils.ocr.ocr import OCReveryting
 from lost_visions.utils.page_calculator import get_page_multipliers
 from lost_visions.utils.rubbish.images_for_books import get_book_images, get_images_for_flickr_id
 from django.utils import timezone
@@ -2279,6 +2280,27 @@ def find_zip(book_id, volume='0'):
     archive = zipfile.ZipFile(zip_path, 'r')
 
     return archive
+
+
+def ocr_page(request, book_id, page, volume):
+    ocr = OCReveryting()
+    files = ocr.ocr_book_pages(book_id, volume, page, page)
+
+    ocr_data = []
+    for ocr_file in files:
+        with open(ocr_file, 'r') as ocr_file_handle:
+            contents = ocr_file_handle.readlines()
+            ocr_data.append({
+                'contents': contents,
+                'data': {
+                    'filename': ocr_file,
+                    'book_id': book_id,
+                    'page': page,
+                    'volume': volume
+                }
+            })
+
+    return HttpResponse(json.dumps(ocr_data, indent=4), content_type="application/json")
 
 
 def find_page(request, book_id, page, volume):

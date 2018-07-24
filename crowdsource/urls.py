@@ -127,6 +127,8 @@ urlpatterns = patterns('',
                        url(r'^find_page/(?P<book_id>\w+)/(?P<page>\w+)/(?P<volume>\w+)', 'lost_visions.views.find_page', name='find_page'),
                        url(r'^page_turner/(?P<book_id>\w+)/(?P<page>\S+)/(?P<volume>\w+)',
                            'lost_visions.views.page_turner', name='page_turner'),
+                       url(r'^ocr_page/(?P<book_id>\w+)/(?P<page>\w+)/(?P<volume>\w+)', 'lost_visions.views.ocr_page',
+                           name='ocr_page'),
 
                        url(r'image_sorter', 'lost_visions.views.image_sorter', name='image_sorter'),
                        url(r'book_images/(?P<image_id>\w+)', 'lost_visions.views.book_images', name='image.book_images')

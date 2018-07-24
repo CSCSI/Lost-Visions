@@ -27,6 +27,11 @@ def standard_deviation(lst, population=True):
     print('The minimum is {0}.'.format(min_time))
     print('The maximum is {0}.'.format(max_time))
     print('The mean is {0}.'.format(mean))
+    print('The total time is {0} seconds, or {1} minutes, or {2} hours'.format(
+        sum(lst),
+        sum(lst) / 60,
+        sum(lst) / 60 / 60
+    ))
 
     # Note: it would be better to return a value and then print it outside
     # the function, but this is just a quick way to print out the values along
@@ -45,7 +50,8 @@ def standard_deviation(lst, population=True):
 
     return sd
 
-class OCReveryting():
+
+class OCReveryting:
 
     def __init__(self):
         self.total_page_count = 0
@@ -95,7 +101,7 @@ class OCReveryting():
         root_folder = self.get_root_folder()
         # zip_path = '/home/ubuntu/PycharmProjects/Lost-Visions/lost_visions/static/media/images/003871282_0_1-324pgs__1023322_dat.zip'
 
-        root_folder = "/home/ubuntu/ocr"
+        # root_folder = "/home/ubuntu/ocr"
         zip_path = self.get_zip_path(root_folder, book_id, volume)
 
         if zip_path is None:
@@ -117,8 +123,7 @@ class OCReveryting():
         if inner_zipped_file is None:
             raise
 
-
-    def text_file_from_img(self, archive, img_file, filename, compress=False):
+    def text_from_img(self, archive, img_file, compress, quality=50):
         imgdata = archive.read(img_file)
 
         input_image = StringIO.StringIO(imgdata)
@@ -126,27 +131,31 @@ class OCReveryting():
         img = Image.open(input_image)
 
         if compress:
-            quality = 10
-            filename = 'compress_{0}_{0}'.format(quality, filename)
             img2_fp = StringIO.StringIO()
             img.save(img2_fp, "JPEG", quality=quality, optimize=True, progressive=True)
             img2_fp.seek(0)
             img2 = Image.open(img2_fp)
-
             img_text = pytesseract.image_to_string(img2)
-
         else:
             img_text = pytesseract.image_to_string(img)
 
         print img_text
+        return img_text
+
+    def text_file_from_img(self, archive, img_file, filename, compress=False, quality=50):
+        img_text = self.text_from_img(archive, img_file, compress, quality)
+
+        if compress:
+            filename = 'compress_{0}_{1}'.format(quality, filename)
 
         with open(filename, 'w') as f1:
             f1.write(img_text.encode('utf8'))
         return filename
 
 
-    def ocr_book(self, book_id, volume, start_page, end_page):
+    def ocr_book_pages(self, book_id, volume, start_page, end_page):
 
+        ocr_files = []
         archive = self.find_zip(book_id, volume)
 
         if archive is None:
@@ -160,7 +169,13 @@ class OCReveryting():
         if num_pages is None:
             raise
 
-        if end_page is None or end_page > num_pages:
+        if end_page is None:
+            end_page = num_pages
+
+        start_page = int(start_page)
+        end_page = int(end_page)
+
+        if end_page > num_pages:
             end_page = num_pages
 
         print 'start_page', start_page, 'end_page', end_page
@@ -172,16 +187,21 @@ class OCReveryting():
                 inner_zipped_file = self.get_page_from_archive(archive, page)
 
                 filename = '{0}_{1}_{2}.txt'.format(book_id, volume, page)
-                filename = self.text_file_from_img(archive, inner_zipped_file, filename)
+                if os.path.isfile(filename):
+                    ocr_files.append(filename)
+                else:
+                    filename = self.text_file_from_img(archive, inner_zipped_file, filename)
 
-                end = time.time()
-                diff = end - start
-                log_file.write('{0}\t{1}\t{2}\t{3}\n'.format(
-                    filename,
-                    start,
-                    end,
-                    diff
-                ).encode('utf8'))
+                    end = time.time()
+                    diff = end - start
+                    log_file.write('{0}\t{1}\t{2}\t{3}\n'.format(
+                        filename,
+                        start,
+                        end,
+                        diff
+                    ).encode('utf8'))
+                    ocr_files.append(filename)
+        return ocr_files
 
     def count_pages_in_archive(self, archive):
         try:
@@ -265,7 +285,7 @@ if __name__ == "__main__":
             end_page = 11
             # 1-324 - 586
 
-            ocr.ocr_book(book_id, volume, start_page, end_page)
+            ocr.ocr_book_pages(book_id, volume, start_page, end_page)
 
         if arg == "count_all_pages":
             ocr.ocr_stats(ocr.logfile)

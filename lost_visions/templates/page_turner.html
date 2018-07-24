@@ -141,6 +141,9 @@
                                                      display: block; margin: 0 auto">
 {#                                            {% endif %}#}
                                         </td>
+                                        <td>
+                                            <div id="ocr_text" style="margin:1em"></div>
+                                        </td>
                                     </tr>
                                 </table>
 
@@ -231,6 +234,30 @@
             setTimeout(function(){
                 $("#menu-toggle").click();
             }, 3);
+
+            $.ajax({
+                type: "GET",
+                url: "{% url 'ocr_page' book_id page volume %}",
+                data: {
+
+                },
+                success: function(data) {
+                    console.log(data);
+
+                    var page_text_html = "";
+                    for(var line_num in data[0]['contents']){
+                        var line = data[0]['contents'][line_num];
+                        page_text_html += "<div>" + line.replace('\n', '<br>') + "</div>";
+                    }
+                    $('#ocr_text').html(page_text_html).css(
+                            {'width': '100%', 'height': '80vh', 'overflow-y': 'scroll' }
+                    );
+
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.log("Problem with category: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
         });
         {#            function hide() {#}
         {#                $(this).closest('.list-group').fadeOut('slide',function(){#}
