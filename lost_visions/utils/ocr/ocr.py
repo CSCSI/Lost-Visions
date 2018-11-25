@@ -1,12 +1,16 @@
 import StringIO
 import os
+import threading
 import zipfile
 from math import sqrt
 
 import pytesseract
 import time
 import sys
+
+import requests
 from PIL import Image
+from multiprocessing.dummy import Pool as ThreadPool
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 THIS_FILE_PATH = os.path.realpath(__file__)
@@ -54,6 +58,7 @@ def standard_deviation(lst, population=True):
 class OCReveryting:
 
     def __init__(self):
+        self.cpu_time = 0
         self.total_page_count = 0
         self.total_archive_count = 0
         self.logfile = os.path.join(BASE_DIR, 'log.log')
@@ -192,37 +197,31 @@ class OCReveryting:
         except:
             pass
 
-        for page in range(start_page, end_page + 1):
-            with open(self.logfile, 'a') as log_file:
-
-                start = time.time()
-
-                inner_zipped_file = self.get_page_from_archive(archive, page)
-
-                filename = os.path.join(output_folder, '{0}_{1}_{2}.txt'.format(book_id, volume, page))
-
-                # if os.path.isfile(filename):
-                #     ocr_files.append(filename)
-                # else:
-                #     filename = self.text_file_from_img(archive, inner_zipped_file, filename)
-                #
-                #     end = time.time()
-                #     diff = end - start
-                #     log_file.write('{0}\t{1}\t{2}\t{3}\n'.format(
-                #         filename,
-                #         start,
-                #         end,
-                #         diff
-                #     ).encode('utf8'))
-                #     ocr_files.append(filename)
-
-                pages_to_ocr.append((archive, inner_zipped_file, filename))
-
-        print(pages_to_ocr)
-
+        global_lock = threading.Lock()
         global_start = time.time()
 
-        from multiprocessing.dummy import Pool as ThreadPool
+        for page in range(start_page, end_page + 1):
+            # with open(self.logfile, 'a') as log_file:
+
+            inner_zipped_file = self.get_page_from_archive(archive, page)
+            filename = os.path.join(output_folder, '{0}_{1}_{2}.txt'.format(book_id, volume, page))
+
+            # if os.path.isfile(filename):
+            #     ocr_files.append(filename)
+            # else:
+            #     filename = self.text_file_from_img(archive, inner_zipped_file, filename)
+            #
+            #     end = time.time()
+            #     diff = end - start
+            #     log_file.write('{0}\t{1}\t{2}\t{3}\n'.format(
+            #         filename,
+            #         start,
+            #         end,
+            #         diff
+            #     ).encode('utf8'))
+            #     ocr_files.append(filename)
+
+            pages_to_ocr.append((archive, inner_zipped_file, filename, global_lock))
 
         pool = ThreadPool(self.POOL_SIZE)
         # Open the urls in their own threads
@@ -236,9 +235,11 @@ class OCReveryting:
         global_end = time.time()
         print('time for {} pages to OCR: {}'.format(len(pages_to_ocr), global_end - global_start))
         with open('ocr_timings.txt', 'a') as f1:
-            f1.write('Time taken,{},Number pages,{},Pool_Size,{}\n'.format(
+            f1.write('Wall time,{},CPU time,{},Number pages,{},Speedup,{},Pool_Size,{}\n'.format(
                 global_end - global_start,
+                self.cpu_time,
                 len(pages_to_ocr),
+                self.cpu_time / (global_end - global_start),
                 self.POOL_SIZE
             ))
 
@@ -246,13 +247,31 @@ class OCReveryting:
 
     def threadable_ocr(self, ocr_metadata):
         # print('ocr_metadata', ocr_metadata)
+
         archive= ocr_metadata[0]
         inner_zipped_file = ocr_metadata[1]
         filename = ocr_metadata[2]
+        global_lock = ocr_metadata[3]
 
-        filename = self.text_file_from_img(archive, inner_zipped_file, filename)
+        page_start = time.time()
+        print(os.getpid(), os.getppid(), threading.currentThread(), filename)
 
-        return filename
+        returned_filename = self.text_file_from_img(archive, inner_zipped_file, filename)
+
+        page_end = time.time()
+        task_time = page_end - page_start
+
+        # Writing how long that took, which probably increases how long it will take
+        global_lock.acquire()
+        self.cpu_time += task_time
+        with open('ocr_finegrain_timings.txt', 'a') as f1:
+            f1.write('Time taken,{},Thread_metadata,{}\n'.format(
+                page_end - page_start,
+                str(threading.currentThread())
+            ))
+        global_lock.release()
+
+        return returned_filename
 
     def count_pages_in_archive(self, archive):
         try:
@@ -310,6 +329,51 @@ class OCReveryting:
         self.mean = mean
         return self.mean
 
+    def ocr_zip_file(self, zip_path):
+        print('Zip path {}'.format(zip_path))
+        # /media/lostvisions/New Volume/003871282_0_1-324pgs__1023322_dat.zip
+        if os.path.isfile(zip_path):
+            basename = os.path.basename(zip_path)
+            book_metadata = basename.split('_')
+
+            book_id = book_metadata[0]
+            volume = book_metadata[1]
+            start_page = book_metadata[2].split('-')[0]
+            end_page = ''.join(c for c in book_metadata[2].split('-')[1] if c.isdigit())
+
+            # Use this to test different pool sizes
+            # for poolsize in range(7, 9):
+            #     ocr.POOL_SIZE = poolsize
+            #     ocr_files = ocr.ocr_book_pages(book_id, volume, 20, 30, zip_path=zip_path)
+            #     print(ocr_files)
+
+            ocr.POOL_SIZE = 10
+            ocr_files = ocr.ocr_book_pages(book_id, volume, start_page, end_page, zip_path=zip_path)
+            print(ocr_files)
+        else:
+            print('Zip path {} is not a valid file'.format(zip_path))
+
+    def scrape_zip_urls_from_url(self):
+        import urllib2
+        from bs4 import BeautifulSoup
+
+        url = 'http://illustrationarchive.cf.ac.uk/static/media/page_zips/disk1/'
+
+        conn = urllib2.urlopen(url)
+        html = conn.read()
+
+        soup = BeautifulSoup(html)
+        links = soup.find_all('a')
+
+        full_links = []
+        for tag in links:
+            link = tag.get('href', None)
+            if link is not None:
+                full_links.append('{}{}\n'.format(url, link))
+        with open('zip_urls.txt', 'w') as zip_urls_file:
+            for link in full_links:
+                zip_urls_file.write(link)
+
 
 if __name__ == "__main__":
 
@@ -326,6 +390,9 @@ if __name__ == "__main__":
         exit(0)
 
     arg = sys.argv[1]
+
+    if arg == "scrape_html_links":
+        ocr.scrape_zip_urls_from_url()
 
     if arg == "test":
         book_id = "001698719"
@@ -347,27 +414,25 @@ if __name__ == "__main__":
         print('ocr_book_zip')
         if len(sys.argv) > 2:
             zip_path = sys.argv[2]
-            print('Zip path {}'.format(zip_path))
-            # /media/lostvisions/New Volume/003871282_0_1-324pgs__1023322_dat.zip
-            if os.path.isfile(zip_path):
-                basename = os.path.basename(zip_path)
-                book_metadata = basename.split('_')
+            ocr.ocr_zip_file(zip_path)
+        else:
+            print('Need a zip path')
 
-                book_id = book_metadata[0]
-                volume = book_metadata[1]
-                start_page = book_metadata[2].split('-')[0]
-                end_page = ''.join(c for c in book_metadata[2].split('-')[1] if c.isdigit())
+    if arg == "ocr_dl_book_zip_list":
+        print('ocr_dl_book_zip_list')
+        if len(sys.argv) > 2:
+            with open(sys.argv[2], 'r') as url_file:
+                all_urls = url_file.readlines()
+                # print all_urls
 
-                # Use this to test different pool sizes
-                # for poolsize in range(7, 12):
-                #     ocr.POOL_SIZE = poolsize
-                #     ocr_files = ocr.ocr_book_pages(book_id, volume, 20, 40, zip_path=zip_path)
-                #     print(ocr_files)
+            for a_url in all_urls[:1]:
+                print('*{}*'.format(a_url))
+                response = requests.get(a_url.strip(), stream=True)
+                response.raise_for_status()
 
-                ocr_files = ocr.ocr_book_pages(book_id, volume, 20, 40, zip_path=zip_path)
-                print(ocr_files)
-            else:
-                print('Zip path {} is not a valid file'.format(zip_path))
+                with open(a_url.split('/')[-1], 'wb') as handle:
+                    for block in response.iter_content(1024):
+                        handle.write(block)
         else:
             print('Need a zip path')
 
