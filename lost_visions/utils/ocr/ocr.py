@@ -1,14 +1,12 @@
 import StringIO
+import multiprocessing
 import os
 import threading
 import zipfile
 from math import sqrt
-
-import math
 import pytesseract
 import time
 import sys
-
 import requests
 from PIL import Image
 from multiprocessing.dummy import Pool as ThreadPool
@@ -64,7 +62,7 @@ class OCReveryting:
         self.total_archive_count = 0
         self.logfile = os.path.join(BASE_DIR, 'log.log')
         self.mean = 40
-        self.POOL_SIZE = 4
+        self.POOL_SIZE = multiprocessing.cpu_count()
 
     def get_zip_path(self, root_folder, book_id, volume='0'):
         book_id = book_id + '_' + volume.lstrip('0')
@@ -187,7 +185,16 @@ class OCReveryting:
         print 'start_page', start_page, 'end_page', end_page
         pages_to_ocr = []
 
-        output_folder = '{}_{}_{}_{}_{}'.format(book_id, volume, start_page, end_page, str(time.time()))
+        timestamp_folder = 'runtime_{}'.format(str(time.time()))
+        try:
+            os.mkdir(timestamp_folder)
+        except:
+            pass
+
+        output_folder = os.path.join(
+            timestamp_folder,
+            '{}_{}_{}_{}'.format(book_id, volume, start_page, end_page)
+        )
         try:
             os.mkdir(output_folder)
         except:
@@ -197,28 +204,11 @@ class OCReveryting:
         global_start = time.time()
 
         for page in range(start_page, end_page + 1):
-            # with open(self.logfile, 'a') as log_file:
-
             inner_zipped_file = self.get_page_from_archive(archive, page)
             filename = os.path.join(output_folder, '{0}_{1}_{2}.txt'.format(book_id, volume, page))
-
-            # if os.path.isfile(filename):
-            #     ocr_files.append(filename)
-            # else:
-            #     filename = self.text_file_from_img(archive, inner_zipped_file, filename)
-            #
-            #     end = time.time()
-            #     diff = end - start
-            #     log_file.write('{0}\t{1}\t{2}\t{3}\n'.format(
-            #         filename,
-            #         start,
-            #         end,
-            #         diff
-            #     ).encode('utf8'))
-            #     ocr_files.append(filename)
-
             pages_to_ocr.append((archive, inner_zipped_file, filename, global_lock))
 
+        print('Pool will be size {}'.format(self.POOL_SIZE))
         pool = ThreadPool(self.POOL_SIZE)
         # Open the urls in their own threads
         # and return the results
@@ -351,7 +341,7 @@ class OCReveryting:
             #     ocr_files = ocr.ocr_book_pages(book_id, volume, 20, 30, zip_path=zip_path)
             #     print(ocr_files)
 
-            ocr.POOL_SIZE = 10
+            # ocr.POOL_SIZE = 10
             ocr_files = ocr.ocr_book_pages(book_id, volume, start_page, end_page, zip_path=zip_path)
             print(ocr_files)
         else:
@@ -429,7 +419,7 @@ if __name__ == "__main__":
                 all_urls = url_file.readlines()
                 # print all_urls
 
-            for a_url in all_urls[:1]:
+            for a_url in all_urls[:5]:
                 a_url = a_url.strip()
                 print('Downloading {}'.format(a_url))
                 zip_file = a_url.split('/')[-1]
@@ -458,7 +448,7 @@ if __name__ == "__main__":
                             handle.write(block)
 
                 ocr.ocr_zip_file(zip_file)
-                # os.remove(a_url)
+                os.remove(a_url)
         else:
             print('Need a zip path')
 
