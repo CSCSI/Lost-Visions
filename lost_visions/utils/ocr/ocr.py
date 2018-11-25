@@ -4,6 +4,7 @@ import threading
 import zipfile
 from math import sqrt
 
+import math
 import pytesseract
 import time
 import sys
@@ -85,9 +86,9 @@ class OCReveryting:
                         else:
                             joined_path = os.path.join(root_folder, os.path.join(a_file, b_file))
                             return joined_path
-        # except Exception as e:
-        #     print 'get_zip_path', str(e), type(e)
-        #     raise e
+                            # except Exception as e:
+                            #     print 'get_zip_path', str(e), type(e)
+                            #     raise e
 
     def get_root_folder(self):
 
@@ -156,8 +157,6 @@ class OCReveryting:
 
         with open(filename, 'w') as f1:
             f1.write(img_text.encode('utf8'))
-
-        print('Wrote {}'.format(filename))
         return filename
 
     def ocr_book_pages(self, book_id, volume, start_page, end_page, zip_path=None):
@@ -167,14 +166,11 @@ class OCReveryting:
             archive = self.find_zip(book_id, volume)
         else:
             archive = zipfile.ZipFile(zip_path, 'r')
-
         if archive is None:
             raise
 
         print('Loaded archive {}'.format(archive.filename))
-
         num_pages = self.count_pages_in_archive(archive)
-
         print('Pages in archive: {}'.format(num_pages))
         if num_pages is None:
             raise
@@ -227,37 +223,44 @@ class OCReveryting:
         # Open the urls in their own threads
         # and return the results
         results = pool.map(self.threadable_ocr, pages_to_ocr)
-        print ('Results', results)
         # close the pool and wait for the work to finish
         pool.close()
         pool.join()
 
         global_end = time.time()
-        print('time for {} pages to OCR: {}'.format(len(pages_to_ocr), global_end - global_start))
+        print('Time for {} pages to OCR: {}'.format(len(pages_to_ocr), global_end - global_start))
         with open('ocr_timings.txt', 'a') as f1:
-            f1.write('Wall time,{},CPU time,{},Number pages,{},Speedup,{},Pool_Size,{}\n'.format(
-                global_end - global_start,
-                self.cpu_time,
-                len(pages_to_ocr),
-                self.cpu_time / (global_end - global_start),
-                self.POOL_SIZE
-            ))
-
+            f1.write(
+                'Wall time,{},CPU time,{},Number pages,{},Time per page,{},Pool_Size,{}\n'.format(
+                    global_end - global_start,
+                    self.cpu_time,
+                    len(pages_to_ocr),
+                    (global_end - global_start) / len(pages_to_ocr),
+                    self.POOL_SIZE
+                ))
         return ocr_files
 
     def threadable_ocr(self, ocr_metadata):
         # print('ocr_metadata', ocr_metadata)
-
         archive= ocr_metadata[0]
         inner_zipped_file = ocr_metadata[1]
         filename = ocr_metadata[2]
         global_lock = ocr_metadata[3]
 
         page_start = time.time()
-        print(os.getpid(), os.getppid(), threading.currentThread(), filename)
+        print 'Thread{}/{}, WillCreate {}'.format(
+            threading.currentThread().name,
+            threading.currentThread().ident,
+            filename
+        )
 
         returned_filename = self.text_file_from_img(archive, inner_zipped_file, filename)
 
+        print 'Thread{}/{}, WroteFile {}'.format(
+            threading.currentThread().name,
+            threading.currentThread().ident,
+            filename
+        )
         page_end = time.time()
         task_time = page_end - page_start
 
@@ -265,12 +268,13 @@ class OCReveryting:
         global_lock.acquire()
         self.cpu_time += task_time
         with open('ocr_finegrain_timings.txt', 'a') as f1:
-            f1.write('Time taken,{},Thread_metadata,{}\n'.format(
-                page_end - page_start,
-                str(threading.currentThread())
+            f1.write('Time {}, Thread{}/{}, WroteFile {}\n'.format(
+                task_time,
+                threading.currentThread().name,
+                threading.currentThread().ident,
+                filename
             ))
         global_lock.release()
-
         return returned_filename
 
     def count_pages_in_archive(self, archive):
@@ -368,7 +372,7 @@ class OCReveryting:
         full_links = []
         for tag in links:
             link = tag.get('href', None)
-            if link is not None:
+            if link is not None and str(link).endswith('.zip'):
                 full_links.append('{}{}\n'.format(url, link))
         with open('zip_urls.txt', 'w') as zip_urls_file:
             for link in full_links:
@@ -426,13 +430,35 @@ if __name__ == "__main__":
                 # print all_urls
 
             for a_url in all_urls[:1]:
-                print('*{}*'.format(a_url))
-                response = requests.get(a_url.strip(), stream=True)
-                response.raise_for_status()
+                a_url = a_url.strip()
+                print('Downloading {}'.format(a_url))
+                zip_file = a_url.split('/')[-1]
 
-                with open(a_url.split('/')[-1], 'wb') as handle:
-                    for block in response.iter_content(1024):
-                        handle.write(block)
+                if not os.path.isfile(zip_file):
+                    # We do not have the zip yet, download it
+                    response = requests.head(a_url)
+                    file_size = None
+                    if 'content-length' in response.headers:
+                        file_size = float(response.headers['content-length'])
+
+                    response = requests.get(a_url, stream=True)
+                    response.raise_for_status()
+
+                    chunk_count = 0
+                    with open(zip_file, 'wb') as handle:
+                        for block in response.iter_content(1024):
+                            if file_size:
+                                chunk_count += 1
+                                percent = (1024 * chunk_count) / file_size * 100
+                                if percent < 100:
+                                    print 'Downloaded {}%  \r'.format(round(percent, 2)),
+                                    sys.stdout.flush()
+                                else:
+                                    print '{}% Download Complete'.format(round(percent, 2))
+                            handle.write(block)
+
+                ocr.ocr_zip_file(zip_file)
+                # os.remove(a_url)
         else:
             print('Need a zip path')
 
