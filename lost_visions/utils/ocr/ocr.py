@@ -347,11 +347,12 @@ class OCReveryting:
         else:
             print('Zip path {} is not a valid file'.format(zip_path))
 
-    def scrape_zip_urls_from_url(self):
+    def scrape_zip_urls_from_url(self, url=None):
         import urllib2
         from bs4 import BeautifulSoup
 
-        url = 'http://illustrationarchive.cf.ac.uk/static/media/page_zips/disk1/'
+        if not url:
+            url = 'http://illustrationarchive.cf.ac.uk/static/media/page_zips/disk1/'
 
         conn = urllib2.urlopen(url)
         html = conn.read()
@@ -375,7 +376,7 @@ if __name__ == "__main__":
 
     print ocr.get_root_folder()
 
-    print 'Options are: test, count_all_pages, ocr_book_zip'
+    print 'Options are: test, count_all_pages, ocr_book_zip, scrape_html_links, ocr_dl_book_zip_list'
     print 'Running..'
     print sys.argv
 
@@ -386,7 +387,10 @@ if __name__ == "__main__":
     arg = sys.argv[1]
 
     if arg == "scrape_html_links":
-        ocr.scrape_zip_urls_from_url()
+        if len(sys.argv) > 2:
+            ocr.scrape_zip_urls_from_url(sys.argv[2])
+        else:
+            ocr.scrape_zip_urls_from_url()
 
     if arg == "test":
         book_id = "001698719"
@@ -413,13 +417,22 @@ if __name__ == "__main__":
             print('Need a zip path')
 
     if arg == "ocr_dl_book_zip_list":
-        print('ocr_dl_book_zip_list')
+        print('ocr_dl_book_zip_list list_filename number_of_zips row_offset')
         if len(sys.argv) > 2:
             with open(sys.argv[2], 'r') as url_file:
                 all_urls = url_file.readlines()
                 # print all_urls
 
-            for a_url in all_urls[:5]:
+            number_of_zips = 3
+            if len(sys.argv) > 3:
+                number_of_zips = int(sys.argv[3])
+            print('Will ocr {} zips'.format(number_of_zips))
+            offset = 0
+            if len(sys.argv) > 4:
+                offset = int(sys.argv[4])
+            print('List offset {}. (0 is first row in file)'.format(offset))
+
+            for a_url in all_urls[offset:offset + number_of_zips]:
                 a_url = a_url.strip()
                 print('Downloading {}'.format(a_url))
                 zip_file = a_url.split('/')[-1]
@@ -448,7 +461,7 @@ if __name__ == "__main__":
                             handle.write(block)
 
                 ocr.ocr_zip_file(zip_file)
-                os.remove(a_url)
+                os.remove(zip_file)
         else:
             print('Need a zip path')
 
