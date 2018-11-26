@@ -57,12 +57,13 @@ def standard_deviation(lst, population=True):
 class OCReveryting:
 
     def __init__(self):
+        self.TIMESTAMP_RUN = False
         self.cpu_time = 0
         self.total_page_count = 0
         self.total_archive_count = 0
         self.logfile = os.path.join(BASE_DIR, 'log.log')
         self.mean = 40
-        self.POOL_SIZE = multiprocessing.cpu_count()
+        self.POOL_SIZE = multiprocessing.cpu_count() * 2
 
     def get_zip_path(self, root_folder, book_id, volume='0'):
         book_id = book_id + '_' + volume.lstrip('0')
@@ -185,16 +186,18 @@ class OCReveryting:
         print 'start_page', start_page, 'end_page', end_page
         pages_to_ocr = []
 
-        timestamp_folder = 'runtime_{}'.format(str(time.time()))
-        try:
-            os.mkdir(timestamp_folder)
-        except:
-            pass
-
-        output_folder = os.path.join(
-            timestamp_folder,
-            '{}_{}_{}_{}'.format(book_id, volume, start_page, end_page)
-        )
+        if ocr.TIMESTAMP_RUN:
+            timestamp_folder = 'runtime_{}'.format(str(time.time()))
+            try:
+                os.mkdir(timestamp_folder)
+            except:
+                pass
+            output_folder = os.path.join(
+                timestamp_folder,
+                '{}_{}_{}_{}'.format(book_id, volume, start_page, end_page)
+            )
+        else:
+            output_folder = '{}_{}_{}_{}'.format(book_id, volume, start_page, end_page)
         try:
             os.mkdir(output_folder)
         except:
