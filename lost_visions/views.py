@@ -2285,7 +2285,7 @@ def find_zip(book_id, volume='0'):
 def ocr_page(request, book_id, page, volume):
     ocr_data = []
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         ocr = OCReveryting()
         files = ocr.ocr_book_pages(book_id, volume, page, page)
 
