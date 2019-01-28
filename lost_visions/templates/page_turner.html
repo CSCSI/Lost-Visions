@@ -117,32 +117,43 @@
                                 <table align="center" cellpadding="5px">
                                     <tr>
                                         <td id="pre_image_td" hidden="hidden">
-{#                                            {{ pre_number }}#}
-{#                                            {% if pre_post == 'pre' %}#}
-                                                <img id="page_image_pre" src="{% url 'find_page' book_id pre_number volume%}"
-                                                     style="background-color: #27268c; padding:1px;
+                                            {#                                            {{ pre_number }}#}
+                                            {#                                            {% if pre_post == 'pre' %}#}
+                                            <img id="page_image_pre" src="{% url 'find_page' book_id pre_number volume%}"
+                                                 style="background-color: #27268c; padding:1px;
                                                      display: block; margin: 0 auto">
-{#                                            {% endif %}#}
+                                            {#                                            {% endif %}#}
                                         </td>
 
                                         <td>
-{#                                            {{ page }}#}
+                                            {#                                            {{ page }}#}
                                             <img id="page_image" src="{% url 'find_page' book_id page volume%}"
                                                  style="background-color: #27268c; padding:1px; display: block;
                                                  border: 3px; border-style: dashed; margin: 0 auto">
                                         </td>
 
                                         <td id="post_image_td" hidden="hidden">
-{#                                            {{ post_number }}#}
-{#                                            {% if pre_post == 'post' %}#}
+                                            {#                                            {{ post_number }}#}
+                                            {#                                            {% if pre_post == 'post' %}#}
 
-                                                <img id="page_image_post" src="{% url 'find_page' book_id post_number volume%}"
-                                                     style="background-color: #27268c; padding:1px;
+                                            <img id="page_image_post" src="{% url 'find_page' book_id post_number volume%}"
+                                                 style="background-color: #27268c; padding:1px;
                                                      display: block; margin: 0 auto">
-{#                                            {% endif %}#}
+                                            {#                                            {% endif %}#}
                                         </td>
                                         <td>
-                                            <div id="ocr_text" style="margin:1em"></div>
+                                            {% if user.is_authenticated %}
+                                                <div id="ocr_text" style="margin:1em"></div>
+                                            {% else %}
+                                                <div class="bs-component" style="margin:1em">
+                                                    <div class="alert alert-dismissable alert-info">
+                                                        <button type="button" class="close" data-dismiss="alert">×</button>
+                                                        You can do more <a href="{% url 'account_login' %}">if you sign up</a>!<br>
+                                                        OCR text would appear here once you are logged in.
+                                                    </div>
+                                                    <div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div>
+                                                </div>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 </table>
@@ -220,7 +231,7 @@
         $(document).ready(function(){
             var view_pages = $.cookie("lv_page_viewer_pages");
 
-{#            alert('show ' + view_pages);#}
+            {#            alert('show ' + view_pages);#}
 
             if (view_pages == "double_left") {
                 $('#pre_image_td').show();
