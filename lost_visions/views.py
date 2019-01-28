@@ -2283,22 +2283,24 @@ def find_zip(book_id, volume='0'):
 
 
 def ocr_page(request, book_id, page, volume):
-    ocr = OCReveryting()
-    files = ocr.ocr_book_pages(book_id, volume, page, page)
-
     ocr_data = []
-    for ocr_file in files:
-        with open(ocr_file, 'r') as ocr_file_handle:
-            contents = ocr_file_handle.readlines()
-            ocr_data.append({
-                'contents': contents,
-                'data': {
-                    'filename': ocr_file,
-                    'book_id': book_id,
-                    'page': page,
-                    'volume': volume
-                }
-            })
+
+    if request.user.is_authenticated:
+        ocr = OCReveryting()
+        files = ocr.ocr_book_pages(book_id, volume, page, page)
+
+        for ocr_file in files:
+            with open(ocr_file, 'r') as ocr_file_handle:
+                contents = ocr_file_handle.readlines()
+                ocr_data.append({
+                    'contents': contents,
+                    'data': {
+                        'filename': ocr_file,
+                        'book_id': book_id,
+                        'page': page,
+                        'volume': volume
+                    }
+                })
 
     return HttpResponse(json.dumps(ocr_data, indent=4), content_type="application/json")
 
