@@ -50,10 +50,10 @@ python-boost
 
 
 ### supervisord, environment var not working, so embedded in a script instead
-[program:django]
-command=/var/www/lost_visions/Lost-Visions/runme.sh
-;command=gunicorn -c /var/www/lost_visions/Lost-Visions/crowdsource/gunicorn.settings crowdsource.wsgi:application
-;environment=LD_LIBRARY_PATH="/usr/local/lib"
+    [program:django]
+    command=/var/www/lost_visions/Lost-Visions/runme.sh
+    ;command=gunicorn -c /var/www/lost_visions/Lost-Visions/crowdsource/gunicorn.settings crowdsource.wsgi:application
+    ;environment=LD_LIBRARY_PATH="/usr/local/lib"
 
 ### runme.sh for supervisord
 
@@ -62,6 +62,15 @@ command=/var/www/lost_visions/Lost-Visions/runme.sh
 export LD_LIBRARY_PATH="/usr/local/lib"
 export PYTHONPATH="/var/www/lost_visions/Lost-Visions"
 exec gunicorn -c /var/www/lost_visions/Lost-Visions/crowdsource/gunicorn.settings crowdsource.wsgi:application
+
+### certbot
+
+https://certbot.eff.org/lets-encrypt/centos6-nginx
+/etc/cron.daily/certbot
+
+    #!/bin/bash
+    python -c 'import random; import time; time.sleep(random.random() * 3600)' && /usr/local/bin/certbot-auto renew && service nginx restart
+
 
 ### ReImagine change to nginx.conf
     client_max_body_size 20M;
